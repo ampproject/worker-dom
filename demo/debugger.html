@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="demo.css" rel="stylesheet">
+  <script src="./dist/debug.index.js" type="module"></script>
+  <script src="./dist/debug.worker.js" type="module"></script>
+</head>
+<body>
+  <p>This debugger allows you to experiment with the WorkerDOM API.</p>
+  <code>global.workerDocument = {createElement, createElementNS, createTextNode, defaultView, body, ...Element}</code>
+  <pre>
+    Example:
+    <code>
+      const child = workerDocument.createElement('div');
+      
+      workerDocument.body.appendChild(child);
+      console.log(`is child connected? ${child.isConnected === true ? 'yes' : 'no'}`);
+    </code>
+  </pre>
+  <h2>Current Markup</h2>
+  <code id="workerDocumentMarkup"></code>
+  <h2>Current Rendered Markup</h2>
+  <div id="workerDocumentOutput"></div>
+  <script defer>
+    const markupEl = document.getElementById('workerDocumentMarkup');
+    const outputEl = document.getElementById('workerDocumentOutput');
+
+    setInterval(_ => {
+      markupEl.textContent = workerDocument.body.innerHTML.toString(); 
+      outputEl.innerHTML = workerDocument.body.innerHTML;
+    }, 500);
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Interactive Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="map-preact/dist/main.css" rel="stylesheet" type="text/css">
+  <script src="./dist/index.mjs" type="module"></script>
+  <script src="./dist/index.js" nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/index.js" defer></script> -->
+</head>
+<body>
+  <div src="map-preact/dist/main.js" class="amp-script"><div><table><thead><tr><th class="candidateTable_name">Candidate</th><th class="candidateTable_party">Party</th><th class="candidateTable_votes">Votes</th><th class="candidateTable_percent">Pct.</th></tr></thead><tbody><tr><td><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="candidateTable_victor candidateTable_displayVictor"><path d="M20.285 2L9 13.567 3.714 8.556 0 12.272 9 21 24 5.715z"></path></svg><span class="candidateTable_name">Elaine Barrish</span></td><td><span class="candidateTable_party">Republican</span><span class="candidateTable_party candidateTable_shortParty">Rep.</span></td><td><span class="candidateTable_votes">123,818,000</span></td><td><span class="candidateTable_percent">54.6%</span></td></tr><tr><td><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="candidateTable_victor"><path d="M20.285 2L9 13.567 3.714 8.556 0 12.272 9 21 24 5.715z"></path></svg><span class="candidateTable_name">Steven Armstrong</span></td><td><span class="candidateTable_party">Democrat</span><span class="candidateTable_party candidateTable_shortParty">Dem.</span></td><td><span class="candidateTable_votes">102,810,012</span></td><td><span class="candidateTable_percent">45.4%</span></td></tr><tr><td><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="candidateTable_victor"><path d="M20.285 2L9 13.567 3.714 8.556 0 12.272 9 21 24 5.715z"></path></svg><span class="candidateTable_name">Benjamin Arthur</span></td><td><span class="candidateTable_party">Independent</span><span class="candidateTable_party candidateTable_shortParty">Ind.</span></td><td><span class="candidateTable_votes">42</span></td><td><span class="candidateTable_percent">0%</span></td></tr></tbody></table><h1>Precinct Map</h1><div class="candidateMap_wrapper"><svg xmlns="http://www.w3.org/2000/svg" width="360" height="360"><rect x="0" y="0" width="180" height="180" fill="red" stroke="black"></rect><rect x="180" y="0" width="180" height="180" fill="red" stroke="black"></rect><rect x="0" y="180" width="180" height="180" fill="red" stroke="black"></rect><rect x="180" y="180" width="180" height="180" fill="red" stroke="black"></rect></svg><p class="candidateMap_tooltip">Region winner </p></div></div></div>
+  <script type="module">
+    import {upgradeElement} from './dist/index.mjs';
+    upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.mjs');
+  </script>
+  <script nomodule async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.js');
+    }, false);
+  </script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.js');
+    }, false);
+  </script> -->
+</body>
+</html>

@@ -1,0 +1,34 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Helvetica, Arial, sans-serif;
+  background: #edf0f0;
+}
+body {
+  padding: 1em;
+}
+
+h1 {
+  background: #141d26;
+  margin: -.5em -.5em 0 -.5em;
+  padding: 1em;
+  height: 1em;
+  color: #edf0f0;
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0 0 0 1em;
+}
+li {
+  line-height: 2;
+}
+
+code {
+  white-space: pre-wrap;
+}

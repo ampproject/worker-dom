@@ -1,0 +1,18 @@
+language: node_js
+sudo: required
+dist: trusty
+node_js:
+  - "lts/*"
+before_install:
+  - unset _JAVA_OPTIONS  # JVM heap sizes break closure compiler
+install:
+  - npm install
+script: 
+  - npm run test
+  - npm run size
+branches:
+  only:
+    - master
+cache:
+  directories:
+    - node_modules
