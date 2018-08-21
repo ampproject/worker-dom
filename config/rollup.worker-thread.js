@@ -114,7 +114,6 @@ const debugModules = DEBUG_BUNDLE_VALUE ? [
       outro: 'window.workerDocument = documentForTesting;'
     },
     plugins: [
-      removeTestingDocument(),
       babelPlugin({
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,

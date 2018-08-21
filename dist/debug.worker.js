@@ -3900,7 +3900,7 @@ var WorkerThread = (function (exports) {
     }
     /** Should only be used for testing. */
 
-    const documentForTesting = undefined;
+    const documentForTesting = createDocument();
 
     /**
      * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
