@@ -1,5 +1,5 @@
 {
-  "name": "worker-dom",
+  "name": "@ampproject/worker-dom",
   "version": "0.1.0",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/index.js",
