@@ -40,6 +40,14 @@ Upgrade a specific section of the document to be driven by a worker.
 </script>
 ``` 
 
+## Running Debug Demos
+
+After installing the library locally, you can try out the debug demos with the following.
+
+```bash
+npm run debug
+```
+
 ### "Safe" mode
 
 WorkerDOM has a special output variant that includes safety features e.g. HTML sanitization and a web worker sandbox. This variant is distributed under the ".safe" suffix for main and worker thread binaries:
