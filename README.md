@@ -7,7 +7,9 @@ An in-progress implementation of the DOM API intended to run within a Web Worker
 **Use Cases**:
 1. Embedded content from a third party living side by side with first party code.
 2. Mitigation of expensive rendering for content not requiring syncronous updates to user actions.
-3. Retaining main thread availablity for high priority updates by async updating elsewhere in a document.  
+3. Retaining main thread availablity for high priority updates by async updating elsewhere in a document.
+
+For more information, visit our [blog post](https://bit.ly/worker-dom-blog) announcing WorkerDOM or checkout the [slides](https://bit.ly/worker-dom-slides) from the announcement at JSConf US.
 
 ## Installation
 
@@ -40,14 +42,6 @@ Upgrade a specific section of the document to be driven by a worker.
 </script>
 ``` 
 
-## Running Debug Demos
-
-After installing the library locally, you can try out the debug demos with the following.
-
-```bash
-npm run debug
-```
-
 ### "Safe" mode
 
 WorkerDOM has a special output variant that includes safety features e.g. HTML sanitization and a web worker sandbox. This variant is distributed under the ".safe" suffix for main and worker thread binaries:
@@ -58,6 +52,14 @@ index.safe.js
 
 worker.safe.mjs
 worker.safe.js
+```
+
+## Running Debug Demos
+
+After installing the library locally, you can try out the debug demos with the following.
+
+```bash
+npm run debug
 ```
 
 ## Security disclosures
