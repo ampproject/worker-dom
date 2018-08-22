@@ -6,7 +6,7 @@ An in-progress implementation of the DOM API intended to run within a Web Worker
 
 **Use Cases**:
 1. Embedded content from a third party living side by side with first party code.
-2. Mitigation of expensive rendering for content not requiring syncronous updates to user actions.
+2. Mitigation of expensive rendering for content not requiring synchronous updates to user actions.
 3. Retaining main thread availablity for high priority updates by async updating elsewhere in a document.
 
 For more information, visit our [blog post](https://bit.ly/worker-dom-blog) announcing WorkerDOM or checkout the [slides](https://bit.ly/worker-dom-slides) from the announcement at JSConf US.
