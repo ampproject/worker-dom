@@ -19,22 +19,31 @@ npm install @ampproject/worker-dom
 
 ## Usage
 
-Include the WorkerDOM main thread code within your document directly or via a bundler.
+WorkerDOM comes in two flavours, a global variant and a module variant. It is possible to include the WorkerDOM main thread code within your document directly or via a bundler. Here's how you might do so directly:
 
 ```html
-<script src="./dist/index.mjs" type="module"></script>
-<script src="./dist/index.js" nomodule defer></script>
+<script src="path/to/workerdom/dist/index.mjs" type="module"></script>
+<script src="path/to/workerdom/dist/index.js" nomodule defer></script>
 ```
 
-Upgrade a specific section of the document to be driven by a worker.
+WorkerDOM allows us to upgrade a specific section of the document to be driven by a worker. For example, imagine a `div` node in the page like so:
 
-**Note**: The nomodule format exposes the global `MainThread` whereas the module format allows one to directly import the `upgradeElement` method.
 ```html
 <div src="hello-world.js" id="upgrade-me"></div>
+```
+
+To upgrade this node using the module version of the code, we can directly import `upgradeElement` and use it like this:
+
+```html
 <script type="module">
   import {upgradeElement} from './dist/index.mjs';
   upgradeElement(document.getElementById('upgrade-me'), './dist/worker.mjs');
 </script>
+```
+
+The nomodule format exposes the global `MainThread`, and could upgrade the `div` in the following way:
+
+```html
 <script nomodule async=false defer>
   document.addEventListener('DOMContentLoaded', function() {
     MainThread.upgradeElement(document.getElementById('upgrade-me'), './dist/worker.js');
