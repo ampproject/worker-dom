@@ -63,13 +63,15 @@ worker.safe.mjs
 worker.safe.js
 ```
 
-## Running Debug Demos
+## Running Demos Locally
 
-After installing the library locally, you can try out the debug demos with the following.
+After cloning the repository, you can try out the debug demos with the following.
 
 ```bash
-npm run debug
+npm run demo
 ```
+
+This script will build the current version of WorkerDOM and start up a local [webserver](http://localhost:3001).
 
 ## Security disclosures
 
