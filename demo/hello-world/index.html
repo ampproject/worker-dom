@@ -4,29 +4,29 @@
   <meta charset="utf-8" />
   <title>Hello World</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="demo.css" rel="stylesheet">
-  <script src="./dist/index.mjs" type="module"></script>
-  <script src="./dist/index.js" nomodule defer></script>
+  <link href="/demo.css" rel="stylesheet">
+  <script src="/dist/index.mjs" type="module"></script>
+  <script src="/dist/index.js" nomodule defer></script>
   <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
   <!-- Comment either block to enable module/nomodule or disable it. -->
-  <!-- <script src="./dist/index.js" defer></script> -->  
+  <!-- <script src="/dist/index.js" defer></script> -->  
 </head>
 <body>
-  <div src="hello-world.js" class="amp-script"><div class="root"><button>prompt</button></div></div>
+  <div src="hello-world.js" id="upgrade-me"><div class="root"><button>prompt</button></div></div>
   <script type="module">
-    import {upgradeElement} from './dist/index.mjs';
-    upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.mjs');
+    import {upgradeElement} from '/dist/index.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.mjs');
   </script>
   <script nomodule async=false defer>
     document.addEventListener('DOMContentLoaded', function() {
-      MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.js');
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.js');
     }, false);
   </script>
   <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
   <!-- Comment either block to enable module/nomodule or disable it. -->
   <!-- <script async=false defer>
     document.addEventListener('DOMContentLoaded', function() {
-      MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.js');
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), './dist/worker.js');
     }, false);
   </script> -->
 </body>
