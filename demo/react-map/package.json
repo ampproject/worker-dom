@@ -9,7 +9,7 @@
     "build": "webpack --config webpack.config.js"
   },
   "dependencies": {
-    "obj-str": "1.0.0",
+    "obj-str": "1.0.1",
     "react": "16.3.2",
     "react-dom": "16.3.2"
   },
