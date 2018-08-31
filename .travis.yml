@@ -1,6 +1,5 @@
 os: 
   - osx
-  - windows
   - linux
 language: node_js
 sudo: required
