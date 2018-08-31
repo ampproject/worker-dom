@@ -61,7 +61,6 @@ function replaceNodes(nodes: Array<HydrateableNode>, parent: HTMLElement, worker
  * @param worker worker that issued the request for hydration.
  */
 function hydrateNode(transferNode: HydrateableNode, node: HTMLElement | Text, worker: Worker): void {
-  debugger;
   const transferIsText = isTextNode(transferNode);
   const nodeIsText = isTextNode(node);
   if (!transferIsText && !nodeIsText) {
@@ -119,7 +118,7 @@ export function hydrate(
   } else {
     hydrateNode(skeleton, baseElement, worker);
   }
-  
+
   // Process Event Addition
   addEvents.forEach(event => {
     const node = getNode(event[TransferrableKeys._index_]);
