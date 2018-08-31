@@ -19,8 +19,8 @@
     "pre~rollup": "rimraf output dist && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
     "~rollup": "rollup --config config/rollup.config.js",
     "lint": "tslint -c config/tslint.json -p src/worker-thread/ & tslint -c config/tslint.json -p src/main-thread/",
-    "predebug": "cross-env DEBUG_BUNDLE=true npm run ~rollup",
-    "debug": "node -r esm demo/server.mjs",
+    "predemo": "cross-env DEBUG_BUNDLE=true npm run ~rollup",
+    "demo": "node -r esm demo/server.mjs",
     "build": "cross-env MINIFY_BUNDLE=true npm run ~rollup",
     "size": "npm run build && bundlesize"
   },
