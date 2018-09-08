@@ -25,7 +25,7 @@
     "size": "npm run build && bundlesize"
   },
   "dependencies": {
-    "dompurify": "1.0.7"
+    "dompurify": "1.0.8"
   },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.6.2",
