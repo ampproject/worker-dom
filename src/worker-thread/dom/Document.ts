@@ -16,7 +16,6 @@
 
 import { Element, NODE_NAME_MAPPING } from './Element';
 import { HTMLElement } from './HTMLElement';
-import { matchChildElement } from './matchElements';
 import './HTMLAnchorElement';
 import './HTMLButtonElement';
 import './HTMLDataElement';
@@ -45,6 +44,7 @@ import './HTMLTableElement';
 import './HTMLTableRowElement';
 import './HTMLTableSectionElement';
 import './HTMLTimeElement';
+import { matchChildElement } from './matchElements';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
 import { Event } from '../Event';
