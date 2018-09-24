@@ -36,7 +36,7 @@
     "@babel/preset-env": "7.0.0",
     "acorn": "5.7.2",
     "ava": "0.25.0",
-    "babel-plugin-minify-replace": "0.4.3",
+    "babel-plugin-minify-replace": "0.5.0",
     "babel-plugin-transform-remove-console": "6.9.4",
     "bundlesize": "0.17.0",
     "cross-env": "5.2.0",
