@@ -26,7 +26,6 @@ polka()
   .get('/health', (req, res) => {
     res.end('OK');
   })
-  .listen(PORT)
-  .then(_ => {
+  .listen(PORT, _ => {
     console.log(`> Running on http://localhost:${PORT}`);
   });
