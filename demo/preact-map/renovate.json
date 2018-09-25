@@ -1,0 +1,11 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "dependencies": {
+    "enabled": false
+  },
+  "devDependencies": {
+    "enabled": false
+  }
+}

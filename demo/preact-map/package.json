@@ -13,14 +13,14 @@
     "preact": "8.3.1"
   },
   "devDependencies": {
-    "babel-core": "6.26.3",
+    "@babel/core": "7.1.0",
+    "@babel/preset-env": "7.1.0",
+    "@babel/plugin-transform-react-jsx": "7.0.0",
     "babel-loader": "8.0.2",
-    "babel-plugin-transform-react-jsx": "6.24.1",
-    "babel-preset-env": "1.7.0",
-    "css-loader": "0.28.11",
-    "mini-css-extract-plugin": "0.4.2",
+    "css-loader": "1.0.0",
+    "mini-css-extract-plugin": "0.4.3",
     "style-loader": "0.23.0",
-    "webpack": "4.17.1",
-    "webpack-cli": "2.1.5"
+    "webpack": "4.20.1",
+    "webpack-cli": "3.1.1"
   }
 }
