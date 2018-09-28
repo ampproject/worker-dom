@@ -35,7 +35,7 @@
     "@babel/plugin-proposal-object-rest-spread": "7.0.0",
     "@babel/preset-env": "7.1.0",
     "acorn": "6.0.1",
-    "acorn-walk": "6.0.1",
+    "acorn-walk": "6.1.0",
     "ava": "0.25.0",
     "babel-plugin-minify-replace": "0.5.0",
     "babel-plugin-transform-remove-console": "6.9.4",
