@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>File Debugging</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/demo.css" rel="stylesheet">
+  <style>
+    html, body {
+      font-size: 1.5em;
+      height: 100%;
+      width: 100%;
+      padding: 0;
+      margin: 0em;
+      cursor: pointer;
+    }
+    #upgrade-me {
+      height: 100%;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+    }
+    .number {
+      width: 4em;
+      display: inline-block;
+      text-align: center;
+      height: 100px;
+      width: calc(100% * (1/4) - 10px - 1px);
+      z-index: 100;
+      padding-top: 1em;
+    }
+    .parent {
+      flex-wrap: wrap;
+      display: flex;
+      width: 100%;
+    }
+  </style>
+  <script src="/dist/index.mjs" type="module"></script>
+  <script src="/dist/index.js" nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/index.js" defer></script> -->
+</head>
+<body>
+  <div src="primes.js" id="upgrade-me">
+  </div>
+  <script type="module">
+    import {upgradeElement} from '/dist/index.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.mjs');
+  </script>
+  <script nomodule async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.js');
+    }, false);
+  </script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.js');
+    }, false);
+  </script> -->
+</body>
+</html>
