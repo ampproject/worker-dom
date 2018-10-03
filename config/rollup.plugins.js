@@ -16,7 +16,7 @@
 
 import babel from 'rollup-plugin-babel';
 import MagicString from 'magic-string';
-const walk = require('acorn/dist/walk');
+const walk = require('acorn-walk');
 
 /**
  * Invoke Babel on source, with some configuration.

@@ -1,6 +1,6 @@
 # WorkerDOM
 
-An in-progress implementation of the DOM API intended to run within a Web Worker. 
+An in-progress (as in very-alpha) implementation of the DOM API intended to run within a Web Worker. 
 
 **Purpose**: Move complexity of intermediate work related to DOM mutations to a background thread, sending only the necessary manipulations to a foreground thread.
 
@@ -51,7 +51,7 @@ The nomodule format exposes the global `MainThread`, and could upgrade the `div`
 </script>
 ``` 
 
-### "Safe" mode
+### "Safe" mode (in progress, alpha quality)
 
 WorkerDOM has a special output variant that includes safety features e.g. HTML sanitization and a web worker sandbox. This variant is distributed under the ".safe" suffix for main and worker thread binaries:
 
