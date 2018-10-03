@@ -42,7 +42,7 @@
     "bundlesize": "0.17.0",
     "cross-env": "5.2.0",
     "esm": "3.0.84",
-    "husky": "1.0.0-rc.15",
+    "husky": "1.1.0",
     "lint-staged": "7.3.0",
     "magic-string": "0.25.1",
     "polka": "0.5.0",
