@@ -65,3 +65,7 @@ function deriveValueToTest(valueToTest: string | boolean | number): string | boo
       return valueToTest;
   }
 }
+
+test('ava lets this file pass', t => {
+  t.pass();
+});
