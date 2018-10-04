@@ -20,7 +20,7 @@
     "tsc:build:worker": "tsc -p config/tsconfig.build.worker-thread.json",
     "tsc:build:main": "tsc -p config/tsconfig.build.main-thread.json",
     "pretest": "rimraf output; run-p tsc:test:worker tsc:test:main tsc:test",
-    "test": "ava -v output/test/**/*.js",
+    "test": "ava -v 'output/test/**/*.js'",
     "pre~rollup": "rimraf output dist; run-p tsc:build:worker tsc:build:main",
     "~rollup": "rollup --config config/rollup.config.js",
     "lint:worker": "tslint -c config/tslint.json -p src/worker-thread/",
