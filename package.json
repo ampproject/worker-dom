@@ -14,9 +14,9 @@
   "author": "The AMP HTML Authors",
   "license": "Apache-2.0",
   "scripts": {
-    "tsc:test:worker": "tsc -p config/tsconfig.test.worker-thread.json",
-    "tsc:test:main": "tsc -p config/tsconfig.test.main-thread.json",
-    "tsc:test": "tsc -p config/tsconfig.test.json",
+    "tsc:test:worker": "tsc -p config/tsconfig.test.worker-thread.json --listEmittedFiles",
+    "tsc:test:main": "tsc -p config/tsconfig.test.main-thread.json --listEmittedFiles",
+    "tsc:test": "tsc -p config/tsconfig.test.json --listEmittedFiles",
     "tsc:build:worker": "tsc -p config/tsconfig.build.worker-thread.json",
     "tsc:build:main": "tsc -p config/tsconfig.build.main-thread.json",
     "pretest": "rimraf output",
