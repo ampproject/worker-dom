@@ -100,13 +100,6 @@
     }
   ],
   "files": [
-    "index.mjs",
-    "index.safe.mjs",
-    "index.js",
-    "index.safe.js",
-    "worker.mjs",
-    "worker.safe.mjs",
-    "worker.js",
-    "worker.safe.js"
+    "dist"
   ]
 }
