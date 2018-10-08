@@ -16,21 +16,22 @@
   "scripts": {
     "tsc:test:worker": "tsc -p config/tsconfig.test.worker-thread.json",
     "tsc:test:main": "tsc -p config/tsconfig.test.main-thread.json",
-    "tsc:test": "tsc -p config/tsconfig.test.json",
+    "tsc:test:tests": "tsc -p config/tsconfig.test.json",
     "tsc:build:worker": "tsc -p config/tsconfig.build.worker-thread.json",
     "tsc:build:main": "tsc -p config/tsconfig.build.main-thread.json",
-    "clean": "rimraf output dist", 
-    "pretest": "npm-run-all clean --parallel tsc:test:worker tsc:test:main tsc:test",
+    "clean": "rimraf output dist",
+    "pretest": "npm-run-all clean --parallel tsc:test:*",
     "test": "ava -v output/test/**/*.js",
-    "pre~rollup": "npm-run-all clean --parallel tsc:build:worker tsc:build:main",
+    "pre~rollup": "npm-run-all clean --parallel tsc:build:*",
     "~rollup": "rollup --config config/rollup.config.js",
     "lint:worker": "tslint -c config/tslint.json -p src/worker-thread/",
     "lint:main": "tslint -c config/tslint.json -p src/main-thread/",
-    "lint": "run-p lint:worker lint:main",
+    "lint": "npm-run-all --parallel lint:*",
     "predemo": "cross-env DEBUG_BUNDLE=true npm run ~rollup",
     "demo": "node -r esm demo/server.mjs",
     "build": "cross-env MINIFY_BUNDLE=true npm run ~rollup",
-    "size": "npm run build && bundlesize"
+    "presize": "npm run build",
+    "size": "bundlesize"
   },
   "dependencies": {
     "dompurify": "1.0.8"
