@@ -9,7 +9,6 @@
     "sourceMap": true,
     "moduleResolution": "node",
     "target": "esnext",
-    "baseUrl": ".",
     "allowJs": false,
     "noUnusedLocals": true,
     "strictNullChecks": true,
@@ -18,6 +17,6 @@
     "alwaysStrict": true,
   },
   "include": [
-    "./*.ts"
+    "*.ts"
   ]
 }

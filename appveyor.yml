@@ -1,0 +1,26 @@
+# http://www.appveyor.com/docs/appveyor-yml
+# Base configuration from https://github.com/nodejs/nan/blob/master/appveyor.yml.
+
+# Test against these versions of Io.js and Node.js.
+environment:
+  matrix:
+    - nodejs_version: "8"
+    - nodejs_version: "10"
+
+# Install scripts. (runs after repo cloning)
+install:
+  # NPM
+  - npm install
+
+# Post-install test scripts.
+test_script:
+  # NPM execute test suite
+  - npm run test
+  # NPM execute size task (ensures the build system works)
+  - npm run size
+
+# Don't actually build.
+build: off
+
+# Set build version format here instead of in the admin panel.
+version: "{build}"
