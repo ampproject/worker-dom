@@ -58,7 +58,7 @@
     "polka": "0.5.1",
     "prettier": "1.14.3",
     "rimraf": "2.6.2",
-    "rollup": "0.66.5",
+    "rollup": "0.66.6",
     "rollup-plugin-babel": "4.0.3",
     "rollup-plugin-node-resolve": "3.4.0",
     "serve-static": "1.13.2",
