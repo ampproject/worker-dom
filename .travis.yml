@@ -1,18 +1,5 @@
 os: 
-  - osx
-  - linux
   - windows
 language: node_js
 node_js:
-  - "8"
-install:
-  - npm install
-script: 
-  - npm run test
-  - npm run size
-branches:
-  only:
-    - master
-cache:
-  directories:
-    - node_modules
+  - 8
