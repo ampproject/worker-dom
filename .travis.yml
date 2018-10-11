@@ -5,7 +5,7 @@ os:
 language: node_js
 sudo: required
 node_js:
-  - "lts/*"
+  - 8
 before_install:
   - unset _JAVA_OPTIONS  # JVM heap sizes break closure compiler
 install:
