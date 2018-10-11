@@ -5,9 +5,8 @@ os:
 language: node_js
 sudo: required
 node_js:
-  - 8
-before_install:
-  - unset _JAVA_OPTIONS  # JVM heap sizes break closure compiler
+  - "8"
+before_install: if [[ "$TRAVIS_OS_NAME" != 'windows' ]]; then unset _JAVA_OPTIONS; fi
 install:
   - npm install
 script: 
