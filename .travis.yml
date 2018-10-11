@@ -3,7 +3,6 @@ os:
   - linux
   - windows
 language: node_js
-sudo: required
 node_js:
   - "8"
 before_install: if [[ "$TRAVIS_OS_NAME" != 'windows' ]]; then unset _JAVA_OPTIONS; fi
