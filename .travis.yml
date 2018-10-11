@@ -5,7 +5,6 @@ os:
 language: node_js
 node_js:
   - "8"
-before_install: if [[ "$TRAVIS_OS_NAME" != 'windows' ]]; then unset _JAVA_OPTIONS; fi
 install:
   - npm install
 script: 
