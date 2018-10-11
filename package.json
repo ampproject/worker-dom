@@ -51,7 +51,7 @@
     "bundlesize": "0.17.0",
     "cross-env": "5.2.0",
     "esm": "3.0.84",
-    "husky": "1.1.1",
+    "husky": "1.1.2",
     "lint-staged": "7.3.0",
     "magic-string": "0.25.1",
     "npm-run-all": "4.1.3",
