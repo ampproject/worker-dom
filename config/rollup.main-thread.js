@@ -36,6 +36,20 @@ const ESModules = [
     ].filter(Boolean)
   },
   {
+    input: 'output/main-thread/index.js',
+    output: {
+      file: 'dist/unminified.index.mjs',
+      format: 'es',
+      sourcemap: true,
+    },
+    plugins: [
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: DEBUG_BUNDLE_VALUE,
+      }),
+    ].filter(Boolean)
+  },
+  {
     input: 'output/main-thread/index.safe.js',
     output: {
       file: 'dist/index.safe.mjs',
@@ -50,7 +64,22 @@ const ESModules = [
       }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
     ].filter(Boolean)
-  }
+  },
+  {
+    input: 'output/main-thread/index.safe.js',
+    output: {
+      file: 'dist/unminified.index.safe.mjs',
+      format: 'es',
+      sourcemap: true,
+    },
+    plugins: [
+      resolve(),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: DEBUG_BUNDLE_VALUE,
+      }),
+    ].filter(Boolean)
+  },
 ];
 
 const IIFEModules = [
@@ -71,6 +100,21 @@ const IIFEModules = [
     ].filter(Boolean)
   },
   {
+    input: 'output/main-thread/index.js',
+    output: {
+      file: 'dist/unminified.index.js',
+      format: 'iife',
+      name: 'MainThread',
+      sourcemap: true,
+    },
+    plugins: [
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: DEBUG_BUNDLE_VALUE,
+      }),
+    ].filter(Boolean)
+  },
+  {
     input: 'output/main-thread/index.safe.js',
     output: {
       file: 'dist/index.safe.js',
@@ -85,6 +129,22 @@ const IIFEModules = [
         allowConsole: DEBUG_BUNDLE_VALUE,
       }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
+    ].filter(Boolean)
+  },
+  {
+    input: 'output/main-thread/index.safe.js',
+    output: {
+      file: 'dist/unminified.index.safe.js',
+      format: 'iife',
+      name: 'MainThread',
+      sourcemap: true,
+    },
+    plugins: [
+      resolve(),
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: DEBUG_BUNDLE_VALUE,
+      }),
     ].filter(Boolean)
   }
 ];
