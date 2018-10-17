@@ -39,7 +39,7 @@ export function isTextNode(node: Node | TransferrableNode): boolean {
  * @example <caption>Element node</caption>
  *   createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
  */
-export function createNode(skeleton: TransferrableNode): RenderableElement {
+export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): RenderableElement | null {
   if (isTextNode(skeleton)) {
     const node = document.createTextNode(getString(skeleton[TransferrableKeys.textContent] as number));
     storeNode(node, skeleton[TransferrableKeys._index_]);
@@ -48,9 +48,9 @@ export function createNode(skeleton: TransferrableNode): RenderableElement {
 
   const namespace: string | undefined =
     skeleton[TransferrableKeys.namespaceURI] !== undefined ? getString(skeleton[TransferrableKeys.namespaceURI] as number) : undefined;
-  const node: HTMLElement | SVGElement = namespace
-    ? (document.createElementNS(namespace, getString(skeleton[TransferrableKeys.nodeName])) as SVGElement)
-    : document.createElement(getString(skeleton[TransferrableKeys.nodeName]));
+  const nodeName = getString(skeleton[TransferrableKeys.nodeName]);
+  let node: HTMLElement | SVGElement = namespace ? (document.createElementNS(namespace, nodeName) as SVGElement) : document.createElement(nodeName);
+
   // TODO(KB): Restore Properties
   // skeleton.properties.forEach(property => {
   //   node[`${property.name}`] = property.value;
@@ -61,6 +61,10 @@ export function createNode(skeleton: TransferrableNode): RenderableElement {
   //   }
   // });
 
+  // If `node` is removed by the sanitizer, don't store it and return null.
+  if (sanitizer && !sanitizer.sanitize(node)) {
+    return null;
+  }
   storeNode(node, skeleton[TransferrableKeys._index_]);
   return node as RenderableElement;
 }
