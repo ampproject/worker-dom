@@ -27,6 +27,7 @@ import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { HydrateableNode } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../StringMapping';
+import { toLower } from '../../utils';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -88,7 +89,6 @@ export class Element extends Node {
   // Element.clientLeft – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientLeft
   // Element.clientTop – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientTop
   // Element.clientWidth – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth
-  // Element.querySelector – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
   // Element.querySelectorAll – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll
   // set Element.innerHTML – https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
   // Element.localName – https://developer.mozilla.org/en-US/docs/Web/API/Element/localName
@@ -389,22 +389,28 @@ export class Element extends Node {
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
+   * @param selector the selector we are trying to match for.
    * @return Element with matching selector.
    */
   public querySelector(selector: string): Element | null {
-    if (selector[0] == '#') {
-      return this.ownerDocument.getElementById(selector.substr(1));
-    } else if (selector[0] == '.') {
-      const matches = this.getElementsByClassName(selector.substr(1));
-      if (matches) {
-        return matches[0];
-      }
+    let matches: Element[] | null = null;
+    //As per spec: https://dom.spec.whatwg.org/#scope-match-a-selectors-string
+    // First, parse the selector
+    //TODO(nainar): Parsing selectors is needed when we add in more complex selectors.
+    // Second, find all the matching elements on the Document
+    if (selector[0] === '#') {
+      matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
+        return element.id === selector.substr(1);
+      });
+    } else if (selector[0] === '.') {
+      matches = this.ownerDocument.getElementsByClassName(selector.substr(1));
     } else {
-      selector = selector.toLowerCase();
-      const matches = this.getElementsByTagName(selector);
-      if (matches) {
-        return matches[0];
-      }
+      matches = this.ownerDocument.getElementsByTagName(toLower(selector));
+    }
+    // Third, filter to return elements that exist within the querying element's descendants.
+    if (matches) {
+      matches = matches.filter(element => this.contains(element) && this !== element);
+      return matches[0];
     }
     //TODO(nainar): More complex selectors
     return null;
