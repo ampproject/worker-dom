@@ -15,15 +15,18 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
-import { Element } from '../../worker-thread/dom/Element';
+import { documentForTesting as document } from '../../worker-thread/dom/Document';
 
 test.beforeEach(t => {
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    child: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    childTwo: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    node: document.createElement('div'),
+    child: document.createElement('div'),
+    childTwo: document.createElement('div'),
   };
+});
+
+test.afterEach(t => {
+  document.body.childNodes.forEach(childNode => childNode.remove());
 });
 
 test('returns true for a node containing itself', t => {
@@ -38,11 +41,18 @@ test('returns false for a node not contained by a parent', t => {
   t.is(node.contains(child), false);
 });
 
-test('returns true for a node contained directly by a parent', t => {
+test('returns false for a node not contained by a parent', t => {
+  const { node, child } = t.context;
+
+  t.is(node.contains(child), false);
+});
+
+test('returns true for a node contained in the document', t => {
   const { node, child } = t.context;
 
   node.appendChild(child);
-  t.is(node.contains(child), true);
+  document.body.appendChild(node);
+  t.is(document.contains(node), true);
 });
 
 test('returns true for a node contained deeper within a tree', t => {
