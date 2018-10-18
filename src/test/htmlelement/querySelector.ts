@@ -18,11 +18,16 @@ import test from 'ava';
 import { documentForTesting as document } from '../../worker-thread/dom/Document';
 import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 
+const PARENT_DIV_ID = 'PARENT_DIV_ID';
+const PARENT_DIV_CLASS = 'PARENT_DIV_CLASS';
+
 const DIV_ID = 'DIV_ID';
 const DIV_CLASS = 'DIV_CLASS';
 
 test.beforeEach(t => {
   const parentDiv = document.createElement('div');
+  parentDiv.setAttribute('id', PARENT_DIV_ID);
+  parentDiv.setAttribute('class', PARENT_DIV_CLASS);
   const div = document.createElement('div');
   div.setAttribute('id', DIV_ID);
   div.setAttribute('class', DIV_CLASS);
@@ -51,6 +56,7 @@ test('test Element.querySelector on class selectors', t => {
 test('test Element.querySelector on tag selectors', t => {
   const { parentDiv, div } = t.context as { parentDiv: HTMLElement; div: HTMLElement };
   t.deepEqual(document.querySelector('div'), parentDiv);
+  t.deepEqual(document.querySelector('div'), document.body.querySelector('div'));
   t.deepEqual(parentDiv.querySelector('div'), div);
 });
 
