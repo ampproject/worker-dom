@@ -386,5 +386,31 @@ export class Element extends Node {
   public getElementsByTagName(tagName: string): Element[] {
     return matchChildrenElements(this, tagName === '*' ? _ => true : element => element.tagName === tagName);
   }
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector
+   * @return Element with matching selector.
+   */
+  public querySelector(selector: string): Element | null {
+    let selectors = selector.split(' ');
+    // Shortcut for single id, class, tag selectors
+    if (selectors.length === 1) {
+      if (selector[0] == '#') {
+        return this.ownerDocument.getElementById(selector.substr(1));
+      } else if (selector[0] == '.') {
+        const matches = this.getElementsByClassName(selector.substr(1));
+        if (matches) {
+          return matches[0];
+        }
+      } else {
+        selector = selector.toLowerCase();
+        const matches = this.getElementsByTagName(selector);
+        if (matches) {
+          return matches[0];
+        }
+      }
+    }
+    //TODO(nainar): More complex selectors
+    return null;
+  }
 }
 reflectProperties([{ id: [''] }], Element);
