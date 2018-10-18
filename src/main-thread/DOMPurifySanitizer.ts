@@ -64,7 +64,7 @@ export class DOMPurifySanitizer implements Sanitizer {
       this.wrapper_.appendChild(node);
     }
     const parent = node.parentNode || this.wrapper_;
-    purify.sanitize(parent, Object.assign({}, this.config_, { IN_PLACE: true }));
+    purify.sanitize(parent, this.config_);
     const clean = parent.firstChild;
     if (!clean) {
       if (this.callbacks_ && this.callbacks_.nodeWasRemoved) {
