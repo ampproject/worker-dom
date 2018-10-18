@@ -36,7 +36,7 @@ function allTextNodes(nodes: NodeList | Array<HydrateableNode>): boolean {
 function replaceNodes(nodes: Array<HydrateableNode>, parent: HTMLElement, worker: Worker): void {
   [].forEach.call(parent.childNodes, (childNode: Element | Text) => childNode.remove());
   nodes.forEach((node, index) => {
-    const newNode: RenderableElement = createNode(node);
+    const newNode: RenderableElement = createNode(node) as RenderableElement;
     (node[TransferrableKeys.attributes] || []).forEach(attribute => {
       const namespaceURI = getString(attribute[0]);
       if (namespaceURI !== 'null') {
