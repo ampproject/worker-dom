@@ -20,5 +20,12 @@ import { install } from './install';
 export const sanitizer = new DOMPurifySanitizer();
 
 export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
-  install(baseElement as HTMLElement, workerDOMUrl, sanitizer);
+  const authorURL = baseElement.getAttribute('src');
+  if (authorURL) {
+    upgrade(baseElement, authorURL, workerDOMUrl);
+  }
+}
+
+export function upgrade(baseElement: Element, authorURL: string, workerDOMUrl: string): void {
+  install(baseElement as HTMLElement, authorURL, workerDOMUrl, sanitizer);
 }

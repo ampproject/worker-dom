@@ -17,5 +17,12 @@
 import { install } from './install';
 
 export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
-  install(baseElement as HTMLElement, workerDOMUrl);
+  const authorURL = baseElement.getAttribute('src');
+  if (authorURL) {
+    upgrade(baseElement, authorURL, workerDOMUrl);
+  }
+}
+
+export function upgrade(baseElement: Element, authorURL: string, workerDOMUrl: string): void {
+  install(baseElement as HTMLElement, authorURL, workerDOMUrl, /* sanitizer */ undefined);
 }
