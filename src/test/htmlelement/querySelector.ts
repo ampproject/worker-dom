@@ -54,7 +54,7 @@ test('test Element.querySelector on tag selectors', t => {
   t.deepEqual(parentDiv.querySelector('div'), div);
 });
 
-test('test Element.querySelector is case insensitive', t => {
+test('test Element.querySelector is case insensitive with regards to tags', t => {
   const { parentDiv, div } = t.context as { parentDiv: HTMLElement; div: HTMLElement };
   t.deepEqual(document.querySelector('div'), parentDiv);
   t.deepEqual(parentDiv.querySelector('div'), div);
