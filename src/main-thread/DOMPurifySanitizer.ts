@@ -44,7 +44,7 @@ export class DOMPurifySanitizer implements Sanitizer {
    * @param callbacks
    */
   configure(config: Object, callbacks: DOMPurifySanitizerCallbacks) {
-    this.config_ = config;
+    this.config_ = Object.assign({}, config, { IN_PLACE: true });
     this.callbacks_ = callbacks;
   }
 
