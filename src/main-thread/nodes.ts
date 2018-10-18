@@ -49,7 +49,7 @@ export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): 
   const namespace: string | undefined =
     skeleton[TransferrableKeys.namespaceURI] !== undefined ? getString(skeleton[TransferrableKeys.namespaceURI] as number) : undefined;
   const nodeName = getString(skeleton[TransferrableKeys.nodeName]);
-  let node: HTMLElement | SVGElement = namespace ? (document.createElementNS(namespace, nodeName) as SVGElement) : document.createElement(nodeName);
+  const node: HTMLElement | SVGElement = namespace ? (document.createElementNS(namespace, nodeName) as SVGElement) : document.createElement(nodeName);
 
   // TODO(KB): Restore Properties
   // skeleton.properties.forEach(property => {
