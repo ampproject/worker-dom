@@ -42,6 +42,22 @@ const ESModules = [
     ].filter(Boolean)
   },
   {
+    input: 'output/worker-thread/index.js',
+    output: {
+      file: 'dist/unminified.worker.mjs',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+    },
+    plugins: [
+      removeTestingDocument(),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: DEBUG_BUNDLE_VALUE,
+      }),
+    ].filter(Boolean)
+  },
+  {
     input: 'output/worker-thread/index.safe.js',
     output: {
       file: 'dist/worker.safe.mjs',
@@ -58,6 +74,22 @@ const ESModules = [
       MINIFY_BUNDLE_VALUE ? compiler({
         env: 'CUSTOM'
       }) : null,
+    ].filter(Boolean)
+  },
+  {
+    input: 'output/worker-thread/index.safe.js',
+    output: {
+      file: 'dist/unminified.worker.safe.mjs',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+    },
+    plugins: [
+      removeTestingDocument(),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: DEBUG_BUNDLE_VALUE,
+      }),
     ].filter(Boolean)
   },
 ];
@@ -83,6 +115,22 @@ const IIFEModules = [
     ].filter(Boolean)
   },
   {
+    input: 'output/worker-thread/index.js',
+    output: {
+      file: 'dist/unminified.worker.js',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+    },
+    plugins: [
+      removeTestingDocument(),
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: DEBUG_BUNDLE_VALUE,
+      }),
+    ].filter(Boolean)
+  },
+  {
     input: 'output/worker-thread/index.safe.js',
     output: {
       file: 'dist/worker.safe.js',
@@ -100,7 +148,23 @@ const IIFEModules = [
         env: 'CUSTOM'
       }) : null,
     ].filter(Boolean)
-  }
+  },
+  {
+    input: 'output/worker-thread/index.safe.js',
+    output: {
+      file: 'dist/unminified.worker.safe.js',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+    },
+    plugins: [
+      removeTestingDocument(),
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: DEBUG_BUNDLE_VALUE,
+      }),
+    ].filter(Boolean)
+  },
 ];
 
 const debugModules = DEBUG_BUNDLE_VALUE ? [
