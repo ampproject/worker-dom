@@ -421,13 +421,23 @@ export class Element extends Node {
    * @return Element with matching selector.
    */
   public querySelectorAll(selector: string): Element[] | null {
-    if (selector[0] == '#') {
-      return matchChildrenElements(this, element => element.id === selector.substr(1));
-    } else if (selector[0] == '.') {
-      return this.getElementsByClassName(selector.substr(1));
+    let matches: Element[] | null = null;
+    //As per spec: https://dom.spec.whatwg.org/#scope-match-a-selectors-string
+    // First, parse the selector
+    //TODO(nainar): Parsing selectors is needed when we add in more complex selectors.
+    // Second, find all the matching elements on the Document
+    if (selector[0] === '#') {
+      matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
+        return element.id === selector.substr(1);
+      });
+    } else if (selector[0] === '.') {
+      matches = this.ownerDocument.getElementsByClassName(selector.substr(1));
     } else {
-      selector = selector.toLowerCase();
-      return this.getElementsByTagName(selector);
+      matches = this.ownerDocument.getElementsByTagName(toLower(selector));
+    }
+    // Third, filter to return elements that exist within the querying element's descendants.
+    if (matches) {
+      return matches.filter(element => this.contains(element) && this !== element);
     }
     //TODO(nainar): More complex selectors
     return null;
