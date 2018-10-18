@@ -409,5 +409,22 @@ export class Element extends Node {
     //TODO(nainar): More complex selectors
     return null;
   }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
+   * @return Element with matching selector.
+   */
+  public querySelectorAll(selector: string): Element[] | null {
+    if (selector[0] == '#') {
+      return matchChildrenElements(this, element => element.id === selector.substr(1));
+    } else if (selector[0] == '.') {
+      return this.getElementsByClassName(selector.substr(1));
+    } else {
+      selector = selector.toLowerCase();
+      return this.getElementsByTagName(selector);
+    }
+    //TODO(nainar): More complex selectors
+    return null;
+  }
 }
 reflectProperties([{ id: [''] }], Element);
