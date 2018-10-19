@@ -21,12 +21,7 @@ import { MessageFromWorker, MessageType, HydrationFromWorker, MutationFromWorker
 import { prepare as prepareNodes } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
-export function install(baseElement: HTMLElement, workerDOMUrl: string, sanitizer?: Sanitizer): void {
-  const authorURL = baseElement.getAttribute('src');
-  if (authorURL === null) {
-    return;
-  }
-
+export function install(baseElement: HTMLElement, authorURL: string, workerDOMUrl: string, sanitizer?: Sanitizer): void {
   createWorker(workerDOMUrl, authorURL).then(worker => {
     if (worker === null) {
       return;
