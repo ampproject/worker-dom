@@ -37,7 +37,7 @@
     "dompurify": "1.0.8"
   },
   "devDependencies": {
-    "@ampproject/rollup-plugin-closure-compiler": "0.7.3",
+    "@ampproject/rollup-plugin-closure-compiler": "0.8.1",
     "@babel/cli": "7.1.2",
     "@babel/core": "7.1.2",
     "@babel/plugin-proposal-class-properties": "7.1.0",
