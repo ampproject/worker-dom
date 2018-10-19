@@ -28,7 +28,7 @@
     "lint:main": "tslint -c config/tslint.json -p src/main-thread/",
     "lint": "npm-run-all --parallel lint:*",
     "predemo": "cross-env DEBUG_BUNDLE=true npm run ~rollup",
-    "demo": "node -r esm demo/server.mjs",
+    "demo": "node -r esm demo/server.js",
     "build": "cross-env MINIFY_BUNDLE=true npm run ~rollup",
     "presize": "npm run build",
     "size": "bundlesize"
@@ -99,6 +99,9 @@
       "maxSize": "7 kB"
     }
   ],
+  "esm": {
+    "cjs": true
+  },
   "files": [
     "dist"
   ]
