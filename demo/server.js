@@ -21,8 +21,8 @@ import path from 'path';
 const { PORT = 3001 } = process.env;
 
 polka()
+  .use(serveStatic(path.resolve(__dirname, '..')))
   .use(serveStatic(path.resolve(__dirname)))
-  .use(serveStatic(path.resolve(__dirname, 'demo')))
   .get('/health', (req, res) => {
     res.end('OK');
   })
