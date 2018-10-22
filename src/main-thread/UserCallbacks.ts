@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-import { install } from './install';
-import { UserCallbacks } from './UserCallbacks';
-
-export const callbacks: UserCallbacks = {};
-
-export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
-  const authorURL = baseElement.getAttribute('src');
-  if (authorURL) {
-    upgrade(baseElement, authorURL, workerDOMUrl);
-  }
-}
-
-export function upgrade(baseElement: Element, authorURL: string, workerDOMUrl: string): void {
-  install(baseElement as HTMLElement, authorURL, workerDOMUrl, callbacks, /* sanitizer */ undefined);
+export interface UserCallbacks {
+  onSendMessage?: Function;
+  onReceiveMessage?: Function;
 }

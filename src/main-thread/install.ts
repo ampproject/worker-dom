@@ -20,9 +20,16 @@ import { createWorker } from './worker';
 import { MessageFromWorker, MessageType, HydrationFromWorker, MutationFromWorker } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { UserCallbacks } from './UserCallbacks';
 
-export function install(baseElement: HTMLElement, authorURL: string, workerDOMUrl: string, sanitizer?: Sanitizer): void {
-  createWorker(workerDOMUrl, authorURL).then(worker => {
+export function install(
+  baseElement: HTMLElement,
+  authorURL: string,
+  workerDOMUrl: string,
+  userCallbacks: UserCallbacks,
+  sanitizer?: Sanitizer,
+): void {
+  createWorker(workerDOMUrl, authorURL, userCallbacks).then(worker => {
     if (worker === null) {
       return;
     }
@@ -31,6 +38,10 @@ export function install(baseElement: HTMLElement, authorURL: string, workerDOMUr
     prepareMutate(worker);
 
     worker.onmessage = ({ data }: MessageFromWorker) => {
+      if (userCallbacks.onReceiveMessage) {
+        userCallbacks.onReceiveMessage(data); // TODO: Deserialize data.
+      }
+
       switch (data[TransferrableKeys.type]) {
         case MessageType.HYDRATE:
           // console.info(`hydration from worker: ${data.type}`, data);
