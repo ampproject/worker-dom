@@ -32,6 +32,7 @@ test('get textContent', t => {
 test('set textContent', t => {
   const { comment } = t.context as { comment: Comment };
 
+t.is(comment.textContent, 'default value');
   comment.textContent = 'new value';
   t.is(comment.textContent, 'new value');
 });
