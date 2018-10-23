@@ -17,11 +17,15 @@
 import test from 'ava';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
+import { Text } from '../../worker-thread/dom/Text';
+import { Comment } from '../../worker-thread/dom/Comment';
 
 test.beforeEach(t => {
   t.context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div', null),
     child: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    text: new Text('text'),
+    comment: new Comment('comment'),
   };
 });
 
@@ -38,4 +42,18 @@ test('element with a child', t => {
 
   node.appendChild(child);
   t.is(node.innerHTML, '<div></div>');
+});
+
+test('element with text', t => {
+  const { node, text } = t.context as { node: Element; text: Text };
+
+  node.appendChild(text);
+  t.is(node.innerHTML, 'text');
+});
+
+test('element with comment', t => {
+  const { node, comment } = t.context as { node: Element; comment: Comment };
+
+  node.appendChild(comment);
+  t.is(node.innerHTML, '<!--comment-->');
 });
