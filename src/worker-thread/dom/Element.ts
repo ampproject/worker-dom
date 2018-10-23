@@ -418,6 +418,7 @@ export class Element extends Node {
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
+   * @param selector the selector we are trying to match for.
    * @return Element with matching selector.
    */
   public querySelectorAll(selector: string): Element[] | null {
