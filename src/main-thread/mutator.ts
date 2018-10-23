@@ -41,14 +41,22 @@ const mutators: {
     const nextSibling = mutation[TransferrableKeys.nextSibling];
     if (addedNodes) {
       addedNodes.forEach(node => {
-        let newChild = getNode(node[TransferrableKeys._index_]);
+        let newChild = null;
+        newChild = getNode(node[TransferrableKeys._index_]);
+
         if (!newChild) {
-          newChild = createNode(node as TransferrableNode);
-          if (sanitizer) {
-            sanitizer.sanitize(newChild); // TODO(choumx): Inform worker?
+          // Transferred nodes that are not stored were previously removed by the sanitizer.
+          if (node[TransferrableKeys.transferred]) {
+            return;
+          } else {
+            newChild = createNode(node as TransferrableNode, sanitizer);
           }
         }
-        target.insertBefore(newChild, (nextSibling && getNode(nextSibling[TransferrableKeys._index_])) || null);
+        if (newChild) {
+          target.insertBefore(newChild, (nextSibling && getNode(nextSibling[TransferrableKeys._index_])) || null);
+        } else {
+          // TODO(choumx): Inform worker that sanitizer removed newChild.
+        }
       });
     }
   },
@@ -60,7 +68,7 @@ const mutators: {
       if (!sanitizer || sanitizer.validAttribute(target.nodeName, attributeName, value)) {
         target.setAttribute(attributeName, value);
       } else {
-        // TODO(choumx): Inform worker?
+        // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
       }
     }
   },
@@ -79,7 +87,7 @@ const mutators: {
       if (!sanitizer || sanitizer.validProperty(target.nodeName, propertyName, value)) {
         target[propertyName] = value;
       } else {
-        // TODO(choumx): Inform worker?
+        // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
       }
     }
   },
@@ -107,7 +115,7 @@ export function mutate(
   // }
   // this.lastGestureTime = lastGestureTime;
   stringValues.forEach(value => storeString(value));
-  nodes.forEach(node => createNode(node));
+  nodes.forEach(node => createNode(node, sanitizer));
   MUTATION_QUEUE = MUTATION_QUEUE.concat(mutations);
   if (!PENDING_MUTATIONS) {
     PENDING_MUTATIONS = true;

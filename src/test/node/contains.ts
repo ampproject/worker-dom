@@ -25,6 +25,10 @@ test.beforeEach(t => {
   };
 });
 
+test.afterEach(t => {
+  document.body.childNodes.forEach(childNode => childNode.remove());
+});
+
 test('returns true for a node containing itself', t => {
   const { node } = t.context;
 

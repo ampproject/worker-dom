@@ -17,6 +17,8 @@
 import { DOMPurifySanitizer } from './DOMPurifySanitizer';
 import { install } from './install';
 
+export const sanitizer = new DOMPurifySanitizer();
+
 export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
-  install(baseElement as HTMLElement, workerDOMUrl, new DOMPurifySanitizer());
+  install(baseElement as HTMLElement, workerDOMUrl, sanitizer);
 }
