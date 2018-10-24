@@ -15,6 +15,7 @@
  */
 
 import { MessageToWorker } from '../transfer/Messages';
+import { readableMessageToWorker } from './debugging';
 import { UserCallbacks } from './UserCallbacks';
 
 /**
@@ -80,8 +81,8 @@ export function createWorker(workerDomURL: string, authorScriptURL: string, call
  */
 export function messageToWorker(worker: Worker, message: MessageToWorker) {
   if (callbacks_ && callbacks_.onSendMessage) {
-    // const readable = readableMessage(message);
-    callbacks_.onSendMessage(message);
+    const readable = readableMessageToWorker(message);
+    callbacks_.onSendMessage(readable);
   }
   worker.postMessage(message);
 }
