@@ -17,7 +17,7 @@
 import { hydrate } from './hydrator';
 import { prepareMutate, mutate } from './mutator';
 import { createWorker } from './worker';
-import { MessageFromWorker, MessageType, HydrationFromWorker, MutationFromWorker } from '../transfer/Messages';
+import { MessageFromWorker, MessageType, HydrationFromWorker, MutationFromWorker, readableMessage } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { UserCallbacks } from './UserCallbacks';
@@ -37,9 +37,12 @@ export function install(
     prepareNodes(baseElement);
     prepareMutate(worker);
 
-    worker.onmessage = ({ data }: MessageFromWorker) => {
+    worker.onmessage = (message: MessageFromWorker) => {
+      const { data } = message;
+
       if (userCallbacks.onReceiveMessage) {
-        userCallbacks.onReceiveMessage(data); // TODO: Deserialize data.
+        const readable = readableMessage(message);
+        userCallbacks.onReceiveMessage(readable);
       }
 
       switch (data[TransferrableKeys.type]) {

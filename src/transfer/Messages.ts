@@ -20,16 +20,39 @@ import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
 import { TransferrableNode, HydrateableNode } from './TransferrableNodes';
 
-export const enum MessageType {
-  // INIT = 0,
-  EVENT = 1,
-  HYDRATE = 2,
-  MUTATE = 3,
-  COMMAND = 4,
-  SYNC = 5,
-  // NAVIGATION_PUSH_STATE = 5,
-  // NAVIGATION_REPLACE_STATE = 6,
-  // NAVIGATION_POP_STATE = 7,
+/**
+ * Intentionally not a const enum so TS will generate reverse mappings.
+ * @see https://www.typescriptlang.org/docs/handbook/enums.html#reverse-mappings
+ */
+export enum MessageType {
+  // INIT,
+  EVENT,
+  HYDRATE,
+  MUTATE,
+  COMMAND,
+  SYNC,
+  // NAVIGATION_PUSH_STATE,
+  // NAVIGATION_REPLACE_STATE,
+  // NAVIGATION_POP_STATE,
+}
+
+/**
+ * @param message
+ */
+export function readableMessage(message: MessageFromWorker | MessageToWorker): Object {
+  const out: any = {};
+  Object.keys(message).forEach(key => {
+    const numericKey = +key;
+    const value = (<any>message)[key];
+
+    const readableKey = TransferrableKeys[numericKey];
+    if (readableKey) {
+      out[readableKey] = value;
+    } else {
+      out[key] = value;
+    }
+  });
+  return out;
 }
 
 export interface HydrationFromWorker {
@@ -38,6 +61,7 @@ export interface HydrationFromWorker {
   readonly [TransferrableKeys.nodes]: HydrateableNode;
   readonly [TransferrableKeys.addedEvents]: Array<TransferrableEventSubscriptionChange>;
 }
+
 export interface MutationFromWorker {
   readonly [TransferrableKeys.type]: MessageType.MUTATE;
   readonly [TransferrableKeys.strings]: Array<string>;
