@@ -26,13 +26,34 @@ import {
   MessageToWorker,
   ValueSyncToWorker,
 } from '../transfer/Messages';
-import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { TransferrableEvent } from '../transfer/TransferrableEvent';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
 
-export function readableMessageFromWorker({ data }: MessageFromWorker): Object {
+/**
+ * Only contains subset of nodeType.
+ */
+const NODE_TYPE_REVERSE_MAPPING: any = {
+  '1': 'ELEMENT',
+  '3': 'TEXT',
+  '8': 'COMMENT',
+  '9': 'DOCUMENT',
+};
+
+const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
+  '0': 'ATTRIBUTES',
+  '1': 'CHARACTER_DATA',
+  '2': 'CHILD_LIST',
+  '3': 'PROPERTIES',
+  '4': 'COMMAND',
+};
+
+/**
+ * @param message
+ */
+export function readableMessageFromWorker(message: MessageFromWorker): Object {
+  const { data } = message;
   if (isHydration(data)) {
     return {
       type: 'HYDRATE',
@@ -58,15 +79,9 @@ export function readableMessageFromWorker({ data }: MessageFromWorker): Object {
  * @param node
  */
 function readableTransferrableNode(node: TransferrableNode): Object {
-  const nodeTypeNames: any = {
-    '1': 'ELEMENT',
-    '3': 'TEXT',
-    '8': 'COMMENT',
-    '9': 'DOCUMENT',
-  };
   const nodeType = node[TransferrableKeys.nodeType];
   const out: any = {
-    nodeType: nodeTypeNames[nodeType] || nodeType,
+    nodeType: NODE_TYPE_REVERSE_MAPPING[nodeType] || nodeType,
     nodeName: getString(node[TransferrableKeys.nodeName]),
     _index_: node[TransferrableKeys._index_],
     transferred: node[TransferrableKeys.transferred],
@@ -102,7 +117,7 @@ function isMutation(data: MutationFromWorker | HydrationFromWorker): data is Mut
 function readableTransferrableMutationRecord(r: TransferrableMutationRecord): Object {
   const target = r[TransferrableKeys.target];
   const out: any = {
-    type: MutationRecordType[r[TransferrableKeys.type]],
+    type: MUTATION_RECORD_TYPE_REVERSE_MAPPING[r[TransferrableKeys.type]],
     target: getNode(target) || target,
   };
   const added = r[TransferrableKeys.addedNodes];

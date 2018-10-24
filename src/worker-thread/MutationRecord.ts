@@ -55,11 +55,8 @@ export interface MutationRecord {
 
 /**
  * Add a new type of MutationRecord 'properties' to enable MutationRecords to capture properties changes on Nodes.
- *
- * Intentionally not a const enum so TS will generate reverse mappings.
- * @see https://www.typescriptlang.org/docs/handbook/enums.html#reverse-mappings
  */
-export enum MutationRecordType {
+export const enum MutationRecordType {
   ATTRIBUTES = 0,
   CHARACTER_DATA = 1,
   CHILD_LIST = 2,
