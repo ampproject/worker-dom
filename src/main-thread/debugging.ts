@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
+/**
+ * @fileoverview Converts index-based worker messages to human-readable objects.
+ *
+ * Requires manual upkeep to keep consistency with messages and enums.
+ * This allows us to continue using 'const enum' for enum inlining.
+ * @see https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#9.4
+ */
+
 import { getNode } from './nodes';
 import { getString } from './strings';
 import { TransferrableNode, TransferredNode } from '../transfer/TransferrableNodes';
@@ -32,7 +40,7 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
 
 /**
- * Only contains subset of nodeType.
+ * Incomplete reverse mapping of src/worker-thread/dom/Node.NodeType enum.
  */
 const NODE_TYPE_REVERSE_MAPPING: any = {
   '1': 'ELEMENT',
@@ -41,6 +49,9 @@ const NODE_TYPE_REVERSE_MAPPING: any = {
   '9': 'DOCUMENT',
 };
 
+/**
+ * Reverse mapping of src/worker-thread/MutationRecord.MutationRecord enum.
+ */
 const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
   '0': 'ATTRIBUTES',
   '1': 'CHARACTER_DATA',

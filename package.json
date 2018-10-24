@@ -91,12 +91,12 @@
     {
       "path": "./dist/index.mjs",
       "compression": "brotli",
-      "maxSize": "2 kB"
+      "maxSize": "3 kB"
     },
     {
       "path": "./dist/index.safe.mjs",
       "compression": "brotli",
-      "maxSize": "7 kB"
+      "maxSize": "8 kB"
     }
   ],
   "esm": {
