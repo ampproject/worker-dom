@@ -24,7 +24,7 @@
 
 import { getNode } from './nodes';
 import { getString } from './strings';
-import { TransferrableNode, TransferredNode } from '../transfer/TransferrableNodes';
+import { TransferrableNode, TransferredNode, HydrateableNode } from '../transfer/TransferrableNodes';
 import {
   EventToWorker,
   HydrationFromWorker,
@@ -34,7 +34,7 @@ import {
   MessageToWorker,
   ValueSyncToWorker,
 } from '../transfer/Messages';
-import { TransferrableEvent } from '../transfer/TransferrableEvent';
+import { TransferrableEvent, TransferrableEventSubscriptionChange } from '../transfer/TransferrableEvent';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
@@ -66,10 +66,12 @@ const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
 export function readableMessageFromWorker(message: MessageFromWorker): Object {
   const { data } = message;
   if (isHydration(data)) {
+    const nodes = data[TransferrableKeys.nodes];
+    const addEvents = data[TransferrableKeys.addedEvents];
     return {
       type: 'HYDRATE',
-      nodes: data[TransferrableKeys.nodes],
-      addEvents: data[TransferrableKeys.addedEvents],
+      nodes: readableHydratableNode(nodes),
+      addEvents: addEvents.map(e => readableTransferrableEventSubscriptionChange(e)),
       // Omit 'strings' key.
     };
   } else if (isMutation(data)) {
@@ -84,6 +86,41 @@ export function readableMessageFromWorker(message: MessageFromWorker): Object {
   } else {
     return 'Unrecognized MessageFromWorker type: ' + data[TransferrableKeys.type];
   }
+}
+
+/**
+ * @param node
+ */
+function readableHydratableNode(node: HydrateableNode): Object {
+  const out: any = readableTransferrableNode(node);
+
+  const attributes = node[TransferrableKeys.attributes];
+  if (attributes !== undefined) {
+    out['attributes'] = attributes.map(a => {
+      return {
+        namespaceURI: a[0],
+        name: a[1],
+        value: a[2],
+      };
+    });
+  }
+  const childNodes = node[TransferrableKeys.childNodes];
+  if (childNodes !== undefined) {
+    out['childNodes'] = childNodes.map(n => readableHydratableNode(n));
+  }
+  return out;
+}
+
+/**
+ * @param e
+ */
+function readableTransferrableEventSubscriptionChange(e: TransferrableEventSubscriptionChange): Object {
+  const type = e[TransferrableKeys.type];
+  const index = e[TransferrableKeys._index_];
+  return {
+    type: getString(type) || type,
+    node: getNode(index) || index,
+  };
 }
 
 /**
