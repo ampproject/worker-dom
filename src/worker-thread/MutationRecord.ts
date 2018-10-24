@@ -53,8 +53,13 @@ export interface MutationRecord {
   readonly removedEvents?: Array<TransferrableEventSubscriptionChange>;
 }
 
-// Add a new type of MutationRecord 'properties' to enable MutationRecords to capture properties changes on Nodes.
-export const enum MutationRecordType {
+/**
+ * Add a new type of MutationRecord 'properties' to enable MutationRecords to capture properties changes on Nodes.
+ *
+ * Intentionally not a const enum so TS will generate reverse mappings.
+ * @see https://www.typescriptlang.org/docs/handbook/enums.html#reverse-mappings
+ */
+export enum MutationRecordType {
   ATTRIBUTES = 0,
   CHARACTER_DATA = 1,
   CHILD_LIST = 2,

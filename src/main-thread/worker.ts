@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MessageToWorker, readableMessage } from '../transfer/Messages';
+import { MessageToWorker } from '../transfer/Messages';
 import { UserCallbacks } from './UserCallbacks';
 
 /**
@@ -80,8 +80,8 @@ export function createWorker(workerDomURL: string, authorScriptURL: string, call
  */
 export function messageToWorker(worker: Worker, message: MessageToWorker) {
   if (callbacks_ && callbacks_.onSendMessage) {
-    const readable = readableMessage(message);
-    callbacks_.onSendMessage(readable);
+    // const readable = readableMessage(message);
+    callbacks_.onSendMessage(message);
   }
   worker.postMessage(message);
 }

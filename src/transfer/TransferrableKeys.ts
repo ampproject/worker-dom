@@ -18,7 +18,7 @@
  * Intentionally not a const enum so TS will generate reverse mappings.
  * @see https://www.typescriptlang.org/docs/handbook/enums.html#reverse-mappings
  */
-export enum TransferrableKeys {
+export const enum TransferrableKeys {
   nodeType,
   nodeName,
   attributes,

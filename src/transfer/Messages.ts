@@ -20,11 +20,7 @@ import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
 import { TransferrableNode, HydrateableNode } from './TransferrableNodes';
 
-/**
- * Intentionally not a const enum so TS will generate reverse mappings.
- * @see https://www.typescriptlang.org/docs/handbook/enums.html#reverse-mappings
- */
-export enum MessageType {
+export const enum MessageType {
   // INIT,
   EVENT,
   HYDRATE,
@@ -39,21 +35,27 @@ export enum MessageType {
 /**
  * @param message
  */
-export function readableMessage(message: MessageFromWorker | MessageToWorker): Object {
-  const out: any = {};
-  Object.keys(message).forEach(key => {
-    const numericKey = +key;
-    const value = (<any>message)[key];
+// export function readableMessage(message: any): Object {
+//   const out: any = {};
+//   Object.keys(message).forEach(key => {
+//     const numericKey = +key;
+//     const value = (<any>message)[key];
 
-    const readableKey = TransferrableKeys[numericKey];
-    if (readableKey) {
-      out[readableKey] = value;
-    } else {
-      out[key] = value;
-    }
-  });
-  return out;
-}
+//     const readableKey = TransferrableKeys[numericKey];
+//     if (readableKey) {
+//       if (readableKey === 'type') {
+//         out[readableKey] = MessageType[value];
+//       } else if (Array.isArray(value) && readableKey !== 'strings') {
+//         out[readableKey] = value.map(v => readableMessage(v));
+//       } else {
+//         out[readableKey] = value;
+//       }
+//     } else {
+//       out[key] = value;
+//     }
+//   });
+//   return out;
+// }
 
 export interface HydrationFromWorker {
   readonly [TransferrableKeys.type]: MessageType.HYDRATE;
@@ -61,7 +63,6 @@ export interface HydrationFromWorker {
   readonly [TransferrableKeys.nodes]: HydrateableNode;
   readonly [TransferrableKeys.addedEvents]: Array<TransferrableEventSubscriptionChange>;
 }
-
 export interface MutationFromWorker {
   readonly [TransferrableKeys.type]: MessageType.MUTATE;
   readonly [TransferrableKeys.strings]: Array<string>;

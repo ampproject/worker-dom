@@ -17,8 +17,9 @@
 import { hydrate } from './hydrator';
 import { prepareMutate, mutate } from './mutator';
 import { createWorker } from './worker';
-import { MessageFromWorker, MessageType, HydrationFromWorker, MutationFromWorker, readableMessage } from '../transfer/Messages';
+import { MessageFromWorker, MessageType, HydrationFromWorker, MutationFromWorker } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
+import { readableMessageFromWorker } from './debugging';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { UserCallbacks } from './UserCallbacks';
 
@@ -40,14 +41,8 @@ export function install(
     worker.onmessage = (message: MessageFromWorker) => {
       const { data } = message;
 
-      if (userCallbacks.onReceiveMessage) {
-        const readable = readableMessage(message);
-        userCallbacks.onReceiveMessage(readable);
-      }
-
       switch (data[TransferrableKeys.type]) {
         case MessageType.HYDRATE:
-          // console.info(`hydration from worker: ${data.type}`, data);
           hydrate(
             (data as HydrationFromWorker)[TransferrableKeys.nodes],
             (data as HydrationFromWorker)[TransferrableKeys.strings],
@@ -57,7 +52,6 @@ export function install(
           );
           break;
         case MessageType.MUTATE:
-          // console.info(`mutation from worker: ${data.type}`, data);
           mutate(
             (data as MutationFromWorker)[TransferrableKeys.nodes],
             (data as MutationFromWorker)[TransferrableKeys.strings],
@@ -65,6 +59,12 @@ export function install(
             sanitizer,
           );
           break;
+      }
+
+      // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
+      if (userCallbacks.onReceiveMessage) {
+        const readable = readableMessageFromWorker(message);
+        userCallbacks.onReceiveMessage(readable);
       }
     };
   });
