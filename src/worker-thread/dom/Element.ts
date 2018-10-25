@@ -388,6 +388,64 @@ export class Element extends Node {
   }
 
   /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors
+   * @param attrSelector the selector we are trying to match for.
+   * @param element the element being tested.
+   * @return boolean for whether we match the condition
+   */
+  matchAttrReference(attrSelector: string, element: Element): boolean {
+    const equalPos: number = attrSelector.indexOf('=');
+    const selectorLength: number = attrSelector.length;
+    // const caseInsensitive = attrSelector.charAt(selectorLength - 2) === 'i'
+    if (equalPos !== -1) {
+      switch (attrSelector.charAt(equalPos - 1)) {
+        case '~': {
+          const attrString = attrSelector.substring(1, equalPos - 1);
+          const value = attrSelector.substring(equalPos + 1, selectorLength);
+          const attrValue = element.getAttribute(attrString);
+          return (
+            !!attrValue &&
+            attrValue.indexOf(value) !== -1 &&
+            attrValue.charAt(attrValue.indexOf(value) - 1) === ' ' &&
+            attrValue.charAt(attrValue.indexOf(value) + 1) === ' '
+          );
+        }
+        case '|': {
+          const attrString = attrSelector.substring(1, equalPos - 1);
+          const value = attrSelector.substring(equalPos + 1, selectorLength);
+          const attrValue = element.getAttribute(attrString);
+          return attrValue === value || attrValue === `${value}-`;
+        }
+        case '^': {
+          const attrString = attrSelector.substring(1, equalPos - 1);
+          const value = attrSelector.substring(equalPos + 1, selectorLength);
+          const attrValue = element.getAttribute(attrString);
+          return !!attrValue && attrValue.startsWith(value);
+        }
+        case '$': {
+          const attrString = attrSelector.substring(1, equalPos - 1);
+          const value = attrSelector.substring(equalPos + 1, selectorLength);
+          const attrValue = element.getAttribute(attrString);
+          return !!attrValue && attrValue.endsWith(value);
+        }
+        case '*': {
+          const attrString = attrSelector.substring(1, equalPos - 1);
+          const value = attrSelector.substring(equalPos + 1, selectorLength);
+          const attrValue = element.getAttribute(attrString);
+          return !!attrValue && attrValue.indexOf(value) !== -1;
+        }
+        default: {
+          const attr = attrSelector.substring(1, equalPos);
+          const value = attrSelector.substring(equalPos + 1, selectorLength);
+          return element.getAttribute(attr) === value;
+        }
+      }
+    } else {
+      return element.hasAttribute(attrSelector.substring(1, selectorLength - 1));
+    }
+  }
+
+  /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
    * @param selector the selector we are trying to match for.
    * @return Element with matching selector.
@@ -406,16 +464,27 @@ export class Element extends Node {
     let matches: Element[] | null = null;
     //As per spec: https://dom.spec.whatwg.org/#scope-match-a-selectors-string
     // First, parse the selector
+    const containsAttrReference = selector.indexOf('[') !== -1 && selector.indexOf(']') !== -1;
+    let elementSelector = selector;
+    let attrSelector: string | null = null;
+    if (containsAttrReference) {
+      elementSelector = selector.substring(0, selector.indexOf('['));
+      attrSelector = selector.substring(selector.indexOf('[') + 1, selector.indexOf(']'));
+    }
     //TODO(nainar): Parsing selectors is needed when we add in more complex selectors.
     // Second, find all the matching elements on the Document
-    if (selector[0] === '#') {
+    if (elementSelector[0] === '#') {
       matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
-        return element.id === selector.substr(1);
+        return element.id === elementSelector.substr(1) && containsAttrReference ? this.matchAttrReference(attrSelector, element) : true;
       });
-    } else if (selector[0] === '.') {
-      matches = this.ownerDocument.getElementsByClassName(selector.substr(1));
+    } else if (elementSelector[0] === '.') {
+      matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
+        return element.classList.contains(elementSelector.substr(1)) && containsAttrReference ? this.matchAttrReference(attrSelector, element) : true;
+      });
     } else {
-      matches = this.ownerDocument.getElementsByTagName(toLower(selector));
+      matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
+        return element.tagName === elementSelector && containsAttrReference ? this.matchAttrReference(attrSelector, element) : true;
+      });
     }
     // Third, filter to return elements that exist within the querying element's descendants.
     if (matches) {
