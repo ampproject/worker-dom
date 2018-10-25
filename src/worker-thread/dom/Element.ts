@@ -147,7 +147,18 @@ export class Element extends Node {
     const childNodes = this.childNodes;
 
     if (childNodes.length) {
-      return childNodes.map(child => (child.nodeType === NodeType.ELEMENT_NODE ? child.outerHTML : child.textContent)).join('');
+      return childNodes
+        .map(child => {
+          switch (child.nodeType) {
+            case NodeType.TEXT_NODE:
+              return child.textContent;
+            case NodeType.COMMENT_NODE:
+              return `<!--${child.textContent}-->`;
+            default:
+              return child.outerHTML;
+          }
+        })
+        .join('');
     }
     return '';
   }

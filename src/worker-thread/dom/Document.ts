@@ -49,6 +49,7 @@ import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
 import { Event } from '../Event';
 import { Text } from './Text';
+import { Comment } from './Comment';
 import { MutationObserver } from '../MutationObserver';
 import { observe as observeMutations } from '../../transfer/DocumentMutations';
 import { propagate as propagateEvents } from '../../transfer/TransferrableEvent';
@@ -60,6 +61,7 @@ export class Document extends Element {
     MutationObserver: typeof MutationObserver;
     Document: typeof Document;
     Node: typeof Node;
+    Comment: typeof Comment;
     Text: typeof Text;
     Element: typeof Element;
     SVGElement: typeof SVGElement;
@@ -78,11 +80,13 @@ export class Document extends Element {
     this.createElementNS = (namespaceURI: NamespaceURI, tagName: string): Element =>
       new (NODE_NAME_MAPPING[tagName] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
     this.createTextNode = (text: string): Text => new Text(text);
+    this.createComment = (text: string): Comment => new Comment(text);
     this.defaultView = {
       document: this,
       MutationObserver,
       Document,
       Node,
+      Comment,
       Text,
       Element,
       SVGElement,

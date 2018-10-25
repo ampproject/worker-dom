@@ -298,11 +298,13 @@ export abstract class Node {
         oldChild.parentNode = null;
         propagate(oldChild, 'isConnected', false);
         this.childNodes.splice(index, 1, newChild);
+        propagate(newChild, 'isConnected', true);
 
         mutate({
           addedNodes: [newChild],
           removedNodes: [oldChild],
           type: MutationRecordType.CHILD_LIST,
+          nextSibling: this.childNodes[index + 1],
           target: this,
         });
       }

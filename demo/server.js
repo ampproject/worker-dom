@@ -18,11 +18,11 @@ import polka from 'polka';
 import serveStatic from 'serve-static';
 import path from 'path';
 
-const { PORT = 3001, PWD } = process.env;
+const { PORT = 3001 } = process.env;
 
 polka()
-  .use(serveStatic(path.resolve(PWD)))
-  .use(serveStatic(path.resolve(PWD, 'demo')))
+  .use(serveStatic(path.resolve(__dirname, '..')))
+  .use(serveStatic(path.resolve(__dirname)))
   .get('/health', (req, res) => {
     res.end('OK');
   })
