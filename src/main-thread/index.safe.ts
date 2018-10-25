@@ -19,10 +19,14 @@ import { UserCallbacks, WorkerCallbacks } from './callbacks';
 import { install } from './install';
 import { readableMessageFromWorker, readableMessageToWorker } from './debugging';
 
+/** Users can import this and configure the sanitizer with custom DOMPurify hooks, etc. */
 export const sanitizer = new DOMPurifySanitizer();
 
+/** Users can import this and set callback functions to add logging on worker messages, etc. */
 export const callbacks: UserCallbacks = {};
 
+// Extra function wrapper around user callbacks to ensure that debugging.ts isn't bundled
+// in other entry points.
 const workerCallbacks: WorkerCallbacks = {
   onSendMessage: message => {
     if (callbacks.onSendMessage) {
