@@ -68,18 +68,18 @@ test('test Element.querySelectorAll is case insensitive with regards to tags', t
 test('test Element.querySelector returns the first result of Element.querySelectorAll', t => {
   const { parentDiv } = t.context as { parentDiv: HTMLElement; div: HTMLElement };
   let querySelectorAllResults = document.querySelectorAll('div');
-  t.true(!!querySelectorAllResults);
+  t.not(querySelectorAllResults, null);
   t.deepEqual(querySelectorAllResults![0], document.querySelector('div'));
 
   querySelectorAllResults = parentDiv.querySelectorAll('div');
-  t.true(!!querySelectorAllResults);
+  t.not(querySelectorAllResults, null);
   t.deepEqual(parentDiv.querySelectorAll('div')![0], parentDiv.querySelector('div'));
 
   querySelectorAllResults = document.querySelectorAll('DIV');
-  t.true(!!querySelectorAllResults);
+  t.not(querySelectorAllResults, null);
   t.deepEqual(document.querySelectorAll('DIV')![0], document.querySelector('DIV'));
 
   querySelectorAllResults = parentDiv.querySelectorAll('DIV');
-  t.true(!!querySelectorAllResults);
+  t.not(querySelectorAllResults, null);
   t.deepEqual(parentDiv.querySelectorAll('DIV')![0], parentDiv.querySelector('DIV'));
 });
