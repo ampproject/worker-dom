@@ -21,15 +21,15 @@ import { TransferrableKeys } from './TransferrableKeys';
 import { TransferrableNode, HydrateableNode } from './TransferrableNodes';
 
 export const enum MessageType {
-  // INIT,
-  EVENT,
-  HYDRATE,
-  MUTATE,
-  COMMAND,
-  SYNC,
-  // NAVIGATION_PUSH_STATE,
-  // NAVIGATION_REPLACE_STATE,
-  // NAVIGATION_POP_STATE,
+  // INIT = 0,
+  EVENT = 1,
+  HYDRATE = 2,
+  MUTATE = 3,
+  COMMAND = 4,
+  SYNC = 5,
+  // NAVIGATION_PUSH_STATE = 5,
+  // NAVIGATION_REPLACE_STATE = 6,
+  // NAVIGATION_POP_STATE = 7,
 }
 
 /**
