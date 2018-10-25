@@ -15,14 +15,13 @@
  */
 
 import { MessageToWorker } from '../transfer/Messages';
-import { readableMessageToWorker } from './debugging';
-import { UserCallbacks } from './UserCallbacks';
+import { WorkerCallbacks } from './callbacks';
 
 /**
- * Stored user callbacks for the most recently created worker.
+ * Stored callbacks for the most recently created worker.
  * Note: This can be easily changed to a lookup table to support multiple workers.
  */
-let callbacks_: UserCallbacks | null;
+let callbacks_: WorkerCallbacks | undefined;
 
 /**
  * TODO(KB): Fetch Polyfill for IE11.
@@ -30,7 +29,7 @@ let callbacks_: UserCallbacks | null;
  * @param authorScriptURL
  * @param callbacks
  */
-export function createWorker(workerDomURL: string, authorScriptURL: string, callbacks: UserCallbacks): Promise<Worker | null> {
+export function createWorker(workerDomURL: string, authorScriptURL: string, callbacks?: WorkerCallbacks): Promise<Worker | null> {
   callbacks_ = callbacks;
 
   return Promise.all([fetch(workerDomURL).then(response => response.text()), fetch(authorScriptURL).then(response => response.text())])
@@ -81,8 +80,7 @@ export function createWorker(workerDomURL: string, authorScriptURL: string, call
  */
 export function messageToWorker(worker: Worker, message: MessageToWorker) {
   if (callbacks_ && callbacks_.onSendMessage) {
-    const readable = readableMessageToWorker(message);
-    callbacks_.onSendMessage(readable);
+    callbacks_.onSendMessage(message);
   }
   worker.postMessage(message);
 }

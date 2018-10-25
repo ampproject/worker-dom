@@ -15,9 +15,6 @@
  */
 
 import { install } from './install';
-import { UserCallbacks } from './UserCallbacks';
-
-export const callbacks: UserCallbacks = {};
 
 export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
   const authorURL = baseElement.getAttribute('src');
@@ -27,5 +24,5 @@ export function upgradeElement(baseElement: Element, workerDOMUrl: string): void
 }
 
 export function upgrade(baseElement: Element, authorURL: string, workerDOMUrl: string): void {
-  install(baseElement as HTMLElement, authorURL, workerDOMUrl, callbacks, /* sanitizer */ undefined);
+  install(baseElement as HTMLElement, authorURL, workerDOMUrl);
 }

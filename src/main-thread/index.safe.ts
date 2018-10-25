@@ -15,12 +15,28 @@
  */
 
 import { DOMPurifySanitizer } from './DOMPurifySanitizer';
-import { UserCallbacks } from './UserCallbacks';
+import { UserCallbacks, WorkerCallbacks } from './callbacks';
 import { install } from './install';
+import { readableMessageFromWorker, readableMessageToWorker } from './debugging';
 
 export const sanitizer = new DOMPurifySanitizer();
 
 export const callbacks: UserCallbacks = {};
+
+const workerCallbacks: WorkerCallbacks = {
+  onSendMessage: message => {
+    if (callbacks.onSendMessage) {
+      const readable = readableMessageToWorker(message);
+      callbacks.onSendMessage(readable);
+    }
+  },
+  onReceiveMessage: message => {
+    if (callbacks.onReceiveMessage) {
+      const readable = readableMessageFromWorker(message);
+      callbacks.onReceiveMessage(readable);
+    }
+  },
+};
 
 export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
   const authorURL = baseElement.getAttribute('src');
@@ -30,5 +46,5 @@ export function upgradeElement(baseElement: Element, workerDOMUrl: string): void
 }
 
 export function upgrade(baseElement: Element, authorURL: string, workerDOMUrl: string): void {
-  install(baseElement as HTMLElement, authorURL, workerDOMUrl, callbacks, sanitizer);
+  install(baseElement as HTMLElement, authorURL, workerDOMUrl, workerCallbacks, sanitizer);
 }

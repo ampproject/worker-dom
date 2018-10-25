@@ -14,7 +14,21 @@
  * limitations under the License.
  */
 
+import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
+
+/**
+ * User-configurable callbacks for worker-dom events e.g. worker messaging.
+ * Useful for adding logging hooks
+ */
 export interface UserCallbacks {
-  onSendMessage?: Function;
-  onReceiveMessage?: Function;
+  onSendMessage?: (readableMessage: Object) => void;
+  onReceiveMessage?: (readableMessage: Object) => void;
+}
+
+/**
+ * System-level callbacks for worker messaging.
+ */
+export interface WorkerCallbacks {
+  onSendMessage?: (message: MessageToWorker) => void;
+  onReceiveMessage?: (message: MessageFromWorker) => void;
 }

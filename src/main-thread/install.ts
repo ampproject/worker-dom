@@ -19,18 +19,17 @@ import { prepareMutate, mutate } from './mutator';
 import { createWorker } from './worker';
 import { MessageFromWorker, MessageType, HydrationFromWorker, MutationFromWorker } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
-import { readableMessageFromWorker } from './debugging';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { UserCallbacks } from './UserCallbacks';
+import { WorkerCallbacks } from './callbacks';
 
 export function install(
   baseElement: HTMLElement,
   authorURL: string,
   workerDOMUrl: string,
-  userCallbacks: UserCallbacks,
+  workerCallbacks?: WorkerCallbacks,
   sanitizer?: Sanitizer,
 ): void {
-  createWorker(workerDOMUrl, authorURL, userCallbacks).then(worker => {
+  createWorker(workerDOMUrl, authorURL, workerCallbacks).then(worker => {
     if (worker === null) {
       return;
     }
@@ -62,9 +61,8 @@ export function install(
       }
 
       // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
-      if (userCallbacks.onReceiveMessage) {
-        const readable = readableMessageFromWorker(message);
-        userCallbacks.onReceiveMessage(readable);
+      if (workerCallbacks && workerCallbacks.onReceiveMessage) {
+        workerCallbacks.onReceiveMessage(message);
       }
     };
   });
