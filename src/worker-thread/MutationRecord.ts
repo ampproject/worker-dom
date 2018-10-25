@@ -53,9 +53,7 @@ export interface MutationRecord {
   readonly removedEvents?: Array<TransferrableEventSubscriptionChange>;
 }
 
-/**
- * Add a new type of MutationRecord 'properties' to enable MutationRecords to capture properties changes on Nodes.
- */
+// Add a new type of MutationRecord 'properties' to enable MutationRecords to capture properties changes on Nodes.
 export const enum MutationRecordType {
   ATTRIBUTES = 0,
   CHARACTER_DATA = 1,

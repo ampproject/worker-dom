@@ -32,31 +32,6 @@ export const enum MessageType {
   // NAVIGATION_POP_STATE = 7,
 }
 
-/**
- * @param message
- */
-// export function readableMessage(message: any): Object {
-//   const out: any = {};
-//   Object.keys(message).forEach(key => {
-//     const numericKey = +key;
-//     const value = (<any>message)[key];
-
-//     const readableKey = TransferrableKeys[numericKey];
-//     if (readableKey) {
-//       if (readableKey === 'type') {
-//         out[readableKey] = MessageType[value];
-//       } else if (Array.isArray(value) && readableKey !== 'strings') {
-//         out[readableKey] = value.map(v => readableMessage(v));
-//       } else {
-//         out[readableKey] = value;
-//       }
-//     } else {
-//       out[key] = value;
-//     }
-//   });
-//   return out;
-// }
-
 export interface HydrationFromWorker {
   readonly [TransferrableKeys.type]: MessageType.HYDRATE;
   readonly [TransferrableKeys.strings]: Array<string>;

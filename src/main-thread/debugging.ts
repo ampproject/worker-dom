@@ -75,14 +75,16 @@ export function readableMessageFromWorker(message: MessageFromWorker): Object {
       // Omit 'strings' key.
     };
   } else if (isMutation(data)) {
-    const nodes = data[TransferrableKeys.nodes];
     const mutations = data[TransferrableKeys.mutations];
-    return {
+    const mutate: any = {
       type: 'MUTATE',
-      nodes: nodes.map(n => readableTransferrableNode(n)),
       mutations: mutations.map(n => readableTransferrableMutationRecord(n)),
       // Omit 'strings' key.
     };
+    // TODO(choumx): Like 'strings', I'm not sure 'nodes' is actually useful.
+    // const nodes = data[TransferrableKeys.nodes];
+    // mutate['nodes'] = nodes.map(n => readableTransferrableNode(n));
+    return mutate;
   } else {
     return 'Unrecognized MessageFromWorker type: ' + data[TransferrableKeys.type];
   }
@@ -127,13 +129,23 @@ function readableTransferrableEventSubscriptionChange(e: TransferrableEventSubsc
  * @param node
  */
 function readableTransferrableNode(node: TransferrableNode): Object {
-  const nodeType = node[TransferrableKeys.nodeType];
+  const index = node[TransferrableKeys._index_];
   const out: any = {
-    nodeType: NODE_TYPE_REVERSE_MAPPING[nodeType] || nodeType,
-    nodeName: getString(node[TransferrableKeys.nodeName]),
-    _index_: node[TransferrableKeys._index_],
     transferred: node[TransferrableKeys.transferred],
   };
+  const realNode = getNode(index);
+  if (realNode) {
+    out['node'] = realNode;
+  } else {
+    // TODO(choumx): Remove this branch if it's not useful in practice.
+    const nodeType = node[TransferrableKeys.nodeType];
+    Object.assign(out, {
+      nodeType: NODE_TYPE_REVERSE_MAPPING[nodeType] || nodeType,
+      nodeName: getString(node[TransferrableKeys.nodeName]),
+      _index_: node[TransferrableKeys._index_],
+    });
+  }
+
   const textContent = node[TransferrableKeys.textContent];
   if (textContent !== undefined) {
     out['textContent'] = textContent;

@@ -14,8 +14,7 @@
     "strictNullChecks": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "alwaysStrict": true,
-    "preserveConstEnums": true,
+    "alwaysStrict": true
   },
   "include": [
     "*.ts"
