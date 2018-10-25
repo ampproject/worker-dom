@@ -388,64 +388,6 @@ export class Element extends Node {
   }
 
   /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors
-   * @param attrSelector the selector we are trying to match for.
-   * @param element the element being tested.
-   * @return boolean for whether we match the condition
-   */
-  matchAttrReference(attrSelector: string, element: Element): boolean {
-    const equalPos: number = attrSelector.indexOf('=');
-    const selectorLength: number = attrSelector.length;
-    // const caseInsensitive = attrSelector.charAt(selectorLength - 2) === 'i'
-    if (equalPos !== -1) {
-      switch (attrSelector.charAt(equalPos - 1)) {
-        case '~': {
-          const attrString = attrSelector.substring(1, equalPos - 1);
-          const value = attrSelector.substring(equalPos + 1, selectorLength);
-          const attrValue = element.getAttribute(attrString);
-          return (
-            !!attrValue &&
-            attrValue.indexOf(value) !== -1 &&
-            attrValue.charAt(attrValue.indexOf(value) - 1) === ' ' &&
-            attrValue.charAt(attrValue.indexOf(value) + 1) === ' '
-          );
-        }
-        case '|': {
-          const attrString = attrSelector.substring(1, equalPos - 1);
-          const value = attrSelector.substring(equalPos + 1, selectorLength);
-          const attrValue = element.getAttribute(attrString);
-          return attrValue === value || attrValue === `${value}-`;
-        }
-        case '^': {
-          const attrString = attrSelector.substring(1, equalPos - 1);
-          const value = attrSelector.substring(equalPos + 1, selectorLength);
-          const attrValue = element.getAttribute(attrString);
-          return !!attrValue && attrValue.startsWith(value);
-        }
-        case '$': {
-          const attrString = attrSelector.substring(1, equalPos - 1);
-          const value = attrSelector.substring(equalPos + 1, selectorLength);
-          const attrValue = element.getAttribute(attrString);
-          return !!attrValue && attrValue.endsWith(value);
-        }
-        case '*': {
-          const attrString = attrSelector.substring(1, equalPos - 1);
-          const value = attrSelector.substring(equalPos + 1, selectorLength);
-          const attrValue = element.getAttribute(attrString);
-          return !!attrValue && attrValue.indexOf(value) !== -1;
-        }
-        default: {
-          const attr = attrSelector.substring(1, equalPos);
-          const value = attrSelector.substring(equalPos + 1, selectorLength);
-          return element.getAttribute(attr) === value;
-        }
-      }
-    } else {
-      return element.hasAttribute(attrSelector.substring(1, selectorLength - 1));
-    }
-  }
-
-  /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
    * @param selector the selector we are trying to match for.
    * @return Element with matching selector.
@@ -469,21 +411,25 @@ export class Element extends Node {
     let attrSelector: string | null = null;
     if (containsAttrReference) {
       elementSelector = selector.substring(0, selector.indexOf('['));
-      attrSelector = selector.substring(selector.indexOf('[') + 1, selector.indexOf(']'));
+      attrSelector = selector.substring(selector.indexOf('['), selector.indexOf(']') + 1);
     }
     //TODO(nainar): Parsing selectors is needed when we add in more complex selectors.
     // Second, find all the matching elements on the Document
-    if (elementSelector[0] === '#') {
+    if (selector[0] === '[') {
       matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
-        return element.id === elementSelector.substr(1) && containsAttrReference ? this.matchAttrReference(attrSelector, element) : true;
+        return matchAttrReference(selector, element);
+      });
+    } else if (elementSelector[0] === '#') {
+      matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
+        return element.id === elementSelector.substr(1) && (containsAttrReference ? matchAttrReference(attrSelector, element) : true);
       });
     } else if (elementSelector[0] === '.') {
       matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
-        return element.classList.contains(elementSelector.substr(1)) && containsAttrReference ? this.matchAttrReference(attrSelector, element) : true;
+        return element.classList.contains(elementSelector.substr(1)) && (containsAttrReference ? matchAttrReference(attrSelector, element) : true);
       });
     } else {
       matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
-        return element.tagName === elementSelector && containsAttrReference ? this.matchAttrReference(attrSelector, element) : true;
+        return element.tagName === toLower(elementSelector) && (containsAttrReference ? matchAttrReference(attrSelector, element) : true);
       });
     }
     // Third, filter to return elements that exist within the querying element's descendants.
@@ -495,3 +441,75 @@ export class Element extends Node {
   }
 }
 reflectProperties([{ id: [''] }], Element);
+
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors
+ * @param attrSelector the selector we are trying to match for.
+ * @param element the element being tested.
+ * @return boolean for whether we match the condition
+ */
+const matchAttrReference = (attrSelector: string | null, element: Element): boolean => {
+  if (!attrSelector) {
+    return false;
+  }
+  const equalPos: number = attrSelector.indexOf('=');
+  const selectorLength: number = attrSelector.length;
+  const caseInsensitive = attrSelector.charAt(selectorLength - 2) === 'i';
+  let endPos = selectorLength - 1;
+  if (caseInsensitive) {
+    endPos -= 2;
+  }
+  if (equalPos !== -1) {
+    switch (attrSelector.charAt(equalPos - 1)) {
+      case '~': {
+        // TODO(nainar): This doesn't work - I suck at reading English. This also doesn't have tests.
+        // const attrString = attrSelector.substring(1, equalPos - 1);
+        // const value = attrSelector.substring(equalPos + 1, endPos);
+        // const attrValue = element.getAttribute(attrString);
+        // return (
+        //   !!attrValue &&
+        //   attrValue.indexOf(value) !== -1 &&
+        //   (attrValue.charAt(attrValue.indexOf(value) - 1) === ' ' || attrValue.indexOf(value) === 0) &&
+        //   (attrValue.charAt(attrValue.indexOf(value) + 1) === ' ' || attrValue.indexOf(value) === attrValue.length - 1)
+        // );
+      }
+      case '|': {
+        const attrString = attrSelector.substring(1, equalPos - 1);
+        const value = attrSelector.substring(equalPos + 1, endPos);
+        const attrValue = element.getAttribute(attrString);
+        return (
+          !!attrValue &&
+          (caseInsensitive
+            ? toLower(attrValue) === toLower(value) || toLower(attrValue) === `${toLower(value)}-`
+            : attrValue === value || attrValue === `${value}-`)
+        );
+      }
+      case '^': {
+        const attrString = attrSelector.substring(1, equalPos - 1);
+        const value = attrSelector.substring(equalPos + 1, endPos);
+        const attrValue = element.getAttribute(attrString);
+        return !!attrValue && (caseInsensitive ? toLower(attrValue).startsWith(toLower(value)) : attrValue.startsWith(value));
+      }
+      case '$': {
+        const attrString = attrSelector.substring(1, equalPos - 1);
+        const value = attrSelector.substring(equalPos + 1, endPos);
+        const attrValue = element.getAttribute(attrString);
+        return !!attrValue && (caseInsensitive ? toLower(attrValue).endsWith(toLower(value)) : attrValue.endsWith(value));
+      }
+      case '*': {
+        const attrString = attrSelector.substring(1, equalPos - 1);
+        const value = attrSelector.substring(equalPos + 1, endPos);
+        const attrValue = element.getAttribute(attrString);
+        return !!attrValue && (caseInsensitive ? toLower(attrValue).indexOf(toLower(value)) !== -1 : attrValue.indexOf(value) !== -1);
+      }
+      default: {
+        const attr = attrSelector.substring(1, equalPos);
+        const value = attrSelector.substring(equalPos + 1, endPos);
+        const attrValue = element.getAttribute(attr);
+        return !!attrValue && (caseInsensitive ? toLower(attrValue) === toLower(value) : attrValue === value);
+      }
+    }
+  } else {
+    return element.hasAttribute(attrSelector.substring(1, endPos));
+  }
+};
