@@ -20,9 +20,16 @@ import { createWorker } from './worker';
 import { MessageFromWorker, MessageType, HydrationFromWorker, MutationFromWorker } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { WorkerCallbacks } from './callbacks';
 
-export function install(baseElement: HTMLElement, authorURL: string, workerDOMUrl: string, sanitizer?: Sanitizer): void {
-  createWorker(workerDOMUrl, authorURL).then(worker => {
+export function install(
+  baseElement: HTMLElement,
+  authorURL: string,
+  workerDOMUrl: string,
+  workerCallbacks?: WorkerCallbacks,
+  sanitizer?: Sanitizer,
+): void {
+  createWorker(workerDOMUrl, authorURL, workerCallbacks).then(worker => {
     if (worker === null) {
       return;
     }
@@ -30,10 +37,11 @@ export function install(baseElement: HTMLElement, authorURL: string, workerDOMUr
     prepareNodes(baseElement);
     prepareMutate(worker);
 
-    worker.onmessage = ({ data }: MessageFromWorker) => {
+    worker.onmessage = (message: MessageFromWorker) => {
+      const { data } = message;
+
       switch (data[TransferrableKeys.type]) {
         case MessageType.HYDRATE:
-          // console.info(`hydration from worker: ${data.type}`, data);
           hydrate(
             (data as HydrationFromWorker)[TransferrableKeys.nodes],
             (data as HydrationFromWorker)[TransferrableKeys.strings],
@@ -43,7 +51,6 @@ export function install(baseElement: HTMLElement, authorURL: string, workerDOMUr
           );
           break;
         case MessageType.MUTATE:
-          // console.info(`mutation from worker: ${data.type}`, data);
           mutate(
             (data as MutationFromWorker)[TransferrableKeys.nodes],
             (data as MutationFromWorker)[TransferrableKeys.strings],
@@ -51,6 +58,11 @@ export function install(baseElement: HTMLElement, authorURL: string, workerDOMUr
             sanitizer,
           );
           break;
+      }
+
+      // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
+      if (workerCallbacks && workerCallbacks.onReceiveMessage) {
+        workerCallbacks.onReceiveMessage(message);
       }
     };
   });
