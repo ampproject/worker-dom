@@ -18,7 +18,7 @@ import { HydrateableNode, NodeType } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { NumericBoolean } from '../utils';
 
-const NODES_WITH_TEXT_CONTENT = [NodeType.COMMENT_NODE, NodeType.TEXT_NODE];
+const NODES_ALLOWED_TO_TRANSMIT_TEXT_CONTENT = [NodeType.COMMENT_NODE, NodeType.TEXT_NODE];
 export const initialStrings: Array<string> = [];
 const strings: Map<string, number> = new Map();
 let count = 0;
@@ -35,7 +35,6 @@ function store(value: string): number {
 }
 
 export function createHydrateableNode(element: RenderableElement): HydrateableNode {
-  console.log('createHydrateableNode', element, element._index_);
   let hydrated = {
     [TransferrableKeys._index_]: element._index_,
     [TransferrableKeys.transferred]: NumericBoolean.FALSE,
@@ -50,7 +49,7 @@ export function createHydrateableNode(element: RenderableElement): HydrateableNo
       store(attribute.value),
     ]),
   };
-  if (NODES_WITH_TEXT_CONTENT.includes(element.nodeType) && (element as Text).textContent !== null) {
+  if (NODES_ALLOWED_TO_TRANSMIT_TEXT_CONTENT.includes(element.nodeType) && (element as Text).textContent !== null) {
     hydrated[TransferrableKeys.textContent] = store(element.textContent as string);
   }
 
