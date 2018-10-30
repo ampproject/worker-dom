@@ -22,21 +22,31 @@ let count: number = 2;
 let NODES: Map<number, Node>;
 let BASE_ELEMENT: HTMLElement;
 
-function serializeDefaultNode(node: Node): void {
+/**
+ * Store the requested node and all of its children.
+ * @param node node to store.
+ */
+function storeNodeAndChildren(node: Node): void {
   storeNode(node, ++count);
-  node.childNodes.forEach(node => serializeDefaultNode(node));
+  node.childNodes.forEach(node => storeNodeAndChildren(node));
 }
 
+/**
+ * Called when initializing a Worker, ensures the nodes in baseElement are known
+ * for transmission into the Worker and future mutation events from the Worker.
+ * @param baseElement Element that will be controlled by a Worker
+ */
 export function prepare(baseElement: Element): void {
+  // The NODES map is populated with two default values pointing to baseElement.
+  // These are [document, document.body] from the worker.
   NODES = new Map([[1, baseElement], [2, baseElement]]);
   BASE_ELEMENT = baseElement as HTMLElement;
-  console.log('prepare', baseElement);
+  // To ensure a lookup works correctly from baseElement
+  // add an _index_ equal to the background thread document.body.
   baseElement._index_ = 2;
-  baseElement.childNodes.forEach(node => serializeDefaultNode(node));
-}
-
-export function isTextNode(node: Node | TransferrableNode): boolean {
-  return ('nodeType' in node ? node.nodeType : node[TransferrableKeys.nodeType]) === NodeType.TEXT_NODE;
+  // Lastly, it's important while initializing the document that we store
+  // the default nodes present in the server rendered document.
+  baseElement.childNodes.forEach(node => storeNodeAndChildren(node));
 }
 
 /**
@@ -47,7 +57,7 @@ export function isTextNode(node: Node | TransferrableNode): boolean {
  *   createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
  */
 export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): Node | null {
-  if (isTextNode(skeleton)) {
+  if (skeleton[TransferrableKeys.nodeType] === NodeType.TEXT_NODE) {
     const node = document.createTextNode(getString(skeleton[TransferrableKeys.textContent] as number));
     storeNode(node, skeleton[TransferrableKeys._index_]);
     return node as Node;
