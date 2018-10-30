@@ -138,7 +138,7 @@ export class Element extends Node {
    */
   get outerHTML(): string {
     const tag = this.localName || this.tagName;
-    return `<${[tag, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${this.tag}>`;
+    return `<${[tag, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${tag}>`;
   }
 
   /**

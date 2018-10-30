@@ -17,6 +17,7 @@
 import test from 'ava';
 import { documentForTesting as document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
+import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.cb.serial('Element.setAttribute mutation observed, new attribute', t => {
   const el = document.createElement('div');
@@ -26,7 +27,7 @@ test.cb.serial('Element.setAttribute mutation observed, new attribute', t => {
         {
           type: MutationRecordType.ATTRIBUTES,
           attributeName: 'data-foo',
-          attributeNamespace: null,
+          attributeNamespace: HTML_NAMESPACE,
           target: el,
           value: 'bar',
           oldValue: '',
@@ -50,7 +51,7 @@ test.cb.serial('Element.setAttribute mutation observed, overwrite attribute', t 
         {
           type: MutationRecordType.ATTRIBUTES,
           attributeName: 'data-foo',
-          attributeNamespace: null,
+          attributeNamespace: HTML_NAMESPACE,
           target: el,
           value: 'baz',
           oldValue: 'bar',
