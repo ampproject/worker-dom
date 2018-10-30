@@ -17,11 +17,11 @@
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLStyleElement } from '../../worker-thread/dom/HTMLStyleElement';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLStyleElement(NodeType.ELEMENT_NODE, 'style', null),
+    element: new HTMLStyleElement(NodeType.ELEMENT_NODE, 'style', HTML_NAMESPACE),
   };
 });
 

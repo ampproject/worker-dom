@@ -17,11 +17,11 @@
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLQuoteElement } from '../../worker-thread/dom/HTMLQuoteElement';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLQuoteElement(NodeType.ELEMENT_NODE, 'blockquote', null),
+    element: new HTMLQuoteElement(NodeType.ELEMENT_NODE, 'blockquote', HTML_NAMESPACE),
   };
 });
 

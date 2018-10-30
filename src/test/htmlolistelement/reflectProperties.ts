@@ -17,11 +17,11 @@
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLOListElement } from '../../worker-thread/dom/HTMLOListElement';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLOListElement(NodeType.ELEMENT_NODE, 'ol', null),
+    element: new HTMLOListElement(NodeType.ELEMENT_NODE, 'ol', HTML_NAMESPACE),
   };
 });
 

@@ -16,10 +16,10 @@
 
 import test from 'ava';
 import { HTMLFieldSetElement } from '../../worker-thread/dom/HTMLFieldSetElement';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test('type should be fieldset by default', t => {
-  const element = new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', null);
+  const element = new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', HTML_NAMESPACE);
 
   t.is(element.type, 'fieldset');
 });

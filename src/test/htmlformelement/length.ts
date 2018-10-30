@@ -17,19 +17,19 @@
 import test from 'ava';
 import { HTMLFormElement } from '../../worker-thread/dom/HTMLFormElement';
 import { Element } from '../../worker-thread/dom/Element';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    form: new HTMLFormElement(NodeType.ELEMENT_NODE, 'form', null),
-    button: new Element(NodeType.ELEMENT_NODE, 'button', null),
-    buttonTwo: new Element(NodeType.ELEMENT_NODE, 'button', null),
-    fieldset: new Element(NodeType.ELEMENT_NODE, 'fieldset', null),
-    input: new Element(NodeType.ELEMENT_NODE, 'input', null),
-    output: new Element(NodeType.ELEMENT_NODE, 'output', null),
-    select: new Element(NodeType.ELEMENT_NODE, 'select', null),
-    textarea: new Element(NodeType.ELEMENT_NODE, 'textarea', null),
-    div: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    form: new HTMLFormElement(NodeType.ELEMENT_NODE, 'form', HTML_NAMESPACE),
+    button: new Element(NodeType.ELEMENT_NODE, 'button', HTML_NAMESPACE),
+    buttonTwo: new Element(NodeType.ELEMENT_NODE, 'button', HTML_NAMESPACE),
+    fieldset: new Element(NodeType.ELEMENT_NODE, 'fieldset', HTML_NAMESPACE),
+    input: new Element(NodeType.ELEMENT_NODE, 'input', HTML_NAMESPACE),
+    output: new Element(NodeType.ELEMENT_NODE, 'output', HTML_NAMESPACE),
+    select: new Element(NodeType.ELEMENT_NODE, 'select', HTML_NAMESPACE),
+    textarea: new Element(NodeType.ELEMENT_NODE, 'textarea', HTML_NAMESPACE),
+    div: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
   };
 });
 

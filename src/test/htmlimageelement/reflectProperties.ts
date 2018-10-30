@@ -17,11 +17,11 @@
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLImageElement } from '../../worker-thread/dom/HTMLImageElement';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLImageElement(NodeType.ELEMENT_NODE, 'img', null),
+    element: new HTMLImageElement(NodeType.ELEMENT_NODE, 'img', HTML_NAMESPACE),
   };
 });
 

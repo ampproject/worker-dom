@@ -17,11 +17,11 @@
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLMeterElement } from '../../worker-thread/dom/HTMLMeterElement';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLMeterElement(NodeType.ELEMENT_NODE, 'meter', null),
+    element: new HTMLMeterElement(NodeType.ELEMENT_NODE, 'meter', HTML_NAMESPACE),
   };
 });
 

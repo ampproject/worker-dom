@@ -17,11 +17,11 @@
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLIFrameElement } from '../../worker-thread/dom/HTMLIFrameElement';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLIFrameElement(NodeType.ELEMENT_NODE, 'iframe', null),
+    element: new HTMLIFrameElement(NodeType.ELEMENT_NODE, 'iframe', HTML_NAMESPACE),
   };
 });
 

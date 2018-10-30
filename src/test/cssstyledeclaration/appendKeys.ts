@@ -17,12 +17,12 @@
 import test from 'ava';
 import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
 import { Element } from '../../worker-thread/dom/Element';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    declaration: new CSSStyleDeclaration(new Element(NodeType.ELEMENT_NODE, 'div', null)),
+    node: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
+    declaration: new CSSStyleDeclaration(new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE)),
   };
 });
 

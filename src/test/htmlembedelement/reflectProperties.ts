@@ -17,11 +17,11 @@
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLEmbedElement } from '../../worker-thread/dom/HTMLEmbedElement';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLEmbedElement(NodeType.ELEMENT_NODE, 'embed', null),
+    element: new HTMLEmbedElement(NodeType.ELEMENT_NODE, 'embed', HTML_NAMESPACE),
   };
 });
 

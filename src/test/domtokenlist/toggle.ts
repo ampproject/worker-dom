@@ -17,11 +17,11 @@
 import test from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    tokenList: new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, null),
+    tokenList: new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE), 'class', null, null),
   };
 });
 

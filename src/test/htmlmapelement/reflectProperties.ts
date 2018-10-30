@@ -17,11 +17,11 @@
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLMapElement } from '../../worker-thread/dom/HTMLMapElement';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLMapElement(NodeType.ELEMENT_NODE, 'map', null),
+    element: new HTMLMapElement(NodeType.ELEMENT_NODE, 'map', HTML_NAMESPACE),
   };
 });
 

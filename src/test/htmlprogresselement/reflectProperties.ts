@@ -17,11 +17,11 @@
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLProgressElement } from '../../worker-thread/dom/HTMLProgressElement';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLProgressElement(NodeType.ELEMENT_NODE, 'progress', null),
+    element: new HTMLProgressElement(NodeType.ELEMENT_NODE, 'progress', HTML_NAMESPACE),
   };
 });
 
