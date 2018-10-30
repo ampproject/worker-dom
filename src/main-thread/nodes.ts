@@ -23,15 +23,6 @@ let NODES: Map<number, Node>;
 let BASE_ELEMENT: HTMLElement;
 
 /**
- * Store the requested node and all of its children.
- * @param node node to store.
- */
-function storeNodeAndChildren(node: Node): void {
-  storeNode(node, ++count);
-  node.childNodes.forEach(node => storeNodeAndChildren(node));
-}
-
-/**
  * Called when initializing a Worker, ensures the nodes in baseElement are known
  * for transmission into the Worker and future mutation events from the Worker.
  * @param baseElement Element that will be controlled by a Worker
@@ -46,7 +37,16 @@ export function prepare(baseElement: Element): void {
   baseElement._index_ = 2;
   // Lastly, it's important while initializing the document that we store
   // the default nodes present in the server rendered document.
-  baseElement.childNodes.forEach(node => storeNodeAndChildren(node));
+  baseElement.childNodes.forEach(node => storeNodes(node));
+}
+
+/**
+ * Store the requested node and all of its children.
+ * @param node node to store.
+ */
+function storeNodes(node: Node): void {
+  storeNode(node, ++count);
+  node.childNodes.forEach(node => storeNodes(node));
 }
 
 /**
@@ -114,6 +114,5 @@ export function getNode(id: number): RenderableElement {
  */
 export function storeNode(node: Node, id: number): void {
   (node as Node)._index_ = id;
-  console.log('storeNode', node, node._index_);
   NODES.set(id, node as Node);
 }
