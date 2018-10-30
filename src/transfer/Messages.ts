@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TransferrableEvent, TransferrableEventSubscriptionChange } from './TransferrableEvent';
+import { TransferrableEvent } from './TransferrableEvent';
 import { TransferrableMutationRecord } from './TransferrableRecord';
 import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
@@ -32,22 +32,18 @@ export const enum MessageType {
   // NAVIGATION_POP_STATE = 7,
 }
 
-export interface HydrationFromWorker {
-  readonly [TransferrableKeys.type]: MessageType.HYDRATE;
-  readonly [TransferrableKeys.strings]: Array<string>;
-  readonly [TransferrableKeys.nodes]: HydrateableNode;
-  readonly [TransferrableKeys.addedEvents]: Array<TransferrableEventSubscriptionChange>;
-}
 export interface MutationFromWorker {
-  readonly [TransferrableKeys.type]: MessageType.MUTATE;
+  readonly [TransferrableKeys.type]: MessageType;
   readonly [TransferrableKeys.strings]: Array<string>;
   readonly [TransferrableKeys.nodes]: Array<TransferrableNode>;
   readonly [TransferrableKeys.mutations]: Array<TransferrableMutationRecord>;
 }
-export interface MessageFromWorker {
-  data: HydrationFromWorker | MutationFromWorker;
-}
 
+export interface HydrationToWorker {
+  readonly [TransferrableKeys.type]: MessageType.HYDRATE;
+  readonly [TransferrableKeys.strings]: Array<string>;
+  readonly [TransferrableKeys.nodes]: HydrateableNode;
+}
 export interface EventToWorker {
   [key: number]: MessageType.EVENT | TransferrableEvent;
   [TransferrableKeys.type]: MessageType.EVENT;
@@ -58,4 +54,4 @@ export interface ValueSyncToWorker {
   [TransferrableKeys.type]: MessageType.SYNC;
   [TransferrableKeys.sync]: TransferrableSyncValue;
 }
-export type MessageToWorker = EventToWorker | ValueSyncToWorker;
+export type MessageToWorker = HydrationToWorker | EventToWorker | ValueSyncToWorker;

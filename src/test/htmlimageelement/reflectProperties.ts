@@ -16,8 +16,8 @@
 
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLImageElement } from '../../worker-thread/dom/HTMLImageElement';
+import { NodeType } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {

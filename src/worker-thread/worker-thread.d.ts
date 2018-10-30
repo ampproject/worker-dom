@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { HTMLElement } from './dom/HTMLElement';
+import { SVGElement } from './dom/SVGElement';
+import { Text } from './dom/Text';
+import { Comment } from './dom/Comment';
 
-test.beforeEach(t => {
-  t.context = {
-    element: new HTMLOptionElement(NodeType.ELEMENT_NODE, 'option', null),
-  };
-});
-
-testReflectedProperties([{ defaultSelected: [false, 'selected'] }, { disabled: [false] }, { type: [''] }]);
+type RenderableElement = HTMLElement | SVGElement | Text | Comment;

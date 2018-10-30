@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-import { TransferrableNode } from '../transfer/TransferrableNodes';
-import { RenderableElement } from './RenderableElement';
+import { TransferrableNode, NodeType } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { getString } from './strings';
-import { NodeType } from '../worker-thread/dom/Node';
+import { get as getString } from './strings';
 
-let NODES: Map<number, RenderableElement>;
+let count: number = 2;
+let NODES: Map<number, Node>;
 let BASE_ELEMENT: HTMLElement;
 
+function serializeDefaultNode(node: Node): void {
+  storeNode(node, ++count);
+  node.childNodes.forEach(node => serializeDefaultNode(node));
+}
+
 export function prepare(baseElement: Element): void {
-  NODES = new Map([[1, baseElement as RenderableElement], [2, baseElement as RenderableElement]]);
+  NODES = new Map([[1, baseElement], [2, baseElement]]);
   BASE_ELEMENT = baseElement as HTMLElement;
+  console.log('prepare', baseElement);
+  baseElement._index_ = 2;
+  baseElement.childNodes.forEach(node => serializeDefaultNode(node));
 }
 
 export function isTextNode(node: Node | TransferrableNode): boolean {
@@ -39,11 +46,11 @@ export function isTextNode(node: Node | TransferrableNode): boolean {
  * @example <caption>Element node</caption>
  *   createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
  */
-export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): RenderableElement | null {
+export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): Node | null {
   if (isTextNode(skeleton)) {
     const node = document.createTextNode(getString(skeleton[TransferrableKeys.textContent] as number));
     storeNode(node, skeleton[TransferrableKeys._index_]);
-    return node as RenderableElement;
+    return node as Node;
   }
 
   const namespace: string | undefined =
@@ -66,13 +73,13 @@ export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): 
     return null;
   }
   storeNode(node, skeleton[TransferrableKeys._index_]);
-  return node as RenderableElement;
+  return node as Node;
 }
 
 /**
  * Returns the real DOM Element corresponding to a serialized Element object.
  * @param id
- * @return
+ * @return RenderableElement
  */
 export function getNode(id: number): RenderableElement {
   const node = NODES.get(id);
@@ -95,7 +102,8 @@ export function getNode(id: number): RenderableElement {
  * @param node
  * @param id
  */
-export function storeNode(node: HTMLElement | SVGElement | Text, id: number): void {
-  (node as RenderableElement)._index_ = id;
-  NODES.set(id, node as RenderableElement);
+export function storeNode(node: Node, id: number): void {
+  (node as Node)._index_ = id;
+  console.log('storeNode', node, node._index_);
+  NODES.set(id, node as Node);
 }

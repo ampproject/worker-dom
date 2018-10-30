@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Node, NodeType, NodeName, NamespaceURI } from './Node';
+import { Node, NodeName, NamespaceURI } from './Node';
 import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
@@ -25,8 +25,8 @@ import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { HydrateableNode } from '../../transfer/TransferrableNodes';
-import { store as storeString } from '../StringMapping';
+import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { store as storeString } from '../strings';
 import { toLower } from '../../utils';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
@@ -37,6 +37,7 @@ export function registerSubclass(nodeName: NodeName, subclass: typeof Element): 
 }
 
 export class Element extends Node {
+  public localName: NodeName;
   public attributes: Attr[] = [];
   public propertyBackedAttributes_: { [key: string]: [() => string | null, (value: string) => string | boolean] } = {};
   public classList: DOMTokenList = new DOMTokenList(Element, this, 'class', 'classList', 'className');
@@ -45,7 +46,8 @@ export class Element extends Node {
 
   constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
     super(nodeType, nodeName);
-    this.namespaceURI = namespaceURI;
+    this.namespaceURI = namespaceURI || HTML_NAMESPACE;
+    this.localName = toLower(nodeName);
     this._transferredFormat_ = {
       [TransferrableKeys._index_]: this._index_,
       [TransferrableKeys.transferred]: NumericBoolean.TRUE,
@@ -91,7 +93,6 @@ export class Element extends Node {
   // Element.clientWidth – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth
   // Element.querySelectorAll – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll
   // set Element.innerHTML – https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
-  // Element.localName – https://developer.mozilla.org/en-US/docs/Web/API/Element/localName
   // NonDocumentTypeChildNode.nextElementSibling – https://developer.mozilla.org/en-US/docs/Web/API/NonDocumentTypeChildNode/nextElementSibling
   // Element.prefix – https://developer.mozilla.org/en-US/docs/Web/API/Element/prefix
   // NonDocummentTypeChildNode.previousElementSibling – https://developer.mozilla.org/en-US/docs/Web/API/NonDocumentTypeChildNode/previousElementSibling
@@ -136,7 +137,8 @@ export class Element extends Node {
    * @return string representation of serialized HTML describing the Element and its descendants.
    */
   get outerHTML(): string {
-    return `<${[this.nodeName, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${this.nodeName}>`;
+    const tag = this.localName || this.tagName;
+    return `<${[tag, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${this.tag}>`;
   }
 
   /**
@@ -234,7 +236,7 @@ export class Element extends Node {
    * @param value attribute value
    */
   public setAttribute(name: string, value: string): void {
-    this.setAttributeNS(null, name, value);
+    this.setAttributeNS(HTML_NAMESPACE, name, value);
   }
 
   /**
@@ -245,7 +247,7 @@ export class Element extends Node {
    * @return value of a specified attribute on the element, or null if the attribute doesn't exist.
    */
   public getAttribute(name: string): string | null {
-    return this.getAttributeNS(null, name);
+    return this.getAttributeNS(HTML_NAMESPACE, name);
   }
 
   /**
@@ -256,7 +258,7 @@ export class Element extends Node {
    * @param name attribute name
    */
   public removeAttribute(name: string): void {
-    this.removeAttributeNS(null, name);
+    this.removeAttributeNS(HTML_NAMESPACE, name);
   }
 
   /**
@@ -265,7 +267,7 @@ export class Element extends Node {
    * @return Boolean indicating if the element has the specified attribute.
    */
   public hasAttribute(name: string): boolean {
-    return this.hasAttributeNS(null, name);
+    return this.hasAttributeNS(HTML_NAMESPACE, name);
   }
 
   /**
@@ -395,7 +397,13 @@ export class Element extends Node {
    * @return Element array with matching tagnames
    */
   public getElementsByTagName(tagName: string): Element[] {
-    return matchChildrenElements(this, tagName === '*' ? _ => true : element => element.tagName === tagName);
+    const lowerTagName = toLower(tagName);
+    return matchChildrenElements(
+      this,
+      tagName === '*'
+        ? _ => true
+        : element => (element.namespaceURI === HTML_NAMESPACE ? element.localName === lowerTagName : element.tagName === tagName),
+    );
   }
 
   /**

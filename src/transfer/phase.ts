@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
-import { NodeType } from '../../transfer/TransferrableNodes';
+export const enum Phases {
+  Initializing = 0,
+  Hydrating = 1,
+  Mutating = 2,
+}
 
-test.beforeEach(t => {
-  t.context = {
-    element: new HTMLOptionElement(NodeType.ELEMENT_NODE, 'option', null),
-  };
-});
-
-testReflectedProperties([{ defaultSelected: [false, 'selected'] }, { disabled: [false] }, { type: [''] }]);
+export let phase: Phases = Phases.Initializing;
+export const set = (newPhase: Phases) => (phase = newPhase);

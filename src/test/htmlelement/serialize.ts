@@ -16,10 +16,9 @@
 
 import test from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
-import { NodeType } from '../../worker-thread/dom/Node';
-import { HydrateableNode } from '../../transfer/TransferrableNodes';
+import { HydrateableNode, NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { get } from '../../worker-thread/StringMapping';
+import { get } from '../../worker-thread/strings';
 
 const RANDOM_TEXT_CONTENT = `TEXT_CONTENT-${Math.random()}`;
 const DIV_ID = 'DIV_ID';

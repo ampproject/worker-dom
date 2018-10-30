@@ -16,8 +16,8 @@
 
 import { TransferredNode } from './TransferrableNodes';
 import { TransferrableKeys } from './TransferrableKeys';
-import { MessageToWorker, MessageType } from './Messages';
-import { get } from '../worker-thread/NodeMapping';
+import { MessageType, EventToWorker } from './Messages';
+import { get } from '../worker-thread/nodes';
 import { Event } from '../worker-thread/Event';
 
 type TransferrableTarget = TransferredNode;
@@ -53,7 +53,7 @@ export interface TransferrableEventSubscriptionChange {
  */
 export function propagate(): void {
   if (typeof addEventListener !== 'undefined') {
-    addEventListener('message', ({ data }: { data: MessageToWorker }) => {
+    addEventListener('message', ({ data }: { data: EventToWorker }) => {
       if (data[TransferrableKeys.type] !== MessageType.EVENT) {
         return;
       }

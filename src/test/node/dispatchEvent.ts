@@ -15,9 +15,9 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { Event } from '../../worker-thread/Event';
 import { Element } from '../../worker-thread/dom/Element';
+import { NodeType } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   const node = new Element(NodeType.ELEMENT_NODE, 'div', null);

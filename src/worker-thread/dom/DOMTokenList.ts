@@ -182,7 +182,7 @@ export class DOMTokenList {
    * @private
    */
   private mutationCompleteHandler_(oldValue: string, value: string): void {
-    this.storeAttributeMethod_(null, this.attributeName_, value);
+    this.storeAttributeMethod_(this.element_.namespaceURI, this.attributeName_, value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this.element_,

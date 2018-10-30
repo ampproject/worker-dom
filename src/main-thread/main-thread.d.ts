@@ -30,3 +30,9 @@ declare interface Sanitizer {
   validAttribute(tag: string, attr: string, value: string): boolean;
   validProperty(tag: string, prop: string, value: string): boolean;
 }
+
+interface Node {
+  _index_: number;
+}
+
+type RenderableElement = (HTMLElement | SVGElement | Text | Comment) & { [index: string]: any };

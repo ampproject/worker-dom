@@ -15,8 +15,8 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLFieldSetElement } from '../../worker-thread/dom/HTMLFieldSetElement';
+import { NodeType } from '../../transfer/TransferrableNodes';
 
 test('type should be fieldset by default', t => {
   const element = new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', null);

@@ -19,9 +19,8 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { TransferrableNode } from '../transfer/TransferrableNodes';
 import { getNode, createNode } from './nodes';
-import { storeString, getString } from './strings';
+import { store as storeString, get as getString } from './strings';
 import { process } from './command';
-import { RenderableElement } from './RenderableElement';
 
 let MUTATION_QUEUE: Array<TransferrableMutationRecord> = [];
 let PENDING_MUTATIONS: boolean = false;
@@ -32,9 +31,9 @@ export function prepareMutate(passedWorker: Worker): void {
 }
 
 const mutators: {
-  [key: number]: (mutation: TransferrableMutationRecord, target: RenderableElement, sanitizer?: Sanitizer) => void;
+  [key: number]: (mutation: TransferrableMutationRecord, target: Node, sanitizer?: Sanitizer) => void;
 } = {
-  [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, target: RenderableElement, sanitizer: Sanitizer) {
+  [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, target: HTMLElement, sanitizer: Sanitizer) {
     (mutation[TransferrableKeys.removedNodes] || []).forEach(node => getNode(node[TransferrableKeys._index_]).remove());
 
     const addedNodes = mutation[TransferrableKeys.addedNodes];
@@ -60,7 +59,7 @@ const mutators: {
       });
     }
   },
-  [MutationRecordType.ATTRIBUTES](mutation: TransferrableMutationRecord, target: RenderableElement, sanitizer?: Sanitizer) {
+  [MutationRecordType.ATTRIBUTES](mutation: TransferrableMutationRecord, target: HTMLElement | SVGElement, sanitizer?: Sanitizer) {
     const attributeName =
       mutation[TransferrableKeys.attributeName] !== undefined ? getString(mutation[TransferrableKeys.attributeName] as number) : null;
     const value = mutation[TransferrableKeys.value] !== undefined ? getString(mutation[TransferrableKeys.value] as number) : null;
@@ -72,7 +71,7 @@ const mutators: {
       }
     }
   },
-  [MutationRecordType.CHARACTER_DATA](mutation: TransferrableMutationRecord, target: RenderableElement) {
+  [MutationRecordType.CHARACTER_DATA](mutation: TransferrableMutationRecord, target: Text) {
     const value = mutation[TransferrableKeys.value];
     if (value) {
       // Sanitization not necessary for textContent.

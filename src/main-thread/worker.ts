@@ -15,9 +15,11 @@
  */
 
 import { MessageToWorker } from '../transfer/Messages';
+import { set as setPhase, Phases } from '../transfer/phase';
+import { createHydrateableNode, initialStrings } from './serialize';
 
 // TODO(KB): Fetch Polyfill for IE11.
-export function createWorker(workerDomURL: string, authorScriptURL: string): Promise<Worker | null> {
+export function createWorker(baseElement: HTMLElement, workerDomURL: string, authorScriptURL: string): Promise<Worker | null> {
   return Promise.all([fetch(workerDomURL).then(response => response.text()), fetch(authorScriptURL).then(response => response.text())])
     .then(([workerScript, authorScript]) => {
       // TODO(KB): Minify this output during build process.
@@ -25,6 +27,8 @@ export function createWorker(workerDomURL: string, authorScriptURL: string): Pro
       for (let key in document.body.style) {
         keys.push(`'${key}'`);
       }
+      const hydratedNode = createHydrateableNode(baseElement);
+      // KB – This can likely be the spot to inject the SSR DOM instead of via postMessage.
       const code = `
         'use strict';
         ${workerScript}
@@ -49,10 +53,13 @@ export function createWorker(workerDomURL: string, authorScriptURL: string): Pro
           function removeEventListener(type, handler) {
             return document.removeEventListener(type, handler);
           }
+          this.consumeInitialDOM(document, [${initialStrings.map(string => `'${string}'`).join(',')}], ${JSON.stringify(hydratedNode)});
           this.appendKeys([${keys}]);
+          document.observe();
           ${authorScript}
         }).call(WorkerThread.workerDOM);
 //# sourceURL=${encodeURI(authorScriptURL)}`;
+      setPhase(Phases.Hydrating);
       return new Worker(URL.createObjectURL(new Blob([code])));
     })
     .catch(error => {

@@ -16,45 +16,18 @@
 
 import { Node } from '../worker-thread/dom/Node';
 import { Document } from '../worker-thread/dom/Document';
-import { MutationRecord, MutationRecordType } from '../worker-thread/MutationRecord';
+import { MutationRecord } from '../worker-thread/MutationRecord';
 import { TransferrableMutationRecord } from './TransferrableRecord';
-import { TransferrableNode, TransferredNode, HydrateableNode } from './TransferrableNodes';
-import { MessageType, MutationFromWorker, HydrationFromWorker } from './Messages';
+import { TransferrableNode, TransferredNode } from './TransferrableNodes';
+import { MessageType, MutationFromWorker } from './Messages';
 import { TransferrableKeys } from './TransferrableKeys';
-import { consume as consumeNodes } from '../worker-thread/NodeMapping';
-import { store as storeString, consume as consumeStrings } from '../worker-thread/StringMapping';
-import { TransferrableEventSubscriptionChange } from './TransferrableEvent';
+import { consume as consumeNodes } from '../worker-thread/nodes';
+import { store as storeString, consume as consumeStrings } from '../worker-thread/strings';
+import { phase, set as setPhase, Phases } from '../transfer/phase';
 
-let document: Document;
 let observing = false;
-let hydrated = false;
 
 const serializeNodes = (nodes: Array<Node>): Array<TransferredNode> => nodes.map(node => node._transferredFormat_);
-
-/**
- *
- * @param mutations
- */
-function serializeHydration(mutations: Array<MutationRecord>): HydrationFromWorker {
-  consumeNodes();
-  const hydratedNode: HydrateableNode = document.body.hydrate();
-  const events: Array<TransferrableEventSubscriptionChange> = [];
-
-  mutations.forEach(mutation => {
-    if (mutation.type === MutationRecordType.COMMAND && mutation.addedEvents) {
-      mutation.addedEvents.forEach(addEvent => {
-        events.push(addEvent);
-      });
-    }
-  });
-
-  return {
-    [TransferrableKeys.type]: MessageType.HYDRATE,
-    [TransferrableKeys.strings]: consumeStrings(),
-    [TransferrableKeys.nodes]: hydratedNode,
-    [TransferrableKeys.addedEvents]: events,
-  };
-}
 
 /**
  *
@@ -63,6 +36,8 @@ function serializeHydration(mutations: Array<MutationRecord>): HydrationFromWork
 function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
   const nodes: Array<TransferrableNode> = consumeNodes().map(node => node._creationFormat_);
   const transferrableMutations: TransferrableMutationRecord[] = [];
+  const type = phase === Phases.Mutating ? MessageType.MUTATE : MessageType.HYDRATE;
+
   mutations.forEach(mutation => {
     let transferable: TransferrableMutationRecord = {
       [TransferrableKeys.type]: mutation.type,
@@ -82,9 +57,8 @@ function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
 
     transferrableMutations.push(transferable);
   });
-
   return {
-    [TransferrableKeys.type]: MessageType.MUTATE,
+    [TransferrableKeys.type]: type,
     [TransferrableKeys.strings]: consumeStrings(),
     [TransferrableKeys.nodes]: nodes,
     [TransferrableKeys.mutations]: transferrableMutations,
@@ -96,11 +70,11 @@ function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
  * @param incoming
  * @param postMessage
  */
-function handleMutations(incoming: MutationRecord[], postMessage?: Function): void {
+function handleMutations(incoming: Array<MutationRecord>, postMessage?: Function): void {
   if (postMessage) {
-    postMessage(hydrated === false ? serializeHydration(incoming) : serializeMutations(incoming));
+    postMessage(serializeMutations(incoming));
+    setPhase(Phases.Mutating);
   }
-  hydrated = true;
 }
 
 /**
@@ -110,10 +84,9 @@ function handleMutations(incoming: MutationRecord[], postMessage?: Function): vo
  */
 export function observe(doc: Document, postMessage: Function): void {
   if (!observing) {
-    document = doc;
     new doc.defaultView.MutationObserver(mutations => handleMutations(mutations, postMessage)).observe(doc.body);
     observing = true;
   } else {
-    console.error('observe() was called more than once.');
+    console.error('observe called more than once');
   }
 }
