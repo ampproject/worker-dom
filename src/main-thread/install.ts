@@ -16,9 +16,11 @@
 
 import { prepareMutate, mutate } from './mutator';
 import { createWorker } from './worker';
-import { MutationFromWorker } from '../transfer/Messages';
+import { MutationFromWorker, MessageType } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+
+const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
 export function install(baseElement: HTMLElement, authorURL: string, workerDOMUrl: string, sanitizer?: Sanitizer): void {
   prepareNodes(baseElement);
@@ -31,37 +33,17 @@ export function install(baseElement: HTMLElement, authorURL: string, workerDOMUr
     prepareMutate(worker);
 
     worker.onmessage = ({ data }: { data: MutationFromWorker }) => {
-      debugger;
-      // if (data[TransferrableKeys.type] !== MessageType.MUTATE) {
-      //   return;
-      // }
+      if (!ALLOWABLE_MESSAGE_TYPES.includes(data[TransferrableKeys.type])) {
+        return;
+      }
+      // TODO(KB): Hydration has special rules limiting the types of allowed mutations.
+      // Re-introduce Hydration and add a specialized handler.
       mutate(
         (data as MutationFromWorker)[TransferrableKeys.nodes],
         (data as MutationFromWorker)[TransferrableKeys.strings],
         (data as MutationFromWorker)[TransferrableKeys.mutations],
         sanitizer,
       );
-      // switch (data[TransferrableKeys.type]) {
-      //   case MessageType.HYDRATE:
-      //     // console.info(`hydration from worker: ${data.type}`, data);
-      //     hydrate(
-      //       (data as HydrationFromWorker)[TransferrableKeys.nodes],
-      //       (data as HydrationFromWorker)[TransferrableKeys.strings],
-      //       (data as HydrationFromWorker)[TransferrableKeys.addedEvents],
-      //       baseElement,
-      //       worker,
-      //     );
-      //     break;
-      //   case MessageType.MUTATE:
-      //     // console.info(`mutation from worker: ${data.type}`, data);
-      //     mutate(
-      //       (data as MutationFromWorker)[TransferrableKeys.nodes],
-      //       (data as MutationFromWorker)[TransferrableKeys.strings],
-      //       (data as MutationFromWorker)[TransferrableKeys.mutations],
-      //       sanitizer,
-      //     );
-      //     break;
-      // }
     };
   });
 }
