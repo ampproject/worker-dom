@@ -35,13 +35,11 @@ function store(value: string): number {
 }
 
 export function createHydrateableNode(element: RenderableElement): HydrateableNode {
-  let hydrated = {
+  let hydrated: HydrateableNode = {
     [TransferrableKeys._index_]: element._index_,
     [TransferrableKeys.transferred]: NumericBoolean.FALSE,
     [TransferrableKeys.nodeType]: element.nodeType,
     [TransferrableKeys.nodeName]: store(element.nodeName),
-    [TransferrableKeys.namespaceURI]: store(element.namespaceURI || 'null'),
-    [TransferrableKeys.textContent]: store(element.textContent || 'null'),
     [TransferrableKeys.childNodes]: [].map.call(element.childNodes || [], (child: RenderableElement) => createHydrateableNode(child)),
     [TransferrableKeys.attributes]: [].map.call(element.attributes || [], (attribute: Attr) => [
       store(attribute.namespaceURI || 'null'),
@@ -49,6 +47,9 @@ export function createHydrateableNode(element: RenderableElement): HydrateableNo
       store(attribute.value),
     ]),
   };
+  if (element.namespaceURI !== null) {
+    hydrated[TransferrableKeys.namespaceURI] = store(element.namespaceURI);
+  }
   if (NODES_ALLOWED_TO_TRANSMIT_TEXT_CONTENT.includes(element.nodeType) && (element as Text).textContent !== null) {
     hydrated[TransferrableKeys.textContent] = store(element.textContent as string);
   }

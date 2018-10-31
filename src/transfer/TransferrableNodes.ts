@@ -37,8 +37,8 @@ export const HTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
 export const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
 export interface HydrateableNode extends TransferrableNode {
-  readonly [TransferrableKeys.attributes]?: Array<[number, number, number]>;
-  readonly [TransferrableKeys.childNodes]?: Array<HydrateableNode>;
+  [TransferrableKeys.attributes]?: Array<[number, number, number]>;
+  [TransferrableKeys.childNodes]?: Array<HydrateableNode>;
 }
 
 export interface TransferrableNode extends TransferredNode {
@@ -47,8 +47,8 @@ export interface TransferrableNode extends TransferredNode {
 
   // Optional keys that are defined at construction of a `Text` or `Element`.
   // This makes the keys observed.
-  readonly [TransferrableKeys.textContent]?: number;
-  readonly [TransferrableKeys.namespaceURI]?: number;
+  [TransferrableKeys.textContent]?: number;
+  [TransferrableKeys.namespaceURI]?: number;
 }
 
 // If a Node has been transferred once already to main thread then we need only pass its index.
