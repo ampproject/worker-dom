@@ -71,7 +71,7 @@ const mutators: {
       }
     }
   },
-  [MutationRecordType.CHARACTER_DATA](mutation: TransferrableMutationRecord, target: Text) {
+  [MutationRecordType.CHARACTER_DATA](mutation: TransferrableMutationRecord, target: CharacterData) {
     const value = mutation[TransferrableKeys.value];
     if (value) {
       // Sanitization not necessary for textContent.
