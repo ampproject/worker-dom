@@ -28,7 +28,6 @@ export function createWorker(baseElement: HTMLElement, workerDomURL: string, aut
         keys.push(`'${key}'`);
       }
       const hydratedNode = createHydrateableNode(baseElement);
-      // KB – This can likely be the spot to inject the SSR DOM instead of via postMessage.
       const code = `
         'use strict';
         ${workerScript}
