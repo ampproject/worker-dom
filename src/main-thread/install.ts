@@ -16,23 +16,32 @@
 
 import { prepareMutate, mutate } from './mutator';
 import { createWorker } from './worker';
-import { MutationFromWorker, MessageType } from '../transfer/Messages';
+import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { WorkerCallbacks } from './callbacks';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
-export function install(baseElement: HTMLElement, authorURL: string, workerDOMUrl: string, sanitizer?: Sanitizer): void {
+export function install(
+  baseElement: HTMLElement,
+  authorURL: string,
+  workerDOMUrl: string,
+  workerCallbacks?: WorkerCallbacks,
+  sanitizer?: Sanitizer,
+): void {
   prepareNodes(baseElement);
 
-  createWorker(baseElement, workerDOMUrl, authorURL).then(worker => {
+  createWorker(baseElement, workerDOMUrl, authorURL, workerCallbacks).then(worker => {
     if (worker === null) {
       return;
     }
 
     prepareMutate(worker);
 
-    worker.onmessage = ({ data }: { data: MutationFromWorker }) => {
+    worker.onmessage = (message: MessageFromWorker) => {
+      const { data } = message;
+
       if (!ALLOWABLE_MESSAGE_TYPES.includes(data[TransferrableKeys.type])) {
         return;
       }
@@ -44,6 +53,11 @@ export function install(baseElement: HTMLElement, authorURL: string, workerDOMUr
         (data as MutationFromWorker)[TransferrableKeys.mutations],
         sanitizer,
       );
+
+      // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
+      if (workerCallbacks && workerCallbacks.onReceiveMessage) {
+        workerCallbacks.onReceiveMessage(message);
+      }
     };
   });
 }

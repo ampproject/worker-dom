@@ -96,7 +96,7 @@
     {
       "path": "./dist/index.safe.mjs",
       "compression": "brotli",
-      "maxSize": "7 kB"
+      "maxSize": "8 kB"
     }
   ],
   "esm": {

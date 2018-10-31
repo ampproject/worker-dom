@@ -38,6 +38,9 @@ export interface MutationFromWorker {
   readonly [TransferrableKeys.nodes]: Array<TransferrableNode>;
   readonly [TransferrableKeys.mutations]: Array<TransferrableMutationRecord>;
 }
+export type MessageFromWorker = {
+  data: MutationFromWorker;
+};
 
 export interface HydrationToWorker {
   readonly [TransferrableKeys.type]: MessageType.HYDRATE;

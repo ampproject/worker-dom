@@ -15,9 +15,32 @@
  */
 
 import { DOMPurifySanitizer } from './DOMPurifySanitizer';
+import { UserCallbacks, WorkerCallbacks } from './callbacks';
 import { install } from './install';
+import { readableMessageFromWorker, readableMessageToWorker } from './debugging';
 
+/** Users can import this and configure the sanitizer with custom DOMPurify hooks, etc. */
 export const sanitizer = new DOMPurifySanitizer();
+
+/** Users can import this and set callback functions to add logging on worker messages, etc. */
+export const callbacks: UserCallbacks = {};
+
+// Extra function wrapper around user callbacks to ensure that debugging.ts isn't bundled
+// in other entry points.
+const workerCallbacks: WorkerCallbacks = {
+  onSendMessage: message => {
+    if (callbacks.onSendMessage) {
+      const readable = readableMessageToWorker(message);
+      callbacks.onSendMessage(readable);
+    }
+  },
+  onReceiveMessage: message => {
+    if (callbacks.onReceiveMessage) {
+      const readable = readableMessageFromWorker(message);
+      callbacks.onReceiveMessage(readable);
+    }
+  },
+};
 
 export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
   const authorURL = baseElement.getAttribute('src');
@@ -27,5 +50,5 @@ export function upgradeElement(baseElement: Element, workerDOMUrl: string): void
 }
 
 export function upgrade(baseElement: Element, authorURL: string, workerDOMUrl: string): void {
-  install(baseElement as HTMLElement, authorURL, workerDOMUrl, sanitizer);
+  install(baseElement as HTMLElement, authorURL, workerDOMUrl, workerCallbacks, sanitizer);
 }

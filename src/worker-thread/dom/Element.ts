@@ -412,6 +412,16 @@ export class Element extends Node {
    * @return Element with matching selector.
    */
   public querySelector(selector: string): Element | null {
+    let matches: Element[] | null = this.querySelectorAll(selector);
+    return matches ? matches[0] : null;
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
+   * @param selector the selector we are trying to match for.
+   * @return Element with matching selector.
+   */
+  public querySelectorAll(selector: string): Element[] | null {
     let matches: Element[] | null = null;
     //As per spec: https://dom.spec.whatwg.org/#scope-match-a-selectors-string
     // First, parse the selector
@@ -428,11 +438,10 @@ export class Element extends Node {
     }
     // Third, filter to return elements that exist within the querying element's descendants.
     if (matches) {
-      matches = matches.filter(element => this.contains(element) && this !== element);
-      return matches[0];
+      return matches.filter(element => this.contains(element) && this !== element);
     }
     //TODO(nainar): More complex selectors
-    return null;
+    return [];
   }
 }
 reflectProperties([{ id: [''] }], Element);

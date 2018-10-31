@@ -17,9 +17,22 @@
 import { MessageToWorker } from '../transfer/Messages';
 import { set as setPhase, Phases } from '../transfer/phase';
 import { createHydrateableNode, initialStrings } from './serialize';
+import { WorkerCallbacks } from './callbacks';
+
+/**
+ * Stored callbacks for the most recently created worker.
+ * Note: This can be easily changed to a lookup table to support multiple workers.
+ */
+let callbacks_: WorkerCallbacks | undefined;
 
 // TODO(KB): Fetch Polyfill for IE11.
-export function createWorker(baseElement: HTMLElement, workerDomURL: string, authorScriptURL: string): Promise<Worker | null> {
+export function createWorker(
+  baseElement: HTMLElement,
+  workerDomURL: string,
+  authorScriptURL: string,
+  callbacks?: WorkerCallbacks,
+): Promise<Worker | null> {
+  callbacks_ = callbacks;
   return Promise.all([fetch(workerDomURL).then(response => response.text()), fetch(authorScriptURL).then(response => response.text())])
     .then(([workerScript, authorScript]) => {
       // TODO(KB): Minify this output during build process.
@@ -66,6 +79,13 @@ export function createWorker(baseElement: HTMLElement, workerDomURL: string, aut
     });
 }
 
+/**
+ * @param worker
+ * @param message
+ */
 export function messageToWorker(worker: Worker, message: MessageToWorker) {
+  if (callbacks_ && callbacks_.onSendMessage) {
+    callbacks_.onSendMessage(message);
+  }
   worker.postMessage(message);
 }

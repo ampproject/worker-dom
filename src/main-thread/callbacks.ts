@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-import { install } from './install';
+import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
 
-export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
-  const authorURL = baseElement.getAttribute('src');
-  if (authorURL) {
-    upgrade(baseElement, authorURL, workerDOMUrl);
-  }
+/**
+ * User-configurable callbacks for worker-dom events e.g. worker messaging.
+ * Useful for adding logging hooks
+ */
+export interface UserCallbacks {
+  onSendMessage?: (readableMessage: Object) => void;
+  onReceiveMessage?: (readableMessage: Object) => void;
 }
 
-export function upgrade(baseElement: Element, authorURL: string, workerDOMUrl: string): void {
-  install(baseElement as HTMLElement, authorURL, workerDOMUrl);
+/**
+ * System-level callbacks for worker messaging.
+ */
+export interface WorkerCallbacks {
+  onSendMessage?: (message: MessageToWorker) => void;
+  onReceiveMessage?: (message: MessageFromWorker) => void;
 }
