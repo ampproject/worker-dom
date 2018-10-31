@@ -31,10 +31,6 @@ export function get(index: number): string {
  * @param value string to store
  * @return location in map
  */
-export function store(value: string): number {
-  // When the main thread is in mutation phase, all additions to the store
-  // are directed by the background thread. This other thread is responsible for
-  // the size and shape of the map.
+export function store(value: string): void {
   strings.set(++count, value);
-  return count;
 }
