@@ -15,15 +15,15 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement';
 import { Text } from '../../worker-thread/dom/Text';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLAnchorElement(NodeType.ELEMENT_NODE, 'a', null),
-    child: new HTMLElement(NodeType.ELEMENT_NODE, 'p', null),
+    element: new HTMLAnchorElement(NodeType.ELEMENT_NODE, 'a', HTML_NAMESPACE),
+    child: new HTMLElement(NodeType.ELEMENT_NODE, 'p', HTML_NAMESPACE),
     text: new Text('default text'),
   };
 });

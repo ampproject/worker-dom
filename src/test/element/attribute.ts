@@ -15,16 +15,16 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
 import { Attr } from '../../worker-thread/dom/Attr';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    attr: { namespaceURI: null, name: 'name', value: 'value' } as Attr,
-    attrOveride: { namespaceURI: null, name: 'name', value: 'value-overide' } as Attr,
-    attrTwo: { namespaceURI: null, name: 'name-two', value: 'value-two' } as Attr,
+    node: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
+    attr: { namespaceURI: HTML_NAMESPACE, name: 'name', value: 'value' } as Attr,
+    attrOveride: { namespaceURI: HTML_NAMESPACE, name: 'name', value: 'value-overide' } as Attr,
+    attrTwo: { namespaceURI: HTML_NAMESPACE, name: 'name-two', value: 'value-two' } as Attr,
   };
 });
 

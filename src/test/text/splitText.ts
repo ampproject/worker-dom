@@ -17,13 +17,13 @@
 import test from 'ava';
 import { Text } from '../../worker-thread/dom/Text';
 import { Element } from '../../worker-thread/dom/Element';
-import { NodeType } from '../../worker-thread/dom/Node';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
     text: new Text('default value'),
-    element: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    paragraph: new Element(NodeType.ELEMENT_NODE, 'p', null),
+    element: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
+    paragraph: new Element(NodeType.ELEMENT_NODE, 'p', HTML_NAMESPACE),
   };
 });
 

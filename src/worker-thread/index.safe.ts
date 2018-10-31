@@ -45,6 +45,7 @@ import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { createDocument } from './dom/Document';
 import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { appendKeys } from './css/CSSStyleDeclaration';
+import { consumeInitialDOM } from './initialize';
 
 const WHITELISTED_GLOBALS = [
   'Array',
@@ -134,6 +135,7 @@ export const workerDOM: WorkerDOMGlobalScope = {
   location: {},
   url: '/',
   appendKeys,
+  consumeInitialDOM,
   HTMLAnchorElement: HTMLAnchorElement,
   HTMLButtonElement: HTMLButtonElement,
   HTMLDataElement: HTMLDataElement,

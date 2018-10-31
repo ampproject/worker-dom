@@ -14,32 +14,17 @@
  * limitations under the License.
  */
 
-import { store as storeNodeMapping } from '../NodeMapping';
+import { store as storeNodeMapping } from '../nodes';
 import { Event, EventHandler } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferredNode, TransferrableNode, HydrateableNode } from '../../transfer/TransferrableNodes';
+import { TransferredNode, TransferrableNode, HydrateableNode, NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { store as storeString } from '../StringMapping';
+import { store as storeString } from '../strings';
 
-export const enum NodeType {
-  ELEMENT_NODE = 1,
-  ATTRIBUTE_NODE = 2,
-  TEXT_NODE = 3,
-  CDATA_SECTION_NODE = 4,
-  ENTITY_REFERENCE_NODE = 5,
-  ENTITY_NODE = 6,
-  PROCESSING_INSTRUCTION_NODE = 7,
-  COMMENT_NODE = 8,
-  DOCUMENT_NODE = 9,
-  DOCUMENT_TYPE_NODE = 10,
-  DOCUMENT_FRAGMENT_NODE = 11,
-  // Note: DOCUMENT_FRAGMENT_NODE is not supported in this implementation yet.
-  NOTATION_NODE = 12,
-}
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
-export type NamespaceURI = string | null;
+export type NamespaceURI = string;
 
 export let globalDocument: Node | null = null;
 

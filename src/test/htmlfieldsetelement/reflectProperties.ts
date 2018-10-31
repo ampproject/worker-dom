@@ -16,12 +16,12 @@
 
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLFieldSetElement } from '../../worker-thread/dom/HTMLFieldSetElement';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', null),
+    element: new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', HTML_NAMESPACE),
   };
 });
 

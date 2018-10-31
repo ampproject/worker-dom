@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { hydrate } from './hydrator';
 import { prepareMutate, mutate } from './mutator';
 import { createWorker } from './worker';
-import { MessageFromWorker, MessageType, HydrationFromWorker, MutationFromWorker } from '../transfer/Messages';
+import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { WorkerCallbacks } from './callbacks';
+
+const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
 export function install(
   baseElement: HTMLElement,
@@ -29,36 +30,29 @@ export function install(
   workerCallbacks?: WorkerCallbacks,
   sanitizer?: Sanitizer,
 ): void {
-  createWorker(workerDOMUrl, authorURL, workerCallbacks).then(worker => {
+  prepareNodes(baseElement);
+
+  createWorker(baseElement, workerDOMUrl, authorURL, workerCallbacks).then(worker => {
     if (worker === null) {
       return;
     }
 
-    prepareNodes(baseElement);
     prepareMutate(worker);
 
     worker.onmessage = (message: MessageFromWorker) => {
       const { data } = message;
 
-      switch (data[TransferrableKeys.type]) {
-        case MessageType.HYDRATE:
-          hydrate(
-            (data as HydrationFromWorker)[TransferrableKeys.nodes],
-            (data as HydrationFromWorker)[TransferrableKeys.strings],
-            (data as HydrationFromWorker)[TransferrableKeys.addedEvents],
-            baseElement,
-            worker,
-          );
-          break;
-        case MessageType.MUTATE:
-          mutate(
-            (data as MutationFromWorker)[TransferrableKeys.nodes],
-            (data as MutationFromWorker)[TransferrableKeys.strings],
-            (data as MutationFromWorker)[TransferrableKeys.mutations],
-            sanitizer,
-          );
-          break;
+      if (!ALLOWABLE_MESSAGE_TYPES.includes(data[TransferrableKeys.type])) {
+        return;
       }
+      // TODO(KB): Hydration has special rules limiting the types of allowed mutations.
+      // Re-introduce Hydration and add a specialized handler.
+      mutate(
+        (data as MutationFromWorker)[TransferrableKeys.nodes],
+        (data as MutationFromWorker)[TransferrableKeys.strings],
+        (data as MutationFromWorker)[TransferrableKeys.mutations],
+        sanitizer,
+      );
 
       // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
       if (workerCallbacks && workerCallbacks.onReceiveMessage) {

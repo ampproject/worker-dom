@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { HTMLQuoteElement } from '../../worker-thread/dom/HTMLQuoteElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { HTMLElement } from './dom/HTMLElement';
+import { SVGElement } from './dom/SVGElement';
+import { Text } from './dom/Text';
+import { Comment } from './dom/Comment';
 
-test.beforeEach(t => {
-  t.context = {
-    element: new HTMLQuoteElement(NodeType.ELEMENT_NODE, 'blockquote', HTML_NAMESPACE),
-  };
-});
-
-testReflectedProperties([{ cite: [''] }]);
+type RenderableElement = HTMLElement | SVGElement | Text | Comment;

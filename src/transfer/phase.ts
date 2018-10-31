@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { HTMLQuoteElement } from '../../worker-thread/dom/HTMLQuoteElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+export const enum Phases {
+  Initializing = 0,
+  Hydrating = 1,
+  Mutating = 2,
+}
 
-test.beforeEach(t => {
-  t.context = {
-    element: new HTMLQuoteElement(NodeType.ELEMENT_NODE, 'blockquote', HTML_NAMESPACE),
-  };
-});
-
-testReflectedProperties([{ cite: [''] }]);
+export let phase: Phases = Phases.Initializing;
+export const set = (newPhase: Phases) => (phase = newPhase);

@@ -15,7 +15,7 @@
  */
 
 import { MessageToWorker, MessageType, ValueSyncToWorker } from './Messages';
-import { get } from '../worker-thread/NodeMapping';
+import { get } from '../worker-thread/nodes';
 import { TransferrableKeys } from './TransferrableKeys';
 
 export interface TransferrableSyncValue {

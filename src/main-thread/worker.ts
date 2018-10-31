@@ -15,6 +15,8 @@
  */
 
 import { MessageToWorker } from '../transfer/Messages';
+import { set as setPhase, Phases } from '../transfer/phase';
+import { createHydrateableNode, initialStrings } from './serialize';
 import { WorkerCallbacks } from './callbacks';
 
 /**
@@ -23,15 +25,14 @@ import { WorkerCallbacks } from './callbacks';
  */
 let callbacks_: WorkerCallbacks | undefined;
 
-/**
- * TODO(KB): Fetch Polyfill for IE11.
- * @param workerDomURL
- * @param authorScriptURL
- * @param callbacks
- */
-export function createWorker(workerDomURL: string, authorScriptURL: string, callbacks?: WorkerCallbacks): Promise<Worker | null> {
+// TODO(KB): Fetch Polyfill for IE11.
+export function createWorker(
+  baseElement: HTMLElement,
+  workerDomURL: string,
+  authorScriptURL: string,
+  callbacks?: WorkerCallbacks,
+): Promise<Worker | null> {
   callbacks_ = callbacks;
-
   return Promise.all([fetch(workerDomURL).then(response => response.text()), fetch(authorScriptURL).then(response => response.text())])
     .then(([workerScript, authorScript]) => {
       // TODO(KB): Minify this output during build process.
@@ -39,6 +40,7 @@ export function createWorker(workerDomURL: string, authorScriptURL: string, call
       for (let key in document.body.style) {
         keys.push(`'${key}'`);
       }
+      const hydratedNode = createHydrateableNode(baseElement);
       const code = `
         'use strict';
         ${workerScript}
@@ -63,10 +65,13 @@ export function createWorker(workerDomURL: string, authorScriptURL: string, call
           function removeEventListener(type, handler) {
             return document.removeEventListener(type, handler);
           }
+          this.consumeInitialDOM(document, [${initialStrings.map(string => `'${string}'`).join(',')}], ${JSON.stringify(hydratedNode)});
           this.appendKeys([${keys}]);
+          document.observe();
           ${authorScript}
         }).call(WorkerThread.workerDOM);
 //# sourceURL=${encodeURI(authorScriptURL)}`;
+      setPhase(Phases.Hydrating);
       return new Worker(URL.createObjectURL(new Blob([code])));
     })
     .catch(error => {

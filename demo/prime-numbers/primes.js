@@ -15,7 +15,6 @@
  */
 
 const sieveOfEratosthenes = (limit) => {
-
   const sieve = [];
   const primes = [];
   let k;
@@ -35,20 +34,18 @@ const sieveOfEratosthenes = (limit) => {
     }
   }
 
-  sieve.forEach(function (value, key) {
+  sieve.forEach(function(value, key) {
     if (value) {
       this.push(key);
     }
   }, primes);
 
   return new Set(primes);
-
 }
 
 let startNumber = 1;
 
 function generatePrimes() {
-
   while (document.body.firstChild) {
     document.body.removeChild(document.body.firstChild);
   }
@@ -77,7 +74,7 @@ function generatePrimes() {
 
 }
 
-setTimeout(generatePrimes, 0); // TODO: Why does this need to be in a timeout to work?
+generatePrimes();
 document.body.addEventListener('click', generatePrimes);
 
 

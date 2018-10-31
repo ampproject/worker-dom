@@ -23,31 +23,13 @@
  */
 
 import { getNode } from './nodes';
-import { getString } from './strings';
-import { TransferrableNode, TransferredNode, HydrateableNode } from '../transfer/TransferrableNodes';
-import {
-  EventToWorker,
-  HydrationFromWorker,
-  MessageFromWorker,
-  MessageType,
-  MutationFromWorker,
-  MessageToWorker,
-  ValueSyncToWorker,
-} from '../transfer/Messages';
-import { TransferrableEvent, TransferrableEventSubscriptionChange } from '../transfer/TransferrableEvent';
+import { get as getString } from './strings';
+import { TransferredNode } from '../transfer/TransferrableNodes';
+import { EventToWorker, MessageFromWorker, MessageType, MessageToWorker, ValueSyncToWorker } from '../transfer/Messages';
+import { TransferrableEvent } from '../transfer/TransferrableEvent';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
-
-/**
- * Incomplete reverse mapping of src/worker-thread/dom/Node.NodeType enum.
- */
-const NODE_TYPE_REVERSE_MAPPING: any = {
-  '1': 'ELEMENT',
-  '3': 'TEXT',
-  '8': 'COMMENT',
-  '9': 'DOCUMENT',
-};
 
 /**
  * Reverse mapping of src/worker-thread/MutationRecord.MutationRecord enum.
@@ -65,19 +47,11 @@ const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
  */
 export function readableMessageFromWorker(message: MessageFromWorker): Object {
   const { data } = message;
-  if (isHydration(data)) {
-    const nodes = data[TransferrableKeys.nodes];
-    const addEvents = data[TransferrableKeys.addedEvents];
-    return {
-      type: 'HYDRATE',
-      nodes: readableHydratableNode(nodes),
-      addEvents: addEvents.map(e => readableTransferrableEventSubscriptionChange(e)),
-      // Omit 'strings' key.
-    };
-  } else if (isMutation(data)) {
+
+  if (data[TransferrableKeys.type] === MessageType.MUTATE || data[TransferrableKeys.type] === MessageType.HYDRATE) {
     const mutations = data[TransferrableKeys.mutations];
     const mutate: any = {
-      type: 'MUTATE',
+      type: data[TransferrableKeys.type] === MessageType.MUTATE ? 'MUTATE' : 'HYDRATE',
       mutations: mutations.map(n => readableTransferrableMutationRecord(n)),
       // Omit 'strings' key.
     };
@@ -88,87 +62,6 @@ export function readableMessageFromWorker(message: MessageFromWorker): Object {
   } else {
     return 'Unrecognized MessageFromWorker type: ' + data[TransferrableKeys.type];
   }
-}
-
-/**
- * @param node
- */
-function readableHydratableNode(node: HydrateableNode): Object {
-  const out: any = readableTransferrableNode(node);
-
-  const attributes = node[TransferrableKeys.attributes];
-  if (attributes !== undefined) {
-    out['attributes'] = attributes.map(a => {
-      return {
-        namespaceURI: a[0],
-        name: a[1],
-        value: a[2],
-      };
-    });
-  }
-  const childNodes = node[TransferrableKeys.childNodes];
-  if (childNodes !== undefined) {
-    out['childNodes'] = childNodes.map(n => readableHydratableNode(n));
-  }
-  return out;
-}
-
-/**
- * @param e
- */
-function readableTransferrableEventSubscriptionChange(e: TransferrableEventSubscriptionChange): Object {
-  const type = e[TransferrableKeys.type];
-  const index = e[TransferrableKeys._index_];
-  return {
-    type: getString(type) || type,
-    node: getNode(index) || index,
-  };
-}
-
-/**
- * @param node
- */
-function readableTransferrableNode(node: TransferrableNode): Object {
-  const index = node[TransferrableKeys._index_];
-  const out: any = {
-    transferred: node[TransferrableKeys.transferred],
-  };
-  const realNode = getNode(index);
-  if (realNode) {
-    out['node'] = realNode;
-  } else {
-    // TODO(choumx): Remove this branch if it's not useful in practice.
-    const nodeType = node[TransferrableKeys.nodeType];
-    Object.assign(out, {
-      nodeType: NODE_TYPE_REVERSE_MAPPING[nodeType] || nodeType,
-      nodeName: getString(node[TransferrableKeys.nodeName]),
-      _index_: node[TransferrableKeys._index_],
-    });
-  }
-
-  const textContent = node[TransferrableKeys.textContent];
-  if (textContent !== undefined) {
-    out['textContent'] = textContent;
-  }
-  const namespaceURI = node[TransferrableKeys.namespaceURI];
-  if (namespaceURI) {
-    out['namespaceURI'] = TransferrableKeys.namespaceURI;
-  }
-  return out;
-}
-
-/**
- * @param data
- */
-function isHydration(data: MutationFromWorker | HydrationFromWorker): data is HydrationFromWorker {
-  return data[TransferrableKeys.type] == MessageType.HYDRATE;
-}
-
-/**
- * @param data
- */
-function isMutation(data: MutationFromWorker | HydrationFromWorker): data is MutationFromWorker {
-  return data[TransferrableKeys.type] == MessageType.MUTATE;
 }
 
 /**

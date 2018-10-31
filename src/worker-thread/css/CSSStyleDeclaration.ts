@@ -170,7 +170,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
    * @private
    */
   private mutationCompleteHandler_(value: string): void {
-    const oldValue = this.storeAttributeMethod_(null, 'style', value);
+    const oldValue = this.storeAttributeMethod_(this.element_.namespaceURI, 'style', value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this.element_,

@@ -17,6 +17,7 @@
 import test from 'ava';
 import { documentForTesting as document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
+import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.cb.serial('Element.removeAttribute mutation observed', t => {
   const el = document.createElement('div');
@@ -26,7 +27,7 @@ test.cb.serial('Element.removeAttribute mutation observed', t => {
         {
           type: MutationRecordType.ATTRIBUTES,
           attributeName: 'data-foo',
-          attributeNamespace: null,
+          attributeNamespace: HTML_NAMESPACE,
           target: el,
           oldValue: 'bar',
         },

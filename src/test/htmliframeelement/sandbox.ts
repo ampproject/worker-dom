@@ -15,12 +15,12 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLIFrameElement } from '../../worker-thread/dom/HTMLIFrameElement';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLIFrameElement(NodeType.ELEMENT_NODE, 'iframe', null),
+    element: new HTMLIFrameElement(NodeType.ELEMENT_NODE, 'iframe', HTML_NAMESPACE),
   };
 });
 
