@@ -54,4 +54,4 @@ export interface ValueSyncToWorker {
   [TransferrableKeys.type]: MessageType.SYNC;
   [TransferrableKeys.sync]: TransferrableSyncValue;
 }
-export type MessageToWorker = HydrationToWorker | EventToWorker | ValueSyncToWorker;
+export type MessageToWorker = EventToWorker | ValueSyncToWorker;
