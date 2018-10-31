@@ -89,18 +89,18 @@ export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): 
 /**
  * Returns the real DOM Element corresponding to a serialized Element object.
  * @param id
- * @return Node
+ * @return RenderableElement
  */
-export function getNode(id: number): Node {
+export function getNode(id: number): RenderableElement {
   const node = NODES.get(id);
 
   if (node && node.nodeName === 'BODY') {
     // If the node requested is the "BODY"
     // Then we return the base node this specific <amp-script> comes from.
     // This encapsulates each <amp-script> node.
-    return BASE_ELEMENT;
+    return BASE_ELEMENT as RenderableElement;
   }
-  return node as Node;
+  return node as RenderableElement;
 }
 
 /**
