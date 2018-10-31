@@ -34,12 +34,10 @@ export function create(document: Document, strings: Array<string>, skeleton: Hyd
   switch (skeleton[TransferrableKeys.nodeType]) {
     case NodeType.TEXT_NODE:
       const text = document.createTextNode(strings[skeleton[TransferrableKeys.textContent] as number]);
-      console.log('append text', strings[skeleton[TransferrableKeys.textContent] as number]);
       storeNode(text);
       return text;
     case NodeType.COMMENT_NODE:
       const comment = document.createComment(strings[skeleton[TransferrableKeys.textContent] as number]);
-      console.log('append comment', strings[skeleton[TransferrableKeys.textContent] as number]);
       storeNode(comment);
       return comment;
     default:
