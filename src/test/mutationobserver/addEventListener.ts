@@ -19,7 +19,7 @@ import { documentForTesting as document } from '../../worker-thread/dom/Document
 import { Element } from '../../worker-thread/dom/Element';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { get } from '../../worker-thread/StringMapping';
+import { get } from '../../worker-thread/strings';
 
 test.beforeEach(t => {
   t.context = {

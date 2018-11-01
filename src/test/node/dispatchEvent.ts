@@ -15,12 +15,12 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { Event } from '../../worker-thread/Event';
 import { Element } from '../../worker-thread/dom/Element';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
-  const node = new Element(NodeType.ELEMENT_NODE, 'div', null);
+  const node = new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE);
   const event = new Event('click', {});
   event.target = node;
 

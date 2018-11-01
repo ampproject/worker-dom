@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-const div = document.createElement('div');
-const text = document.createTextNode('Hello World!');
-const span = document.createElement('span');
-const spanText = document.createTextNode('spaner');
-const input = document.createElement('input');
+const span = document.querySelector('span');
+const div = document.querySelector('div');
+const input = document.querySelector('input');
 
 input.value = '';
-
-div.appendChild(text);
-span.appendChild(spanText);
-div.appendChild(span);
-div.appendChild(input);
-document.body.appendChild(div);
 
 function toggle() {
   span.classList.toggle('clicked');

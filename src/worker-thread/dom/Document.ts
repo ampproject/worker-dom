@@ -46,7 +46,7 @@ import './HTMLTableSectionElement';
 import './HTMLTimeElement';
 import { matchChildElement } from './matchElements';
 import { SVGElement } from './SVGElement';
-import { Node, NodeType, NamespaceURI } from './Node';
+import { Node, NamespaceURI } from './Node';
 import { Event } from '../Event';
 import { Text } from './Text';
 import { Comment } from './Comment';
@@ -54,6 +54,7 @@ import { MutationObserver } from '../MutationObserver';
 import { observe as observeMutations } from '../../transfer/DocumentMutations';
 import { propagate as propagateEvents } from '../../transfer/TransferrableEvent';
 import { propagate as propagateSyncValues } from '../../transfer/TransferrableSyncValue';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 export class Document extends Element {
   public defaultView: {
@@ -74,13 +75,18 @@ export class Document extends Element {
   public body: Element;
 
   constructor() {
-    super(NodeType.DOCUMENT_NODE, '#document', null);
+    super(NodeType.DOCUMENT_NODE, '#document', HTML_NAMESPACE);
     this.documentElement = this;
-    this.createElement = (tagName: string): Element => this.createElementNS(null, tagName);
+    this.createElement = (tagName: string): Element => this.createElementNS(HTML_NAMESPACE, tagName);
     this.createElementNS = (namespaceURI: NamespaceURI, tagName: string): Element =>
       new (NODE_NAME_MAPPING[tagName] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
     this.createTextNode = (text: string): Text => new Text(text);
     this.createComment = (text: string): Comment => new Comment(text);
+    this.observe = (): void => {
+      observeMutations(this, this.postMessageMethod);
+      propagateEvents();
+      propagateSyncValues();
+    };
     this.defaultView = {
       document: this,
       MutationObserver,
@@ -108,19 +114,10 @@ export class Document extends Element {
  * @param postMessageMethod
  */
 export function createDocument(postMessageMethod?: Function): Document {
-  // Use local references of privileged functions that are used asynchronously
-  // (e.g. `postMessage`) to prevent overwriting by 3P JS.
-  const _postMessage = postMessageMethod;
-
   const doc = new Document();
+  doc.postMessageMethod = postMessageMethod;
   doc.isConnected = true;
   doc.appendChild((doc.body = doc.createElement('body')));
-
-  if (_postMessage) {
-    observeMutations(doc, _postMessage);
-    propagateEvents();
-    propagateSyncValues();
-  }
 
   return doc;
 }

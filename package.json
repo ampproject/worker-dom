@@ -1,6 +1,6 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.1.7",
+  "version": "0.2.1",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/index",
   "module": "dist/index.mjs",
@@ -52,7 +52,7 @@
     "cross-env": "5.2.0",
     "esm": "3.0.84",
     "husky": "1.1.2",
-    "lint-staged": "7.3.0",
+    "lint-staged": "8.0.4",
     "magic-string": "0.25.1",
     "npm-run-all": "4.1.3",
     "polka": "0.5.1",
@@ -63,7 +63,7 @@
     "rollup-plugin-node-resolve": "3.4.0",
     "serve-static": "1.13.2",
     "tslint": "5.11.0",
-    "typescript": "3.1.3"
+    "typescript": "3.1.5"
   },
   "lint-staged": {
     "*.ts": [
@@ -96,7 +96,7 @@
     {
       "path": "./dist/index.safe.mjs",
       "compression": "brotli",
-      "maxSize": "7 kB"
+      "maxSize": "8 kB"
     }
   ],
   "esm": {

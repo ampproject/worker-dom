@@ -16,12 +16,12 @@
 
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLModElement } from '../../worker-thread/dom/HTMLModElement';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLModElement(NodeType.ELEMENT_NODE, 'del', null),
+    element: new HTMLModElement(NodeType.ELEMENT_NODE, 'del', HTML_NAMESPACE),
   };
 });
 

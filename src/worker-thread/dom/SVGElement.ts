@@ -15,6 +15,13 @@
  */
 
 import { Element, registerSubclass } from './Element';
+import { SVG_NAMESPACE, NodeType } from '../../transfer/TransferrableNodes';
+import { NodeName } from './Node';
 
-export class SVGElement extends Element {}
+export class SVGElement extends Element {
+  constructor(nodeType: NodeType, nodeName: NodeName) {
+    super(nodeType, nodeName, SVG_NAMESPACE);
+    this.localName = nodeName;
+  }
+}
 registerSubclass('svg', SVGElement);

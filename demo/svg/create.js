@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-const btn = document.createElement('button');
-btn.textContent = 'Add SVG';
+const btn = document.querySelector('button');
 
 btn.addEventListener('click', () => {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -28,6 +27,3 @@ btn.addEventListener('click', () => {
   svg.appendChild(path);
   document.body.appendChild(svg);
 });
-
-document.body.appendChild(btn);
-

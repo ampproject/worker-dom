@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { Node, NodeName, NodeType } from './Node';
+import { Node, NodeName } from './Node';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
+import { NodeType } from '../../transfer/TransferrableNodes';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 export abstract class CharacterData extends Node {

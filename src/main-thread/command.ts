@@ -16,12 +16,11 @@
 
 import { MessageType } from '../transfer/Messages';
 import { messageToWorker } from './worker';
-import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { getNode } from './nodes';
-import { getString } from './strings';
+import { get as getString } from './strings';
 
 const KNOWN_LISTENERS: Array<(event: Event) => any> = [];
 

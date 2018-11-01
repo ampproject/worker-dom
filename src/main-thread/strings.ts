@@ -15,21 +15,22 @@
  */
 
 let count: number = 0;
-const STRINGS: Map<number, string> = new Map();
+const strings: Map<number, string> = new Map();
 
 /**
  * Return a string for the specified index.
  * @param index string index to retrieve.
  * @returns string in map for the index.
  */
-export function getString(index: number): string {
-  return STRINGS.get(index) || '';
+export function get(index: number): string {
+  return strings.get(index) || '';
 }
 
 /**
- * Stores a string for parsing from mutation
- * @param value string to store from background thread.
+ * Stores a string in mapping and returns the index of the location.
+ * @param value string to store
+ * @return location in map
  */
-export function storeString(value: string): void {
-  STRINGS.set(++count, value);
+export function store(value: string): void {
+  strings.set(++count, value);
 }

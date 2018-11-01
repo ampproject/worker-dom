@@ -16,17 +16,16 @@
 
 import test from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
-import { NodeType } from '../../worker-thread/dom/Node';
-import { HydrateableNode } from '../../transfer/TransferrableNodes';
+import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { get } from '../../worker-thread/StringMapping';
+import { get } from '../../worker-thread/strings';
 
 const RANDOM_TEXT_CONTENT = `TEXT_CONTENT-${Math.random()}`;
 const DIV_ID = 'DIV_ID';
 const DIV_CLASS = 'DIV_CLASS';
 
 test.beforeEach(t => {
-  const div = new Element(NodeType.ELEMENT_NODE, 'div', null);
+  const div = new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE);
   div.setAttribute('id', DIV_ID);
   div.setAttribute('class', DIV_CLASS);
   div.textContent = RANDOM_TEXT_CONTENT;
@@ -57,8 +56,8 @@ test('Element should serialize namespace', t => {
 });
 
 test('Element should serialize child node as well', t => {
-  const div = new Element(NodeType.ELEMENT_NODE, 'div', null);
-  const childDiv = new Element(NodeType.ELEMENT_NODE, 'div', null);
+  const div = new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE);
+  const childDiv = new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE);
   div.appendChild(childDiv);
   const serializedDiv = div.hydrate() as HydrateableNode;
   const childNodes = serializedDiv[TransferrableKeys.childNodes] || [];

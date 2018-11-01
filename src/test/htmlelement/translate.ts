@@ -15,12 +15,12 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLElement(NodeType.ELEMENT_NODE, 'div', null),
+    element: new HTMLElement(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
   };
 });
 

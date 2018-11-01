@@ -15,15 +15,15 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 import { Element } from '../../worker-thread/dom/Element';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLElement(NodeType.ELEMENT_NODE, 'label', null),
-    form: new Element(NodeType.ELEMENT_NODE, 'form', null),
-    intermediary: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    element: new HTMLElement(NodeType.ELEMENT_NODE, 'label', HTML_NAMESPACE),
+    form: new Element(NodeType.ELEMENT_NODE, 'form', HTML_NAMESPACE),
+    intermediary: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
   };
 });
 
@@ -50,7 +50,7 @@ test('form should return only form parent when deeply nested', t => {
 
 test('form should return closest form to the fieldset element', t => {
   const { element, form, intermediary } = t.context as { element: HTMLElement; form: Element; intermediary: Element };
-  const secondForm = new Element(NodeType.ELEMENT_NODE, 'form', null);
+  const secondForm = new Element(NodeType.ELEMENT_NODE, 'form', HTML_NAMESPACE);
 
   secondForm.appendChild(form);
   form.appendChild(intermediary);

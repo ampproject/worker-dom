@@ -16,12 +16,12 @@
 
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLSourceElement } from '../../worker-thread/dom/HTMLSourceElement';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLSourceElement(NodeType.ELEMENT_NODE, 'source', null),
+    element: new HTMLSourceElement(NodeType.ELEMENT_NODE, 'source', HTML_NAMESPACE),
   };
 });
 

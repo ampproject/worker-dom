@@ -44,6 +44,7 @@ import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { Document } from './dom/Document';
 import { EventHandler } from './Event';
+import { HydrateableNode } from '../transfer/TransferrableNodes';
 
 export interface WorkerDOMGlobalScope {
   document: Document;
@@ -53,6 +54,7 @@ export interface WorkerDOMGlobalScope {
   location: object;
   url: string;
   appendKeys: (keys: Array<string>) => void;
+  consumeInitialDOM: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode) => void;
   HTMLAnchorElement: typeof HTMLAnchorElement;
   HTMLButtonElement: typeof HTMLButtonElement;
   HTMLDataElement: typeof HTMLDataElement;

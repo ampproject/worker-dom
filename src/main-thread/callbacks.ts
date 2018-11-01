@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { HTMLQuoteElement } from '../../worker-thread/dom/HTMLQuoteElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
 
-test.beforeEach(t => {
-  t.context = {
-    element: new HTMLQuoteElement(NodeType.ELEMENT_NODE, 'blockquote', HTML_NAMESPACE),
-  };
-});
+/**
+ * User-configurable callbacks for worker-dom events e.g. worker messaging.
+ * Useful for adding logging hooks
+ */
+export interface UserCallbacks {
+  onSendMessage?: (readableMessage: Object) => void;
+  onReceiveMessage?: (readableMessage: Object) => void;
+}
 
-testReflectedProperties([{ cite: [''] }]);
+/**
+ * System-level callbacks for worker messaging.
+ */
+export interface WorkerCallbacks {
+  onSendMessage?: (message: MessageToWorker) => void;
+  onReceiveMessage?: (message: MessageFromWorker) => void;
+}

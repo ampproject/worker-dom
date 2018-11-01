@@ -17,7 +17,8 @@
 import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
-import { NodeType, NodeName, NamespaceURI } from './Node';
+import { NodeName, NamespaceURI } from './Node';
+import { NodeType } from '../../transfer/TransferrableNodes';
 
 export class HTMLOptionElement extends HTMLElement {
   private isSelected: boolean = false;

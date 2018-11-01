@@ -15,18 +15,18 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
 import { HTMLDataListElement } from '../../worker-thread/dom/HTMLDataListElement';
 import { Text } from '../../worker-thread/dom/Text';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    node: new HTMLDataListElement(NodeType.ELEMENT_NODE, 'datalist', null),
-    option: new Element(NodeType.ELEMENT_NODE, 'option', null),
-    optionTwo: new Element(NodeType.ELEMENT_NODE, 'option', null),
+    node: new HTMLDataListElement(NodeType.ELEMENT_NODE, 'datalist', HTML_NAMESPACE),
+    option: new Element(NodeType.ELEMENT_NODE, 'option', HTML_NAMESPACE),
+    optionTwo: new Element(NodeType.ELEMENT_NODE, 'option', HTML_NAMESPACE),
     text: new Text(''),
-    invalidElement: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    invalidElement: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
   };
 });
 

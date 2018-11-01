@@ -15,12 +15,12 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 test.beforeEach(t => {
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    node: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
     callback: () => undefined,
     callbackTwo: () => false,
   };
