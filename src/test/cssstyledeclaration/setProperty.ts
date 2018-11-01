@@ -33,3 +33,12 @@ test('setting a value stores the value for a getter', t => {
   declaration.width = '10px';
   t.is(declaration.width, '10px');
 });
+
+test('setting a zero value stores the value for a getter', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node);
+
+  t.is(declaration.top, undefined);
+  appendKeys(['top']);
+  declaration.width = 0;
+  t.is(declaration.width, 0);
+});

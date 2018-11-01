@@ -105,7 +105,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
    * @return value stored for the provided key.
    */
   public getPropertyValue(key: string): string {
-    return this.properties_[key] || '';
+    return this.properties_[key] != null ? (this.properties_[key] as string) : '';
   }
 
   /**
