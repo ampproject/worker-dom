@@ -39,6 +39,6 @@ test('setting a zero value stores the value for a getter', t => {
 
   t.is(declaration.top, undefined);
   appendKeys(['top']);
-  declaration.width = 0;
-  t.is(declaration.width, 0);
+  declaration.top = 0;
+  t.is(declaration.top, 0);
 });
