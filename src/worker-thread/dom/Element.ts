@@ -461,60 +461,32 @@ const matchAttrReference = (attrSelector: string | null, element: Element): bool
   const equalPos: number = attrSelector.indexOf('=');
   const selectorLength: number = attrSelector.length;
   const caseInsensitive = attrSelector.charAt(selectorLength - 2) === 'i';
-  let endPos = selectorLength - 1;
-  if (caseInsensitive) {
-    endPos -= 2;
-  }
+  let endPos = caseInsensitive ? selectorLength - 3 : selectorLength - 1;
   if (equalPos !== -1) {
-    switch (attrSelector.charAt(equalPos - 1)) {
-      case '~': {
-        // TODO(nainar): This doesn't work - I suck at reading English. This also doesn't have tests.
-        // const attrString = attrSelector.substring(1, equalPos - 1);
-        // const value = attrSelector.substring(equalPos + 1, endPos);
-        // const attrValue = element.getAttribute(attrString);
-        // return (
-        //   !!attrValue &&
-        //   attrValue.indexOf(value) !== -1 &&
-        //   (attrValue.charAt(attrValue.indexOf(value) - 1) === ' ' || attrValue.indexOf(value) === 0) &&
-        //   (attrValue.charAt(attrValue.indexOf(value) + 1) === ' ' || attrValue.indexOf(value) === attrValue.length - 1)
-        // );
-      }
-      case '|': {
-        const attrString = attrSelector.substring(1, equalPos - 1);
-        const value = attrSelector.substring(equalPos + 1, endPos);
-        const attrValue = element.getAttribute(attrString);
-        return (
-          !!attrValue &&
-          (caseInsensitive
-            ? toLower(attrValue) === toLower(value) || toLower(attrValue) === `${toLower(value)}-`
-            : attrValue === value || attrValue === `${value}-`)
-        );
-      }
-      case '^': {
-        const attrString = attrSelector.substring(1, equalPos - 1);
-        const value = attrSelector.substring(equalPos + 1, endPos);
-        const attrValue = element.getAttribute(attrString);
-        return !!attrValue && (caseInsensitive ? toLower(attrValue).startsWith(toLower(value)) : attrValue.startsWith(value));
-      }
-      case '$': {
-        const attrString = attrSelector.substring(1, equalPos - 1);
-        const value = attrSelector.substring(equalPos + 1, endPos);
-        const attrValue = element.getAttribute(attrString);
-        return !!attrValue && (caseInsensitive ? toLower(attrValue).endsWith(toLower(value)) : attrValue.endsWith(value));
-      }
-      case '*': {
-        const attrString = attrSelector.substring(1, equalPos - 1);
-        const value = attrSelector.substring(equalPos + 1, endPos);
-        const attrValue = element.getAttribute(attrString);
-        return !!attrValue && (caseInsensitive ? toLower(attrValue).indexOf(toLower(value)) !== -1 : attrValue.indexOf(value) !== -1);
-      }
-      default: {
-        const attr = attrSelector.substring(1, equalPos);
-        const value = attrSelector.substring(equalPos + 1, endPos);
-        const attrValue = element.getAttribute(attr);
-        return !!attrValue && (caseInsensitive ? toLower(attrValue) === toLower(value) : attrValue === value);
+    const equalSuffix: string = attrSelector.charAt(equalPos - 1);
+    const possibleSuffixes: string[] = ['~', '|', '$', '^', '*'];
+    const attrString: string = possibleSuffixes.includes(equalSuffix) ? attrSelector.substring(1, equalPos - 1) : attrSelector.substring(1, equalPos);
+    const rawValue: string = attrSelector.substring(equalPos + 1, endPos);
+    const rawAttrValue: string | null = element.getAttribute(attrString);
+    if (rawAttrValue) {
+      const casedValue: string = caseInsensitive ? toLower(rawValue) : rawValue;
+      const casedAttrValue: string = caseInsensitive ? toLower(rawAttrValue) : rawAttrValue;
+      switch (equalSuffix) {
+        case '~':
+          return casedAttrValue.split(' ').indexOf(casedValue) !== -1;
+        case '|':
+          return casedAttrValue === casedValue || casedAttrValue === `${casedValue}-`;
+        case '^':
+          return casedAttrValue.startsWith(casedValue);
+        case '$':
+          return casedAttrValue.endsWith(casedValue);
+        case '*':
+          return casedAttrValue.indexOf(casedValue) !== -1;
+        default:
+          return casedAttrValue === casedValue;
       }
     }
+    return false;
   } else {
     return element.hasAttribute(attrSelector.substring(1, endPos));
   }
