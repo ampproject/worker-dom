@@ -27,7 +27,7 @@ import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { HydrateableNode } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../StringMapping';
-import { toLower } from '../../utils';
+import { containsIndexOf, toLower } from '../../utils';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -414,41 +414,36 @@ export class Element extends Node {
    * @return Element with matching selector.
    */
   public querySelectorAll(selector: string): Element[] | null {
-    let matches: Element[] | null = null;
-    //As per spec: https://dom.spec.whatwg.org/#scope-match-a-selectors-string
+    // As per spec: https://dom.spec.whatwg.org/#scope-match-a-selectors-string
     // First, parse the selector
-    const containsAttrReference = selector.indexOf('[') !== -1 && selector.indexOf(']') !== -1;
-    let elementSelector = selector;
-    let attrSelector: string | null = null;
-    if (containsAttrReference) {
-      elementSelector = selector.substring(0, selector.indexOf('['));
-      attrSelector = selector.substring(selector.indexOf('['), selector.indexOf(']') + 1);
-    }
-    //TODO(nainar): Parsing selectors is needed when we add in more complex selectors.
+    const selectorBracketIndexes = [selector.indexOf('['), selector.indexOf(']')];
+    const selectorHasAttr = containsIndexOf(selectorBracketIndexes[0]) && containsIndexOf(selectorBracketIndexes[1]);
+    const elementSelector = selectorHasAttr ? selector.substring(0, selectorBracketIndexes[0]) : selector;
+    const attrSelector = selectorHasAttr ? selector.substring(selectorBracketIndexes[0], selectorBracketIndexes[1] + 1) : null;
+
+    // TODO(nainar): Parsing selectors is needed when we add in more complex selectors.
     // Second, find all the matching elements on the Document
+    let matcher: (element: Element) => boolean;
     if (selector[0] === '[') {
-      matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
-        return matchAttrReference(selector, element);
-      });
+      matcher = element => matchAttrReference(selector, element);
     } else if (elementSelector[0] === '#') {
-      matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
-        return element.id === elementSelector.substr(1) && (containsAttrReference ? matchAttrReference(attrSelector, element) : true);
-      });
+      matcher = selectorHasAttr
+        ? element => element.id === elementSelector.substr(1) && matchAttrReference(attrSelector, element)
+        : element => element.id === elementSelector.substr(1);
     } else if (elementSelector[0] === '.') {
-      matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
-        return element.classList.contains(elementSelector.substr(1)) && (containsAttrReference ? matchAttrReference(attrSelector, element) : true);
-      });
+      matcher = selectorHasAttr
+        ? element => element.classList.contains(elementSelector.substr(1)) && matchAttrReference(attrSelector, element)
+        : element => element.classList.contains(elementSelector.substr(1));
     } else {
-      matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
-        return element.tagName === toLower(elementSelector) && (containsAttrReference ? matchAttrReference(attrSelector, element) : true);
-      });
+      matcher = selectorHasAttr
+        ? element => element.tagName === toLower(elementSelector) && matchAttrReference(attrSelector, element)
+        : element => element.tagName === toLower(elementSelector);
     }
+
     // Third, filter to return elements that exist within the querying element's descendants.
-    if (matches) {
-      return matches.filter(element => this.contains(element) && this !== element);
-    }
-    //TODO(nainar): More complex selectors
-    return [];
+    return matcher
+      ? matchChildrenElements(this.ownerDocument.documentElement, matcher).filter(element => this !== element && this.contains(element))
+      : [];
   }
 }
 reflectProperties([{ id: [''] }], Element);
