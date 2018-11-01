@@ -12,7 +12,11 @@
   <!-- <script src="/dist/index.js" defer></script> -->  
 </head>
 <body>
-  <div src="hello-world.js" id="upgrade-me"><div class="root"><button>Insert Hello World!</button></div></div>
+  <div src="hello-world.js" id="upgrade-me">
+    <div class="root">
+      <button>Insert Hello World!</button>
+    </div>
+  </div>
   <script type="module">
     import {upgradeElement} from '/dist/index.mjs';
     upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.mjs');

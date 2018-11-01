@@ -65,7 +65,7 @@ export function createWorker(
           function removeEventListener(type, handler) {
             return document.removeEventListener(type, handler);
           }
-          this.consumeInitialDOM(document, [${initialStrings.map(string => `'${string}'`).join(',')}], ${JSON.stringify(hydratedNode)});
+          this.consumeInitialDOM(document, ${JSON.stringify(initialStrings)}, ${JSON.stringify(hydratedNode)});
           this.appendKeys([${keys}]);
           document.observe();
           ${authorScript}
