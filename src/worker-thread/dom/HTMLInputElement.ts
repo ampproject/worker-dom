@@ -63,7 +63,7 @@ reflectProperties(
     { disabled: [false] },
     { autofocus: [false] },
     { required: [false] },
-    { defaultChecked: [false, 'checked'] },
+    { defaultChecked: [false, /* attr */ 'checked'] },
     { alt: [''] },
     { height: [0] },
     { src: [''] },

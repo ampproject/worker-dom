@@ -48,11 +48,11 @@ reflectProperties(
     { dir: [''] },
     { lang: [''] },
     { title: [''] },
-    { draggable: [false] },
-    { hidden: [false] },
-    { noModule: [false] },
-    { spellcheck: [true] },
-    { translate: [true] },
+    { draggable: [false, /* attr */ undefined, /* keywords */ ['true', 'false']] },
+    { hidden: [false, /* attr */ undefined] },
+    { noModule: [false] }, // TOOD: Why is this on HTMLElement and not HTMLScriptElement?
+    { spellcheck: [true, /* attr */ undefined, /* keywords */ ['true', 'false']] },
+    { translate: [true, /* attr */ undefined, /* keywords */ ['yes', 'no']] },
   ],
   HTMLElement,
 );
