@@ -16,6 +16,8 @@
 
 export const toLower = (string: string): string => string.toLowerCase();
 
+export const containsIndexOf = (pos: number): boolean => pos !== -1;
+
 export const keyValueString = (key: string, value: string): string => `${key}="${value}"`;
 
 export const enum NumericBoolean {

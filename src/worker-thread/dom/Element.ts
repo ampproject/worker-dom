@@ -27,7 +27,7 @@ import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
-import { toLower } from '../../utils';
+import { containsIndexOf, toLower } from '../../utils';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -422,26 +422,80 @@ export class Element extends Node {
    * @return Element with matching selector.
    */
   public querySelectorAll(selector: string): Element[] | null {
-    let matches: Element[] | null = null;
-    //As per spec: https://dom.spec.whatwg.org/#scope-match-a-selectors-string
+    // As per spec: https://dom.spec.whatwg.org/#scope-match-a-selectors-string
     // First, parse the selector
-    //TODO(nainar): Parsing selectors is needed when we add in more complex selectors.
+    const selectorBracketIndexes = [selector.indexOf('['), selector.indexOf(']')];
+    const selectorHasAttr = containsIndexOf(selectorBracketIndexes[0]) && containsIndexOf(selectorBracketIndexes[1]);
+    const elementSelector = selectorHasAttr ? selector.substring(0, selectorBracketIndexes[0]) : selector;
+    const attrSelector = selectorHasAttr ? selector.substring(selectorBracketIndexes[0], selectorBracketIndexes[1] + 1) : null;
+
+    // TODO(nainar): Parsing selectors is needed when we add in more complex selectors.
     // Second, find all the matching elements on the Document
-    if (selector[0] === '#') {
-      matches = matchChildrenElements(this.ownerDocument.documentElement, function(element: Element) {
-        return element.id === selector.substr(1);
-      });
-    } else if (selector[0] === '.') {
-      matches = this.ownerDocument.getElementsByClassName(selector.substr(1));
+    let matcher: (element: Element) => boolean;
+    if (selector[0] === '[') {
+      matcher = element => matchAttrReference(selector, element);
+    } else if (elementSelector[0] === '#') {
+      matcher = selectorHasAttr
+        ? element => element.id === elementSelector.substr(1) && matchAttrReference(attrSelector, element)
+        : element => element.id === elementSelector.substr(1);
+    } else if (elementSelector[0] === '.') {
+      matcher = selectorHasAttr
+        ? element => element.classList.contains(elementSelector.substr(1)) && matchAttrReference(attrSelector, element)
+        : element => element.classList.contains(elementSelector.substr(1));
     } else {
-      matches = this.ownerDocument.getElementsByTagName(toLower(selector));
+      matcher = selectorHasAttr
+        ? element => element.tagName === toLower(elementSelector) && matchAttrReference(attrSelector, element)
+        : element => element.tagName === toLower(elementSelector);
     }
+
     // Third, filter to return elements that exist within the querying element's descendants.
-    if (matches) {
-      return matches.filter(element => this.contains(element) && this !== element);
-    }
-    //TODO(nainar): More complex selectors
-    return [];
+    return matcher
+      ? matchChildrenElements(this.ownerDocument.documentElement, matcher).filter(element => this !== element && this.contains(element))
+      : [];
   }
 }
 reflectProperties([{ id: [''] }], Element);
+
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors
+ * @param attrSelector the selector we are trying to match for.
+ * @param element the element being tested.
+ * @return boolean for whether we match the condition
+ */
+const matchAttrReference = (attrSelector: string | null, element: Element): boolean => {
+  if (!attrSelector) {
+    return false;
+  }
+  const equalPos: number = attrSelector.indexOf('=');
+  const selectorLength: number = attrSelector.length;
+  const caseInsensitive = attrSelector.charAt(selectorLength - 2) === 'i';
+  let endPos = caseInsensitive ? selectorLength - 3 : selectorLength - 1;
+  if (equalPos !== -1) {
+    const equalSuffix: string = attrSelector.charAt(equalPos - 1);
+    const possibleSuffixes: string[] = ['~', '|', '$', '^', '*'];
+    const attrString: string = possibleSuffixes.includes(equalSuffix) ? attrSelector.substring(1, equalPos - 1) : attrSelector.substring(1, equalPos);
+    const rawValue: string = attrSelector.substring(equalPos + 1, endPos);
+    const rawAttrValue: string | null = element.getAttribute(attrString);
+    if (rawAttrValue) {
+      const casedValue: string = caseInsensitive ? toLower(rawValue) : rawValue;
+      const casedAttrValue: string = caseInsensitive ? toLower(rawAttrValue) : rawAttrValue;
+      switch (equalSuffix) {
+        case '~':
+          return casedAttrValue.split(' ').indexOf(casedValue) !== -1;
+        case '|':
+          return casedAttrValue === casedValue || casedAttrValue === `${casedValue}-`;
+        case '^':
+          return casedAttrValue.startsWith(casedValue);
+        case '$':
+          return casedAttrValue.endsWith(casedValue);
+        case '*':
+          return casedAttrValue.indexOf(casedValue) !== -1;
+        default:
+          return casedAttrValue === casedValue;
+      }
+    }
+    return false;
+  } else {
+    return element.hasAttribute(attrSelector.substring(1, endPos));
+  }
+};
