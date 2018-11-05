@@ -55,5 +55,3 @@ testReflectedProperties([
   { type: ['text'] },
   { width: [0] },
 ]);
-
-testReflectedProperties([{ checked: [false] }, { value: [''] }]);
