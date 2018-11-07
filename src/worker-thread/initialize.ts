@@ -25,6 +25,7 @@ import { SVGElement } from './dom/SVGElement';
 import { set as setPhase, Phases } from '../transfer/phase';
 
 export function consumeInitialDOM(document: Document, strings: Array<string>, hydrateableNode: HydrateableNode): void {
+  // TODO(choumx): Add debugging hook for this.
   strings.forEach(string => storeString(string));
   (hydrateableNode[TransferrableKeys.childNodes] || []).forEach(child => document.body.appendChild(create(document, strings, child)));
   setPhase(Phases.Hydrating);
