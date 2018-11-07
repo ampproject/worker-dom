@@ -78,8 +78,9 @@ export class Document extends Element {
     super(NodeType.DOCUMENT_NODE, '#document', HTML_NAMESPACE);
     this.documentElement = this;
     this.createElement = (tagName: string): Element => this.createElementNS(HTML_NAMESPACE, tagName);
+    // TODO: Add tests for case-sensitivity of NODE_NAME_MAPPING.
     this.createElementNS = (namespaceURI: NamespaceURI, tagName: string): Element =>
-      new (NODE_NAME_MAPPING[tagName] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
+      new (NODE_NAME_MAPPING[tagName.toLowerCase()] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
     this.createTextNode = (text: string): Text => new Text(text);
     this.createComment = (text: string): Comment => new Comment(text);
     this.observe = (): void => {
