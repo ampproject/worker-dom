@@ -51,10 +51,11 @@ import { Event } from '../Event';
 import { Text } from './Text';
 import { Comment } from './Comment';
 import { MutationObserver } from '../MutationObserver';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { observe as observeMutations } from '../../transfer/DocumentMutations';
 import { propagate as propagateEvents } from '../../transfer/TransferrableEvent';
 import { propagate as propagateSyncValues } from '../../transfer/TransferrableSyncValue';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { toLower } from '../../utils';
 
 export class Document extends Element {
   public defaultView: {
@@ -80,7 +81,7 @@ export class Document extends Element {
     this.createElement = (tagName: string): Element => this.createElementNS(HTML_NAMESPACE, tagName);
     // TODO: Add tests for case-sensitivity of NODE_NAME_MAPPING.
     this.createElementNS = (namespaceURI: NamespaceURI, tagName: string): Element =>
-      new (NODE_NAME_MAPPING[tagName.toLowerCase()] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
+      new (NODE_NAME_MAPPING[toLower(tagName)] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
     this.createTextNode = (text: string): Text => new Text(text);
     this.createComment = (text: string): Comment => new Comment(text);
     this.observe = (): void => {
