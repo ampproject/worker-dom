@@ -17,28 +17,66 @@
 import { Element } from './Element';
 import { toLower } from '../../utils';
 
+type PropertyValue = string | boolean | number;
+type AttributeName = string;
+type AttributeKeywords = [string, string];
+
 export interface PropertyPair {
-  [key: string]: [string | boolean | number, string] | [string | boolean | number];
+  [property: string]: {
+    // The default value for this property.
+    0: PropertyValue;
+    // Some properties correspond to an attribute with a different name, e.g. .className vs. 'class'.
+    1?: AttributeName;
+    // Enumerated attributes have keyword values, e.g. translate=yes|no.
+    // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#keywords-and-enumerated-attributes
+    2?: AttributeKeywords;
+  };
 }
+
+// TODO: Do all boolean attributes have boolean properties?
+// TODO: Do enumerated attributes with non-boolean properties exist?
+
 export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element): void => {
   properties.forEach(pair => {
-    for (let key in pair) {
-      const defaultValue = pair[key][0];
+    for (let property in pair) {
+      const p = pair[property];
+
+      const defaultValue = p[0];
+      const attributeName = p[1] || toLower(property);
+      const keywords = p[2];
+
       const propertyIsNumber = typeof defaultValue === 'number';
-      const propertyIsBoolean = typeof defaultValue === 'boolean';
-      const attributeKey = (pair[key][1] as string) || toLower(key);
-      Object.defineProperty(defineOn.prototype, key, {
+      // Boolean attributes only care about presence, not attribute value.
+      // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attributes
+      const isBooleanAttribute = typeof defaultValue === 'boolean';
+
+      Object.defineProperty(defineOn.prototype, property, {
         enumerable: true,
-        get(): string | boolean | number {
-          const storedAttribute = (this as Element).getAttribute(attributeKey);
-          if (propertyIsBoolean) {
-            return storedAttribute !== null ? storedAttribute === 'true' : defaultValue;
+        get(): PropertyValue {
+          const element = this as Element;
+          const attributeValue = (this as Element).getAttribute(attributeName);
+          if (keywords) {
+            if (element.hasAttribute(attributeName)) {
+              return attributeValue === keywords[0];
+            } else {
+              return defaultValue;
+            }
           }
-          const castableValue = storedAttribute || defaultValue;
+          if (isBooleanAttribute) {
+            return element.hasAttribute(attributeName);
+          }
+          const castableValue = attributeValue || defaultValue;
           return propertyIsNumber ? Number(castableValue) : String(castableValue);
         },
-        set(value: string | boolean | number) {
-          (this as Element).setAttribute(attributeKey, String(value));
+        set(value: PropertyValue) {
+          const element = this as Element;
+          if (keywords) {
+            element.setAttribute(attributeName, value ? keywords[0] : keywords[1]);
+          } else if (isBooleanAttribute) {
+            value ? element.setAttribute(attributeName, '') : element.removeAttribute(attributeName);
+          } else {
+            element.setAttribute(attributeName, String(value));
+          }
         },
       });
     }

@@ -63,11 +63,15 @@ const mutators: {
     const attributeName =
       mutation[TransferrableKeys.attributeName] !== undefined ? getString(mutation[TransferrableKeys.attributeName] as number) : null;
     const value = mutation[TransferrableKeys.value] !== undefined ? getString(mutation[TransferrableKeys.value] as number) : null;
-    if (attributeName != null && value != null) {
-      if (!sanitizer || sanitizer.validAttribute(target.nodeName, attributeName, value)) {
-        target.setAttribute(attributeName, value);
+    if (attributeName != null) {
+      if (value == null) {
+        target.removeAttribute(attributeName);
       } else {
-        // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
+        if (!sanitizer || sanitizer.validAttribute(target.nodeName, attributeName, value)) {
+          target.setAttribute(attributeName, value);
+        } else {
+          // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
+        }
       }
     }
   },

@@ -41,12 +41,18 @@ test('autofocus property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.autofocus = true;
-  t.is(element.getAttribute('autofocus'), 'true');
+  t.true(element.hasAttribute('autofocus'));
+
+  element.autofocus = false;
+  t.false(element.hasAttribute('autofocus'));
 });
 
 test('autofocus attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
-  element.setAttribute('autofocus', 'true');
-  t.is(element.autofocus, true);
+  element.setAttribute('autofocus', '');
+  t.true(element.autofocus);
+
+  element.removeAttribute('autofocus');
+  t.false(element.autofocus);
 });

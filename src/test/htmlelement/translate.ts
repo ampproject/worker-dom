@@ -41,12 +41,18 @@ test('translate property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.translate = false;
-  t.is(element.getAttribute('translate'), 'false');
+  t.is(element.getAttribute('translate'), 'no');
+
+  element.translate = true;
+  t.is(element.getAttribute('translate'), 'yes');
 });
 
 test('translate attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLElement };
 
-  element.setAttribute('translate', 'false');
+  element.setAttribute('translate', 'yes');
+  t.is(element.translate, true);
+
+  element.setAttribute('translate', 'no');
   t.is(element.translate, false);
 });

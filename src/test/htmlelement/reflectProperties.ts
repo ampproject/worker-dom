@@ -34,6 +34,6 @@ testReflectedProperties([
   { draggable: [false] },
   { hidden: [false] },
   { noModule: [false] },
-  { spellcheck: [true] },
-  { translate: [true] },
+  { spellcheck: [true, /* attr */ undefined, /* keywords */ ['true', 'false']] },
+  { translate: [true, /* attr */ undefined, /* keywords */ ['yes', 'no']] },
 ]);

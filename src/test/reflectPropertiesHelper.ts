@@ -27,6 +27,7 @@ export function testReflectedProperty(propertyPair: PropertyPair, overrideValueT
   const propertyName = Object.keys(propertyPair)[0];
   const defaultValue = propertyPair[propertyName][0];
   const attributeName = propertyPair[propertyName][1] || propertyName.toLowerCase();
+  const keywords = propertyPair[propertyName][2];
   const valueToTest = deriveValueToTest(overrideValueToTest !== null ? overrideValueToTest : defaultValue);
 
   test(`${propertyName} should be ${defaultValue} by default`, t => {
@@ -43,7 +44,16 @@ export function testReflectedProperty(propertyPair: PropertyPair, overrideValueT
   test(`${propertyName} property change should be reflected in attribute`, t => {
     const { element } = t.context;
     element[propertyName] = valueToTest;
-    t.is(element.getAttribute(attributeName), String(valueToTest));
+    if (keywords) {
+      // Enumerated attrs have keywords instead of 'true' and 'false', e.g. translate="yes|no".
+      const keyword = valueToTest ? keywords[0] : keywords[1];
+      t.is(element.getAttribute(attributeName), keyword);
+    } else if (typeof valueToTest === 'boolean') {
+      // Boolean attributes only care about existence of the attribute, not their values.
+      t.is(element.hasAttribute(attributeName), valueToTest);
+    } else {
+      t.is(element.getAttribute(attributeName), String(valueToTest));
+    }
   });
 
   test(`${propertyName} attribute change should be reflected in property`, t => {
