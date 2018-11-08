@@ -43,7 +43,7 @@ export class HTMLInputElement extends HTMLElement {
   set value(value: string) {
     // Don't early-out if value doesn't appear to have changed.
     // The worker may have a stale value if 'input' events aren't being forwarded.
-    this._value_ = value;
+    this._value_ = String(value);
     mutate({
       type: MutationRecordType.PROPERTIES,
       target: this,
@@ -53,28 +53,33 @@ export class HTMLInputElement extends HTMLElement {
   }
 
   get valueAsDate(): Date | null {
-    if (this.isInputType('date')) {
-      return new Date(this._value_);
-    } else {
-      return null;
-    }
+    const date = new Date(this._value_);
+    const invalid = isNaN(date.getTime());
+    return invalid ? null : date;
   }
 
   /** Unlike browsers, does not throw if this input[type] doesn't support dates. */
   set valueAsDate(value: Date | null) {
     if (!(value instanceof Date)) {
-      throw new Error('The provided value is not a Date.');
+      throw new TypeError('The provided value is not a Date.');
     }
     this.value = this.dateToString(value);
   }
 
   get valueAsNumber(): number {
+    if (this._value_.length === 0) {
+      return NaN;
+    }
     return Number(this._value_);
   }
 
   /** Unlike browsers, does not throw if this input[type] doesn't support numbers. */
   set valueAsNumber(value: number) {
-    this.value = String(value);
+    if (typeof value === 'number') {
+      this.value = String(value);
+    } else {
+      this.value = '';
+    }
   }
 
   get checked(): boolean {
@@ -101,7 +106,7 @@ export class HTMLInputElement extends HTMLElement {
    */
   private dateToString(date: Date): string {
     const y = date.getFullYear();
-    const m = date.getMonth();
+    const m = date.getMonth() + 1; // getMonth() is 0-index.
     const d = date.getDate();
     return `${y}-${m > 9 ? '' : '0'}${m}-${d > 9 ? '' : '0'}${d}`;
   }
