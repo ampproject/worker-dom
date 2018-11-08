@@ -107,7 +107,7 @@ export class HTMLInputElement extends HTMLElement {
   private dateToString(date: Date): string {
     const y = date.getFullYear();
     const m = date.getMonth() + 1; // getMonth() is 0-index.
-    const d = date.getDate();
+    const d = date.getDate() + 1; // getDate() is 0-index.
     return `${y}-${m > 9 ? '' : '0'}${m}-${d > 9 ? '' : '0'}${d}`;
   }
 }

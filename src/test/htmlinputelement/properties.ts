@@ -58,7 +58,7 @@ test('valueAsDate', t => {
 
   t.is(input.valueAsDate, null, 'Default valueAsDate should be null.');
 
-  input.valueAsDate = new Date(2018, 0, 31);
+  input.valueAsDate = new Date(2018, 0, 30);
   t.is(input.value, '2018-01-31');
 
   const d = input.valueAsDate;
