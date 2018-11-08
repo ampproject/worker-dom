@@ -42,7 +42,7 @@ export class HTMLInputElement extends HTMLElement {
 
   set value(value: string) {
     // Don't early-out if value doesn't appear to have changed.
-    // The worker may have a stale value if 'input' events aren't being forwarded.
+    // The worker may have a stale value since 'input' events aren't being forwarded.
     this._value_ = String(value);
     mutate({
       type: MutationRecordType.PROPERTIES,
