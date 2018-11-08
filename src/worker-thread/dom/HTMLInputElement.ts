@@ -90,7 +90,7 @@ export class HTMLInputElement extends HTMLElement {
     if (this._checked_ === value) {
       return;
     }
-    this._checked_ = value;
+    this._checked_ = !!value;
     mutate({
       type: MutationRecordType.PROPERTIES,
       target: this,

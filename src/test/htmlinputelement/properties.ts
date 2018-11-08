@@ -71,3 +71,27 @@ test('valueAsDate', t => {
   }, TypeError);
   t.is(error.message, 'The provided value is not a Date.');
 });
+
+test('checked', t => {
+  const input = t.context.element as HTMLInputElement;
+
+  t.false(input.checked, 'Default checked should be false.');
+
+  input.checked = true;
+  t.true(input.checked);
+
+  input.checked = false;
+  t.false(input.checked);
+
+  input.checked = 1 as any;
+  t.true(input.checked);
+
+  input.checked = null as any;
+  t.false(input.checked);
+
+  input.checked = 'abc' as any;
+  t.true(input.checked);
+
+  input.checked = '' as any;
+  t.false(input.checked);
+});
