@@ -53,8 +53,9 @@ export class HTMLInputElement extends HTMLElement {
   }
 
   get valueAsDate(): Date | null {
-    const date = new Date(this._value_);
-    const invalid = isNaN(date.getTime());
+    // Don't use Date constructor or Date.parse() since ISO 8601 (yyyy-mm-dd) parsing is inconsistent.
+    const date = this.stringToDate(this._value_);
+    const invalid = !date || isNaN(date.getTime());
     return invalid ? null : date;
   }
 
@@ -107,8 +108,22 @@ export class HTMLInputElement extends HTMLElement {
   private dateToString(date: Date): string {
     const y = date.getFullYear();
     const m = date.getMonth() + 1; // getMonth() is 0-index.
-    const d = date.getDate() + 1; // getDate() is 0-index.
+    const d = date.getDate();
     return `${y}-${m > 9 ? '' : '0'}${m}-${d > 9 ? '' : '0'}${d}`;
+  }
+
+  /**
+   * Returns a Date from a 'yyyy-mm-dd' format.
+   * @param s
+   */
+  private stringToDate(str: string): Date | null {
+    const components = str.split('-');
+    if (components.length !== 3) {
+      return null;
+    }
+    const [y, m, d] = components;
+    // Month is 0-index.
+    return new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
   }
 }
 registerSubclass('input', HTMLInputElement);
