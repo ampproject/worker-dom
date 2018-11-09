@@ -58,13 +58,13 @@ test('valueAsDate', t => {
 
   t.is(input.valueAsDate, null, 'Default valueAsDate should be null.');
 
-  input.valueAsDate = new Date(2018, 0, 30);
-  t.is(input.value, '2018-01-31');
+  input.valueAsDate = new Date(1776, 6, 3);
+  t.is(input.value, '1776-07-04');
 
   const d = input.valueAsDate;
-  t.is(d.getFullYear(), 2018);
-  t.is(d.getMonth(), 0);
-  t.is(d.getDate(), 30);
+  t.is(d.getFullYear(), 1776);
+  t.is(d.getMonth(), 6);
+  t.is(d.getDate(), 3);
 
   const error = t.throws(() => {
     input.valueAsDate = 'notADate' as any;
