@@ -22,19 +22,12 @@ import { getNode, createNode } from './nodes';
 import { store as storeString, get as getString } from './strings';
 import { process } from './command';
 
-let MUTATION_QUEUE: Array<TransferrableMutationRecord> = [];
-let PENDING_MUTATIONS: boolean = false;
-let worker: Worker;
-
-export function prepareMutate(passedWorker: Worker): void {
-  worker = passedWorker;
-}
-
 type Mutators = {
-  [key: number]: (mutation: TransferrableMutationRecord, target: Node, sanitizer?: Sanitizer) => void;
+  [key: number]: (mutation: TransferrableMutationRecord, target: Node, worker: Worker, sanitizer?: Sanitizer) => void;
 };
-const mutators: Mutators = {
-  [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, target: HTMLElement, sanitizer?: Sanitizer): void {
+
+const MUTATORS: Mutators = {
+  [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, target: HTMLElement, worker, sanitizer?: Sanitizer): void {
     (mutation[TransferrableKeys.removedNodes] || []).forEach(node => getNode(node[TransferrableKeys._index_]).remove());
 
     const addedNodes = mutation[TransferrableKeys.addedNodes];
@@ -61,7 +54,7 @@ const mutators: Mutators = {
       });
     }
   },
-  [MutationRecordType.ATTRIBUTES](mutation: TransferrableMutationRecord, target: HTMLElement | SVGElement, sanitizer?: Sanitizer) {
+  [MutationRecordType.ATTRIBUTES](mutation: TransferrableMutationRecord, target: HTMLElement | SVGElement, worker, sanitizer?: Sanitizer) {
     const attributeName =
       mutation[TransferrableKeys.attributeName] !== undefined ? getString(mutation[TransferrableKeys.attributeName] as number) : null;
     const value = mutation[TransferrableKeys.value] !== undefined ? getString(mutation[TransferrableKeys.value] as number) : null;
@@ -84,7 +77,7 @@ const mutators: Mutators = {
       target.textContent = getString(value);
     }
   },
-  [MutationRecordType.PROPERTIES](mutation: TransferrableMutationRecord, target: RenderableElement, sanitizer?: Sanitizer) {
+  [MutationRecordType.PROPERTIES](mutation: TransferrableMutationRecord, target: RenderableElement, worker, sanitizer?: Sanitizer) {
     const propertyName =
       mutation[TransferrableKeys.propertyName] !== undefined ? getString(mutation[TransferrableKeys.propertyName] as number) : null;
     const value = mutation[TransferrableKeys.value] !== undefined ? getString(mutation[TransferrableKeys.value] as number) : null;
@@ -96,45 +89,46 @@ const mutators: Mutators = {
       }
     }
   },
-  [MutationRecordType.COMMAND](mutation: TransferrableMutationRecord) {
+  [MutationRecordType.COMMAND](mutation: TransferrableMutationRecord, target, worker: Worker) {
     process(worker, mutation);
   },
 };
 
-/**
- * Process MutationRecords from worker thread applying changes to the existing DOM.
- * @param nodes New nodes to add in the main thread with the incoming mutations.
- * @param mutations Changes to apply in both graph shape and content of Elements.
- * @param sanitizer Sanitizer to apply to content if needed.
- */
-export function mutate(
-  nodes: Array<TransferrableNode>,
-  stringValues: Array<string>,
-  mutations: Array<TransferrableMutationRecord>,
-  sanitizer?: Sanitizer,
-): void {
-  // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
-  // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
-  //   return;
-  // }
-  // this.lastGestureTime = lastGestureTime;
-  stringValues.forEach(value => storeString(value));
-  nodes.forEach(node => createNode(node, sanitizer));
-  MUTATION_QUEUE = MUTATION_QUEUE.concat(mutations);
-  if (!PENDING_MUTATIONS) {
-    PENDING_MUTATIONS = true;
-    requestAnimationFrame(_ => syncFlush(sanitizer));
-  }
-}
+export class Mutator {
+  private queue: Array<TransferrableMutationRecord> = [];
+  private pending: boolean = false;
+  private worker: Worker;
+  private sanitizer: Sanitizer | undefined;
 
-/**
- * Apply all stored mutations syncronously. This method works well, but can cause jank if there are too many
- * mutations to apply in a single frame.
- *
- * Investigations in using asyncFlush to resolve are worth considering.
- */
-function syncFlush(sanitizer?: Sanitizer): void {
-  MUTATION_QUEUE.forEach(mutation => mutators[mutation[TransferrableKeys.type]](mutation, getNode(mutation[TransferrableKeys.target]), sanitizer));
-  MUTATION_QUEUE = [];
-  PENDING_MUTATIONS = false;
+  constructor(worker: Worker, sanitizer?: Sanitizer) {
+    this.worker = worker;
+    this.sanitizer = sanitizer;
+
+    this.flush = this.flush.bind(this);
+  }
+
+  /**
+   * Process MutationRecords from worker thread applying changes to the existing DOM.
+   * @param nodes New nodes to add in the main thread with the incoming mutations.
+   * @param mutations Changes to apply in both graph shape and content of Elements.
+   * @param sanitizer Sanitizer to apply to content if needed.
+   */
+  public mutate(nodes: Array<TransferrableNode>, stringValues: Array<string>, mutations: Array<TransferrableMutationRecord>): void {
+    stringValues.forEach(value => storeString(value));
+    nodes.forEach(node => createNode(node, this.sanitizer));
+
+    this.queue = this.queue.concat(mutations);
+    if (!this.pending) {
+      this.pending = true;
+      requestAnimationFrame(this.flush);
+    }
+  }
+
+  private flush(): void {
+    this.queue.forEach(mutation =>
+      MUTATORS[mutation[TransferrableKeys.type]](mutation, getNode(mutation[TransferrableKeys.target]), this.worker, this.sanitizer),
+    );
+    this.queue = [];
+    this.pending = false;
+  }
 }

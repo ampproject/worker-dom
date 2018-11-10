@@ -20,6 +20,7 @@ import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/
 import { prepare as prepareNodes } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { WorkerCallbacks } from './callbacks';
+// import { Mutator } from './mutator2';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
@@ -39,6 +40,7 @@ export function install(
 
     prepareMutate(worker);
 
+    // const mutator = new Mutator(worker, sanitizer);
     worker.onmessage = (message: MessageFromWorker) => {
       const { data } = message;
 
@@ -53,6 +55,11 @@ export function install(
         (data as MutationFromWorker)[TransferrableKeys.mutations],
         sanitizer,
       );
+      // mutator.mutate(
+      //   (data as MutationFromWorker)[TransferrableKeys.nodes],
+      //   (data as MutationFromWorker)[TransferrableKeys.strings],
+      //   (data as MutationFromWorker)[TransferrableKeys.mutations],
+      // );
 
       // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
       if (workerCallbacks && workerCallbacks.onReceiveMessage) {

@@ -40,7 +40,7 @@ export function createHydrateableNode(element: RenderableElement): HydrateableNo
     [TransferrableKeys.transferred]: NumericBoolean.FALSE,
     [TransferrableKeys.nodeType]: element.nodeType,
     [TransferrableKeys.nodeName]: store(element.nodeName),
-    [TransferrableKeys.childNodes]: [].map.call(element.childNodes || [], (child: RenderableElement) => createHydrateableNode(child)),
+    [TransferrableKeys.childNodes]: Array.from(element.childNodes).map((child: RenderableElement) => createHydrateableNode(child)),
     [TransferrableKeys.attributes]: [].map.call(element.attributes || [], (attribute: Attr) => [
       store(attribute.namespaceURI || 'null'),
       store(attribute.name),
