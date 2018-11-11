@@ -444,8 +444,8 @@ export class Element extends Node {
         : element => element.classList.contains(elementSelector.substr(1));
     } else {
       matcher = selectorHasAttr
-        ? element => element.tagName === toLower(elementSelector) && matchAttrReference(attrSelector, element)
-        : element => element.tagName === toLower(elementSelector);
+        ? element => element.localName === toLower(elementSelector) && matchAttrReference(attrSelector, element)
+        : element => element.localName === toLower(elementSelector);
     }
 
     // Third, filter to return elements that exist within the querying element's descendants.
