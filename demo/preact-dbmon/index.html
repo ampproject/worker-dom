@@ -12,7 +12,7 @@
   <!-- <script src="./dist/index.js" defer></script> -->
 </head>
 <body>
-  <div src="dbmon.js" id="upgrade-me"><div><div id="mutations"><label id="ratioval">mutations: 50%</label><input type="range"></input></div><table class="table table-striped latest-data"><tbody></tbody></table></div></div>
+  <div src="dbmon.js" id="upgrade-me"></div>
   <script type="module">
     import {upgradeElement} from '/dist/index.mjs';
     upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.mjs');
