@@ -86,7 +86,7 @@
     {
       "path": "./dist/worker.safe.mjs",
       "compression": "brotli",
-      "maxSize": "7 kB"
+      "maxSize": "8 kB"
     },
     {
       "path": "./dist/index.mjs",
