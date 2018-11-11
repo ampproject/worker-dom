@@ -1,6 +1,6 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/index",
   "module": "dist/index.mjs",
@@ -86,7 +86,7 @@
     {
       "path": "./dist/worker.safe.mjs",
       "compression": "brotli",
-      "maxSize": "7 kB"
+      "maxSize": "8 kB"
     },
     {
       "path": "./dist/index.mjs",
