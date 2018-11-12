@@ -22,6 +22,8 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { getNode } from './nodes';
 import { get as getString } from './strings';
 
+// TODO(choumx): Support SYNC events for properties other than 'value', e.g. 'checked'.
+
 const KNOWN_LISTENERS: Array<(event: Event) => any> = [];
 
 /**
@@ -112,7 +114,7 @@ export function process(worker: Worker, mutation: TransferrableMutationRecord): 
 }
 
 /**
- * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to
+ * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,
  * ensure that only a single 'change' event is attached to prevent sending values multiple times.
  * @param worker worker issuing listener changes
  * @param target node to change listeners on

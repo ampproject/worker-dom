@@ -86,9 +86,12 @@ const mutators: {
     const propertyName =
       mutation[TransferrableKeys.propertyName] !== undefined ? getString(mutation[TransferrableKeys.propertyName] as number) : null;
     const value = mutation[TransferrableKeys.value] !== undefined ? getString(mutation[TransferrableKeys.value] as number) : null;
-    if (propertyName && value) {
-      if (!sanitizer || sanitizer.validProperty(target.nodeName, propertyName, value)) {
-        target[propertyName] = value;
+    if (propertyName && value != null) {
+      const stringValue = String(value);
+      if (!sanitizer || sanitizer.validProperty(target.nodeName, propertyName, stringValue)) {
+        // TODO(choumx, #122): Proper support for non-string property mutations.
+        const isBooleanProperty = propertyName == 'checked';
+        target[propertyName] = isBooleanProperty ? value === 'true' : value;
       } else {
         // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
       }

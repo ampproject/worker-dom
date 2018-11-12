@@ -14,12 +14,118 @@
  * limitations under the License.
  */
 
-import { registerSubclass } from './Element';
+import { mutate } from '../MutationObserver';
 import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
 import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
+import { MutationRecordType } from '../MutationRecord';
+import { reflectProperties } from './enhanceElement';
+import { registerSubclass } from './Element';
 
-export class HTMLInputElement extends HTMLElement {}
+export class HTMLInputElement extends HTMLElement {
+  // Per spec, some attributes like 'value' and 'checked' change behavior based on dirty flags.
+  // Since these flags can only be changed on interaction (outside of worker), we can ignore them here.
+  // Tradeoffs: Consequent attribute changes are missing, HTMLFormElement.reset() doesn't work, etc.
+  // Alternative: Implement dirty flag checking in worker-dom, which would require listening for
+  //     and forwarding interaction events to flag "dirtiness".
+  // https://html.spec.whatwg.org/multipage/input.html#common-input-element-apis
+  private _value_: string = '';
+  private _checked_: boolean = false;
+
+  // TODO(willchou): There are a few interrelated issues with `value` property.
+  //   1. "Dirtiness" caveat above.
+  //   2. Duplicate SYNC events. Sent by every event fired from elements with a `value`, plus the default 'change' listener.
+  //   3. Duplicate MUTATE events. Caused by stale `value` in worker due to no default 'input' listener (see below).
+
+  get value(): string {
+    return this._value_;
+  }
+
+  set value(value: string) {
+    // Don't early-out if value doesn't appear to have changed.
+    // The worker may have a stale value since 'input' events aren't being forwarded.
+    this._value_ = String(value);
+    mutate({
+      type: MutationRecordType.PROPERTIES,
+      target: this,
+      propertyName: 'value',
+      value,
+    });
+  }
+
+  get valueAsDate(): Date | null {
+    // Don't use Date constructor or Date.parse() since ISO 8601 (yyyy-mm-dd) parsing is inconsistent.
+    const date = this.stringToDate(this._value_);
+    const invalid = !date || isNaN(date.getTime());
+    return invalid ? null : date;
+  }
+
+  /** Unlike browsers, does not throw if this input[type] doesn't support dates. */
+  set valueAsDate(value: Date | null) {
+    if (!(value instanceof Date)) {
+      throw new TypeError('The provided value is not a Date.');
+    }
+    this.value = this.dateToString(value);
+  }
+
+  get valueAsNumber(): number {
+    if (this._value_.length === 0) {
+      return NaN;
+    }
+    return Number(this._value_);
+  }
+
+  /** Unlike browsers, does not throw if this input[type] doesn't support numbers. */
+  set valueAsNumber(value: number) {
+    if (typeof value === 'number') {
+      this.value = String(value);
+    } else {
+      this.value = '';
+    }
+  }
+
+  get checked(): boolean {
+    return this._checked_;
+  }
+
+  set checked(value: boolean) {
+    if (this._checked_ === value) {
+      return;
+    }
+    this._checked_ = !!value;
+    mutate({
+      type: MutationRecordType.PROPERTIES,
+      target: this,
+      propertyName: 'checked',
+      // TODO(choumx, #122): Proper support for non-string property mutations.
+      value: String(value),
+    });
+  }
+
+  /**
+   * Returns a date in 'yyyy-mm-dd' format.
+   * @param date
+   */
+  private dateToString(date: Date): string {
+    const y = date.getFullYear();
+    const m = date.getMonth() + 1; // getMonth() is 0-index.
+    const d = date.getDate();
+    return `${y}-${m > 9 ? '' : '0'}${m}-${d > 9 ? '' : '0'}${d}`;
+  }
+
+  /**
+   * Returns a Date from a 'yyyy-mm-dd' format.
+   * @param s
+   */
+  private stringToDate(str: string): Date | null {
+    const components = str.split('-');
+    if (components.length !== 3) {
+      return null;
+    }
+    const [y, m, d] = components;
+    // Month is 0-index.
+    return new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
+  }
+}
 registerSubclass('input', HTMLInputElement);
 HTMLInputLabelsMixin(HTMLInputElement);
 
@@ -54,41 +160,39 @@ HTMLInputLabelsMixin(HTMLInputElement);
 // HTMLInputElement.autocapitalize => string, reflected attribute
 reflectProperties(
   [
+    { accept: [''] },
+    { alt: [''] },
+    { autocapitalize: [''] },
+    { autocomplete: [''] },
+    { autofocus: [false] },
+    { defaultChecked: [false, /* attr */ 'checked'] },
+    { defaultValue: ['', 'value'] },
+    { dirName: [''] },
+    { disabled: [false] },
     { formAction: [''] },
     { formEncType: [''] },
     { formMethod: [''] },
     { formTarget: [''] },
-    { name: [''] },
-    { type: ['text'] },
-    { disabled: [false] },
-    { autofocus: [false] },
-    { required: [false] },
-    { defaultChecked: [false, /* attr */ 'checked'] },
-    { alt: [''] },
     { height: [0] },
-    { src: [''] },
-    { width: [0] },
-    { accept: [''] },
-    { autocomplete: [''] },
+    { max: [''] },
     { maxLength: [0] },
-    { size: [0] },
+    { min: [''] },
+    { multiple: [false] },
+    { name: [''] },
     { pattern: [''] },
     { placeholder: [''] },
     { readOnly: [false] },
-    { min: [''] },
-    { max: [''] },
-    { defaultValue: ['', 'value'] },
-    { dirName: [''] },
-    { multiple: [false] },
+    { required: [false] },
+    { size: [0] },
+    { src: [''] },
     { step: [''] },
-    { autocapitalize: [''] },
+    { type: ['text'] },
+    { width: [0] },
   ],
   HTMLInputElement,
 );
 
 // TODO(KB) Not Reflected Properties
-// HTMLInputElement.value => string
-// HTMLInputElement.checked	=> boolean
 // HTMLInputElement.indeterminate => boolean
 
 // Unimplemented Properties
@@ -104,8 +208,6 @@ reflectProperties(
 // HTMLInputElement.selectionEnd => number
 // HTMLInputElement.selectionDirection => string
 // HTMLInputElement.list => Element, read only (element pointed by list attribute)
-// HTMLInputElement.valueAsDate => Date
-// HTMLInputElement.valueAsNumber => number
 
 // Unimplemented Methods
 // HTMLInputElement.setSelectionRange()

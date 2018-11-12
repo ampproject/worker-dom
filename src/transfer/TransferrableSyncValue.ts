@@ -40,7 +40,8 @@ export function propagate(): void {
     const sync = (data as ValueSyncToWorker)[TransferrableKeys.sync];
     const node = get(sync[TransferrableKeys._index_]);
     if (node) {
-      node.value = sync[TransferrableKeys.value];
+      // Modify the private backing ivar of `value` property to avoid mutation/sync cycle.
+      node._value_ = sync[TransferrableKeys.value];
     }
   });
 }
