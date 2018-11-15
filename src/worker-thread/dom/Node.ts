@@ -92,44 +92,6 @@ export abstract class Node {
   // Node.nodeValue – https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeValue
   // Node.cloneNode – https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode
 
-  // public cloneNode(deep: boolean = false): Node {
-  //   let clone: Node; // = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
-  //   switch(this.nodeType) {
-  //     case NodeType.TEXT_NODE:
-  //       return this.ownerDocument.createTextNode(this.data);
-  //     case NodeType.COMMENT_NODE:
-  //       return this.ownerDocument.createComment(this.data);
-  //     case NodeType.ELEMENT_NODE:
-  //       return this.ownerDocument.createElement(this.nodeName);
-  //       th
-  //   }
-  //   this.ownerDocument
-
-  //   cloneNode(deep) {
-  //     let node;
-  //     const document = this.ownerDocument;
-  //     switch (this.nodeType) {
-  //       case Node.ATTRIBUTE_NODE:
-  //         node = document.createAttribute(this.name);
-  //         node.value = this.value;
-  //         return node;
-  //       case Node.TEXT_NODE:
-  //         return document.createTextNode(this.data);
-  //       case Node.COMMENT_NODE:
-  //         return document.createComment(this.data);
-  //       case Node.ELEMENT_NODE:
-  //         node = document.createElement(this.nodeName);
-  //         this.attributes.forEach(a => node.setAttribute(a.name, a.value));
-  //       case Node.DOCUMENT_FRAGMENT_NODE:
-  //         if (!node) node = document.createDocumentFragment();
-  //         if (deep)
-  //           this.childNodes.forEach(c => node.appendChild(c.cloneNode(deep)));
-  //         return node;
-  //     }
-  //   }
-
-  // }
-
   /**
    * Getter returning the text representation of Element.childNodes.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
