@@ -58,4 +58,12 @@ export class Comment extends CharacterData {
     // Mutation Observation is performed by CharacterData.
     this.nodeValue = value;
   }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode
+   * @return new Comment Node with the same data as the Comment to clone.
+   */
+  public cloneNode(): Comment {
+    return this.ownerDocument.createComment(this.data);
+  }
 }

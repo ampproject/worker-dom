@@ -57,6 +57,7 @@ export abstract class Node {
   public _transferredFormat_: TransferredNode;
   public _creationFormat_: TransferrableNode;
   public abstract hydrate(): HydrateableNode;
+  public abstract cloneNode(deep: boolean): Node;
   private _handlers_: {
     [index: string]: EventHandler[];
   } = {};
