@@ -58,4 +58,12 @@ export class Comment extends CharacterData {
     // Mutation Observation is performed by CharacterData.
     this.nodeValue = value;
   }
+
+  /**
+   *
+   * @param deep
+   */
+  public cloneNode(deep: boolean = false): Comment {
+    return this.ownerDocument.createComment(this.data);
+  }
 }

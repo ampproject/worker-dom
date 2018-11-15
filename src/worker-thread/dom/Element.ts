@@ -407,6 +407,19 @@ export class Element extends Node {
   }
 
   /**
+   *
+   * @param deep
+   */
+  public cloneNode(deep: boolean = false): Element {
+    const clone: Element = this.ownerDocument.createElement(this.nodeName);
+    this.attributes.forEach(attr => clone.setAttribute(attr.name, attr.value));
+    if (deep) {
+      this.childNodes.forEach((child: Node) => clone.appendChild(child.cloneNode(deep)));
+    }
+    return clone;
+  }
+
+  /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
    * @param selector the selector we are trying to match for.
    * @return Element with matching selector.

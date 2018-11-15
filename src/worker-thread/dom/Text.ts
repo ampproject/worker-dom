@@ -65,6 +65,14 @@ export class Text extends CharacterData {
   }
 
   /**
+   *
+   * @param deep
+   */
+  public cloneNode(deep: boolean = false): Text {
+    return this.ownerDocument.createTextNode(this.data);
+  }
+
+  /**
    * Breaks Text node into two nodes at the specified offset, keeping both nodes in the tree as siblings.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Text/splitText
    * @param offset number position to split text at.
