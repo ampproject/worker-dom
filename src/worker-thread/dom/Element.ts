@@ -407,8 +407,9 @@ export class Element extends Node {
   }
 
   /**
-   *
-   * @param deep
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode
+   * @param deep boolean determines if the clone should include a recursive copy of all childNodes.
+   * @return Element containing all current attributes and potentially childNode clones of the Element requested to be cloned.
    */
   public cloneNode(deep: boolean = false): Element {
     const clone: Element = this.ownerDocument.createElement(this.nodeName);

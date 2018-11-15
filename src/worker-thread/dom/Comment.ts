@@ -60,10 +60,10 @@ export class Comment extends CharacterData {
   }
 
   /**
-   *
-   * @param deep
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode
+   * @return new Comment Node with the same data as the Comment to clone.
    */
-  public cloneNode(deep: boolean = false): Comment {
+  public cloneNode(): Comment {
     return this.ownerDocument.createComment(this.data);
   }
 }

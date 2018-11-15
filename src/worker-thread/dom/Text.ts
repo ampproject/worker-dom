@@ -65,10 +65,10 @@ export class Text extends CharacterData {
   }
 
   /**
-   *
-   * @param deep
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode
+   * @return new Text Node with the same data as the Text to clone.
    */
-  public cloneNode(deep: boolean = false): Text {
+  public cloneNode(): Text {
     return this.ownerDocument.createTextNode(this.data);
   }
 
