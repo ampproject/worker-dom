@@ -41,6 +41,12 @@ test('cloneNode should create a new node with the same tagName', t => {
   t.is(parent.cloneNode().tagName, parent.tagName);
 });
 
+test('cloneNode should create a new node with a different _index_', t => {
+  const { parent } = t.context as { parent: Element };
+
+  t.not(parent.cloneNode()._index_, parent._index_);
+});
+
 test('cloneNode should create a new node with the same attribute', t => {
   const { parent } = t.context as { parent: Element };
   parent.setAttribute('fancy', 'yes');
