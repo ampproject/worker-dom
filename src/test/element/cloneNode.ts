@@ -31,7 +31,7 @@ test.beforeEach(t => {
   t.context.parent.appendChild(t.context.sibling);
   document.body.appendChild(t.context.parent);
 });
-test.afterEach(t => {
+test.afterEach(_ => {
   document.body.childNodes.forEach(childNode => childNode.remove());
 });
 
@@ -61,6 +61,16 @@ test('cloneNode should create a new node with the same attributes', t => {
 
   t.is(parent.cloneNode().getAttribute('fancy'), 'yes');
   t.is(parent.cloneNode().getAttribute('virtual'), 'no');
+});
+
+test('cloneNode should create a new node with the same attributes, but not preserve attributes across the instances', t => {
+  const { parent } = t.context as { parent: Element };
+  parent.setAttribute('fancy', 'yes');
+  const clone = parent.cloneNode();
+  parent.setAttribute('fancy', 'no');
+
+  t.is(clone.getAttribute('fancy'), 'yes');
+  t.is(parent.getAttribute('fancy'), 'no');
 });
 
 test('cloneNode should create a new node without the same properties', t => {
