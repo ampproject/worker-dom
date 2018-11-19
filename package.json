@@ -1,6 +1,6 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/index",
   "module": "dist/index.mjs",
@@ -33,12 +33,12 @@
     "presize": "npm run build",
     "size": "bundlesize",
     "release:tag": "cross-var git tag -a v$npm_package_version -m '$npm_package_version'",
+    "prerelease:git": "git add ." ,
+    "release:git": "cross-var git commit -m 'Release $npm_package_version'",
+    "postrelease:git": "git push origin master",
     "release:gren": "gren release",
     "release:changelog": "gren changelog --override",
-    "release:apply": "git add .",
-    "release:commit": "cross-var git commit -m 'Release $npm_package_version'",
-    "release:push": "git push origin master",
-    "release": "npm-run-all --serial release:*"
+    "release": "npm-run-all --serial release:tag release:git release:gren release:changelog release:git"
   },
   "dependencies": {
     "dompurify": "1.0.8"
