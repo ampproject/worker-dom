@@ -1,6 +1,6 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/index",
   "module": "dist/index.mjs",
@@ -31,7 +31,9 @@
     "demo": "node -r esm demo/server.js",
     "build": "cross-env MINIFY_BUNDLE=true npm run ~rollup",
     "presize": "npm run build",
-    "size": "bundlesize"
+    "size": "bundlesize",
+    "release": "gren release",
+    "postrelease": "gren changelog --override"
   },
   "dependencies": {
     "dompurify": "1.0.8"
