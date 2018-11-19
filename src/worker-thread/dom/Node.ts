@@ -229,8 +229,9 @@ export abstract class Node {
    * Adds the specified childNode argument as the last child to the current node.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
    * @param child Child Node to append to this Node.
+   * @return Node the appended node.
    */
-  public appendChild(child: Node): void {
+  public appendChild(child: Node): Node {
     child.remove();
     child.parentNode = this;
     propagate(child, 'isConnected', this.isConnected);
@@ -242,6 +243,8 @@ export abstract class Node {
       type: MutationRecordType.CHILD_LIST,
       target: this,
     });
+    
+    return child;
   }
 
   /**
