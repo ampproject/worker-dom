@@ -32,8 +32,13 @@
     "build": "cross-env MINIFY_BUNDLE=true npm run ~rollup",
     "presize": "npm run build",
     "size": "bundlesize",
-    "release": "gren release",
-    "postrelease": "gren changelog --override"
+    "release:tag": "cross-var git tag -a v$npm_package_version -m '$npm_package_version'",
+    "release:gren": "gren release",
+    "release:changelog": "gren changelog --override",
+    "release:apply": "git add .",
+    "release:commit": "cross-var git commit -m 'Release $npm_package_version'",
+    "release:push": "git push origin master",
+    "release": "npm-run-all --serial release:*"
   },
   "dependencies": {
     "dompurify": "1.0.8"
@@ -52,6 +57,7 @@
     "babel-plugin-transform-remove-console": "6.9.4",
     "bundlesize": "0.17.0",
     "cross-env": "5.2.0",
+    "cross-var": "1.1.0",
     "esm": "3.0.84",
     "github-release-notes": "0.17.0",
     "husky": "1.1.4",
