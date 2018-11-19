@@ -51,3 +51,10 @@ test('reappending a known child', t => {
   t.deepEqual(node.childNodes[0], childTwo, 'reappending a known child removes the child from exising position');
   t.deepEqual(node.childNodes[1], child, 'reappending a known child makes childNode[length] = new child');
 });
+
+test('appending returns the appended child', t => {
+  const { node, child } = t.context;
+
+  const returned = node.appendChild(child);
+  t.is(child, returned);
+});
