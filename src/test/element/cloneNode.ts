@@ -17,6 +17,7 @@
 import test from 'ava';
 import { documentForTesting as document } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 test.beforeEach(t => {
   t.context = {
@@ -44,7 +45,7 @@ test('cloneNode should create a new node with the same tagName', t => {
 test('cloneNode should create a new node with a different _index_', t => {
   const { parent } = t.context as { parent: Element };
 
-  t.not(parent.cloneNode()._index_, parent._index_);
+  t.not(parent.cloneNode()[TransferrableKeys._index_], parent[TransferrableKeys._index_]);
 });
 
 test('cloneNode should create a new node with the same attribute', t => {

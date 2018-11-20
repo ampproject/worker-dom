@@ -71,9 +71,7 @@ export class HTMLSelectElement extends HTMLElement {
    * @param selectedIndex index number to make selected.
    */
   set selectedIndex(selectedIndex: number) {
-    this.children.forEach((element: Element, index: number) => {
-      element.selected = index === selectedIndex;
-    });
+    this.children.forEach((element: Element, index: number) => (element.selected = index === selectedIndex));
   }
 
   /**

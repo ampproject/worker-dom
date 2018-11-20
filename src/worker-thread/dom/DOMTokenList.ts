@@ -18,12 +18,13 @@ import { Element } from './Element';
 import { NamespaceURI } from './Node';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export class DOMTokenList {
-  private array_: Array<string> = [];
-  private element_: Element;
-  private attributeName_: string;
-  private storeAttributeMethod_: (namespaceURI: NamespaceURI, name: string, value: string) => void;
+  private [TransferrableKeys.tokens]: Array<string> = [];
+  private [TransferrableKeys.target]: Element;
+  private [TransferrableKeys.attributeName]: string;
+  private [TransferrableKeys.storeAttribute]: (namespaceURI: NamespaceURI, name: string, value: string) => void;
 
   /**
    * The DOMTokenList interface represents a set of space-separated tokens.
@@ -36,10 +37,10 @@ export class DOMTokenList {
    * @param propertyName Key used to access DOMTokenList as string getter/setter.
    */
   constructor(defineOn: typeof Element, element: Element, attributeName: string, accessorKey: string | null, propertyName: string | null) {
-    this.element_ = element;
-    this.attributeName_ = attributeName;
+    this[TransferrableKeys.target] = element;
+    this[TransferrableKeys.attributeName] = attributeName;
 
-    this.storeAttributeMethod_ = element.storeAttributeNS_.bind(element);
+    this[TransferrableKeys.storeAttribute] = element[TransferrableKeys.storeAttribute].bind(element);
     element.propertyBackedAttributes_[attributeName] = [(): string | null => this.value, (value: string) => (this.value = value)];
 
     if (accessorKey && propertyName) {
@@ -61,7 +62,7 @@ export class DOMTokenList {
    * @return string representation of tokens (space delimitted).
    */
   get value(): string {
-    return this.array_.join(' ');
+    return this[TransferrableKeys.tokens].join(' ');
   }
 
   /**
@@ -69,7 +70,7 @@ export class DOMTokenList {
    * @return integer representing the number of objects stored in the object.
    */
   get length(): number {
-    return this.array_.length;
+    return this[TransferrableKeys.tokens].length;
   }
 
   /**
@@ -81,8 +82,8 @@ export class DOMTokenList {
     const newValue = collection.trim();
 
     // Replace current tokens with new tokens.
-    this.array_.splice(0, this.array_.length, ...(newValue !== '' ? newValue.split(/\s+/) : ''));
-    this.mutationCompleteHandler_(oldValue, newValue);
+    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...(newValue !== '' ? newValue.split(/\s+/) : ''));
+    this.mutated(oldValue, newValue);
   }
 
   /**
@@ -91,7 +92,7 @@ export class DOMTokenList {
    * @return value stored at the index requested, or undefined if beyond known range.
    */
   public item(index: number): string | undefined {
-    return this.array_[index];
+    return this[TransferrableKeys.tokens][index];
   }
 
   /**
@@ -100,7 +101,7 @@ export class DOMTokenList {
    * @return boolean indicating if the token is contained by the DOMTokenList.
    */
   public contains(token: string): boolean {
-    return this.array_.includes(token);
+    return this[TransferrableKeys.tokens].includes(token);
   }
 
   /**
@@ -112,8 +113,8 @@ export class DOMTokenList {
    */
   public add(...tokens: string[]): void {
     const oldValue = this.value;
-    this.array_.splice(0, this.array_.length, ...new Set(this.array_.concat(tokens)));
-    this.mutationCompleteHandler_(oldValue, this.value);
+    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...new Set(this[TransferrableKeys.tokens].concat(tokens)));
+    this.mutated(oldValue, this.value);
   }
 
   /**
@@ -125,8 +126,8 @@ export class DOMTokenList {
    */
   public remove(...tokens: string[]): void {
     const oldValue = this.value;
-    this.array_.splice(0, this.array_.length, ...new Set(this.array_.filter(token => !tokens.includes(token))));
-    this.mutationCompleteHandler_(oldValue, this.value);
+    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...new Set(this[TransferrableKeys.tokens].filter(token => !tokens.includes(token))));
+    this.mutated(oldValue, this.value);
   }
 
   /**
@@ -135,20 +136,20 @@ export class DOMTokenList {
    * @param newToken
    */
   public replace(token: string, newToken: string): void {
-    if (!this.array_.includes(token)) {
+    if (!this[TransferrableKeys.tokens].includes(token)) {
       return;
     }
 
     const oldValue = this.value;
-    const set = new Set(this.array_);
+    const set = new Set(this[TransferrableKeys.tokens]);
     if (token !== newToken) {
       set.delete(token);
       if (newToken !== '') {
         set.add(newToken);
       }
     }
-    this.array_.splice(0, this.array_.length, ...set);
-    this.mutationCompleteHandler_(oldValue, this.value);
+    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...set);
+    this.mutated(oldValue, this.value);
   }
 
   /**
@@ -160,7 +161,7 @@ export class DOMTokenList {
    * @return true if the token is in the list following mutation, false if not.
    */
   public toggle(token: string, force?: boolean): boolean {
-    if (!this.array_.includes(token)) {
+    if (!this[TransferrableKeys.tokens].includes(token)) {
       if (force !== false) {
         // Note, this will add the token if force is undefined (not passed into the method), or true.
         this.add(token);
@@ -181,12 +182,12 @@ export class DOMTokenList {
    * @param value value after mutation
    * @private
    */
-  private mutationCompleteHandler_(oldValue: string, value: string): void {
-    this.storeAttributeMethod_(this.element_.namespaceURI, this.attributeName_, value);
+  private mutated(oldValue: string, value: string): void {
+    this[TransferrableKeys.storeAttribute](this[TransferrableKeys.target].namespaceURI, this[TransferrableKeys.attributeName], value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
-      target: this.element_,
-      attributeName: this.attributeName_,
+      target: this[TransferrableKeys.target],
+      attributeName: this[TransferrableKeys.attributeName],
       value,
       oldValue,
     });

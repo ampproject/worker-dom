@@ -17,28 +17,20 @@
 import { CharacterData } from './CharacterData';
 import { NumericBoolean } from '../../utils';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { HydrateableNode, NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Comment
 export class Comment extends CharacterData {
   constructor(data: string) {
     super(data, NodeType.COMMENT_NODE, '#comment');
-    this._transferredFormat_ = {
-      [TransferrableKeys._index_]: this._index_,
-      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-    };
-    this._creationFormat_ = {
-      [TransferrableKeys._index_]: this._index_,
+    this[TransferrableKeys._creationFormat_] = {
+      [TransferrableKeys._index_]: this[TransferrableKeys._index_],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: NodeType.COMMENT_NODE,
-      [TransferrableKeys.nodeName]: storeString('#comment'),
+      [TransferrableKeys.nodeName]: storeString(this.nodeName),
       [TransferrableKeys.textContent]: storeString(this.data),
     };
-  }
-
-  public hydrate(): HydrateableNode {
-    return this._creationFormat_;
   }
 
   /**

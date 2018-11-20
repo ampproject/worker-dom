@@ -37,7 +37,7 @@ export function prepare(baseElement: Element): void {
   baseElement._index_ = 2;
   // Lastly, it's important while initializing the document that we store
   // the default nodes present in the server rendered document.
-  baseElement.childNodes.forEach(node => storeNodes(node));
+  baseElement.childNodes.forEach(storeNodes);
 }
 
 /**
@@ -46,7 +46,7 @@ export function prepare(baseElement: Element): void {
  */
 function storeNodes(node: Node): void {
   storeNode(node, ++count);
-  node.childNodes.forEach(node => storeNodes(node));
+  node.childNodes.forEach(storeNodes);
 }
 
 /**

@@ -56,6 +56,7 @@ import { observe as observeMutations } from '../../transfer/DocumentMutations';
 import { propagate as propagateEvents } from '../../transfer/TransferrableEvent';
 import { propagate as propagateSyncValues } from '../../transfer/TransferrableSyncValue';
 import { toLower } from '../../utils';
+import { DocumentFragment } from './DocumentFragment';
 
 export class Document extends Element {
   public defaultView: {
@@ -73,6 +74,8 @@ export class Document extends Element {
   public createElement: (tagName: string) => Element;
   public createElementNS: (namespaceURI: NamespaceURI, tagName: string) => Element;
   public createTextNode: (text: string) => Text;
+  public createComment: (text: string) => Comment;
+  public createDocumentFragment: () => DocumentFragment;
   public body: Element;
 
   constructor() {
@@ -84,6 +87,7 @@ export class Document extends Element {
       new (NODE_NAME_MAPPING[toLower(tagName)] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
     this.createTextNode = (text: string): Text => new Text(text);
     this.createComment = (text: string): Comment => new Comment(text);
+    this.createDocumentFragment = (): DocumentFragment => new DocumentFragment();
     this.observe = (): void => {
       observeMutations(this, this.postMessageMethod);
       propagateEvents();

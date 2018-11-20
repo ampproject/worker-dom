@@ -18,6 +18,7 @@ import test from 'ava';
 import { documentForTesting as document } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
 import { Comment } from '../../worker-thread/dom/Comment';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 test.beforeEach(t => {
   t.context = {
@@ -41,7 +42,7 @@ test('cloneNode should create a new node with the same tagName', t => {
 test('cloneNode should create a new node with a different _index_', t => {
   const { comment } = t.context as { comment: Comment };
 
-  t.not(comment.cloneNode()._index_, comment._index_);
+  t.not(comment.cloneNode()[TransferrableKeys._index_], comment[TransferrableKeys._index_]);
 });
 
 test('cloneNode should create a new node with the same children when the deep flag is set', t => {

@@ -16,7 +16,7 @@
 
 import { store as storeNodeMapping } from '../nodes';
 import { Event, EventHandler } from '../Event';
-import { toLower } from '../../utils';
+import { toLower, NumericBoolean } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { TransferredNode, TransferrableNode, HydrateableNode, NodeType } from '../../transfer/TransferrableNodes';
@@ -53,12 +53,11 @@ export abstract class Node {
   public childNodes: Node[] = [];
   public parentNode: Node | null = null;
   public isConnected: boolean = false;
-  public _index_: number;
-  public _transferredFormat_: TransferredNode;
-  public _creationFormat_: TransferrableNode;
-  public abstract hydrate(): HydrateableNode;
+  public [TransferrableKeys._index_]: number;
+  public [TransferrableKeys._transferredFormat_]: TransferredNode;
+  public [TransferrableKeys._creationFormat_]: TransferrableNode;
   public abstract cloneNode(deep: boolean): Node;
-  private _handlers_: {
+  private [TransferrableKeys._handlers_]: {
     [index: string]: EventHandler[];
   } = {};
 
@@ -72,7 +71,20 @@ export abstract class Node {
     }
     this.ownerDocument = globalDocument;
 
-    this._index_ = storeNodeMapping(this);
+    this[TransferrableKeys._index_] = storeNodeMapping(this);
+
+    this[TransferrableKeys._transferredFormat_] = {
+      [TransferrableKeys._index_]: this[TransferrableKeys._index_],
+      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
+    };
+  }
+
+  /**
+   * When hydrating the tree, we need to send HydrateableNode representations
+   * for the main thread to process and store items from for future modifications.
+   */
+  public hydrate(): HydrateableNode {
+    return this[TransferrableKeys._creationFormat_];
   }
 
   // Unimplemented Properties
@@ -113,7 +125,7 @@ export abstract class Node {
    * @return Node's first child in the tree, or null if the node has no children.
    */
   get firstChild(): Node | null {
-    return this.childNodes.length > 0 ? this.childNodes[0] : null;
+    return this.childNodes[0] || null;
   }
 
   /**
@@ -121,7 +133,7 @@ export abstract class Node {
    * @return The last child of a node, or null if there are no child elements.
    */
   get lastChild(): Node | null {
-    return this.childNodes.length > 0 ? this.childNodes[this.childNodes.length - 1] : null;
+    return this.childNodes[this.childNodes.length - 1] || null;
   }
 
   /**
@@ -184,27 +196,17 @@ export abstract class Node {
    * @return child after it has been inserted.
    */
   public insertBefore(child: Node | null, referenceNode: Node | undefined | null): Node | null {
-    if (child === null) {
-      return null;
-    }
-
-    if (child === this) {
+    if (child === null || child === this) {
       // The new child cannot contain the parent.
       return child;
     }
 
-    if (referenceNode == null) {
+    if (child.nodeType === NodeType.DOCUMENT_FRAGMENT_NODE) {
+      child.childNodes.slice().forEach((node: Node) => this.insertBefore(node, referenceNode));
+    } else if (referenceNode == null) {
       // When a referenceNode is not valid, appendChild(child).
-      this.appendChild(child);
-      mutate({
-        addedNodes: [child],
-        type: MutationRecordType.CHILD_LIST,
-        target: this,
-      });
-      return child;
-    }
-
-    if (this.childNodes.indexOf(referenceNode) >= 0) {
+      return this.appendChild(child);
+    } else if (this.childNodes.indexOf(referenceNode) >= 0) {
       // Should only insertBefore direct children of this Node.
       child.remove();
 
@@ -232,18 +234,21 @@ export abstract class Node {
    * @return Node the appended node.
    */
   public appendChild(child: Node): Node {
-    child.remove();
-    child.parentNode = this;
-    propagate(child, 'isConnected', this.isConnected);
-    this.childNodes.push(child);
+    if (child.nodeType === NodeType.DOCUMENT_FRAGMENT_NODE) {
+      child.childNodes.slice().forEach(this.appendChild, this);
+    } else {
+      child.remove();
+      child.parentNode = this;
+      propagate(child, 'isConnected', this.isConnected);
+      this.childNodes.push(child);
 
-    mutate({
-      addedNodes: [child],
-      previousSibling: this.childNodes[this.childNodes.length - 2],
-      type: MutationRecordType.CHILD_LIST,
-      target: this,
-    });
-    
+      mutate({
+        addedNodes: [child],
+        previousSibling: this.childNodes[this.childNodes.length - 2],
+        type: MutationRecordType.CHILD_LIST,
+        target: this,
+      });
+    }
     return child;
   }
 
@@ -317,12 +322,12 @@ export abstract class Node {
    * @param handler Function called when event is dispatched.
    */
   public addEventListener(type: string, handler: EventHandler): void {
-    const handlers: EventHandler[] = this._handlers_[toLower(type)];
+    const handlers: EventHandler[] = this[TransferrableKeys._handlers_][toLower(type)];
     let index: number = 0;
-    if (handlers && handlers.length > 0) {
+    if (handlers) {
       index = handlers.push(handler);
     } else {
-      this._handlers_[toLower(type)] = [handler];
+      this[TransferrableKeys._handlers_][toLower(type)] = [handler];
     }
 
     mutate({
@@ -331,7 +336,7 @@ export abstract class Node {
       addedEvents: [
         {
           [TransferrableKeys.type]: storeString(type),
-          [TransferrableKeys._index_]: this._index_,
+          [TransferrableKeys._index_]: this[TransferrableKeys._index_],
           [TransferrableKeys.index]: index,
         },
       ],
@@ -345,7 +350,7 @@ export abstract class Node {
    * @param handler Function to stop calling when event is dispatched.
    */
   public removeEventListener(type: string, handler: EventHandler): void {
-    const handlers = this._handlers_[toLower(type)];
+    const handlers = this[TransferrableKeys._handlers_][toLower(type)];
     const index = !!handlers ? handlers.indexOf(handler) : -1;
 
     if (index >= 0) {
@@ -356,7 +361,7 @@ export abstract class Node {
         removedEvents: [
           {
             [TransferrableKeys.type]: storeString(type),
-            [TransferrableKeys._index_]: this._index_,
+            [TransferrableKeys._index_]: this[TransferrableKeys._index_],
             [TransferrableKeys.index]: index,
           },
         ],
@@ -375,9 +380,9 @@ export abstract class Node {
     let iterator: number;
 
     do {
-      handlers = target && target._handlers_ && target._handlers_[toLower(event.type)];
+      handlers = target && target[TransferrableKeys._handlers_] && target[TransferrableKeys._handlers_][toLower(event.type)];
       if (handlers) {
-        for (iterator = handlers.length; iterator--; ) {
+        for (iterator = handlers.length; iterator--;) {
           if ((handlers[iterator].call(target, event) === false || event._end) && event.cancelable) {
             break;
           }

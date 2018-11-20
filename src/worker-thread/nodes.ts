@@ -16,6 +16,7 @@
 
 import { Node } from './dom/Node';
 import { phase, Phases } from '../transfer/phase';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 let count: number = 0;
 let transfer: Array<Node> = [];
@@ -27,11 +28,11 @@ const mapping: Map<number, Node> = new Map();
  * @return index Node was stored with in mapping
  */
 export function store(node: Node): number {
-  if (node._index_ !== undefined) {
-    return node._index_;
+  if (node[TransferrableKeys._index_] !== undefined) {
+    return node[TransferrableKeys._index_];
   }
 
-  mapping.set((node._index_ = ++count), node);
+  mapping.set((node[TransferrableKeys._index_] = ++count), node);
   if (phase !== Phases.Initializing) {
     // After Initialization, include all future dom node creation into the list for next transfer.
     transfer.push(node);

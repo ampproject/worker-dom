@@ -48,12 +48,8 @@ export class Element extends Node {
     super(nodeType, nodeName);
     this.namespaceURI = namespaceURI || HTML_NAMESPACE;
     this.localName = toLower(nodeName);
-    this._transferredFormat_ = {
-      [TransferrableKeys._index_]: this._index_,
-      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-    };
-    this._creationFormat_ = {
-      [TransferrableKeys._index_]: this._index_,
+    this[TransferrableKeys._creationFormat_] = {
+      [TransferrableKeys._index_]: this[TransferrableKeys._index_],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: this.nodeType,
       [TransferrableKeys.nodeName]: storeString(this.nodeName),
@@ -67,22 +63,15 @@ export class Element extends Node {
    */
   public hydrate(): HydrateableNode {
     return Object.assign(
-      {},
-      this._creationFormat_,
-      this.childNodes.length > 0
-        ? {
-            [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
-          }
-        : {},
-      this.attributes.length > 0
-        ? {
-            [TransferrableKeys.attributes]: this.attributes.map(attribute => [
-              storeString(attribute.namespaceURI || 'null'),
-              storeString(attribute.name),
-              storeString(attribute.value),
-            ]),
-          }
-        : {},
+      this[TransferrableKeys._creationFormat_],
+      {
+        [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
+        [TransferrableKeys.attributes]: this.attributes.map(attribute => [
+          storeString(attribute.namespaceURI || 'null'),
+          storeString(attribute.name),
+          storeString(attribute.value),
+        ]),
+      },
     );
   }
 
@@ -307,7 +296,7 @@ export class Element extends Node {
       return;
     }
 
-    const oldValue = this.storeAttributeNS_(namespaceURI, name, value);
+    const oldValue = this[TransferrableKeys.storeAttribute](namespaceURI, name, value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this,
@@ -318,7 +307,7 @@ export class Element extends Node {
     });
   }
 
-  public storeAttributeNS_(namespaceURI: NamespaceURI, name: string, value: string): string {
+  public [TransferrableKeys.storeAttribute](namespaceURI: NamespaceURI, name: string, value: string): string {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     const oldValue = (attr && attr.value) || '';
 

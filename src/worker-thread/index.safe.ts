@@ -187,9 +187,7 @@ function dereferenceGlobals(global: WorkerGlobalScope) {
   let current = global;
   while (current && current.constructor !== EventTarget) {
     console.info('Removing references from:', current);
-    Object.getOwnPropertyNames(current).forEach(prop => {
-      deleteUnsafe(current, prop);
-    });
+    Object.getOwnPropertyNames(current).forEach(prop => deleteUnsafe(current, prop));
     current = Object.getPrototypeOf(current);
   }
 }
