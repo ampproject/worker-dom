@@ -109,11 +109,7 @@ const mutators: {
  * @param nodes New nodes to add in the main thread with the incoming mutations.
  * @param mutations Changes to apply in both graph shape and content of Elements.
  */
-export function mutate(
-  nodes: Array<TransferrableNode>,
-  stringValues: Array<string>,
-  mutations: Array<TransferrableMutationRecord>,
-): void {
+export function mutate(nodes: Array<TransferrableNode>, stringValues: Array<string>, mutations: Array<TransferrableMutationRecord>): void {
   //mutations: TransferrableMutationRecord[]): void {
   // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
   // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {

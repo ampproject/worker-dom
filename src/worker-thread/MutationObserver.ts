@@ -21,7 +21,8 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 const observers: MutationObserver[] = [];
 let pendingMutations = false;
 
-const match = (observerTarget: Node | null, target: Node): boolean => observerTarget !== null && target[TransferrableKeys._index_] === observerTarget[TransferrableKeys._index_];
+const match = (observerTarget: Node | null, target: Node): boolean =>
+  observerTarget !== null && target[TransferrableKeys._index_] === observerTarget[TransferrableKeys._index_];
 const pushMutation = (observer: MutationObserver, record: MutationRecord): void => {
   observer.pushRecord(record);
   if (!pendingMutations) {
