@@ -57,16 +57,16 @@ function storeNodes(node: Node): void {
  *   createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
  */
 export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): Node | null {
-  let node;
+  let node: Node;
   if (skeleton[TransferrableKeys.nodeType] === NodeType.TEXT_NODE) {
     node = document.createTextNode(getString(skeleton[TransferrableKeys.textContent] as number));
   } else if (skeleton[TransferrableKeys.nodeType] === NodeType.DOCUMENT_FRAGMENT_NODE) {
     node = document.createDocumentFragment();
   } else {
-    const namespace: string | undefined =
+    const namespace =
       skeleton[TransferrableKeys.namespaceURI] !== undefined ? getString(skeleton[TransferrableKeys.namespaceURI] as number) : undefined;
     const nodeName = getString(skeleton[TransferrableKeys.nodeName]);
-    node = namespace ? (document.createElementNS(namespace, nodeName) as SVGElement) : document.createElement(nodeName);
+    node = namespace ? document.createElementNS(namespace, nodeName) : document.createElement(nodeName);
 
     // TODO(KB): Restore Properties
     // skeleton.properties.forEach(property => {
