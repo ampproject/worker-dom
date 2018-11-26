@@ -33,7 +33,7 @@
     "presize": "npm run build",
     "size": "bundlesize",
     "release:tag": "cross-var git tag -a v$npm_package_version -m '$npm_package_version'",
-    "prerelease:git": "git add ." ,
+    "prerelease:git": "git add .",
     "release:git": "cross-var git commit -m 'Release $npm_package_version'",
     "postrelease:git": "git push origin master --no-verify",
     "release:gren": "gren release",

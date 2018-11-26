@@ -57,33 +57,35 @@ function storeNodes(node: Node): void {
  *   createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
  */
 export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): Node | null {
+  let node;
   if (skeleton[TransferrableKeys.nodeType] === NodeType.TEXT_NODE) {
-    const node = document.createTextNode(getString(skeleton[TransferrableKeys.textContent] as number));
-    storeNode(node, skeleton[TransferrableKeys._index_]);
-    return node as Node;
+    node = document.createTextNode(getString(skeleton[TransferrableKeys.textContent] as number));
+  } else if (skeleton[TransferrableKeys.nodeType] === NodeType.DOCUMENT_FRAGMENT_NODE) {
+    node = document.createDocumentFragment();
+  } else {
+    const namespace: string | undefined =
+      skeleton[TransferrableKeys.namespaceURI] !== undefined ? getString(skeleton[TransferrableKeys.namespaceURI] as number) : undefined;
+    const nodeName = getString(skeleton[TransferrableKeys.nodeName]);
+    node = namespace ? (document.createElementNS(namespace, nodeName) as SVGElement) : document.createElement(nodeName);
+
+    // TODO(KB): Restore Properties
+    // skeleton.properties.forEach(property => {
+    //   node[`${property.name}`] = property.value;
+    // });
+    // ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(childNode => {
+    //   if (childNode[TransferrableKeys.transferred] === NumericBoolean.FALSE) {
+    //     node.appendChild(createNode(childNode as TransferrableNode));
+    //   }
+    // });
+
+    // If `node` is removed by the sanitizer, don't store it and return null.
+    if (sanitizer && !sanitizer.sanitize(node)) {
+      return null;
+    }
   }
 
-  const namespace: string | undefined =
-    skeleton[TransferrableKeys.namespaceURI] !== undefined ? getString(skeleton[TransferrableKeys.namespaceURI] as number) : undefined;
-  const nodeName = getString(skeleton[TransferrableKeys.nodeName]);
-  const node: HTMLElement | SVGElement = namespace ? (document.createElementNS(namespace, nodeName) as SVGElement) : document.createElement(nodeName);
-
-  // TODO(KB): Restore Properties
-  // skeleton.properties.forEach(property => {
-  //   node[`${property.name}`] = property.value;
-  // });
-  // ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(childNode => {
-  //   if (childNode[TransferrableKeys.transferred] === NumericBoolean.FALSE) {
-  //     node.appendChild(createNode(childNode as TransferrableNode));
-  //   }
-  // });
-
-  // If `node` is removed by the sanitizer, don't store it and return null.
-  if (sanitizer && !sanitizer.sanitize(node)) {
-    return null;
-  }
   storeNode(node, skeleton[TransferrableKeys._index_]);
-  return node as Node;
+  return node;
 }
 
 /**
