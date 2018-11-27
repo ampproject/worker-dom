@@ -19,6 +19,7 @@ import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { NumericBoolean } from '../../utils';
 import { store as storeString } from '../strings';
+import { QuerySelectorMixin } from './QuerySelectorMixin';
 
 export class DocumentFragment extends Node {
   constructor() {
@@ -32,6 +33,19 @@ export class DocumentFragment extends Node {
     };
   }
 
+  // Partially implemented Mixin Methods
+  // Both Element.querySelector() and Element.querySelector() are only implemented for the following simple selectors:
+  // - Element selectors
+  // - ID selectors
+  // - Class selectors
+  // - Attribute selectors
+  // Element.querySelector() – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
+  // Element.querySelectorAll() – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll
+
+  /**
+   * @param deep boolean determines if the clone should include a recursive copy of all childNodes.
+   * @return DocumentFragment containing childNode clones of the DocumentFragment requested to be cloned.
+   */
   public cloneNode(deep: boolean = false): DocumentFragment {
     const clone: DocumentFragment = this.ownerDocument.createDocumentFragment();
     if (deep) {
@@ -40,3 +54,4 @@ export class DocumentFragment extends Node {
     return clone;
   }
 }
+QuerySelectorMixin(DocumentFragment);

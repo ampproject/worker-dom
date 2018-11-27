@@ -37,7 +37,7 @@ export function createWorker(
     .then(([workerScript, authorScript]) => {
       // TODO(KB): Minify this output during build process.
       const keys: Array<string> = [];
-      for (let key in document.body.style) {
+      for (const key in document.body.style) {
         keys.push(`'${key}'`);
       }
       const hydratedNode = createHydrateableNode(baseElement);

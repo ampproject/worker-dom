@@ -22,14 +22,13 @@ import { MutationRecordType } from '../MutationRecord';
 import { NumericBoolean } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
-import { matchChildrenElements } from './matchElements';
+import { matchChildrenElements, elementPredicate } from './matchElements';
 import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
-import { containsIndexOf, toLower } from '../../utils';
-
-const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
+import { toLower } from '../../utils';
+import { QuerySelectorMixin } from './QuerySelectorMixin';
 
 export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
 export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
@@ -62,17 +61,14 @@ export class Element extends Node {
    * for the main thread to process and store items from for future modifications.
    */
   public hydrate(): HydrateableNode {
-    return Object.assign(
-      this[TransferrableKeys._creationFormat_],
-      {
-        [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
-        [TransferrableKeys.attributes]: this.attributes.map(attribute => [
-          storeString(attribute.namespaceURI || 'null'),
-          storeString(attribute.name),
-          storeString(attribute.value),
-        ]),
-      },
-    );
+    return Object.assign(this[TransferrableKeys._creationFormat_], {
+      [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
+      [TransferrableKeys.attributes]: this.attributes.map(attribute => [
+        storeString(attribute.namespaceURI || 'null'),
+        storeString(attribute.name),
+        storeString(attribute.value),
+      ]),
+    });
   }
 
   // Unimplemented properties
@@ -80,7 +76,6 @@ export class Element extends Node {
   // Element.clientLeft – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientLeft
   // Element.clientTop – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientTop
   // Element.clientWidth – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth
-  // Element.querySelectorAll – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll
   // set Element.innerHTML – https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
   // NonDocumentTypeChildNode.nextElementSibling – https://developer.mozilla.org/en-US/docs/Web/API/NonDocumentTypeChildNode/nextElementSibling
   // Element.prefix – https://developer.mozilla.org/en-US/docs/Web/API/Element/prefix
@@ -116,7 +111,7 @@ export class Element extends Node {
   // Element.setCapture() – https://developer.mozilla.org/en-US/docs/Web/API/Element/setCapture
   // Element.setPointerCapture() – https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture
 
-  // Partially implemented Methods
+  // Partially implemented Mixin Methods
   // Both Element.querySelector() and Element.querySelector() are only implemented for the following simple selectors:
   // - Element selectors
   // - ID selectors
@@ -194,7 +189,7 @@ export class Element extends Node {
    * @return Element objects that are children of this ParentNode, omitting all of its non-element nodes.
    */
   get children(): Element[] {
-    return this.childNodes.filter(isElementPredicate) as Element[];
+    return this.childNodes.filter(elementPredicate) as Element[];
   }
 
   /**
@@ -212,7 +207,7 @@ export class Element extends Node {
    * @return first childNode that is also an element.
    */
   get firstElementChild(): Element | null {
-    return (this.childNodes.find(isElementPredicate) as Element) || null;
+    return (this.childNodes.find(elementPredicate) as Element) || null;
   }
 
   /**
@@ -415,97 +410,6 @@ export class Element extends Node {
     }
     return clone;
   }
-
-  /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
-   * @param selector the selector we are trying to match for.
-   * @return Element with matching selector.
-   */
-  public querySelector(selector: string): Element | null {
-    let matches: Element[] | null = this.querySelectorAll(selector);
-    return matches ? matches[0] : null;
-  }
-
-  /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
-   * @param selector the selector we are trying to match for.
-   * @return Element with matching selector.
-   */
-  public querySelectorAll(selector: string): Element[] | null {
-    // As per spec: https://dom.spec.whatwg.org/#scope-match-a-selectors-string
-    // First, parse the selector
-    const selectorBracketIndexes = [selector.indexOf('['), selector.indexOf(']')];
-    const selectorHasAttr = containsIndexOf(selectorBracketIndexes[0]) && containsIndexOf(selectorBracketIndexes[1]);
-    const elementSelector = selectorHasAttr ? selector.substring(0, selectorBracketIndexes[0]) : selector;
-    const attrSelector = selectorHasAttr ? selector.substring(selectorBracketIndexes[0], selectorBracketIndexes[1] + 1) : null;
-
-    // TODO(nainar): Parsing selectors is needed when we add in more complex selectors.
-    // Second, find all the matching elements on the Document
-    let matcher: (element: Element) => boolean;
-    if (selector[0] === '[') {
-      matcher = element => matchAttrReference(selector, element);
-    } else if (elementSelector[0] === '#') {
-      matcher = selectorHasAttr
-        ? element => element.id === elementSelector.substr(1) && matchAttrReference(attrSelector, element)
-        : element => element.id === elementSelector.substr(1);
-    } else if (elementSelector[0] === '.') {
-      matcher = selectorHasAttr
-        ? element => element.classList.contains(elementSelector.substr(1)) && matchAttrReference(attrSelector, element)
-        : element => element.classList.contains(elementSelector.substr(1));
-    } else {
-      matcher = selectorHasAttr
-        ? element => element.localName === toLower(elementSelector) && matchAttrReference(attrSelector, element)
-        : element => element.localName === toLower(elementSelector);
-    }
-
-    // Third, filter to return elements that exist within the querying element's descendants.
-    return matcher
-      ? matchChildrenElements(this.ownerDocument.documentElement, matcher).filter(element => this !== element && this.contains(element))
-      : [];
-  }
 }
+QuerySelectorMixin(Element);
 reflectProperties([{ id: [''] }], Element);
-
-/**
- * @see https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors
- * @param attrSelector the selector we are trying to match for.
- * @param element the element being tested.
- * @return boolean for whether we match the condition
- */
-const matchAttrReference = (attrSelector: string | null, element: Element): boolean => {
-  if (!attrSelector) {
-    return false;
-  }
-  const equalPos: number = attrSelector.indexOf('=');
-  const selectorLength: number = attrSelector.length;
-  const caseInsensitive = attrSelector.charAt(selectorLength - 2) === 'i';
-  let endPos = caseInsensitive ? selectorLength - 3 : selectorLength - 1;
-  if (equalPos !== -1) {
-    const equalSuffix: string = attrSelector.charAt(equalPos - 1);
-    const possibleSuffixes: string[] = ['~', '|', '$', '^', '*'];
-    const attrString: string = possibleSuffixes.includes(equalSuffix) ? attrSelector.substring(1, equalPos - 1) : attrSelector.substring(1, equalPos);
-    const rawValue: string = attrSelector.substring(equalPos + 1, endPos);
-    const rawAttrValue: string | null = element.getAttribute(attrString);
-    if (rawAttrValue) {
-      const casedValue: string = caseInsensitive ? toLower(rawValue) : rawValue;
-      const casedAttrValue: string = caseInsensitive ? toLower(rawAttrValue) : rawAttrValue;
-      switch (equalSuffix) {
-        case '~':
-          return casedAttrValue.split(' ').indexOf(casedValue) !== -1;
-        case '|':
-          return casedAttrValue === casedValue || casedAttrValue === `${casedValue}-`;
-        case '^':
-          return casedAttrValue.startsWith(casedValue);
-        case '$':
-          return casedAttrValue.endsWith(casedValue);
-        case '*':
-          return casedAttrValue.indexOf(casedValue) !== -1;
-        default:
-          return casedAttrValue === casedValue;
-      }
-    }
-    return false;
-  } else {
-    return element.hasAttribute(attrSelector.substring(1, endPos));
-  }
-};

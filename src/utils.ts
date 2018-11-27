@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export const toLower = (string: string): string => string.toLowerCase();
+export const toLower = (value: string): string => value.toLowerCase();
 
 export const containsIndexOf = (pos: number): boolean => pos !== -1;
 
