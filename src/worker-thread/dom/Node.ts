@@ -34,7 +34,7 @@ export let globalDocument: Node | null = null;
  * @param property Property to modify
  * @param value New value to apply
  */
-const propagate = (node: Node, property: string, value: any): void => {
+export const propagate = (node: Node, property: string, value: any): void => {
   node[property] = value;
   node.childNodes.forEach(child => propagate(child, property, value));
 };
@@ -382,7 +382,7 @@ export abstract class Node {
     do {
       handlers = target && target[TransferrableKeys._handlers_] && target[TransferrableKeys._handlers_][toLower(event.type)];
       if (handlers) {
-        for (iterator = handlers.length; iterator--;) {
+        for (iterator = handlers.length; iterator--; ) {
           if ((handlers[iterator].call(target, event) === false || event._end) && event.cancelable) {
             break;
           }

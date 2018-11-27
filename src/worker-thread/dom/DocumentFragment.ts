@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { Node } from './Node';
+import { ParentNode } from './ParentNode';
 import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { NumericBoolean } from '../../utils';
 import { store as storeString } from '../strings';
-import { QuerySelectorMixin } from './QuerySelectorMixin';
+import { Node, propagate } from './Node';
 
-export class DocumentFragment extends Node {
+export class DocumentFragment extends ParentNode {
   constructor() {
     super(NodeType.DOCUMENT_FRAGMENT_NODE, '#document-fragment');
 
@@ -33,14 +33,33 @@ export class DocumentFragment extends Node {
     };
   }
 
-  // Partially implemented Mixin Methods
-  // Both Element.querySelector() and Element.querySelector() are only implemented for the following simple selectors:
-  // - Element selectors
-  // - ID selectors
-  // - Class selectors
-  // - Attribute selectors
-  // Element.querySelector() – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
-  // Element.querySelectorAll() – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/insertBefore
+   * @param child
+   * @param referenceNode
+   * @return child after it has been inserted.
+   */
+  public insertBefore(child: Node | null, referenceNode: Node | undefined | null): Node | null {
+    const inserted = super.insertBefore(child, referenceNode);
+    if (inserted) {
+      propagate(inserted, 'isConnected', false);
+    }
+    return inserted;
+  }
+
+  /**
+   * Adds the specified childNode argument as the last child to the current node.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
+   * @param child Child Node to append to this Node.
+   * @return Node the appended node.
+   */
+  public appendChild(child: Node): Node {
+    const inserted = super.appendChild(child);
+    if (inserted) {
+      propagate(inserted, 'isConnected', false);
+    }
+    return inserted;
+  }
 
   /**
    * @param deep boolean determines if the clone should include a recursive copy of all childNodes.
@@ -49,9 +68,8 @@ export class DocumentFragment extends Node {
   public cloneNode(deep: boolean = false): DocumentFragment {
     const clone: DocumentFragment = this.ownerDocument.createDocumentFragment();
     if (deep) {
-      this.childNodes.forEach((child: Node) => clone.appendChild(child.cloneNode(deep)));
+      this.childNodes.forEach(child => clone.appendChild(child.cloneNode(deep)));
     }
     return clone;
   }
 }
-QuerySelectorMixin(DocumentFragment);

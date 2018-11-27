@@ -15,6 +15,7 @@
  */
 
 import { Node, NodeName, NamespaceURI } from './Node';
+import { ParentNode } from './ParentNode';
 import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
@@ -22,20 +23,19 @@ import { MutationRecordType } from '../MutationRecord';
 import { NumericBoolean } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
-import { matchChildrenElements, elementPredicate } from './matchElements';
+import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
 import { toLower } from '../../utils';
-import { QuerySelectorMixin } from './QuerySelectorMixin';
 
 export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
 export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
   NODE_NAME_MAPPING[nodeName] = subclass;
 }
 
-export class Element extends Node {
+export class Element extends ParentNode {
   public localName: NodeName;
   public attributes: Attr[] = [];
   public propertyBackedAttributes_: { [key: string]: [() => string | null, (value: string) => string | boolean] } = {};
@@ -181,43 +181,6 @@ export class Element extends Node {
    */
   get tagName(): string {
     return this.nodeName;
-  }
-
-  /**
-   * Getter returning children of an Element that are Elements themselves.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/children
-   * @return Element objects that are children of this ParentNode, omitting all of its non-element nodes.
-   */
-  get children(): Element[] {
-    return this.childNodes.filter(elementPredicate) as Element[];
-  }
-
-  /**
-   * Getter returning the number of child elements of a Element.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/childElementCount
-   * @return number of child elements of the given Element.
-   */
-  get childElementCount(): number {
-    return this.children.length;
-  }
-
-  /**
-   * Getter returning the first Element in Element.childNodes.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/firstElementChild
-   * @return first childNode that is also an element.
-   */
-  get firstElementChild(): Element | null {
-    return (this.childNodes.find(elementPredicate) as Element) || null;
-  }
-
-  /**
-   * Getter returning the last Element in Element.childNodes.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/lastElementChild
-   * @return first childNode that is also an element.
-   */
-  get lastElementChild(): Element | null {
-    const children = this.children;
-    return children[children.length - 1] || null;
   }
 
   /**
@@ -411,5 +374,4 @@ export class Element extends Node {
     return clone;
   }
 }
-QuerySelectorMixin(Element);
 reflectProperties([{ id: [''] }], Element);
