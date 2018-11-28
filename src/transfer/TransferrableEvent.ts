@@ -23,7 +23,7 @@ import { Event } from '../worker-thread/Event';
 type TransferrableTarget = TransferredNode;
 
 export interface TransferrableEvent {
-  readonly [TransferrableKeys._index_]: number;
+  readonly [TransferrableKeys.index]: number;
   readonly [TransferrableKeys.bubbles]?: boolean;
   readonly [TransferrableKeys.cancelable]?: boolean;
   [TransferrableKeys.cancelBubble]?: boolean;
@@ -42,7 +42,7 @@ export interface TransferrableEvent {
 
 export interface TransferrableEventSubscriptionChange {
   readonly [TransferrableKeys.type]: number;
-  readonly [TransferrableKeys._index_]: number;
+  readonly [TransferrableKeys.index]: number;
   readonly [TransferrableKeys.index]: number;
 }
 
@@ -61,7 +61,7 @@ export function propagate(): void {
     }
 
     const event = data[TransferrableKeys.event] as TransferrableEvent;
-    const node = get(event[TransferrableKeys._index_]);
+    const node = get(event[TransferrableKeys.index]);
     if (node !== null) {
       const target = event[TransferrableKeys.target];
       node.dispatchEvent(
@@ -73,7 +73,7 @@ export function propagate(): void {
             eventPhase: event[TransferrableKeys.eventPhase],
             isTrusted: event[TransferrableKeys.isTrusted],
             returnValue: event[TransferrableKeys.returnValue],
-            target: get(target ? target[TransferrableKeys._index_] : null),
+            target: get(target ? target[TransferrableKeys.index] : null),
             timeStamp: event[TransferrableKeys.timeStamp],
             scoped: event[TransferrableKeys.scoped],
             keyCode: event[TransferrableKeys.keyCode],

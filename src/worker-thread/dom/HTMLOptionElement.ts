@@ -19,6 +19,7 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { NodeName, NamespaceURI } from './Node';
 import { NodeType } from '../../transfer/TransferrableNodes';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export class HTMLOptionElement extends HTMLElement {
   private isSelected: boolean = false;
@@ -26,7 +27,10 @@ export class HTMLOptionElement extends HTMLElement {
   constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
     super(nodeType, nodeName, namespaceURI);
 
-    this.propertyBackedAttributes_.selected = [(): string => String(this.isSelected), (value: string): boolean => (this.selected = value === 'true')];
+    this[TransferrableKeys.propertyBackedAttributes].selected = [
+      (): string => String(this.isSelected),
+      (value: string): boolean => (this.selected = value === 'true'),
+    ];
   }
 
   /**

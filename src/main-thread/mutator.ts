@@ -36,14 +36,14 @@ const mutators: {
   [key: number]: (mutation: TransferrableMutationRecord, target: Node) => void;
 } = {
   [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, target: HTMLElement) {
-    (mutation[TransferrableKeys.removedNodes] || []).forEach(node => getNode(node[TransferrableKeys._index_]).remove());
+    (mutation[TransferrableKeys.removedNodes] || []).forEach(node => getNode(node[TransferrableKeys.index]).remove());
 
     const addedNodes = mutation[TransferrableKeys.addedNodes];
     const nextSibling = mutation[TransferrableKeys.nextSibling];
     if (addedNodes) {
       addedNodes.forEach(node => {
         let newChild = null;
-        newChild = getNode(node[TransferrableKeys._index_]);
+        newChild = getNode(node[TransferrableKeys.index]);
 
         if (!newChild) {
           // Transferred nodes that are not stored were previously removed by the sanitizer.
@@ -54,7 +54,7 @@ const mutators: {
           }
         }
         if (newChild) {
-          target.insertBefore(newChild, (nextSibling && getNode(nextSibling[TransferrableKeys._index_])) || null);
+          target.insertBefore(newChild, (nextSibling && getNode(nextSibling[TransferrableKeys.index])) || null);
         } else {
           // TODO(choumx): Inform worker that sanitizer removed newChild.
         }

@@ -71,7 +71,7 @@ reflectProperties([{ href: [''] }, { hreflang: [''] }, { media: [''] }, { target
 
     constructor(...) {
       // Element.getAttribute('href') => Element.href.
-      Object.assign(this.propertyBackedAttributes_, {
+      Object.assign(this[TransferrableKeys.propertyBackedAttributes], {
         href: this.href,
       }); 
     }

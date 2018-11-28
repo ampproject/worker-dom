@@ -18,6 +18,7 @@ import { Element } from './Element';
 import { elementPredicate, matchAttrReference, matchChildrenElements } from './matchElements';
 import { Node } from './Node';
 import { containsIndexOf, toLower } from '../../utils';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 /*
 Normally ParentNode is implemented as a mixin, but since the Node class is an abstract
@@ -131,6 +132,7 @@ function querySelectorAll(node: Node, selector: string): Element[] | null {
   }
 
   // Third, filter to return elements that exist within the querying element's descendants.
-  const rootNode = node.isConnected ? node.ownerDocument.documentElement : node;
-  return matcher ? matchChildrenElements(rootNode, matcher).filter(element => node !== element && node.contains(element)) : [];
+  return matcher
+    ? matchChildrenElements(node[TransferrableKeys.scopingRoot], matcher).filter(element => node !== element && node.contains(element))
+    : [];
 }

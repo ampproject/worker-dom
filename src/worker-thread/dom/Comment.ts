@@ -24,8 +24,8 @@ import { store as storeString } from '../strings';
 export class Comment extends CharacterData {
   constructor(data: string) {
     super(data, NodeType.COMMENT_NODE, '#comment');
-    this[TransferrableKeys._creationFormat_] = {
-      [TransferrableKeys._index_]: this[TransferrableKeys._index_],
+    this[TransferrableKeys.creationFormat] = {
+      [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: NodeType.COMMENT_NODE,
       [TransferrableKeys.nodeName]: storeString(this.nodeName),

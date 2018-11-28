@@ -30,27 +30,27 @@ test.beforeEach(t => {
 test('event handlers are undefined by default', t => {
   const { node } = t.context;
 
-  t.is(node[TransferrableKeys._handlers_]['click'], undefined);
+  t.is(node[TransferrableKeys.handlers]['click'], undefined);
 });
 
 test('adding an event listener increases total registered events from 0 to 1 on a Node', t => {
   const { node, callback } = t.context;
 
   node.addEventListener('click', callback);
-  t.is(node[TransferrableKeys._handlers_]['click'].length, 1);
-  t.is(node[TransferrableKeys._handlers_]['click'][0], callback);
+  t.is(node[TransferrableKeys.handlers]['click'].length, 1);
+  t.is(node[TransferrableKeys.handlers]['click'][0], callback);
 });
 
 test('adding a second event listener increases total registered events from 0 to 2 on a Node', t => {
   const { node, callback, callbackTwo } = t.context;
 
   node.addEventListener('click', callback);
-  t.is(node[TransferrableKeys._handlers_]['click'].length, 1);
-  t.is(node[TransferrableKeys._handlers_]['click'][0], callback);
-  t.is(node[TransferrableKeys._handlers_]['click'][1], undefined);
+  t.is(node[TransferrableKeys.handlers]['click'].length, 1);
+  t.is(node[TransferrableKeys.handlers]['click'][0], callback);
+  t.is(node[TransferrableKeys.handlers]['click'][1], undefined);
 
   node.addEventListener('click', callbackTwo);
-  t.is(node[TransferrableKeys._handlers_]['click'].length, 2);
-  t.is(node[TransferrableKeys._handlers_]['click'][0], callback);
-  t.is(node[TransferrableKeys._handlers_]['click'][1], callbackTwo);
+  t.is(node[TransferrableKeys.handlers]['click'].length, 2);
+  t.is(node[TransferrableKeys.handlers]['click'][0], callback);
+  t.is(node[TransferrableKeys.handlers]['click'][1], callbackTwo);
 });

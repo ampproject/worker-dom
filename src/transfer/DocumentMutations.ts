@@ -27,26 +27,26 @@ import { phase, set as setPhase, Phases } from '../transfer/phase';
 
 let observing = false;
 
-const serializeNodes = (nodes: Array<Node>): Array<TransferredNode> => nodes.map(node => node[TransferrableKeys._transferredFormat_]);
+const serializeNodes = (nodes: Array<Node>): Array<TransferredNode> => nodes.map(node => node[TransferrableKeys.transferredFormat]);
 
 /**
  *
  * @param mutations
  */
 function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
-  const nodes: Array<TransferrableNode> = consumeNodes().map(node => node[TransferrableKeys._creationFormat_]);
+  const nodes: Array<TransferrableNode> = consumeNodes().map(node => node[TransferrableKeys.creationFormat]);
   const transferrableMutations: TransferrableMutationRecord[] = [];
   const type = phase === Phases.Mutating ? MessageType.MUTATE : MessageType.HYDRATE;
 
   mutations.forEach(mutation => {
     let transferable: TransferrableMutationRecord = {
       [TransferrableKeys.type]: mutation.type,
-      [TransferrableKeys.target]: mutation.target[TransferrableKeys._index_],
+      [TransferrableKeys.target]: mutation.target[TransferrableKeys.index],
     };
 
     mutation.addedNodes && (transferable[TransferrableKeys.addedNodes] = serializeNodes(mutation.addedNodes));
     mutation.removedNodes && (transferable[TransferrableKeys.removedNodes] = serializeNodes(mutation.removedNodes));
-    mutation.nextSibling && (transferable[TransferrableKeys.nextSibling] = mutation.nextSibling[TransferrableKeys._transferredFormat_]);
+    mutation.nextSibling && (transferable[TransferrableKeys.nextSibling] = mutation.nextSibling[TransferrableKeys.transferredFormat]);
     mutation.attributeName != null && (transferable[TransferrableKeys.attributeName] = storeString(mutation.attributeName));
     mutation.attributeNamespace != null && (transferable[TransferrableKeys.attributeNamespace] = storeString(mutation.attributeNamespace));
     mutation.oldValue != null && (transferable[TransferrableKeys.oldValue] = storeString(mutation.oldValue));

@@ -34,7 +34,7 @@ export let globalDocument: Node | null = null;
  * @param property Property to modify
  * @param value New value to apply
  */
-export const propagate = (node: Node, property: string, value: any): void => {
+export const propagate = (node: Node, property: string | number, value: any): void => {
   node[property] = value;
   node.childNodes.forEach(child => propagate(child, property, value));
 };
@@ -48,16 +48,18 @@ export const propagate = (node: Node, property: string, value: any): void => {
 export abstract class Node {
   [index: string]: any;
   public ownerDocument: Node;
+  // https://drafts.csswg.org/selectors-4/#scoping-root
+  public [TransferrableKeys.scopingRoot]: Node;
   public nodeType: NodeType;
   public nodeName: NodeName;
   public childNodes: Node[] = [];
   public parentNode: Node | null = null;
   public isConnected: boolean = false;
-  public [TransferrableKeys._index_]: number;
-  public [TransferrableKeys._transferredFormat_]: TransferredNode;
-  public [TransferrableKeys._creationFormat_]: TransferrableNode;
+  public [TransferrableKeys.index]: number;
+  public [TransferrableKeys.transferredFormat]: TransferredNode;
+  public [TransferrableKeys.creationFormat]: TransferrableNode;
   public abstract cloneNode(deep: boolean): Node;
-  private [TransferrableKeys._handlers_]: {
+  private [TransferrableKeys.handlers]: {
     [index: string]: EventHandler[];
   } = {};
 
@@ -70,11 +72,12 @@ export abstract class Node {
       globalDocument = this;
     }
     this.ownerDocument = globalDocument;
+    this[TransferrableKeys.scopingRoot] = this;
 
-    this[TransferrableKeys._index_] = storeNodeMapping(this);
+    this[TransferrableKeys.index] = storeNodeMapping(this);
 
-    this[TransferrableKeys._transferredFormat_] = {
-      [TransferrableKeys._index_]: this[TransferrableKeys._index_],
+    this[TransferrableKeys.transferredFormat] = {
+      [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.TRUE,
     };
   }
@@ -84,7 +87,7 @@ export abstract class Node {
    * for the main thread to process and store items from for future modifications.
    */
   public hydrate(): HydrateableNode {
-    return this[TransferrableKeys._creationFormat_];
+    return this[TransferrableKeys.creationFormat];
   }
 
   // Unimplemented Properties
@@ -214,6 +217,7 @@ export abstract class Node {
       this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child);
       child.parentNode = this;
       propagate(child, 'isConnected', this.isConnected);
+      propagate(child, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
       mutate({
         addedNodes: [child],
         nextSibling: referenceNode,
@@ -240,6 +244,7 @@ export abstract class Node {
       child.remove();
       child.parentNode = this;
       propagate(child, 'isConnected', this.isConnected);
+      propagate(child, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
       this.childNodes.push(child);
 
       mutate({
@@ -265,6 +270,7 @@ export abstract class Node {
     if (exists) {
       child.parentNode = null;
       propagate(child, 'isConnected', false);
+      propagate(child, TransferrableKeys.scopingRoot, child);
       this.childNodes.splice(index, 1);
       mutate({
         removedNodes: [child],
@@ -291,8 +297,10 @@ export abstract class Node {
       if (index >= 0) {
         oldChild.parentNode = null;
         propagate(oldChild, 'isConnected', false);
+        propagate(oldChild, TransferrableKeys.scopingRoot, oldChild);
         this.childNodes.splice(index, 1, newChild);
-        propagate(newChild, 'isConnected', true);
+        propagate(newChild, 'isConnected', this.isConnected);
+        propagate(newChild, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
 
         mutate({
           addedNodes: [newChild],
@@ -322,12 +330,12 @@ export abstract class Node {
    * @param handler Function called when event is dispatched.
    */
   public addEventListener(type: string, handler: EventHandler): void {
-    const handlers: EventHandler[] = this[TransferrableKeys._handlers_][toLower(type)];
+    const handlers: EventHandler[] = this[TransferrableKeys.handlers][toLower(type)];
     let index: number = 0;
     if (handlers) {
       index = handlers.push(handler);
     } else {
-      this[TransferrableKeys._handlers_][toLower(type)] = [handler];
+      this[TransferrableKeys.handlers][toLower(type)] = [handler];
     }
 
     mutate({
@@ -336,7 +344,7 @@ export abstract class Node {
       addedEvents: [
         {
           [TransferrableKeys.type]: storeString(type),
-          [TransferrableKeys._index_]: this[TransferrableKeys._index_],
+          [TransferrableKeys.index]: this[TransferrableKeys.index],
           [TransferrableKeys.index]: index,
         },
       ],
@@ -350,7 +358,7 @@ export abstract class Node {
    * @param handler Function to stop calling when event is dispatched.
    */
   public removeEventListener(type: string, handler: EventHandler): void {
-    const handlers = this[TransferrableKeys._handlers_][toLower(type)];
+    const handlers = this[TransferrableKeys.handlers][toLower(type)];
     const index = !!handlers ? handlers.indexOf(handler) : -1;
 
     if (index >= 0) {
@@ -361,7 +369,7 @@ export abstract class Node {
         removedEvents: [
           {
             [TransferrableKeys.type]: storeString(type),
-            [TransferrableKeys._index_]: this[TransferrableKeys._index_],
+            [TransferrableKeys.index]: this[TransferrableKeys.index],
             [TransferrableKeys.index]: index,
           },
         ],
@@ -380,15 +388,15 @@ export abstract class Node {
     let iterator: number;
 
     do {
-      handlers = target && target[TransferrableKeys._handlers_] && target[TransferrableKeys._handlers_][toLower(event.type)];
+      handlers = target && target[TransferrableKeys.handlers] && target[TransferrableKeys.handlers][toLower(event.type)];
       if (handlers) {
         for (iterator = handlers.length; iterator--; ) {
-          if ((handlers[iterator].call(target, event) === false || event._end) && event.cancelable) {
+          if ((handlers[iterator].call(target, event) === false || event[TransferrableKeys.end]) && event.cancelable) {
             break;
           }
         }
       }
-    } while (event.bubbles && !(event.cancelable && event._stop) && (target = target && target.parentNode));
+    } while (event.bubbles && !(event.cancelable && event[TransferrableKeys.stop]) && (target = target && target.parentNode));
     return !event.defaultPrevented;
   }
 }

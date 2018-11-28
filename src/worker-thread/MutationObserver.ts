@@ -22,7 +22,7 @@ const observers: MutationObserver[] = [];
 let pendingMutations = false;
 
 const match = (observerTarget: Node | null, target: Node): boolean =>
-  observerTarget !== null && target[TransferrableKeys._index_] === observerTarget[TransferrableKeys._index_];
+  observerTarget !== null && target[TransferrableKeys.index] === observerTarget[TransferrableKeys.index];
 const pushMutation = (observer: MutationObserver, record: MutationRecord): void => {
   observer.pushRecord(record);
   if (!pendingMutations) {
@@ -78,7 +78,7 @@ interface MutationObserverInit {
 
 export class MutationObserver {
   public callback: (mutations: MutationRecord[]) => any;
-  private [TransferrableKeys._records_]: MutationRecord[] = [];
+  private [TransferrableKeys.records]: MutationRecord[] = [];
   public target: Node | null;
   public options: MutationObserverInit;
 
@@ -118,7 +118,7 @@ export class MutationObserver {
    * @return Mutation Records stored on this MutationObserver instance.
    */
   public takeRecords(): MutationRecord[] {
-    return this[TransferrableKeys._records_].splice(0, this[TransferrableKeys._records_].length);
+    return this[TransferrableKeys.records].splice(0, this[TransferrableKeys.records].length);
   }
 
   /**
@@ -126,6 +126,6 @@ export class MutationObserver {
    * @param record MutationRecord to store for this instance.
    */
   public pushRecord(record: MutationRecord): void {
-    this[TransferrableKeys._records_].push(record);
+    this[TransferrableKeys.records].push(record);
   }
 }

@@ -36,7 +36,7 @@ function store(value: string): number {
 
 export function createHydrateableNode(element: RenderableElement): HydrateableNode {
   let hydrated: HydrateableNode = {
-    [TransferrableKeys._index_]: element._index_,
+    [TransferrableKeys.index]: element.index,
     [TransferrableKeys.transferred]: NumericBoolean.FALSE,
     [TransferrableKeys.nodeType]: element.nodeType,
     [TransferrableKeys.nodeName]: store(element.nodeName),

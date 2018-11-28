@@ -53,7 +53,7 @@ const fireValueChange = (worker: Worker, node: RenderableElement): void => {
   messageToWorker(worker, {
     [TransferrableKeys.type]: MessageType.SYNC,
     [TransferrableKeys.sync]: {
-      [TransferrableKeys._index_]: node._index_,
+      [TransferrableKeys.index]: node.index,
       [TransferrableKeys.value]: node.value,
     },
   });
@@ -62,22 +62,22 @@ const fireValueChange = (worker: Worker, node: RenderableElement): void => {
 /**
  * Register an event handler for dispatching events to worker thread
  * @param worker whom to dispatch events toward
- * @param _index_ node index the event comes from (used to dispatchEvent in worker thread).
+ * @param index node index the event comes from (used to dispatchEvent in worker thread).
  * @return eventHandler function consuming event and dispatching to worker thread
  */
-const eventHandler = (worker: Worker, _index_: number) => (event: Event | KeyboardEvent): void => {
+const eventHandler = (worker: Worker, index: number) => (event: Event | KeyboardEvent): void => {
   if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
     fireValueChange(worker, event.currentTarget as RenderableElement);
   }
   messageToWorker(worker, {
     [TransferrableKeys.type]: MessageType.EVENT,
     [TransferrableKeys.event]: {
-      [TransferrableKeys._index_]: _index_,
+      [TransferrableKeys.index]: index,
       [TransferrableKeys.bubbles]: event.bubbles,
       [TransferrableKeys.cancelable]: event.cancelable,
       [TransferrableKeys.cancelBubble]: event.cancelBubble,
       [TransferrableKeys.currentTarget]: {
-        [TransferrableKeys._index_]: (event.currentTarget as RenderableElement)._index_,
+        [TransferrableKeys.index]: (event.currentTarget as RenderableElement).index,
         [TransferrableKeys.transferred]: NumericBoolean.TRUE,
       },
       [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
@@ -85,7 +85,7 @@ const eventHandler = (worker: Worker, _index_: number) => (event: Event | Keyboa
       [TransferrableKeys.isTrusted]: event.isTrusted,
       [TransferrableKeys.returnValue]: event.returnValue,
       [TransferrableKeys.target]: {
-        [TransferrableKeys._index_]: (event.target as RenderableElement)._index_,
+        [TransferrableKeys.index]: (event.target as RenderableElement).index,
         [TransferrableKeys.transferred]: NumericBoolean.TRUE,
       },
       [TransferrableKeys.timeStamp]: event.timeStamp,
@@ -102,8 +102,8 @@ const eventHandler = (worker: Worker, _index_: number) => (event: Event | Keyboa
  * @param mutation mutation record containing commands to execute.
  */
 export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
-  const _index_: number = mutation[TransferrableKeys.target];
-  const target = getNode(_index_);
+  const index: number = mutation[TransferrableKeys.target];
+  const target = getNode(index);
 
   (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub => {
     processListenerChange(worker, target, false, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]);
@@ -132,7 +132,7 @@ export function processListenerChange(worker: Worker, target: RenderableElement,
       changeEventSubscribed = true;
       target.onchange = null;
     }
-    (target as HTMLElement).addEventListener(type, (KNOWN_LISTENERS[index] = eventHandler(worker, target._index_)));
+    (target as HTMLElement).addEventListener(type, (KNOWN_LISTENERS[index] = eventHandler(worker, target.index)));
   } else {
     if (isChangeEvent) {
       changeEventSubscribed = false;

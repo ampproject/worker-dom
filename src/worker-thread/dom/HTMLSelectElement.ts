@@ -20,6 +20,7 @@ import { reflectProperties } from './enhanceElement';
 import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
 import { matchChildrenElements, matchChildElement, tagNameConditionPredicate } from './matchElements';
 import { HTMLOptionElement } from './HTMLOptionElement';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 const isOptionPredicate = tagNameConditionPredicate(['option']);
 const isSelectedOptionPredicate = (element: Element): boolean => element.tagName === 'option' && (element as HTMLOptionElement).selected;
@@ -36,7 +37,7 @@ const enum TypeDefaults {
 }
 
 export class HTMLSelectElement extends HTMLElement {
-  private _size_: number = SizeDefaults.UNMODIFIED;
+  private [TransferrableKeys.size]: number = SizeDefaults.UNMODIFIED;
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/length
@@ -89,7 +90,11 @@ export class HTMLSelectElement extends HTMLElement {
    * @return size of the select element.
    */
   get size(): number {
-    return this._size_ === SizeDefaults.UNMODIFIED ? (this.multiple ? SizeDefaults.MULTIPLE : SizeDefaults.SINGLE) : this._size_;
+    return this[TransferrableKeys.size] === SizeDefaults.UNMODIFIED
+      ? this.multiple
+        ? SizeDefaults.MULTIPLE
+        : SizeDefaults.SINGLE
+      : this[TransferrableKeys.size];
   }
 
   /**
@@ -98,7 +103,7 @@ export class HTMLSelectElement extends HTMLElement {
    * @param size number to set the size to.
    */
   set size(size: number) {
-    this._size_ = size > 0 ? size : this.multiple ? SizeDefaults.MULTIPLE : SizeDefaults.SINGLE;
+    this[TransferrableKeys.size] = size > 0 ? size : this.multiple ? SizeDefaults.MULTIPLE : SizeDefaults.SINGLE;
   }
 
   /**

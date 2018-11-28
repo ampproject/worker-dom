@@ -38,7 +38,7 @@ export function registerSubclass(nodeName: NodeName, subclass: typeof Element): 
 export class Element extends ParentNode {
   public localName: NodeName;
   public attributes: Attr[] = [];
-  public propertyBackedAttributes_: { [key: string]: [() => string | null, (value: string) => string | boolean] } = {};
+  public [TransferrableKeys.propertyBackedAttributes]: { [key: string]: [() => string | null, (value: string) => string | boolean] } = {};
   public classList: DOMTokenList = new DOMTokenList(Element, this, 'class', 'classList', 'className');
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
@@ -47,8 +47,8 @@ export class Element extends ParentNode {
     super(nodeType, nodeName);
     this.namespaceURI = namespaceURI || HTML_NAMESPACE;
     this.localName = toLower(nodeName);
-    this[TransferrableKeys._creationFormat_] = {
-      [TransferrableKeys._index_]: this[TransferrableKeys._index_],
+    this[TransferrableKeys.creationFormat] = {
+      [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: this.nodeType,
       [TransferrableKeys.nodeName]: storeString(this.nodeName),
@@ -61,7 +61,7 @@ export class Element extends ParentNode {
    * for the main thread to process and store items from for future modifications.
    */
   public hydrate(): HydrateableNode {
-    return Object.assign(this[TransferrableKeys._creationFormat_], {
+    return Object.assign(this[TransferrableKeys.creationFormat], {
       [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
       [TransferrableKeys.attributes]: this.attributes.map(attribute => [
         storeString(attribute.namespaceURI || 'null'),
@@ -242,7 +242,7 @@ export class Element extends ParentNode {
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
-    if (this.propertyBackedAttributes_[name] !== undefined) {
+    if (this[TransferrableKeys.propertyBackedAttributes][name] !== undefined) {
       if (!this.attributes.find(matchAttrPredicate(namespaceURI, name))) {
         this.attributes.push({
           namespaceURI,
@@ -250,7 +250,7 @@ export class Element extends ParentNode {
           value,
         });
       }
-      this.propertyBackedAttributes_[name][1](value);
+      this[TransferrableKeys.propertyBackedAttributes][name][1](value);
       return;
     }
 
@@ -292,7 +292,9 @@ export class Element extends ParentNode {
   public getAttributeNS(namespaceURI: NamespaceURI, name: string): string | null {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     if (attr) {
-      return this.propertyBackedAttributes_[name] !== undefined ? this.propertyBackedAttributes_[name][0]() : attr.value;
+      return this[TransferrableKeys.propertyBackedAttributes][name] !== undefined
+        ? this[TransferrableKeys.propertyBackedAttributes][name][0]()
+        : attr.value;
     }
     return null;
   }

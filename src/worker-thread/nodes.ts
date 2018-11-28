@@ -28,11 +28,11 @@ const mapping: Map<number, Node> = new Map();
  * @return index Node was stored with in mapping
  */
 export function store(node: Node): number {
-  if (node[TransferrableKeys._index_] !== undefined) {
-    return node[TransferrableKeys._index_];
+  if (node[TransferrableKeys.index] !== undefined) {
+    return node[TransferrableKeys.index];
   }
 
-  mapping.set((node[TransferrableKeys._index_] = ++count), node);
+  mapping.set((node[TransferrableKeys.index] = ++count), node);
   if (phase !== Phases.Initializing) {
     // After Initialization, include all future dom node creation into the list for next transfer.
     transfer.push(node);

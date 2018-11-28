@@ -42,10 +42,10 @@ test('cloneNode should create a new node with the same tagName', t => {
   t.is(parent.cloneNode().tagName, parent.tagName);
 });
 
-test('cloneNode should create a new node with a different _index_', t => {
+test('cloneNode should create a new node with a different index', t => {
   const { parent } = t.context as { parent: Element };
 
-  t.not(parent.cloneNode()[TransferrableKeys._index_], parent[TransferrableKeys._index_]);
+  t.not(parent.cloneNode()[TransferrableKeys.index], parent[TransferrableKeys.index]);
 });
 
 test('cloneNode should create a new node with the same attribute', t => {

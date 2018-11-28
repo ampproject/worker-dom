@@ -33,8 +33,8 @@ export function prepare(baseElement: Element): void {
   NODES = new Map([[1, baseElement], [2, baseElement]]);
   BASE_ELEMENT = baseElement as HTMLElement;
   // To ensure a lookup works correctly from baseElement
-  // add an _index_ equal to the background thread document.body.
-  baseElement._index_ = 2;
+  // add an index equal to the background thread document.body.
+  baseElement.index = 2;
   // Lastly, it's important while initializing the document that we store
   // the default nodes present in the server rendered document.
   baseElement.childNodes.forEach(storeNodes);
@@ -84,7 +84,7 @@ export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): 
     }
   }
 
-  storeNode(node, skeleton[TransferrableKeys._index_]);
+  storeNode(node, skeleton[TransferrableKeys.index]);
   return node;
 }
 
@@ -115,6 +115,6 @@ export function getNode(id: number): RenderableElement {
  * @param id
  */
 export function storeNode(node: Node, id: number): void {
-  (node as Node)._index_ = id;
+  (node as Node).index = id;
   NODES.set(id, node as Node);
 }

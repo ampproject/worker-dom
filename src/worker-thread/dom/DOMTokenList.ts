@@ -41,7 +41,7 @@ export class DOMTokenList {
     this[TransferrableKeys.attributeName] = attributeName;
 
     this[TransferrableKeys.storeAttribute] = element[TransferrableKeys.storeAttribute].bind(element);
-    element.propertyBackedAttributes_[attributeName] = [(): string | null => this.value, (value: string) => (this.value = value)];
+    element[TransferrableKeys.propertyBackedAttributes][attributeName] = [(): string | null => this.value, (value: string) => (this.value = value)];
 
     if (accessorKey && propertyName) {
       Object.defineProperty(defineOn.prototype, propertyName, {
@@ -126,7 +126,11 @@ export class DOMTokenList {
    */
   public remove(...tokens: string[]): void {
     const oldValue = this.value;
-    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...new Set(this[TransferrableKeys.tokens].filter(token => !tokens.includes(token))));
+    this[TransferrableKeys.tokens].splice(
+      0,
+      this[TransferrableKeys.tokens].length,
+      ...new Set(this[TransferrableKeys.tokens].filter(token => !tokens.includes(token))),
+    );
     this.mutated(oldValue, this.value);
   }
 
