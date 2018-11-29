@@ -34,7 +34,7 @@ export function prepare(baseElement: Element): void {
   BASE_ELEMENT = baseElement as HTMLElement;
   // To ensure a lookup works correctly from baseElement
   // add an index equal to the background thread document.body.
-  baseElement.index = 2;
+  baseElement._index_ = 2;
   // Lastly, it's important while initializing the document that we store
   // the default nodes present in the server rendered document.
   baseElement.childNodes.forEach(storeNodes);
@@ -115,6 +115,6 @@ export function getNode(id: number): RenderableElement {
  * @param id
  */
 export function storeNode(node: Node, id: number): void {
-  (node as Node).index = id;
+  (node as Node)._index_ = id;
   NODES.set(id, node as Node);
 }

@@ -53,7 +53,7 @@ const fireValueChange = (worker: Worker, node: RenderableElement): void => {
   messageToWorker(worker, {
     [TransferrableKeys.type]: MessageType.SYNC,
     [TransferrableKeys.sync]: {
-      [TransferrableKeys.index]: node.index,
+      [TransferrableKeys.index]: node._index_,
       [TransferrableKeys.value]: node.value,
     },
   });
@@ -77,7 +77,7 @@ const eventHandler = (worker: Worker, index: number) => (event: Event | Keyboard
       [TransferrableKeys.cancelable]: event.cancelable,
       [TransferrableKeys.cancelBubble]: event.cancelBubble,
       [TransferrableKeys.currentTarget]: {
-        [TransferrableKeys.index]: (event.currentTarget as RenderableElement).index,
+        [TransferrableKeys.index]: (event.currentTarget as RenderableElement)._index_,
         [TransferrableKeys.transferred]: NumericBoolean.TRUE,
       },
       [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
@@ -85,7 +85,7 @@ const eventHandler = (worker: Worker, index: number) => (event: Event | Keyboard
       [TransferrableKeys.isTrusted]: event.isTrusted,
       [TransferrableKeys.returnValue]: event.returnValue,
       [TransferrableKeys.target]: {
-        [TransferrableKeys.index]: (event.target as RenderableElement).index,
+        [TransferrableKeys.index]: (event.target as RenderableElement)._index_,
         [TransferrableKeys.transferred]: NumericBoolean.TRUE,
       },
       [TransferrableKeys.timeStamp]: event.timeStamp,
@@ -132,7 +132,7 @@ export function processListenerChange(worker: Worker, target: RenderableElement,
       changeEventSubscribed = true;
       target.onchange = null;
     }
-    (target as HTMLElement).addEventListener(type, (KNOWN_LISTENERS[index] = eventHandler(worker, target.index)));
+    (target as HTMLElement).addEventListener(type, (KNOWN_LISTENERS[index] = eventHandler(worker, target._index_)));
   } else {
     if (isChangeEvent) {
       changeEventSubscribed = false;

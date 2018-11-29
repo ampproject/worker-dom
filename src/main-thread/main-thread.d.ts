@@ -32,7 +32,7 @@ declare interface Sanitizer {
 }
 
 interface Node {
-  index: number;
+  _index_: number;
 }
 
 type RenderableElement = (HTMLElement | SVGElement | Text | Comment) & { [index: string]: any };
