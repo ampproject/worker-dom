@@ -20,6 +20,7 @@ import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
 import { MutationRecordType } from '../MutationRecord';
 import { reflectProperties } from './enhanceElement';
 import { registerSubclass } from './Element';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export class HTMLInputElement extends HTMLElement {
   // Per spec, some attributes like 'value' and 'checked' change behavior based on dirty flags.
@@ -28,8 +29,8 @@ export class HTMLInputElement extends HTMLElement {
   // Alternative: Implement dirty flag checking in worker-dom, which would require listening for
   //     and forwarding interaction events to flag "dirtiness".
   // https://html.spec.whatwg.org/multipage/input.html#common-input-element-apis
-  private _value_: string = '';
-  private _checked_: boolean = false;
+  private [TransferrableKeys.value]: string = '';
+  private [TransferrableKeys.checked]: boolean = false;
 
   // TODO(willchou): There are a few interrelated issues with `value` property.
   //   1. "Dirtiness" caveat above.
@@ -37,13 +38,13 @@ export class HTMLInputElement extends HTMLElement {
   //   3. Duplicate MUTATE events. Caused by stale `value` in worker due to no default 'input' listener (see below).
 
   get value(): string {
-    return this._value_;
+    return this[TransferrableKeys.value];
   }
 
   set value(value: string) {
     // Don't early-out if value doesn't appear to have changed.
     // The worker may have a stale value since 'input' events aren't being forwarded.
-    this._value_ = String(value);
+    this[TransferrableKeys.value] = String(value);
     mutate({
       type: MutationRecordType.PROPERTIES,
       target: this,
@@ -54,7 +55,7 @@ export class HTMLInputElement extends HTMLElement {
 
   get valueAsDate(): Date | null {
     // Don't use Date constructor or Date.parse() since ISO 8601 (yyyy-mm-dd) parsing is inconsistent.
-    const date = this.stringToDate(this._value_);
+    const date = this.stringToDate(this[TransferrableKeys.value]);
     const invalid = !date || isNaN(date.getTime());
     return invalid ? null : date;
   }
@@ -68,10 +69,10 @@ export class HTMLInputElement extends HTMLElement {
   }
 
   get valueAsNumber(): number {
-    if (this._value_.length === 0) {
+    if (this[TransferrableKeys.value].length === 0) {
       return NaN;
     }
-    return Number(this._value_);
+    return Number(this[TransferrableKeys.value]);
   }
 
   /** Unlike browsers, does not throw if this input[type] doesn't support numbers. */
@@ -84,14 +85,14 @@ export class HTMLInputElement extends HTMLElement {
   }
 
   get checked(): boolean {
-    return this._checked_;
+    return this[TransferrableKeys.checked];
   }
 
   set checked(value: boolean) {
-    if (this._checked_ === value) {
+    if (this[TransferrableKeys.checked] === value) {
       return;
     }
-    this._checked_ = !!value;
+    this[TransferrableKeys.checked] = !!value;
     mutate({
       type: MutationRecordType.PROPERTIES,
       target: this,

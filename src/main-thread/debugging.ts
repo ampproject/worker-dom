@@ -124,7 +124,7 @@ function readableTransferrableMutationRecord(r: TransferrableMutationRecord): Ob
  * @param n
  */
 function readableTransferredNode(n: TransferredNode): Object {
-  const index = n[TransferrableKeys._index_];
+  const index = n[TransferrableKeys.index];
   return getNode(index) || index;
 }
 
@@ -221,7 +221,7 @@ function readableTransferrableEvent(e: TransferrableEvent): Object {
  * @param v
  */
 function readableTransferrableSyncValue(v: TransferrableSyncValue): Object {
-  const index = v[TransferrableKeys._index_];
+  const index = v[TransferrableKeys.index];
   return {
     target: getNode(index) || index,
     value: v[TransferrableKeys.value],

@@ -17,19 +17,15 @@
 import { CharacterData } from './CharacterData';
 import { NumericBoolean } from '../../utils';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { HydrateableNode, NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
   constructor(data: string) {
     super(data, NodeType.TEXT_NODE, '#text');
-    this._transferredFormat_ = {
-      [TransferrableKeys._index_]: this._index_,
-      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-    };
-    this._creationFormat_ = {
-      [TransferrableKeys._index_]: this._index_,
+    this[TransferrableKeys.creationFormat] = {
+      [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: NodeType.TEXT_NODE,
       [TransferrableKeys.nodeName]: storeString('#text'),
@@ -41,10 +37,6 @@ export class Text extends CharacterData {
   // Text.isElementContentWhitespace – https://developer.mozilla.org/en-US/docs/Web/API/Text/isElementContentWhitespace
   // Text.wholeText – https://developer.mozilla.org/en-US/docs/Web/API/Text/wholeText
   // Text.assignedSlot – https://developer.mozilla.org/en-US/docs/Web/API/Text/assignedSlot
-
-  public hydrate(): HydrateableNode {
-    return this._creationFormat_;
-  }
 
   /**
    * textContent getter, retrieves underlying CharacterData data.

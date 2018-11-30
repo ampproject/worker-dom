@@ -19,6 +19,7 @@ import { MutationRecordType } from '../MutationRecord';
 import { Element } from '../dom/Element';
 import { NamespaceURI } from '../dom/Node';
 import { toLower } from '../../utils';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 interface StyleProperties {
   [key: string]: string | null;
@@ -85,16 +86,16 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     | ((key: string) => void)
     | ((key: string, value: string) => void)
     | ((namespaceURI: NamespaceURI, name: string, value: string) => void);
-  private properties_: StyleProperties = {};
-  private storeAttributeMethod_: (namespaceURI: NamespaceURI, name: string, value: string) => string;
-  private element_: Element;
+  private [TransferrableKeys.properties]: StyleProperties = {};
+  private [TransferrableKeys.storeAttribute]: (namespaceURI: NamespaceURI, name: string, value: string) => string;
+  private [TransferrableKeys.target]: Element;
 
-  constructor(element: Element) {
-    this.storeAttributeMethod_ = element.storeAttributeNS_.bind(element);
-    this.element_ = element;
+  constructor(target: Element) {
+    this[TransferrableKeys.storeAttribute] = target[TransferrableKeys.storeAttribute].bind(target);
+    this[TransferrableKeys.target] = target;
 
-    if (element && element.propertyBackedAttributes_) {
-      element.propertyBackedAttributes_.style = [(): string | null => this.cssText, (value: string) => (this.cssText = value)];
+    if (target && target[TransferrableKeys.propertyBackedAttributes]) {
+      target[TransferrableKeys.propertyBackedAttributes].style = [(): string | null => this.cssText, (value: string) => (this.cssText = value)];
     }
   }
 
@@ -105,7 +106,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
    * @return value stored for the provided key.
    */
   public getPropertyValue(key: string): string {
-    return this.properties_[key] || '';
+    return this[TransferrableKeys.properties][key] || '';
   }
 
   /**
@@ -117,8 +118,8 @@ export class CSSStyleDeclaration implements StyleDeclaration {
   public removeProperty(key: string): string {
     const oldValue = this.getPropertyValue(key);
 
-    this.properties_[key] = null;
-    this.mutationCompleteHandler_(this.cssText);
+    this[TransferrableKeys.properties][key] = null;
+    this.mutated(this.cssText);
     return oldValue;
   }
 
@@ -129,8 +130,8 @@ export class CSSStyleDeclaration implements StyleDeclaration {
    * @param value store this value
    */
   public setProperty(key: string, value: string): void {
-    this.properties_[key] = value;
-    this.mutationCompleteHandler_(this.cssText);
+    this[TransferrableKeys.properties][key] = value;
+    this.mutated(this.cssText);
   }
 
   /**
@@ -140,7 +141,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
   get cssText(): string {
     let value: string;
     let returnValue: string = '';
-    for (let key in this.properties_) {
+    for (let key in this[TransferrableKeys.properties]) {
       if ((value = this.getPropertyValue(key)) !== '') {
         returnValue += `${key}: ${value}; `;
       }
@@ -154,14 +155,14 @@ export class CSSStyleDeclaration implements StyleDeclaration {
    * @param value css text string to parse and store
    */
   set cssText(value: string) {
-    this.properties_ = {};
+    this[TransferrableKeys.properties] = {};
 
     const values = value.split(/[:;]/);
     const length = values.length;
     for (let index = 0; index + 1 < length; index += 2) {
-      this.properties_[toLower(values[index].trim())] = values[index + 1].trim();
+      this[TransferrableKeys.properties][toLower(values[index].trim())] = values[index + 1].trim();
     }
-    this.mutationCompleteHandler_(this.cssText);
+    this.mutated(this.cssText);
   }
 
   /**
@@ -169,11 +170,11 @@ export class CSSStyleDeclaration implements StyleDeclaration {
    * @param value value after mutation
    * @private
    */
-  private mutationCompleteHandler_(value: string): void {
-    const oldValue = this.storeAttributeMethod_(this.element_.namespaceURI, 'style', value);
+  private mutated(value: string): void {
+    const oldValue = this[TransferrableKeys.storeAttribute](this[TransferrableKeys.target].namespaceURI, 'style', value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
-      target: this.element_,
+      target: this[TransferrableKeys.target],
       attributeName: 'style',
       value,
       oldValue,

@@ -42,7 +42,7 @@ test.cb.serial('Element.addEventListener mutation observed when node is connecte
           addedEvents: [
             {
               [TransferrableKeys.type]: get('mouseenter') as number,
-              [TransferrableKeys._index_]: 3,
+              [TransferrableKeys.index]: 3,
               [TransferrableKeys.index]: 0,
             },
           ],
@@ -69,7 +69,7 @@ test.cb.serial('Element.addEventListener mutation observed when node is not yet 
           addedEvents: [
             {
               [TransferrableKeys.type]: get('mouseenter') as number,
-              [TransferrableKeys._index_]: 4,
+              [TransferrableKeys.index]: 4,
               [TransferrableKeys.index]: 0,
             },
           ],

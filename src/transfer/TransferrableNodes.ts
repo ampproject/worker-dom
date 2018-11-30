@@ -53,6 +53,6 @@ export interface TransferrableNode extends TransferredNode {
 
 // If a Node has been transferred once already to main thread then we need only pass its index.
 export interface TransferredNode {
-  readonly [TransferrableKeys._index_]: number;
+  readonly [TransferrableKeys.index]: number;
   readonly [TransferrableKeys.transferred]: NumericBoolean;
 }
