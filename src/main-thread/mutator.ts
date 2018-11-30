@@ -27,6 +27,11 @@ let PENDING_MUTATIONS: boolean = false;
 let worker: Worker;
 let sanitizer: Sanitizer | undefined;
 
+/**
+ *
+ * @param passedWorker
+ * @param passedSanitizer Sanitizer to apply to content if needed.
+ */
 export function prepareMutate(passedWorker: Worker, passedSanitizer?: Sanitizer): void {
   worker = passedWorker;
   sanitizer = passedSanitizer;
@@ -107,6 +112,7 @@ const mutators: {
 /**
  * Process MutationRecords from worker thread applying changes to the existing DOM.
  * @param nodes New nodes to add in the main thread with the incoming mutations.
+ * @param stringValues Additional string values to use in decoding messages.
  * @param mutations Changes to apply in both graph shape and content of Elements.
  */
 export function mutate(nodes: Array<TransferrableNode>, stringValues: Array<string>, mutations: Array<TransferrableMutationRecord>): void {
@@ -132,9 +138,7 @@ export function mutate(nodes: Array<TransferrableNode>, stringValues: Array<stri
  * Investigations in using asyncFlush to resolve are worth considering.
  */
 function syncFlush(): void {
-  MUTATION_QUEUE.forEach(mutation => {
-    mutators[mutation[TransferrableKeys.type]](mutation, getNode(mutation[TransferrableKeys.target]));
-  });
+  MUTATION_QUEUE.forEach(mutation => mutators[mutation[TransferrableKeys.type]](mutation, getNode(mutation[TransferrableKeys.target])));
   MUTATION_QUEUE = [];
   PENDING_MUTATIONS = false;
 }

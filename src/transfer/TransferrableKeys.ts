@@ -68,4 +68,5 @@ export const enum TransferrableKeys {
   size = 50,
   stop = 51,
   end = 52,
+  selected = 53,
 }

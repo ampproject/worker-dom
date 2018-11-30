@@ -71,23 +71,11 @@ export class Document extends Element {
     Event: typeof Event;
   };
   public documentElement: Document;
-  public createElement: (tagName: string) => Element;
-  public createElementNS: (namespaceURI: NamespaceURI, tagName: string) => Element;
-  public createTextNode: (text: string) => Text;
-  public createComment: (text: string) => Comment;
-  public createDocumentFragment: () => DocumentFragment;
   public body: Element;
 
   constructor() {
     super(NodeType.DOCUMENT_NODE, '#document', HTML_NAMESPACE);
     this.documentElement = this;
-    this.createElement = (tagName: string): Element => this.createElementNS(HTML_NAMESPACE, tagName);
-    // TODO: Add tests for case-sensitivity of NODE_NAME_MAPPING.
-    this.createElementNS = (namespaceURI: NamespaceURI, tagName: string): Element =>
-      new (NODE_NAME_MAPPING[toLower(tagName)] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
-    this.createTextNode = (text: string): Text => new Text(text);
-    this.createComment = (text: string): Comment => new Comment(text);
-    this.createDocumentFragment = (): DocumentFragment => new DocumentFragment();
     this.observe = (): void => {
       observeMutations(this, this.postMessageMethod);
       propagateEvents();
@@ -104,6 +92,24 @@ export class Document extends Element {
       SVGElement,
       Event,
     };
+  }
+
+  public createElement(tagName: string): Element {
+    return this.createElementNS(HTML_NAMESPACE, tagName);
+  }
+  public createElementNS(namespaceURI: NamespaceURI, tagName: string): Element {
+    return new (NODE_NAME_MAPPING[toLower(tagName)] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
+  }
+
+  public createTextNode(text: string): Text {
+    return new Text(text);
+  }
+  public createComment(text: string): Comment {
+    return new Comment(text);
+  }
+
+  public createDocumentFragment(): DocumentFragment {
+    return new DocumentFragment();
   }
 
   /**

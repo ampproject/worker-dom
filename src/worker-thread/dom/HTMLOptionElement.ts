@@ -22,13 +22,13 @@ import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export class HTMLOptionElement extends HTMLElement {
-  private isSelected: boolean = false;
+  private [TransferrableKeys.selected]: boolean = false;
 
   constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
     super(nodeType, nodeName, namespaceURI);
 
     this[TransferrableKeys.propertyBackedAttributes].selected = [
-      (): string => String(this.isSelected),
+      (): string => String(this[TransferrableKeys.selected]),
       (value: string): boolean => (this.selected = value === 'true'),
     ];
   }
@@ -62,7 +62,7 @@ export class HTMLOptionElement extends HTMLElement {
    * @return boolean based on if the option element is selected.
    */
   get selected(): boolean {
-    return this.isSelected;
+    return this[TransferrableKeys.selected];
   }
 
   /**
@@ -70,7 +70,7 @@ export class HTMLOptionElement extends HTMLElement {
    * @param value new selected boolean value.
    */
   set selected(value: boolean) {
-    this.isSelected = value;
+    this[TransferrableKeys.selected] = value;
     // TODO(KB) This is a mutation.
   }
 

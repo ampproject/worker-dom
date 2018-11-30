@@ -75,7 +75,6 @@ export abstract class Node {
     this[TransferrableKeys.scopingRoot] = this;
 
     this[TransferrableKeys.index] = storeNodeMapping(this);
-
     this[TransferrableKeys.transferredFormat] = {
       [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.TRUE,

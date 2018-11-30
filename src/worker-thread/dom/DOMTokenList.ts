@@ -31,17 +31,17 @@ export class DOMTokenList {
    * It is indexed beginning with 0 as with JavaScript Array objects and is case-sensitive.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList
    * @param defineOn Element or class extension to define getter/setter pair for token list access.
-   * @param element Specific Element instance to modify when value is changed.
+   * @param target Specific Element instance to modify when value is changed.
    * @param attributeName Name of the attribute used by Element to access DOMTokenList.
    * @param accessorKey Key used to access DOMTokenList directly from specific element.
    * @param propertyName Key used to access DOMTokenList as string getter/setter.
    */
-  constructor(defineOn: typeof Element, element: Element, attributeName: string, accessorKey: string | null, propertyName: string | null) {
-    this[TransferrableKeys.target] = element;
+  constructor(defineOn: typeof Element, target: Element, attributeName: string, accessorKey: string | null, propertyName: string | null) {
+    this[TransferrableKeys.target] = target;
     this[TransferrableKeys.attributeName] = attributeName;
 
-    this[TransferrableKeys.storeAttribute] = element[TransferrableKeys.storeAttribute].bind(element);
-    element[TransferrableKeys.propertyBackedAttributes][attributeName] = [(): string | null => this.value, (value: string) => (this.value = value)];
+    this[TransferrableKeys.storeAttribute] = target[TransferrableKeys.storeAttribute].bind(target);
+    target[TransferrableKeys.propertyBackedAttributes][attributeName] = [(): string | null => this.value, (value: string) => (this.value = value)];
 
     if (accessorKey && propertyName) {
       Object.defineProperty(defineOn.prototype, propertyName, {

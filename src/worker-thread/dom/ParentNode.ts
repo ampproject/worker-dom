@@ -117,14 +117,8 @@ function querySelectorAll(node: Node, selector: string): Element[] | null {
       : element => element.id === elementSelector.substr(1);
   } else if (elementSelector[0] === '.') {
     matcher = selectorHasAttr
-      ? element => {
-          //console.log('in qsa', element.classList);
-          return element.classList.contains(elementSelector.substr(1)) && matchAttrReference(attrSelector, element);
-        }
-      : element => {
-          //console.log('in qsa', element.classList);
-          return element.classList.contains(elementSelector.substr(1));
-        };
+      ? element => element.classList.contains(elementSelector.substr(1)) && matchAttrReference(attrSelector, element)
+      : element => element.classList.contains(elementSelector.substr(1));
   } else {
     matcher = selectorHasAttr
       ? element => element.localName === toLower(elementSelector) && matchAttrReference(attrSelector, element)
