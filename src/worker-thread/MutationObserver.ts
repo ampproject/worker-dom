@@ -16,11 +16,13 @@
 
 import { Node } from './dom/Node';
 import { MutationRecord, MutationRecordType } from './MutationRecord';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 const observers: MutationObserver[] = [];
 let pendingMutations = false;
 
-const match = (observerTarget: Node | null, target: Node): boolean => observerTarget !== null && target._index_ === observerTarget._index_;
+const match = (observerTarget: Node | null, target: Node): boolean =>
+  observerTarget !== null && target[TransferrableKeys.index] === observerTarget[TransferrableKeys.index];
 const pushMutation = (observer: MutationObserver, record: MutationRecord): void => {
   observer.pushRecord(record);
   if (!pendingMutations) {
@@ -41,7 +43,7 @@ const pushMutation = (observer: MutationObserver, record: MutationRecord): void 
  */
 export function mutate(record: MutationRecord): void {
   observers.forEach(observer => {
-    if (!observer.options.subtreeFlattened || record.type === MutationRecordType.COMMAND) {
+    if (!observer.options[TransferrableKeys.subtreeFlattened] || record.type === MutationRecordType.COMMAND) {
       pushMutation(observer, record);
       return;
     }
@@ -71,12 +73,12 @@ interface MutationObserverInit {
 
   // Except for this one (not specced) that will force all mutations to be observed
   // Without flattening the record to the node requested to be observed.
-  subtreeFlattened?: boolean;
+  [TransferrableKeys.subtreeFlattened]?: boolean;
 }
 
 export class MutationObserver {
   public callback: (mutations: MutationRecord[]) => any;
-  private _records_: MutationRecord[] = [];
+  private [TransferrableKeys.records]: MutationRecord[] = [];
   public target: Node | null;
   public options: MutationObserverInit;
 
@@ -92,7 +94,7 @@ export class MutationObserver {
   public observe(target: Node, options?: MutationObserverInit): void {
     this.disconnect();
     this.target = target;
-    this.options = Object.assign({ subtreeFlattened: false }, options);
+    this.options = Object.assign({ [TransferrableKeys.subtreeFlattened]: false }, options);
 
     observers.push(this);
   }
@@ -116,7 +118,7 @@ export class MutationObserver {
    * @return Mutation Records stored on this MutationObserver instance.
    */
   public takeRecords(): MutationRecord[] {
-    return this._records_.splice(0, this._records_.length);
+    return this[TransferrableKeys.records].splice(0, this[TransferrableKeys.records].length);
   }
 
   /**
@@ -124,6 +126,6 @@ export class MutationObserver {
    * @param record MutationRecord to store for this instance.
    */
   public pushRecord(record: MutationRecord): void {
-    this._records_.push(record);
+    this[TransferrableKeys.records].push(record);
   }
 }

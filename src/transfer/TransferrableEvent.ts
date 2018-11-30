@@ -23,7 +23,7 @@ import { Event } from '../worker-thread/Event';
 type TransferrableTarget = TransferredNode;
 
 export interface TransferrableEvent {
-  readonly [TransferrableKeys._index_]: number;
+  readonly [TransferrableKeys.index]: number;
   readonly [TransferrableKeys.bubbles]?: boolean;
   readonly [TransferrableKeys.cancelable]?: boolean;
   [TransferrableKeys.cancelBubble]?: boolean;
@@ -42,7 +42,7 @@ export interface TransferrableEvent {
 
 export interface TransferrableEventSubscriptionChange {
   readonly [TransferrableKeys.type]: number;
-  readonly [TransferrableKeys._index_]: number;
+  readonly [TransferrableKeys.index]: number;
   readonly [TransferrableKeys.index]: number;
 }
 
@@ -52,33 +52,34 @@ export interface TransferrableEventSubscriptionChange {
  * method to dispatch the transfered event in the worker thread.
  */
 export function propagate(): void {
-  if (typeof addEventListener !== 'undefined') {
-    addEventListener('message', ({ data }: { data: EventToWorker }) => {
-      if (data[TransferrableKeys.type] !== MessageType.EVENT) {
-        return;
-      }
-
-      const event = data[TransferrableKeys.event] as TransferrableEvent;
-      const node = get(event[TransferrableKeys._index_]);
-      if (node !== null) {
-        const target = event[TransferrableKeys.target];
-        node.dispatchEvent(
-          Object.assign(
-            new Event(event[TransferrableKeys.type], { bubbles: event[TransferrableKeys.bubbles], cancelable: event[TransferrableKeys.cancelable] }),
-            {
-              cancelBubble: event[TransferrableKeys.cancelBubble],
-              defaultPrevented: event[TransferrableKeys.defaultPrevented],
-              eventPhase: event[TransferrableKeys.eventPhase],
-              isTrusted: event[TransferrableKeys.isTrusted],
-              returnValue: event[TransferrableKeys.returnValue],
-              target: get(target ? target[TransferrableKeys._index_] : null),
-              timeStamp: event[TransferrableKeys.timeStamp],
-              scoped: event[TransferrableKeys.scoped],
-              keyCode: event[TransferrableKeys.keyCode],
-            },
-          ),
-        );
-      }
-    });
+  if (typeof addEventListener !== 'function') {
+    return;
   }
+  addEventListener('message', ({ data }: { data: EventToWorker }) => {
+    if (data[TransferrableKeys.type] !== MessageType.EVENT) {
+      return;
+    }
+
+    const event = data[TransferrableKeys.event] as TransferrableEvent;
+    const node = get(event[TransferrableKeys.index]);
+    if (node !== null) {
+      const target = event[TransferrableKeys.target];
+      node.dispatchEvent(
+        Object.assign(
+          new Event(event[TransferrableKeys.type], { bubbles: event[TransferrableKeys.bubbles], cancelable: event[TransferrableKeys.cancelable] }),
+          {
+            cancelBubble: event[TransferrableKeys.cancelBubble],
+            defaultPrevented: event[TransferrableKeys.defaultPrevented],
+            eventPhase: event[TransferrableKeys.eventPhase],
+            isTrusted: event[TransferrableKeys.isTrusted],
+            returnValue: event[TransferrableKeys.returnValue],
+            target: get(target ? target[TransferrableKeys.index] : null),
+            timeStamp: event[TransferrableKeys.timeStamp],
+            scoped: event[TransferrableKeys.scoped],
+            keyCode: event[TransferrableKeys.keyCode],
+          },
+        ),
+      );
+    }
+  });
 }

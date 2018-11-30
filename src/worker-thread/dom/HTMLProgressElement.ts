@@ -18,21 +18,22 @@ import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export class HTMLProgressElement extends HTMLElement {
-  private _indeterminate: boolean = true;
-  private _value: number = 0;
+  private [TransferrableKeys.indeterminate]: boolean = true;
+  private [TransferrableKeys.value]: number = 0;
 
   get position(): number {
-    return this._indeterminate ? -1 : this._value / this.max;
+    return this[TransferrableKeys.indeterminate] ? -1 : this[TransferrableKeys.value] / this.max;
   }
 
   get value(): number {
-    return this._value;
+    return this[TransferrableKeys.value];
   }
   set value(value: number) {
-    this._indeterminate = false;
-    this._value = value;
+    this[TransferrableKeys.indeterminate] = false;
+    this[TransferrableKeys.value] = value;
     // TODO(KB) This is a property mutation needing tracked.
   }
 }

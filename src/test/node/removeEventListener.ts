@@ -17,6 +17,7 @@
 import test from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 test.beforeEach(t => {
   t.context = {
@@ -31,7 +32,7 @@ test('removing the only registered callback retains array with zero length', t =
 
   node.addEventListener('click', callback);
   node.removeEventListener('click', callback);
-  t.deepEqual(node._handlers_['click'], []);
+  t.deepEqual(node[TransferrableKeys.handlers]['click'], []);
 });
 
 test('removing a specific callback from list with more than one callback reduces the list to the remaining callback', t => {
@@ -39,9 +40,9 @@ test('removing a specific callback from list with more than one callback reduces
 
   node.addEventListener('click', callback);
   node.addEventListener('click', callbackTwo);
-  t.deepEqual(node._handlers_['click'], [callback, callbackTwo]);
+  t.deepEqual(node[TransferrableKeys.handlers]['click'], [callback, callbackTwo]);
   node.removeEventListener('click', callback);
-  t.deepEqual(node._handlers_['click'], [callbackTwo]);
+  t.deepEqual(node[TransferrableKeys.handlers]['click'], [callbackTwo]);
 });
 
 test('removing an unknown callback when callbacks are registerd to a type does nothing', t => {
@@ -49,14 +50,14 @@ test('removing an unknown callback when callbacks are registerd to a type does n
 
   node.addEventListener('click', callback);
   node.addEventListener('click', callbackTwo);
-  t.deepEqual(node._handlers_['click'], [callback, callbackTwo]);
+  t.deepEqual(node[TransferrableKeys.handlers]['click'], [callback, callbackTwo]);
   node.removeEventListener('click', () => undefined);
-  t.deepEqual(node._handlers_['click'], [callback, callbackTwo]);
+  t.deepEqual(node[TransferrableKeys.handlers]['click'], [callback, callbackTwo]);
 });
 
 test('removing an unknown callback for a unknown type does nothing', t => {
   const { node } = t.context;
 
   node.removeEventListener('click', () => undefined);
-  t.is(node._handlers_['click'], undefined);
+  t.is(node[TransferrableKeys.handlers]['click'], undefined);
 });

@@ -37,7 +37,7 @@ export function install(
       return;
     }
 
-    prepareMutate(worker);
+    prepareMutate(worker, sanitizer);
 
     worker.onmessage = (message: MessageFromWorker) => {
       const { data } = message;
@@ -51,7 +51,6 @@ export function install(
         (data as MutationFromWorker)[TransferrableKeys.nodes],
         (data as MutationFromWorker)[TransferrableKeys.strings],
         (data as MutationFromWorker)[TransferrableKeys.mutations],
-        sanitizer,
       );
 
       // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.

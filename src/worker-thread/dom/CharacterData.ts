@@ -18,15 +18,15 @@ import { Node, NodeName } from './Node';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { NodeType } from '../../transfer/TransferrableNodes';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 export abstract class CharacterData extends Node {
-  // _data_ is private to ensure mutation observation occurs for all public setters.
-  private _data_: string;
+  private [TransferrableKeys.data]: string;
 
   constructor(data: string, nodeType: NodeType, nodeName: NodeName) {
     super(nodeType, nodeName);
-    this._data_ = data;
+    this[TransferrableKeys.data] = data;
   }
 
   // Unimplemented Methods
@@ -42,7 +42,7 @@ export abstract class CharacterData extends Node {
    * @return Returns the string contained in private CharacterData.data
    */
   get data(): string {
-    return this._data_;
+    return this[TransferrableKeys.data];
   }
 
   /**
@@ -50,7 +50,7 @@ export abstract class CharacterData extends Node {
    */
   set data(value: string) {
     const oldValue = this.data;
-    this._data_ = value;
+    this[TransferrableKeys.data] = value;
 
     mutate({
       target: this,
@@ -64,14 +64,14 @@ export abstract class CharacterData extends Node {
    * @return Returns the size of the string contained in CharacterData.data
    */
   get length(): number {
-    return this._data_.length;
+    return this[TransferrableKeys.data].length;
   }
 
   /**
    * @return Returns the string contained in CharacterData.data
    */
   get nodeValue(): string {
-    return this._data_;
+    return this[TransferrableKeys.data];
   }
 
   /**

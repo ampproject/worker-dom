@@ -39,7 +39,7 @@ export function registerSubclass(nodeName: NodeName, subclass: typeof Element): 
 export class Element extends Node {
   public localName: NodeName;
   public attributes: Attr[] = [];
-  public propertyBackedAttributes_: { [key: string]: [() => string | null, (value: string) => string | boolean] } = {};
+  public [TransferrableKeys.propertyBackedAttributes]: { [key: string]: [() => string | null, (value: string) => string | boolean] } = {};
   public classList: DOMTokenList = new DOMTokenList(Element, this, 'class', 'classList', 'className');
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
@@ -48,12 +48,8 @@ export class Element extends Node {
     super(nodeType, nodeName);
     this.namespaceURI = namespaceURI || HTML_NAMESPACE;
     this.localName = toLower(nodeName);
-    this._transferredFormat_ = {
-      [TransferrableKeys._index_]: this._index_,
-      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-    };
-    this._creationFormat_ = {
-      [TransferrableKeys._index_]: this._index_,
+    this[TransferrableKeys.creationFormat] = {
+      [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: this.nodeType,
       [TransferrableKeys.nodeName]: storeString(this.nodeName),
@@ -66,24 +62,14 @@ export class Element extends Node {
    * for the main thread to process and store items from for future modifications.
    */
   public hydrate(): HydrateableNode {
-    return Object.assign(
-      {},
-      this._creationFormat_,
-      this.childNodes.length > 0
-        ? {
-            [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
-          }
-        : {},
-      this.attributes.length > 0
-        ? {
-            [TransferrableKeys.attributes]: this.attributes.map(attribute => [
-              storeString(attribute.namespaceURI || 'null'),
-              storeString(attribute.name),
-              storeString(attribute.value),
-            ]),
-          }
-        : {},
-    );
+    return Object.assign(this[TransferrableKeys.creationFormat], {
+      [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
+      [TransferrableKeys.attributes]: this.attributes.map(attribute => [
+        storeString(attribute.namespaceURI || 'null'),
+        storeString(attribute.name),
+        storeString(attribute.value),
+      ]),
+    });
   }
 
   // Unimplemented properties
@@ -91,7 +77,6 @@ export class Element extends Node {
   // Element.clientLeft – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientLeft
   // Element.clientTop – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientTop
   // Element.clientWidth – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth
-  // Element.querySelectorAll – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll
   // set Element.innerHTML – https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
   // NonDocumentTypeChildNode.nextElementSibling – https://developer.mozilla.org/en-US/docs/Web/API/NonDocumentTypeChildNode/nextElementSibling
   // Element.prefix – https://developer.mozilla.org/en-US/docs/Web/API/Element/prefix
@@ -295,7 +280,7 @@ export class Element extends Node {
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
-    if (this.propertyBackedAttributes_[name] !== undefined) {
+    if (this[TransferrableKeys.propertyBackedAttributes][name] !== undefined) {
       if (!this.attributes.find(matchAttrPredicate(namespaceURI, name))) {
         this.attributes.push({
           namespaceURI,
@@ -303,11 +288,11 @@ export class Element extends Node {
           value,
         });
       }
-      this.propertyBackedAttributes_[name][1](value);
+      this[TransferrableKeys.propertyBackedAttributes][name][1](value);
       return;
     }
 
-    const oldValue = this.storeAttributeNS_(namespaceURI, name, value);
+    const oldValue = this[TransferrableKeys.storeAttribute](namespaceURI, name, value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this,
@@ -318,7 +303,7 @@ export class Element extends Node {
     });
   }
 
-  public storeAttributeNS_(namespaceURI: NamespaceURI, name: string, value: string): string {
+  public [TransferrableKeys.storeAttribute](namespaceURI: NamespaceURI, name: string, value: string): string {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     const oldValue = (attr && attr.value) || '';
 
@@ -345,7 +330,9 @@ export class Element extends Node {
   public getAttributeNS(namespaceURI: NamespaceURI, name: string): string | null {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     if (attr) {
-      return this.propertyBackedAttributes_[name] !== undefined ? this.propertyBackedAttributes_[name][0]() : attr.value;
+      return this[TransferrableKeys.propertyBackedAttributes][name] !== undefined
+        ? this[TransferrableKeys.propertyBackedAttributes][name][0]()
+        : attr.value;
     }
     return null;
   }

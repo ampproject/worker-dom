@@ -16,7 +16,7 @@
 
 import { store as storeNodeMapping } from '../nodes';
 import { Event, EventHandler } from '../Event';
-import { toLower } from '../../utils';
+import { toLower, NumericBoolean } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { TransferredNode, TransferrableNode, HydrateableNode, NodeType } from '../../transfer/TransferrableNodes';
@@ -34,7 +34,7 @@ export let globalDocument: Node | null = null;
  * @param property Property to modify
  * @param value New value to apply
  */
-const propagate = (node: Node, property: string, value: any): void => {
+export const propagate = (node: Node, property: string | number, value: any): void => {
   node[property] = value;
   node.childNodes.forEach(child => propagate(child, property, value));
 };
@@ -53,12 +53,11 @@ export abstract class Node {
   public childNodes: Node[] = [];
   public parentNode: Node | null = null;
   public isConnected: boolean = false;
-  public _index_: number;
-  public _transferredFormat_: TransferredNode;
-  public _creationFormat_: TransferrableNode;
-  public abstract hydrate(): HydrateableNode;
+  public [TransferrableKeys.index]: number;
+  public [TransferrableKeys.transferredFormat]: TransferredNode;
+  public [TransferrableKeys.creationFormat]: TransferrableNode;
   public abstract cloneNode(deep: boolean): Node;
-  private _handlers_: {
+  private [TransferrableKeys.handlers]: {
     [index: string]: EventHandler[];
   } = {};
 
@@ -72,7 +71,19 @@ export abstract class Node {
     }
     this.ownerDocument = globalDocument;
 
-    this._index_ = storeNodeMapping(this);
+    this[TransferrableKeys.index] = storeNodeMapping(this);
+    this[TransferrableKeys.transferredFormat] = {
+      [TransferrableKeys.index]: this[TransferrableKeys.index],
+      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
+    };
+  }
+
+  /**
+   * When hydrating the tree, we need to send HydrateableNode representations
+   * for the main thread to process and store items from for future modifications.
+   */
+  public hydrate(): HydrateableNode {
+    return this[TransferrableKeys.creationFormat];
   }
 
   // Unimplemented Properties
@@ -113,7 +124,7 @@ export abstract class Node {
    * @return Node's first child in the tree, or null if the node has no children.
    */
   get firstChild(): Node | null {
-    return this.childNodes.length > 0 ? this.childNodes[0] : null;
+    return this.childNodes[0] || null;
   }
 
   /**
@@ -121,7 +132,7 @@ export abstract class Node {
    * @return The last child of a node, or null if there are no child elements.
    */
   get lastChild(): Node | null {
-    return this.childNodes.length > 0 ? this.childNodes[this.childNodes.length - 1] : null;
+    return this.childNodes[this.childNodes.length - 1] || null;
   }
 
   /**
@@ -243,7 +254,7 @@ export abstract class Node {
       type: MutationRecordType.CHILD_LIST,
       target: this,
     });
-    
+
     return child;
   }
 
@@ -317,12 +328,12 @@ export abstract class Node {
    * @param handler Function called when event is dispatched.
    */
   public addEventListener(type: string, handler: EventHandler): void {
-    const handlers: EventHandler[] = this._handlers_[toLower(type)];
+    const handlers: EventHandler[] = this[TransferrableKeys.handlers][toLower(type)];
     let index: number = 0;
     if (handlers && handlers.length > 0) {
       index = handlers.push(handler);
     } else {
-      this._handlers_[toLower(type)] = [handler];
+      this[TransferrableKeys.handlers][toLower(type)] = [handler];
     }
 
     mutate({
@@ -331,7 +342,7 @@ export abstract class Node {
       addedEvents: [
         {
           [TransferrableKeys.type]: storeString(type),
-          [TransferrableKeys._index_]: this._index_,
+          [TransferrableKeys.index]: this[TransferrableKeys.index],
           [TransferrableKeys.index]: index,
         },
       ],
@@ -345,7 +356,7 @@ export abstract class Node {
    * @param handler Function to stop calling when event is dispatched.
    */
   public removeEventListener(type: string, handler: EventHandler): void {
-    const handlers = this._handlers_[toLower(type)];
+    const handlers = this[TransferrableKeys.handlers][toLower(type)];
     const index = !!handlers ? handlers.indexOf(handler) : -1;
 
     if (index >= 0) {
@@ -356,7 +367,7 @@ export abstract class Node {
         removedEvents: [
           {
             [TransferrableKeys.type]: storeString(type),
-            [TransferrableKeys._index_]: this._index_,
+            [TransferrableKeys.index]: this[TransferrableKeys.index],
             [TransferrableKeys.index]: index,
           },
         ],
@@ -375,15 +386,15 @@ export abstract class Node {
     let iterator: number;
 
     do {
-      handlers = target && target._handlers_ && target._handlers_[toLower(event.type)];
+      handlers = target && target[TransferrableKeys.handlers] && target[TransferrableKeys.handlers][toLower(event.type)];
       if (handlers) {
         for (iterator = handlers.length; iterator--; ) {
-          if ((handlers[iterator].call(target, event) === false || event._end) && event.cancelable) {
+          if ((handlers[iterator].call(target, event) === false || event[TransferrableKeys.end]) && event.cancelable) {
             break;
           }
         }
       }
-    } while (event.bubbles && !(event.cancelable && event._stop) && (target = target && target.parentNode));
+    } while (event.bubbles && !(event.cancelable && event[TransferrableKeys.stop]) && (target = target && target.parentNode));
     return !event.defaultPrevented;
   }
 }

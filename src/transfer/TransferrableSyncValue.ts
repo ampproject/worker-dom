@@ -19,7 +19,7 @@ import { get } from '../worker-thread/nodes';
 import { TransferrableKeys } from './TransferrableKeys';
 
 export interface TransferrableSyncValue {
-  readonly [TransferrableKeys._index_]: number;
+  readonly [TransferrableKeys.index]: number;
   readonly [TransferrableKeys.value]: string | number;
 }
 
@@ -38,10 +38,10 @@ export function propagate(): void {
     }
 
     const sync = (data as ValueSyncToWorker)[TransferrableKeys.sync];
-    const node = get(sync[TransferrableKeys._index_]);
+    const node = get(sync[TransferrableKeys.index]);
     if (node) {
       // Modify the private backing ivar of `value` property to avoid mutation/sync cycle.
-      node._value_ = sync[TransferrableKeys.value];
+      node[TransferrableKeys.value] = sync[TransferrableKeys.value];
     }
   });
 }

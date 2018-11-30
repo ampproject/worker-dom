@@ -42,7 +42,7 @@ test.cb.serial('Element.removeEventListener mutation observed when node is conne
           removedEvents: [
             {
               [TransferrableKeys.type]: get('mouseenter') as number,
-              [TransferrableKeys._index_]: 3,
+              [TransferrableKeys.index]: 3,
               [TransferrableKeys.index]: 0,
             },
           ],
@@ -70,7 +70,7 @@ test.cb.serial('Element.removeEventListener mutation observed when node is not y
           removedEvents: [
             {
               [TransferrableKeys.type]: get('mouseenter') as number,
-              [TransferrableKeys._index_]: 4,
+              [TransferrableKeys.index]: 4,
               [TransferrableKeys.index]: 0,
             },
           ],

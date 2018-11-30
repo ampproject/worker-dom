@@ -15,6 +15,7 @@
  */
 
 import { Node } from './dom/Node';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 interface EventOptions {
   bubbles?: boolean;
@@ -38,8 +39,8 @@ export class Event {
   public timeStamp: number;
   public type: string;
   public scoped: boolean;
-  public _stop?: boolean = false;
-  public _end?: boolean = false;
+  public [TransferrableKeys.stop]: boolean = false;
+  public [TransferrableKeys.end]: boolean = false;
 
   constructor(type: string, opts: EventOptions) {
     this.type = type;
@@ -47,10 +48,10 @@ export class Event {
     this.cancelable = !!opts.cancelable;
   }
   public stopPropagation(): void {
-    this._stop = true;
+    this[TransferrableKeys.stop] = true;
   }
   public stopImmediatePropagation(): void {
-    this._end = this._stop = true;
+    this[TransferrableKeys.end] = this[TransferrableKeys.stop] = true;
   }
   public preventDefault(): void {
     this.defaultPrevented = true;
