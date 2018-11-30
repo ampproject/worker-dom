@@ -48,6 +48,8 @@ export const propagate = (node: Node, property: string | number, value: any): vo
 export abstract class Node {
   [index: string]: any;
   public ownerDocument: Node;
+  // https://drafts.csswg.org/selectors-4/#scoping-root
+  public [TransferrableKeys.scopingRoot]: Node;
   public nodeType: NodeType;
   public nodeName: NodeName;
   public childNodes: Node[] = [];
@@ -70,6 +72,7 @@ export abstract class Node {
       globalDocument = this;
     }
     this.ownerDocument = globalDocument;
+    this[TransferrableKeys.scopingRoot] = this;
 
     this[TransferrableKeys.index] = storeNodeMapping(this);
     this[TransferrableKeys.transferredFormat] = {
@@ -195,27 +198,17 @@ export abstract class Node {
    * @return child after it has been inserted.
    */
   public insertBefore(child: Node | null, referenceNode: Node | undefined | null): Node | null {
-    if (child === null) {
-      return null;
-    }
-
-    if (child === this) {
+    if (child === null || child === this) {
       // The new child cannot contain the parent.
       return child;
     }
 
-    if (referenceNode == null) {
+    if (child.nodeType === NodeType.DOCUMENT_FRAGMENT_NODE) {
+      child.childNodes.slice().forEach((node: Node) => this.insertBefore(node, referenceNode));
+    } else if (referenceNode == null) {
       // When a referenceNode is not valid, appendChild(child).
-      this.appendChild(child);
-      mutate({
-        addedNodes: [child],
-        type: MutationRecordType.CHILD_LIST,
-        target: this,
-      });
-      return child;
-    }
-
-    if (this.childNodes.indexOf(referenceNode) >= 0) {
+      return this.appendChild(child);
+    } else if (this.childNodes.indexOf(referenceNode) >= 0) {
       // Should only insertBefore direct children of this Node.
       child.remove();
 
@@ -223,6 +216,7 @@ export abstract class Node {
       this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child);
       child.parentNode = this;
       propagate(child, 'isConnected', this.isConnected);
+      propagate(child, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
       mutate({
         addedNodes: [child],
         nextSibling: referenceNode,
@@ -243,18 +237,22 @@ export abstract class Node {
    * @return Node the appended node.
    */
   public appendChild(child: Node): Node {
-    child.remove();
-    child.parentNode = this;
-    propagate(child, 'isConnected', this.isConnected);
-    this.childNodes.push(child);
+    if (child.nodeType === NodeType.DOCUMENT_FRAGMENT_NODE) {
+      child.childNodes.slice().forEach(this.appendChild, this);
+    } else {
+      child.remove();
+      child.parentNode = this;
+      propagate(child, 'isConnected', this.isConnected);
+      propagate(child, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
+      this.childNodes.push(child);
 
-    mutate({
-      addedNodes: [child],
-      previousSibling: this.childNodes[this.childNodes.length - 2],
-      type: MutationRecordType.CHILD_LIST,
-      target: this,
-    });
-
+      mutate({
+        addedNodes: [child],
+        previousSibling: this.childNodes[this.childNodes.length - 2],
+        type: MutationRecordType.CHILD_LIST,
+        target: this,
+      });
+    }
     return child;
   }
 
@@ -271,6 +269,7 @@ export abstract class Node {
     if (exists) {
       child.parentNode = null;
       propagate(child, 'isConnected', false);
+      propagate(child, TransferrableKeys.scopingRoot, child);
       this.childNodes.splice(index, 1);
       mutate({
         removedNodes: [child],
@@ -297,8 +296,10 @@ export abstract class Node {
       if (index >= 0) {
         oldChild.parentNode = null;
         propagate(oldChild, 'isConnected', false);
+        propagate(oldChild, TransferrableKeys.scopingRoot, oldChild);
         this.childNodes.splice(index, 1, newChild);
-        propagate(newChild, 'isConnected', true);
+        propagate(newChild, 'isConnected', this.isConnected);
+        propagate(newChild, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
 
         mutate({
           addedNodes: [newChild],
@@ -330,7 +331,7 @@ export abstract class Node {
   public addEventListener(type: string, handler: EventHandler): void {
     const handlers: EventHandler[] = this[TransferrableKeys.handlers][toLower(type)];
     let index: number = 0;
-    if (handlers && handlers.length > 0) {
+    if (handlers) {
       index = handlers.push(handler);
     } else {
       this[TransferrableKeys.handlers][toLower(type)] = [handler];

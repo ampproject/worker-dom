@@ -25,7 +25,7 @@ export class Comment extends CharacterData {
   constructor(data: string) {
     super(data, NodeType.COMMENT_NODE, '#comment');
     this[TransferrableKeys.creationFormat] = {
-      [TransferrableKeys.index]: this._index_,
+      [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: NodeType.COMMENT_NODE,
       [TransferrableKeys.nodeName]: storeString(this.nodeName),

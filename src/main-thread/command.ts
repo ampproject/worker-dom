@@ -102,8 +102,8 @@ const eventHandler = (worker: Worker, index: number) => (event: Event | Keyboard
  * @param mutation mutation record containing commands to execute.
  */
 export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
-  const _index_: number = mutation[TransferrableKeys.target];
-  const target = getNode(_index_);
+  const index: number = mutation[TransferrableKeys.target];
+  const target = getNode(index);
 
   (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub => {
     processListenerChange(worker, target, false, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]);

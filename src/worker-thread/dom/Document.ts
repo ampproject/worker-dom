@@ -56,6 +56,7 @@ import { observe as observeMutations } from '../../transfer/DocumentMutations';
 import { propagate as propagateEvents } from '../../transfer/TransferrableEvent';
 import { propagate as propagateSyncValues } from '../../transfer/TransferrableSyncValue';
 import { toLower } from '../../utils';
+import { DocumentFragment } from './DocumentFragment';
 
 export class Document extends Element {
   public defaultView: {
@@ -103,9 +104,12 @@ export class Document extends Element {
   public createTextNode(text: string): Text {
     return new Text(text);
   }
-
   public createComment(text: string): Comment {
     return new Comment(text);
+  }
+
+  public createDocumentFragment(): DocumentFragment {
+    return new DocumentFragment();
   }
 
   /**
