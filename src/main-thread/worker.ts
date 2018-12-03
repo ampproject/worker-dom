@@ -42,7 +42,6 @@ export function createWorker(
         keys.push(`'${key}'`);
       }
       const code = `
-        'use strict';
         ${workerScript}
         (function() {
           var self = this;
@@ -58,7 +57,7 @@ export function createWorker(
           var Document = defaultView.Document;
           var Event = defaultView.Event;
           var MutationObserver = defaultView.MutationObserver;
-
+        
           function addEventListener(type, handler) {
             return document.addEventListener(type, handler);
           }
@@ -68,7 +67,10 @@ export function createWorker(
           this.consumeInitialDOM(document, ${JSON.stringify(initialStrings)}, ${JSON.stringify(hydratedNode)});
           this.appendKeys([${keys}]);
           document.observe();
-          ${authorScript}
+          with (window) {
+            'use strict';
+            ${authorScript}
+          }
         }).call(WorkerThread.workerDOM);
 //# sourceURL=${encodeURI(authorScriptURL)}`;
       setPhase(Phases.Hydrating);
