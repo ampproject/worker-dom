@@ -16,6 +16,7 @@
 
 import resolve from 'rollup-plugin-node-resolve';
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
+import { terser } from 'rollup-plugin-terser';
 import {babelPlugin} from './rollup.plugins.js';
 import {MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE} from './rollup.utils.js';
 
@@ -33,6 +34,7 @@ const ESModules = [
         allowConsole: DEBUG_BUNDLE_VALUE,
       }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
+      MINIFY_BUNDLE_VALUE ? terser() : null,
     ].filter(Boolean)
   },
   {
@@ -63,6 +65,7 @@ const ESModules = [
         allowConsole: DEBUG_BUNDLE_VALUE,
       }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
+      MINIFY_BUNDLE_VALUE ? terser() : null,
     ].filter(Boolean)
   },
   {
@@ -97,6 +100,7 @@ const IIFEModules = [
         allowConsole: DEBUG_BUNDLE_VALUE,
       }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
+      MINIFY_BUNDLE_VALUE ? terser() : null,
     ].filter(Boolean)
   },
   {
@@ -129,6 +133,7 @@ const IIFEModules = [
         allowConsole: DEBUG_BUNDLE_VALUE,
       }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
+      MINIFY_BUNDLE_VALUE ? terser() : null,
     ].filter(Boolean)
   },
   {
@@ -164,6 +169,7 @@ const debugModules = DEBUG_BUNDLE_VALUE ? [
         allowConsole: true,
       }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
+      MINIFY_BUNDLE_VALUE ? terser() : null,
     ].filter(Boolean)
   }
 ] : [];
