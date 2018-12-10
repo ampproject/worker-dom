@@ -43,7 +43,37 @@ export function createWorker(
       }
       const code = `
         ${workerScript}
-        (function() {
+        var window = Object.assign(self, WorkerThread.workerDOM);
+        var document = window.document;
+        window.consumeInitialDOM(document, ${JSON.stringify(initialStrings)}, ${JSON.stringify(hydratedNode)});
+        window.appendKeys([${keys}]);
+        window.document.observe();
+        with (window) {
+          'use strict';
+          ${authorScript}
+        }
+//# sourceURL=${encodeURI(authorScriptURL)}`;
+      setPhase(Phases.Hydrating);
+      return new Worker(URL.createObjectURL(new Blob([code])));
+    })
+    .catch(error => {
+      return null;
+    });
+}
+
+/**
+ * @param worker
+ * @param message
+ */
+export function messageToWorker(worker: Worker, message: MessageToWorker) {
+  if (callbacks_ && callbacks_.onSendMessage) {
+    callbacks_.onSendMessage(message);
+  }
+  worker.postMessage(message);
+}
+
+/*
+(function() {
           var self = this;
           var window = this;
           var document = this.document;
@@ -72,22 +102,4 @@ export function createWorker(
             ${authorScript}
           }
         }).call(WorkerThread.workerDOM);
-//# sourceURL=${encodeURI(authorScriptURL)}`;
-      setPhase(Phases.Hydrating);
-      return new Worker(URL.createObjectURL(new Blob([code])));
-    })
-    .catch(error => {
-      return null;
-    });
-}
-
-/**
- * @param worker
- * @param message
- */
-export function messageToWorker(worker: Worker, message: MessageToWorker) {
-  if (callbacks_ && callbacks_.onSendMessage) {
-    callbacks_.onSendMessage(message);
-  }
-  worker.postMessage(message);
-}
+*/

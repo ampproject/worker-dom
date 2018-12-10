@@ -51,8 +51,8 @@ export interface WorkerDOMGlobalScope {
   addEventListener: (type: string, handler: EventHandler) => void;
   removeEventListener: (type: string, handler: EventHandler) => void;
   localStorage: object;
-  location: object;
-  url: string;
+  // location: object;
+  // url: string;
   appendKeys: (keys: Array<string>) => void;
   consumeInitialDOM: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode) => void;
   HTMLAnchorElement: typeof HTMLAnchorElement;
