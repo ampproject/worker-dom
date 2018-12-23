@@ -68,7 +68,7 @@
     "polka": "0.5.1",
     "prettier": "1.15.3",
     "rimraf": "2.6.2",
-    "rollup": "0.68.1",
+    "rollup": "0.68.2",
     "rollup-plugin-babel": "4.0.3",
     "rollup-plugin-node-resolve": "3.4.0",
     "rollup-plugin-terser": "3.0.0",
