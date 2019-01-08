@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLProgressElement } from '../../worker-thread/dom/HTMLProgressElement';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  element: HTMLProgressElement;
+}>;
 
 test.beforeEach(t => {
   t.context = {

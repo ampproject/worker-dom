@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { createDocument, Document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 import { appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
 
-test.cb.serial('Element.style.width mutation observed, single value', t => {
+const test = anyTest as TestInterface<{
+  document: Document;
+}>;
+
+test.beforeEach(t => {
+  t.context = {
+    document: createDocument(),
+  };
+});
+
+test.serial.cb('Element.style.width mutation observed, single value', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
@@ -45,7 +56,8 @@ test.cb.serial('Element.style.width mutation observed, single value', t => {
   el.style.width = '';
 });
 
-test.cb.serial('Element.style.width mutation observed, single value, via setProperty', t => {
+test.serial.cb('Element.style.width mutation observed, single value, via setProperty', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
@@ -71,7 +83,8 @@ test.cb.serial('Element.style.width mutation observed, single value, via setProp
   el.style.setProperty('width', '');
 });
 
-test.cb.serial('Element.style.width mutation observed, single value, via removeProperty', t => {
+test.serial.cb('Element.style.width mutation observed, single value, via removeProperty', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
@@ -97,7 +110,8 @@ test.cb.serial('Element.style.width mutation observed, single value, via removeP
   el.style.removeProperty('width');
 });
 
-test.cb.serial('Element.style.width mutation observed, single value, via cssText', t => {
+test.cb('Element.style.width mutation observed, single value, via cssText', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {

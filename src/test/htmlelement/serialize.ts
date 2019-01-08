@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
@@ -23,6 +23,10 @@ import { get } from '../../worker-thread/strings';
 const RANDOM_TEXT_CONTENT = `TEXT_CONTENT-${Math.random()}`;
 const DIV_ID = 'DIV_ID';
 const DIV_CLASS = 'DIV_CLASS';
+
+const test = anyTest as TestInterface<{
+  div: Element;
+}>;
 
 test.beforeEach(t => {
   const div = new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE);
@@ -38,13 +42,18 @@ test('Element should serialize to a TransferrableNode', t => {
   const serializedDiv = t.context.div.hydrate();
   t.is(serializedDiv[TransferrableKeys.nodeType], NodeType.ELEMENT_NODE);
   t.is(serializedDiv[TransferrableKeys.nodeName], get('div') as number);
-  t.is(serializedDiv[TransferrableKeys.childNodes].length, 1);
-  t.is(serializedDiv[TransferrableKeys.attributes].length, 2);
-  t.is(serializedDiv[TransferrableKeys.attributes][0][1], get('id') as number);
-  t.is(serializedDiv[TransferrableKeys.attributes][0][2], get(DIV_ID) as number);
-  t.is(serializedDiv[TransferrableKeys.attributes][1][1], get('class') as number);
-  t.is(serializedDiv[TransferrableKeys.attributes][1][2], get(DIV_CLASS) as number);
-  t.is(serializedDiv[TransferrableKeys.childNodes][0][TransferrableKeys.textContent], get(RANDOM_TEXT_CONTENT) as number);
+
+  t.not(serializedDiv[TransferrableKeys.childNodes], undefined);
+  t.is((serializedDiv[TransferrableKeys.childNodes] as Array<HydrateableNode>).length, 1);
+  t.is((serializedDiv[TransferrableKeys.childNodes] as Array<HydrateableNode>)[0][TransferrableKeys.textContent], get(RANDOM_TEXT_CONTENT) as number);
+
+  t.not(serializedDiv[TransferrableKeys.attributes], undefined);
+  t.is((serializedDiv[TransferrableKeys.attributes] as Array<[number, number, number]>).length, 2);
+  t.is((serializedDiv[TransferrableKeys.attributes] as Array<[number, number, number]>)[0][1], get('id') as number);
+  t.is((serializedDiv[TransferrableKeys.attributes] as Array<[number, number, number]>)[0][2], get(DIV_ID) as number);
+  t.is((serializedDiv[TransferrableKeys.attributes] as Array<[number, number, number]>)[1][1], get('class') as number);
+  t.is((serializedDiv[TransferrableKeys.attributes] as Array<[number, number, number]>)[1][2], get(DIV_CLASS) as number);
+
   // Properties are not yet implemented
   // t.is(serializedDiv.properties.length, 0);
 });

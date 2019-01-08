@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+  child: Element;
+  childTwo: Element;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -27,20 +33,20 @@ test.beforeEach(t => {
 });
 
 test('return false when node contains no children', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   t.is(node.hasChildNodes(), false);
 });
 
 test('return true when node contains a child', t => {
-  const { node, child } = t.context as { node: Element; child: Element };
+  const { node, child } = t.context;
 
   node.appendChild(child);
   t.is(node.hasChildNodes(), true);
 });
 
 test('return true when node contains multiple children', t => {
-  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Element };
+  const { node, child, childTwo } = t.context;
 
   node.appendChild(child);
   node.appendChild(childTwo);

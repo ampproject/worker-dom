@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  element: HTMLOptionElement;
+}>;
 
 test.beforeEach(t => {
   t.context = {

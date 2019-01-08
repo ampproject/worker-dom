@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  element: Element;
+  child: Element;
+  text: Text;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -28,7 +34,7 @@ test.beforeEach(t => {
 });
 
 test('textContent setter adds a child text node to Element.', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context;
 
   t.is(element.childNodes.length, 0);
   element.textContent = 'foo';
@@ -36,7 +42,7 @@ test('textContent setter adds a child text node to Element.', t => {
 });
 
 test('clearing textContent via setter removes value stored as text inside element', t => {
-  const { element, text } = t.context as { element: Element; text: Text };
+  const { element, text } = t.context;
 
   element.appendChild(text);
   t.is(element.childNodes[0].data, 'default text');
@@ -46,7 +52,7 @@ test('clearing textContent via setter removes value stored as text inside elemen
 });
 
 test('textContent setter replaces childNodes with single text node.', t => {
-  const { element, child, text } = t.context as { element: Element; child: Element; text: Text };
+  const { element, child, text } = t.context;
 
   child.appendChild(text);
   element.appendChild(child);

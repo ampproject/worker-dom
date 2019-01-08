@@ -14,38 +14,39 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { createDocument } from '../../worker-thread/dom/Document';
 import { Text } from '../../worker-thread/dom/Text';
-import { Node } from '../../worker-thread/dom/Node';
 import { DocumentFragment } from '../../worker-thread/dom/DocumentFragment';
+import { Element } from '../../worker-thread/dom/Element';
+
+const test = anyTest as TestInterface<{
+  parentFragment: DocumentFragment;
+  node: Element;
+  sibling: Element;
+  text: Text;
+}>;
 
 test.beforeEach(t => {
-  const parentFragment = document.createDocumentFragment();
-  const node = document.createElement('div');
-  const sibling = document.createElement('div');
-  const text = document.createTextNode('text');
+  const document = createDocument();
 
   t.context = {
-    parentFragment,
-    node,
-    sibling,
-    text,
+    parentFragment: document.createDocumentFragment(),
+    node: document.createElement('div'),
+    sibling: document.createElement('div'),
+    text: document.createTextNode('text'),
   };
-});
-test.afterEach(t => {
-  (t.context.parentFragment.childNodes as Node[]).forEach(childNode => childNode.remove());
 });
 
 test('children should be an empty array when there are no childNodes', t => {
-  const { parentFragment } = t.context as { parentFragment: DocumentFragment };
+  const { parentFragment } = t.context;
 
   t.is(parentFragment.children.length, 0);
   t.deepEqual(parentFragment.children, []);
 });
 
 test('children should contain all childNodes when all are the correct NodeType', t => {
-  const { parentFragment, node } = t.context as { parentFragment: DocumentFragment; node: Node };
+  const { parentFragment, node } = t.context;
 
   parentFragment.appendChild(node);
   t.is(parentFragment.children.length, 1);
@@ -53,7 +54,7 @@ test('children should contain all childNodes when all are the correct NodeType',
 });
 
 test('children should contain only childNodes of NodeType.ELEMENT_NODE', t => {
-  const { parentFragment, node, text } = t.context as { parentFragment: DocumentFragment; node: Node; text: Text };
+  const { parentFragment, node, text } = t.context;
 
   parentFragment.appendChild(node);
   parentFragment.appendChild(text);
@@ -62,7 +63,7 @@ test('children should contain only childNodes of NodeType.ELEMENT_NODE', t => {
 });
 
 test('children should be an empty array when there are no childNodes of NodeType.ELEMENT_NODE', t => {
-  const { parentFragment, text } = t.context as { parentFragment: DocumentFragment; text: Text };
+  const { parentFragment, text } = t.context;
 
   parentFragment.appendChild(text);
   t.is(parentFragment.children.length, 0);

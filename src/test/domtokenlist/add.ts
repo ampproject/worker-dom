@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  tokenList: DOMTokenList;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -26,7 +30,7 @@ test.beforeEach(t => {
 });
 
 test('adding a single value', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.add('foo');
   t.is(tokenList.value, 'foo');
@@ -51,7 +55,7 @@ test('adding a single value', t => {
 });
 
 test('adding multiple values', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.add('foo', 'bar');
   t.is(tokenList.value, 'foo bar');

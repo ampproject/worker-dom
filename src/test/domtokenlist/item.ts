@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
 import { HTML_NAMESPACE, NodeType } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  tokenList: DOMTokenList;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -26,7 +30,7 @@ test.beforeEach(t => {
 });
 
 test('getting position zero should return the correct value', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = 'foo';
   t.is(tokenList.item(0), 'foo');
@@ -39,7 +43,7 @@ test('getting position zero should return the correct value', t => {
 });
 
 test('getting last position should return the correct value', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = 'foo';
   t.is(tokenList.item(tokenList.length - 1), 'foo');
@@ -52,7 +56,7 @@ test('getting last position should return the correct value', t => {
 });
 
 test('getting middle positions should return the correct value', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = 'foo bar foo';
   t.is(tokenList.item(1), 'bar');

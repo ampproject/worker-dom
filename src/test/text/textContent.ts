@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Text } from '../../worker-thread/dom/Text';
+
+const test = anyTest as TestInterface<{
+  text: Text;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -24,20 +28,20 @@ test.beforeEach(t => {
 });
 
 test('get textContent', t => {
-  const { text } = t.context as { text: Text };
+  const { text } = t.context;
 
   t.is(text.textContent, 'default value');
 });
 
 test('set textContent', t => {
-  const { text } = t.context as { text: Text };
+  const { text } = t.context;
 
   text.textContent = 'new value';
   t.is(text.textContent, 'new value');
 });
 
 test('textContent matches data', t => {
-  const { text } = t.context as { text: Text };
+  const { text } = t.context;
 
   t.is(text.data, 'default value');
   t.is(text.textContent, 'default value');

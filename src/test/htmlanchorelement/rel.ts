@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  element: HTMLAnchorElement;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -25,27 +29,27 @@ test.beforeEach(t => {
 });
 
 test('rel should be empty by default', t => {
-  const { element } = t.context as { element: HTMLAnchorElement };
+  const { element } = t.context;
 
   t.is(element.rel, '');
 });
 
 test('rel should be settable to a single value', t => {
-  const { element } = t.context as { element: HTMLAnchorElement };
+  const { element } = t.context;
 
   element.rel = 'next';
   t.is(element.rel, 'next');
 });
 
 test('rel property change should be reflected in attribute', t => {
-  const { element } = t.context as { element: HTMLAnchorElement };
+  const { element } = t.context;
 
   element.rel = 'next';
   t.is(element.getAttribute('rel'), 'next');
 });
 
 test('rel attribute change should be reflected in property', t => {
-  const { element } = t.context as { element: HTMLAnchorElement };
+  const { element } = t.context;
 
   element.setAttribute('rel', 'next');
   t.is(element.rel, 'next');

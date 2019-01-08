@@ -14,76 +14,80 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
+const test = anyTest as TestInterface<{
+  element: HTMLAnchorElement;
+}>;
+
 test.beforeEach(t => {
   t.context = {
-    node: new HTMLAnchorElement(NodeType.ELEMENT_NODE, 'a', HTML_NAMESPACE),
+    element: new HTMLAnchorElement(NodeType.ELEMENT_NODE, 'a', HTML_NAMESPACE),
   };
 });
 
 test('relList should be empty by default', t => {
-  const { node } = t.context as { node: HTMLAnchorElement };
+  const { element } = t.context;
 
-  t.is(node.relList.value, '');
-  t.is(node.getAttribute('rel'), null);
+  t.is(element.relList.value, '');
+  t.is(element.getAttribute('rel'), null);
 });
 
 test('relList.add of a single value should only add one class', t => {
-  const { node } = t.context as { node: HTMLAnchorElement };
+  const { element } = t.context;
 
-  node.relList.add('foo');
-  t.is(node.relList.value, 'foo');
-  t.is(node.rel, 'foo');
-  t.is(node.getAttribute('rel'), 'foo');
+  element.relList.add('foo');
+  t.is(element.relList.value, 'foo');
+  t.is(element.rel, 'foo');
+  t.is(element.getAttribute('rel'), 'foo');
 });
 
 test('relList.add of a multiple value should only add all classes', t => {
-  const { node } = t.context as { node: HTMLAnchorElement };
+  const { element } = t.context;
 
-  node.relList.add('foo', 'bar', 'baz');
-  t.is(node.relList.value, 'foo bar baz');
-  t.is(node.rel, 'foo bar baz');
-  t.is(node.getAttribute('rel'), 'foo bar baz');
+  element.relList.add('foo', 'bar', 'baz');
+  t.is(element.relList.value, 'foo bar baz');
+  t.is(element.rel, 'foo bar baz');
+  t.is(element.getAttribute('rel'), 'foo bar baz');
 });
 
 test('relList.remove of a single value should only remove one class', t => {
-  const { node } = t.context as { node: HTMLAnchorElement };
+  const { element } = t.context;
 
-  node.rel = 'foo bar';
-  node.relList.remove('foo');
-  t.is(node.relList.value, 'bar');
-  t.is(node.rel, 'bar');
-  t.is(node.getAttribute('rel'), 'bar');
+  element.rel = 'foo bar';
+  element.relList.remove('foo');
+  t.is(element.relList.value, 'bar');
+  t.is(element.rel, 'bar');
+  t.is(element.getAttribute('rel'), 'bar');
 });
 
 test('relList.remove of a multiple values should remove all values', t => {
-  const { node } = t.context as { node: HTMLAnchorElement };
+  const { element } = t.context;
 
-  node.rel = 'foo bar baz';
-  node.relList.remove('foo', 'bar');
-  t.is(node.relList.value, 'baz');
-  t.is(node.rel, 'baz');
-  t.is(node.getAttribute('rel'), 'baz');
+  element.rel = 'foo bar baz';
+  element.relList.remove('foo', 'bar');
+  t.is(element.relList.value, 'baz');
+  t.is(element.rel, 'baz');
+  t.is(element.getAttribute('rel'), 'baz');
 });
 
 test('relList.toggle should add a value that is not present already', t => {
-  const { node } = t.context as { node: HTMLAnchorElement };
+  const { element } = t.context;
 
-  node.relList.toggle('foo');
-  t.is(node.relList.value, 'foo');
-  t.is(node.rel, 'foo');
-  t.is(node.getAttribute('rel'), 'foo');
+  element.relList.toggle('foo');
+  t.is(element.relList.value, 'foo');
+  t.is(element.rel, 'foo');
+  t.is(element.getAttribute('rel'), 'foo');
 });
 
 test('relList.toggle should remove a value that is present already', t => {
-  const { node } = t.context as { node: HTMLAnchorElement };
+  const { element } = t.context;
 
-  node.rel = 'foo';
-  node.relList.toggle('foo');
-  t.is(node.relList.value, '');
-  t.is(node.rel, '');
-  t.is(node.getAttribute('rel'), '');
+  element.rel = 'foo';
+  element.relList.toggle('foo');
+  t.is(element.relList.value, '');
+  t.is(element.rel, '');
+  t.is(element.getAttribute('rel'), '');
 });

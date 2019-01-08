@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { createDocument, Document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
-test.cb('Text, set data', t => {
+const test = anyTest as TestInterface<{
+  document: Document;
+}>;
+
+test.beforeEach(t => {
+  t.context = {
+    document: createDocument(),
+  };
+});
+
+test.serial.cb('Text, set data', t => {
+  const { document } = t.context;
   const text = document.createTextNode('original text');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
@@ -40,7 +51,8 @@ test.cb('Text, set data', t => {
   text.data = 'new text';
 });
 
-test.cb.serial('Text, set textContent', t => {
+test.serial.cb('Text, set textContent', t => {
+  const { document } = t.context;
   const text = document.createTextNode('original text');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {

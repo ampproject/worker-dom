@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { createDocument } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
 import { Comment } from '../../worker-thread/dom/Comment';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
+const test = anyTest as TestInterface<{
+  parent: Element;
+  comment: Comment;
+}>;
+
 test.beforeEach(t => {
+  const document = createDocument();
   t.context = {
     parent: document.createElement('div'),
     comment: document.createComment('Super Comment'),
@@ -29,24 +35,21 @@ test.beforeEach(t => {
   t.context.parent.appendChild(t.context.comment);
   document.body.appendChild(t.context.parent);
 });
-test.afterEach(_ => {
-  document.body.childNodes.forEach(childNode => childNode.remove());
-});
 
 test('cloneNode should create a new node with the same tagName', t => {
-  const { comment } = t.context as { comment: Comment };
+  const { comment } = t.context;
 
   t.is(comment.cloneNode().tagName, comment.tagName);
 });
 
 test('cloneNode should create a new node with a different index', t => {
-  const { comment } = t.context as { comment: Comment };
+  const { comment } = t.context;
 
   t.not(comment.cloneNode()[TransferrableKeys.index], comment[TransferrableKeys.index]);
 });
 
 test('cloneNode should create a new node with the same children when the deep flag is set', t => {
-  const { parent, comment } = t.context as { parent: Element; comment: Comment };
+  const { parent, comment } = t.context;
   const clone = parent.cloneNode(true);
 
   t.is(parent.childNodes.length, clone.childNodes.length);

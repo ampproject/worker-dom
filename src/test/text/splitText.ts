@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Text } from '../../worker-thread/dom/Text';
 import { Element } from '../../worker-thread/dom/Element';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  text: Text;
+  element: Element;
+  paragraph: Element;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -28,7 +34,7 @@ test.beforeEach(t => {
 });
 
 test('unmounted text splitting', t => {
-  const { text } = t.context as { text: Text };
+  const { text } = t.context;
 
   const offsetNode: Text = text.splitText(3);
   t.is(text.textContent, 'def');
@@ -38,7 +44,7 @@ test('unmounted text splitting', t => {
 });
 
 test('tree mounted text splitting', t => {
-  const { text, element } = t.context as { text: Text; element: Element };
+  const { text, element } = t.context;
 
   element.appendChild(text);
 
@@ -50,7 +56,7 @@ test('tree mounted text splitting', t => {
 });
 
 test('tree with siblings mounted text splitting', t => {
-  const { text, element, paragraph } = t.context as { text: Text; element: Element; paragraph: Element };
+  const { text, element, paragraph } = t.context;
 
   element.appendChild(text);
   element.appendChild(paragraph);

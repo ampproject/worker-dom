@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+  child: Element;
+  childTwo: Element;
+}>;
 
 test.beforeEach(t => {
   t.context = {

@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
 import { Element } from '../../worker-thread/dom/Element';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+  declaration: CSSStyleDeclaration;
+}>;
 
 test.beforeEach(t => {
   t.context = {

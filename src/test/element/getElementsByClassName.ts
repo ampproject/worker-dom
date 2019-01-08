@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+  child: Element;
+  childTwo: Element;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -27,7 +33,7 @@ test.beforeEach(t => {
 });
 
 test('single direct child with one classname', t => {
-  const { node, child } = t.context as { node: Element; child: Element };
+  const { node, child } = t.context;
 
   child.className = 'foo';
   node.appendChild(child);
@@ -38,7 +44,7 @@ test('single direct child with one classname', t => {
 });
 
 test('multiple direct children with two classnames', t => {
-  const { node, child } = t.context as { node: Element; child: Element };
+  const { node, child } = t.context;
 
   child.className = 'foo bar';
   node.appendChild(child);
@@ -53,7 +59,7 @@ test('multiple direct children with two classnames', t => {
 });
 
 test('tree with depth > 1', t => {
-  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Element };
+  const { node, child, childTwo } = t.context;
 
   childTwo.className = child.className = 'foo';
   child.appendChild(childTwo);

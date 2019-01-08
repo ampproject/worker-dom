@@ -14,38 +14,44 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
-import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
+import { createDocument } from '../../worker-thread/dom/Document';
+import { Element } from '../../worker-thread/dom/Element';
+
+const test = anyTest as TestInterface<{
+  option: HTMLOptionElement;
+  optionTwo: HTMLOptionElement;
+  optionThree: HTMLOptionElement;
+  select: Element;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    option: document.createElement('option'),
-    optionTwo: document.createElement('option'),
-    optionThree: document.createElement('option'),
+    option: document.createElement('option') as HTMLOptionElement,
+    optionTwo: document.createElement('option') as HTMLOptionElement,
+    optionThree: document.createElement('option') as HTMLOptionElement,
     select: document.createElement('select'),
   };
 });
-test.afterEach(t => {
-  document.body.childNodes.forEach(childNode => childNode.remove());
-});
 
 test('index should be 0 by default', t => {
-  const { option } = t.context as { option: HTMLOptionElement };
+  const { option } = t.context;
 
   t.is(option.index, 0);
 });
 
 test('index should be 0 for single item', t => {
-  const { option, select } = t.context as { option: HTMLOptionElement; select: HTMLElement };
+  const { option, select } = t.context;
 
   select.appendChild(option);
   t.is(option.index, 0);
 });
 
 test('index should be 0 and 1 for two items', t => {
-  const { option, optionTwo, select } = t.context as { option: HTMLOptionElement; optionTwo: HTMLOptionElement; select: HTMLElement };
+  const { option, optionTwo, select } = t.context;
 
   select.appendChild(option);
   select.appendChild(optionTwo);
@@ -54,12 +60,7 @@ test('index should be 0 and 1 for two items', t => {
 });
 
 test('index should be the live index when moved', t => {
-  const { option, optionTwo, optionThree, select } = t.context as {
-    option: HTMLOptionElement;
-    optionTwo: HTMLOptionElement;
-    optionThree: HTMLOptionElement;
-    select: HTMLElement;
-  };
+  const { option, optionTwo, optionThree, select } = t.context;
 
   select.appendChild(option);
   select.appendChild(optionTwo);

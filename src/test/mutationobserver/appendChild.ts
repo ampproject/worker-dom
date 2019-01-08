@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { createDocument, Document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
-test.cb.serial('appendChild mutation observed, first node', t => {
+const test = anyTest as TestInterface<{
+  document: Document;
+}>;
+
+test.beforeEach(t => {
+  t.context = {
+    document: createDocument(),
+  };
+});
+
+test.serial.cb('appendChild mutation observed, first node', t => {
+  const { document } = t.context;
   const div = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
@@ -40,7 +51,8 @@ test.cb.serial('appendChild mutation observed, first node', t => {
 });
 
 // TODO(KB): Tests must be run serially, observer callbacks are not occuring otherwise.
-test.cb.serial('appendChild mutation observed, sibling node', t => {
+test.serial.cb('appendChild mutation observed, sibling node', t => {
+  const { document } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver(
@@ -63,7 +75,8 @@ test.cb.serial('appendChild mutation observed, sibling node', t => {
   document.body.appendChild(p);
 });
 
-test.cb.serial('appendChild mutation observed, tree > 1 depth', t => {
+test.serial.cb('appendChild mutation observed, tree > 1 depth', t => {
+  const { document } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver(

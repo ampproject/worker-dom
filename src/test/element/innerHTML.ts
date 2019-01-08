@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
 import { Comment } from '../../worker-thread/dom/Comment';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+  child: Element;
+  text: Text;
+  comment: Comment;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -30,7 +37,7 @@ test.beforeEach(t => {
 });
 
 test('element with no children', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   t.is(node.innerHTML, '');
   node.className = 'test';
@@ -38,21 +45,21 @@ test('element with no children', t => {
 });
 
 test('element with a child', t => {
-  const { node, child } = t.context as { node: Element; child: Element };
+  const { node, child } = t.context;
 
   node.appendChild(child);
   t.is(node.innerHTML, '<div></div>');
 });
 
 test('element with text', t => {
-  const { node, text } = t.context as { node: Element; text: Text };
+  const { node, text } = t.context;
 
   node.appendChild(text);
   t.is(node.innerHTML, 'text');
 });
 
 test('element with comment', t => {
-  const { node, comment } = t.context as { node: Element; comment: Comment };
+  const { node, comment } = t.context;
 
   node.appendChild(comment);
   t.is(node.innerHTML, '<!--comment-->');

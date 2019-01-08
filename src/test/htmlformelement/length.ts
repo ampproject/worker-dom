@@ -14,10 +14,22 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { HTMLFormElement } from '../../worker-thread/dom/HTMLFormElement';
 import { Element } from '../../worker-thread/dom/Element';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  form: HTMLFormElement;
+  button: Element;
+  buttonTwo: Element;
+  fieldset: Element;
+  input: Element;
+  output: Element;
+  select: Element;
+  textarea: Element;
+  div: Element;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -34,21 +46,13 @@ test.beforeEach(t => {
 });
 
 test('length should be 0 by default', t => {
-  const { form } = t.context as { form: HTMLFormElement };
+  const { form } = t.context;
 
   t.is(form.length, 0);
 });
 
 test('length should contain all valid elements', t => {
-  const { form, button, fieldset, input, output, select, textarea } = t.context as {
-    form: HTMLFormElement;
-    button: Element;
-    fieldset: Element;
-    input: Element;
-    output: Element;
-    select: Element;
-    textarea: Element;
-  };
+  const { form, button, fieldset, input, output, select, textarea } = t.context;
 
   form.appendChild(button);
   form.appendChild(fieldset);
@@ -61,16 +65,7 @@ test('length should contain all valid elements', t => {
 });
 
 test('length should contain all valid elements, filtering invalid elements', t => {
-  const { form, button, fieldset, input, output, select, textarea, div } = t.context as {
-    form: HTMLFormElement;
-    button: Element;
-    fieldset: Element;
-    input: Element;
-    output: Element;
-    select: Element;
-    textarea: Element;
-    div: Element;
-  };
+  const { form, button, fieldset, input, output, select, textarea, div } = t.context;
 
   form.appendChild(button);
   form.appendChild(fieldset);

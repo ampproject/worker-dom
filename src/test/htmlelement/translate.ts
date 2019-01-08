@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  element: HTMLElement;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -25,20 +29,20 @@ test.beforeEach(t => {
 });
 
 test('translate should be true by default', t => {
-  const { element } = t.context as { element: HTMLElement };
+  const { element } = t.context;
 
   t.is(element.translate, true);
 });
 
 test('translate should be settable to a single value', t => {
-  const { element } = t.context as { element: HTMLElement };
+  const { element } = t.context;
 
   element.translate = false;
   t.is(element.translate, false);
 });
 
 test('translate property change should be reflected in attribute', t => {
-  const { element } = t.context as { element: HTMLElement };
+  const { element } = t.context;
 
   element.translate = false;
   t.is(element.getAttribute('translate'), 'no');
@@ -48,7 +52,7 @@ test('translate property change should be reflected in attribute', t => {
 });
 
 test('translate attribute change should be reflected in property', t => {
-  const { element } = t.context as { element: HTMLElement };
+  const { element } = t.context;
 
   element.setAttribute('translate', 'yes');
   t.is(element.translate, true);

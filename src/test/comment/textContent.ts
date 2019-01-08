@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Comment } from '../../worker-thread/dom/Comment';
+
+const test = anyTest as TestInterface<{
+  comment: Comment;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -24,13 +28,13 @@ test.beforeEach(t => {
 });
 
 test('get textContent', t => {
-  const { comment } = t.context as { comment: Comment };
+  const { comment } = t.context;
 
   t.is(comment.textContent, 'default value');
 });
 
 test('set textContent', t => {
-  const { comment } = t.context as { comment: Comment };
+  const { comment } = t.context;
 
   t.is(comment.textContent, 'default value');
   comment.textContent = 'new value';
@@ -38,7 +42,7 @@ test('set textContent', t => {
 });
 
 test('textContent matches data', t => {
-  const { comment } = t.context as { comment: Comment };
+  const { comment } = t.context;
 
   t.is(comment.data, 'default value');
   t.is(comment.textContent, 'default value');

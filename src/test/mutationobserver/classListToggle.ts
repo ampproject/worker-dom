@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { Document, createDocument } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
-test.cb.serial('Element.classList.toggle mutation observed, toggle to remove', t => {
+const test = anyTest as TestInterface<{
+  document: Document;
+}>;
+
+test.beforeEach(t => {
+  t.context = {
+    document: createDocument(),
+  };
+});
+
+test.serial.cb('Element.classList.toggle mutation observed, toggle to remove', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   el.className = 'foo';
   const observer = new document.defaultView.MutationObserver(
@@ -42,7 +53,8 @@ test.cb.serial('Element.classList.toggle mutation observed, toggle to remove', t
   el.classList.toggle('foo');
 });
 
-test.cb.serial('Element.classList.toggle mutation observed, toggle to add', t => {
+test.serial.cb('Element.classList.toggle mutation observed, toggle to add', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   el.className = 'foo';
   const observer = new document.defaultView.MutationObserver(

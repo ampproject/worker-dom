@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Text } from '../../worker-thread/dom/Text';
 import { Element } from '../../worker-thread/dom/Element';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+  child: Element;
+  nodeText: Text;
+  childText: Text;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -29,13 +36,13 @@ test.beforeEach(t => {
 });
 
 test('textContent getter returns empty string when there are no text childNodes.', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   t.is(node.textContent, '');
 });
 
 test('textContent getter returns the value of direct childNodes when there are no children', t => {
-  const { node, nodeText } = t.context as { node: Element; nodeText: Text };
+  const { node, nodeText } = t.context;
 
   node.appendChild(nodeText);
   t.is(node.textContent, nodeText.textContent);
@@ -43,7 +50,7 @@ test('textContent getter returns the value of direct childNodes when there are n
 });
 
 test('textContent getter returns the value of all depths childNodes even when there are children with no textContent', t => {
-  const { node, child, nodeText } = t.context as { node: Element; child: Element; nodeText: Text };
+  const { node, child, nodeText } = t.context;
 
   node.appendChild(nodeText);
   node.appendChild(child);
@@ -52,7 +59,7 @@ test('textContent getter returns the value of all depths childNodes even when th
 });
 
 test('textContent returns the value of all depths childNodes when there are children', t => {
-  const { node, child, nodeText, childText } = t.context as { node: Element; child: Element; nodeText: Text; childText: Text };
+  const { node, child, nodeText, childText } = t.context;
 
   child.appendChild(childText);
   node.appendChild(nodeText);

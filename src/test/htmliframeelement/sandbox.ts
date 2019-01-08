@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { HTMLIFrameElement } from '../../worker-thread/dom/HTMLIFrameElement';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  element: HTMLIFrameElement;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -25,14 +29,14 @@ test.beforeEach(t => {
 });
 
 test('sandbox should be empty by default', t => {
-  const { element } = t.context as { element: HTMLIFrameElement };
+  const { element } = t.context;
 
   t.is(element.sandbox.value, '');
   t.is(element.getAttribute('sandbox'), null);
 });
 
 test('setAttribute should modify sandbox property', t => {
-  const { element } = t.context as { element: HTMLIFrameElement };
+  const { element } = t.context;
 
   element.setAttribute('sandbox', 'allow-forms allow-modals');
   t.is(element.sandbox.value, 'allow-forms allow-modals');
@@ -40,7 +44,7 @@ test('setAttribute should modify sandbox property', t => {
 });
 
 test('sandbox.add of a single value should only add one class', t => {
-  const { element } = t.context as { element: HTMLIFrameElement };
+  const { element } = t.context;
 
   element.sandbox.add('allow-forms');
   t.is(element.sandbox.value, 'allow-forms');
@@ -48,7 +52,7 @@ test('sandbox.add of a single value should only add one class', t => {
 });
 
 test('sandbox.add of a multiple value should only add all classes', t => {
-  const { element } = t.context as { element: HTMLIFrameElement };
+  const { element } = t.context;
 
   element.sandbox.add('allow-forms', 'allow-modals', 'allow-orientation-lock');
   t.is(element.sandbox.value, 'allow-forms allow-modals allow-orientation-lock');
@@ -56,7 +60,7 @@ test('sandbox.add of a multiple value should only add all classes', t => {
 });
 
 test('sandbox.remove of a single value should only remove one class', t => {
-  const { element } = t.context as { element: HTMLIFrameElement };
+  const { element } = t.context;
 
   element.sandbox.value = 'allow-forms allow-modals';
   element.sandbox.remove('allow-forms');
@@ -65,7 +69,7 @@ test('sandbox.remove of a single value should only remove one class', t => {
 });
 
 test('sandbox.remove of a multiple values should remove all values', t => {
-  const { element } = t.context as { element: HTMLIFrameElement };
+  const { element } = t.context;
 
   element.sandbox.value = 'allow-forms allow-modals allow-orientation-lock';
   element.sandbox.remove('allow-forms', 'allow-modals');
@@ -74,7 +78,7 @@ test('sandbox.remove of a multiple values should remove all values', t => {
 });
 
 test('sandbox.toggle should add a value that is not present already', t => {
-  const { element } = t.context as { element: HTMLIFrameElement };
+  const { element } = t.context;
 
   element.sandbox.toggle('allow-forms');
   t.is(element.sandbox.value, 'allow-forms');
@@ -82,7 +86,7 @@ test('sandbox.toggle should add a value that is not present already', t => {
 });
 
 test('sandbox.toggle should remove a value that is present already', t => {
-  const { element } = t.context as { element: HTMLIFrameElement };
+  const { element } = t.context;
 
   element.sandbox.value = 'allow-forms';
   element.sandbox.toggle('allow-forms');

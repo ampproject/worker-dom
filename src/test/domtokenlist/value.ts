@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  tokenList: DOMTokenList;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -26,13 +30,13 @@ test.beforeEach(t => {
 });
 
 test('getter should be empty by default', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   t.is(tokenList.value, '');
 });
 
 test('should accept new total values via setter', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = 'foo';
   t.is(tokenList.value, 'foo');

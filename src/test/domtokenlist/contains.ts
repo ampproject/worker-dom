@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+
+const test = anyTest as TestInterface<{
+  tokenList: DOMTokenList;
+}>;
 
 test.beforeEach(t => {
   t.context = {
@@ -26,14 +30,14 @@ test.beforeEach(t => {
 });
 
 test('by default nothing is contained', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   t.is(tokenList.contains('foo'), false);
   t.is(tokenList.contains(''), false);
 });
 
 test('when only a single value is present, it is always contained', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = 'foo';
   t.is(tokenList.contains('foo'), true);
@@ -44,7 +48,7 @@ test('when only a single value is present, it is always contained', t => {
 });
 
 test('when multiple values are present, they are correctly contained', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = 'foo bar';
   t.is(tokenList.contains('foo'), true);
