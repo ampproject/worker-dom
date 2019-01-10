@@ -73,6 +73,13 @@ npm run demo
 
 This script will build the current version of WorkerDOM and start up a local [webserver](http://localhost:3001).
 
+## Local Development
+
+Local development of WorkerDOM assumes the following:
+1. Familiarity with `npm` or `yarn`
+2. Latest LTS release of Node (10 at time of writing) available.
+3. Comfort with TypeScript, the codebase and tests are entirely written in TypeScript.
+
 ## Security disclosures
 
 The AMP Project accepts responsible security disclosures through the [Google Application Security program](https://www.google.com/about/appsecurity/).

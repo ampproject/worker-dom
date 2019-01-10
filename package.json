@@ -9,7 +9,7 @@
     "url": "https://github.com/ampproject/worker-dom.git"
   },
   "engines": {
-    "node": ">=8.10.0"
+    "node": ">=10.14"
   },
   "author": "The AMP HTML Authors",
   "license": "Apache-2.0",
@@ -69,8 +69,8 @@
     "prettier": "1.15.3",
     "rimraf": "2.6.3",
     "rollup": "1.1.0",
-    "rollup-plugin-babel": "4.0.3",
-    "rollup-plugin-node-resolve": "3.4.0",
+    "rollup-plugin-babel": "4.3.0",
+    "rollup-plugin-node-resolve": "4.0.0",
     "rollup-plugin-terser": "4.0.2",
     "serve-static": "1.13.2",
     "tslint": "5.12.0",
