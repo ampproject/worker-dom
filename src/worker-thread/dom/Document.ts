@@ -134,3 +134,6 @@ export function createDocument(postMessageMethod?: Function): Document {
 
   return doc;
 }
+
+/** Should only be used for testing. */
+export const documentForTesting = createDocument();
