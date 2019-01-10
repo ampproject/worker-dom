@@ -14,42 +14,54 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { HTMLFieldSetElement } from '../../worker-thread/dom/HTMLFieldSetElement';
 import { Element } from '../../worker-thread/dom/Element';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
-// button fieldset input object output select textarea
+const test = anyTest as TestInterface<{
+  element: HTMLFieldSetElement;
+  button: Element;
+  buttonTwo: Element;
+  fieldset: HTMLFieldSetElement;
+  input: Element;
+  output: Element;
+  select: Element;
+  textarea: Element;
+  div: Element;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', HTML_NAMESPACE),
-    button: new Element(NodeType.ELEMENT_NODE, 'button', HTML_NAMESPACE),
-    buttonTwo: new Element(NodeType.ELEMENT_NODE, 'button', HTML_NAMESPACE),
-    fieldset: new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', HTML_NAMESPACE),
-    input: new Element(NodeType.ELEMENT_NODE, 'input', HTML_NAMESPACE),
-    output: new Element(NodeType.ELEMENT_NODE, 'output', HTML_NAMESPACE),
-    select: new Element(NodeType.ELEMENT_NODE, 'select', HTML_NAMESPACE),
-    textarea: new Element(NodeType.ELEMENT_NODE, 'textarea', HTML_NAMESPACE),
-    div: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
+    element: document.createElement('fieldset') as HTMLFieldSetElement,
+    button: document.createElement('button'),
+    buttonTwo: document.createElement('button'),
+    fieldset: document.createElement('fieldset') as HTMLFieldSetElement,
+    input: document.createElement('input'),
+    output: document.createElement('output'),
+    select: document.createElement('select'),
+    textarea: document.createElement('textarea'),
+    div: document.createElement('div'),
   };
 });
 
 test('elements should be empty by default', t => {
-  const { element } = t.context as { element: HTMLFieldSetElement };
+  const { element } = t.context;
 
   t.deepEqual(element.elements, []);
 });
 
 test('elements should contain a button element', t => {
-  const { element, button } = t.context as { element: HTMLFieldSetElement; button: Element };
+  const { element, button } = t.context;
 
   element.appendChild(button);
   t.deepEqual(element.elements, [button]);
 });
 
 test('elements should contain two button elements', t => {
-  const { element, button, buttonTwo } = t.context as { element: HTMLFieldSetElement; button: Element; buttonTwo: Element };
+  const { element, button, buttonTwo } = t.context;
 
   element.appendChild(button);
   element.appendChild(buttonTwo);
@@ -57,7 +69,7 @@ test('elements should contain two button elements', t => {
 });
 
 test('elements should contain button element deeply nested, filtering invalid childNodes', t => {
-  const { element, button, div } = t.context as { element: HTMLFieldSetElement; button: Element; div: Element };
+  const { element, button, div } = t.context;
 
   div.appendChild(button);
   element.appendChild(div);
@@ -67,16 +79,7 @@ test('elements should contain button element deeply nested, filtering invalid ch
 });
 
 test('elements should contain all valid elements, filtering invalid childNodes', t => {
-  const { element, button, fieldset, input, output, select, textarea, div } = t.context as {
-    element: HTMLFieldSetElement;
-    button: Element;
-    fieldset: HTMLFieldSetElement;
-    input: Element;
-    output: Element;
-    select: Element;
-    textarea: Element;
-    div: Element;
-  };
+  const { element, button, fieldset, input, output, select, textarea, div } = t.context;
 
   element.appendChild(button);
   element.appendChild(fieldset);

@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { createDocument, Document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
-test.cb.serial('replaceChild mutation, only node', t => {
+const test = anyTest as TestInterface<{
+  document: Document;
+}>;
+
+test.beforeEach(t => {
+  t.context = {
+    document: createDocument(),
+  };
+});
+
+test.serial.cb('replaceChild mutation, only node', t => {
+  const { document } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver(
@@ -42,7 +53,8 @@ test.cb.serial('replaceChild mutation, only node', t => {
   document.body.replaceChild(p, div);
 });
 
-test.cb.serial('replaceChild mutation, replace first with second', t => {
+test.serial.cb('replaceChild mutation, replace first with second', t => {
+  const { document } = t.context;
   const first = document.createElement('first');
   const second = document.createElement('second');
   const third = document.createElement('third');
@@ -69,7 +81,8 @@ test.cb.serial('replaceChild mutation, replace first with second', t => {
   document.body.replaceChild(second, first);
 });
 
-test.cb.serial('replaceChild mutation, replace third with second', t => {
+test.serial.cb('replaceChild mutation, replace third with second', t => {
+  const { document } = t.context;
   const first = document.createElement('first');
   const second = document.createElement('second');
   const third = document.createElement('third');
@@ -96,7 +109,8 @@ test.cb.serial('replaceChild mutation, replace third with second', t => {
   document.body.replaceChild(second, third);
 });
 
-test.cb.serial('replaceChild mutation, remove sibling node', t => {
+test.serial.cb('replaceChild mutation, remove sibling node', t => {
+  const { document } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver(

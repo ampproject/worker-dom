@@ -14,52 +14,58 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
+    node: document.createElement('div'),
   };
 });
 
 test('hasAttribute is false by default', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   t.is(node.hasAttribute('class'), false);
 });
 
 test('hasAttribute is true, when attribute is added', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   node.setAttribute('data-foo', 'bar');
   t.is(node.hasAttribute('data-foo'), true);
 });
 
 test('hasAttribute is true, when empty className is added', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   node.className = '';
   t.is(node.hasAttribute('class'), true);
 });
 
 test('hasAttribute is true, when valid className is added', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   node.className = 'foo';
   t.is(node.hasAttribute('class'), true);
 });
 
 test('hasAttribute is true, when DOMTokenList is set to empty string', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   node.classList.value = '';
   t.is(node.hasAttribute('class'), true);
 });
 
 test('hasAttribute is true when last value is removed from DOMTokenList driven attribute', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   node.classList.value = 'foo';
   node.classList.toggle('foo');

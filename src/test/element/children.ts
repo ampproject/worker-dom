@@ -14,28 +14,36 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+  child: Element;
+  childTwo: Text;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
-    child: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
-    childTwo: new Text(''),
+    node: document.createElement('div'),
+    child: document.createElement('div'),
+    childTwo: document.createTextNode(''),
   };
 });
 
 test('children should be an empty array when there are no childNodes', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   t.is(node.children.length, 0);
   t.deepEqual(node.children, []);
 });
 
 test('children should contain all childNodes when all are the correct NodeType', t => {
-  const { node, child } = t.context as { node: Element; child: Element };
+  const { node, child } = t.context;
 
   node.appendChild(child);
   t.is(node.children.length, 1);
@@ -43,7 +51,7 @@ test('children should contain all childNodes when all are the correct NodeType',
 });
 
 test('children should contain only childNodes of NodeType.ELEMENT_NODE', t => {
-  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Text };
+  const { node, child, childTwo } = t.context;
 
   node.appendChild(child);
   node.appendChild(childTwo);
@@ -52,7 +60,7 @@ test('children should contain only childNodes of NodeType.ELEMENT_NODE', t => {
 });
 
 test('children should be an empty array when there are no childNodes of NodeType.ELEMENT_NODE', t => {
-  const { node, childTwo } = t.context as { node: Element; childTwo: Text };
+  const { node, childTwo } = t.context;
 
   node.appendChild(childTwo);
   t.is(node.children.length, 0);

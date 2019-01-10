@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLScriptElement } from '../../worker-thread/dom/HTMLScriptElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
+
+const test = anyTest as TestInterface<{
+  element: HTMLScriptElement;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLScriptElement(NodeType.ELEMENT_NODE, 'script', HTML_NAMESPACE),
+    element: document.createElement('script') as HTMLScriptElement,
   };
 });
 

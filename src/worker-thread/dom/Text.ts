@@ -19,11 +19,12 @@ import { NumericBoolean } from '../../utils';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { NodeType } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
+import { Node } from './Node';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
-  constructor(data: string) {
-    super(data, NodeType.TEXT_NODE, '#text');
+  constructor(data: string, ownerDocument: Node) {
+    super(data, NodeType.TEXT_NODE, '#text', ownerDocument);
     this[TransferrableKeys.creationFormat] = {
       [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
@@ -71,7 +72,7 @@ export class Text extends CharacterData {
    * @return Text Node after the offset.
    */
   public splitText(offset: number): Text {
-    const remainderTextNode = new Text(this.data.slice(offset, this.data.length));
+    const remainderTextNode = new Text(this.data.slice(offset, this.data.length), this.ownerDocument);
     const parentNode = this.parentNode;
 
     this.nodeValue = this.data.slice(0, offset);

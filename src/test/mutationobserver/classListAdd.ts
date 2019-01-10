@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { Document, createDocument } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
-test.cb.serial('Element.classList.add mutation observed, single value', t => {
+const test = anyTest as TestInterface<{
+  document: Document;
+}>;
+
+test.beforeEach(t => {
+  t.context = {
+    document: createDocument(),
+  };
+});
+
+test.serial.cb('Element.classList.add mutation observed, single value', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
@@ -41,7 +52,8 @@ test.cb.serial('Element.classList.add mutation observed, single value', t => {
   el.classList.add('bar');
 });
 
-test.cb.serial('Element.classList.add mutation observed, single value to existing values', t => {
+test.serial.cb('Element.classList.add mutation observed, single value to existing values', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   el.classList.value = 'foo';
   const observer = new document.defaultView.MutationObserver(
@@ -65,7 +77,8 @@ test.cb.serial('Element.classList.add mutation observed, single value to existin
   el.classList.add('bar');
 });
 
-test.cb.serial('Element.classList.add mutation observed, multiple values', t => {
+test.serial.cb('Element.classList.add mutation observed, multiple values', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
@@ -88,7 +101,8 @@ test.cb.serial('Element.classList.add mutation observed, multiple values', t => 
   el.classList.add('foo', 'bar');
 });
 
-test.cb.serial('Element.classList.add mutation observed, multiple value to existing values', t => {
+test.serial.cb('Element.classList.add mutation observed, multiple value to existing values', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   el.classList.value = 'foo';
   const observer = new document.defaultView.MutationObserver(

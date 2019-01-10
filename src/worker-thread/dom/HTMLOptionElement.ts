@@ -17,15 +17,15 @@
 import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
-import { NodeName, NamespaceURI } from './Node';
+import { NodeName, NamespaceURI, Node } from './Node';
 import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export class HTMLOptionElement extends HTMLElement {
   private [TransferrableKeys.selected]: boolean = false;
 
-  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
-    super(nodeType, nodeName, namespaceURI);
+  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node) {
+    super(nodeType, nodeName, namespaceURI, ownerDocument);
 
     this[TransferrableKeys.propertyBackedAttributes].selected = [
       (): string => String(this[TransferrableKeys.selected]),

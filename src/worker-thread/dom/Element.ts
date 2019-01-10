@@ -43,8 +43,8 @@ export class Element extends ParentNode {
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
 
-  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
-    super(nodeType, nodeName);
+  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null) {
+    super(nodeType, nodeName, ownerDocument);
     this.namespaceURI = namespaceURI || HTML_NAMESPACE;
     this.localName = toLower(nodeName);
     this[TransferrableKeys.creationFormat] = {
@@ -163,7 +163,7 @@ export class Element extends ParentNode {
   set textContent(text: string) {
     // TODO(KB): Investigate removing all children in a single .splice to childNodes.
     this.childNodes.forEach(childNode => childNode.remove());
-    this.appendChild(new Text(text));
+    this.appendChild(new Text(text, this.ownerDocument));
   }
 
   /**

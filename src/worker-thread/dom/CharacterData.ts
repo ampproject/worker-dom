@@ -24,8 +24,8 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 export abstract class CharacterData extends Node {
   private [TransferrableKeys.data]: string;
 
-  constructor(data: string, nodeType: NodeType, nodeName: NodeName) {
-    super(nodeType, nodeName);
+  constructor(data: string, nodeType: NodeType, nodeName: NodeName, ownerDocument: Node) {
+    super(nodeType, nodeName, ownerDocument);
     this[TransferrableKeys.data] = data;
   }
 

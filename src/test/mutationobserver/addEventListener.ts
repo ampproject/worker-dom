@@ -14,25 +14,34 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { createDocument, Document } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { get } from '../../worker-thread/strings';
 
+const test = anyTest as TestInterface<{
+  document: Document;
+  el: Element;
+  callback: () => undefined;
+}>;
+
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
+    document,
     el: document.createElement('div'),
     callback: () => undefined,
   };
 });
 test.afterEach(t => {
-  document.body.childNodes.forEach(childNode => childNode.remove());
+  t.context.document.body.childNodes.forEach(childNode => childNode.remove());
 });
 
-test.cb.serial('Element.addEventListener mutation observed when node is connected.', t => {
-  const { el, callback } = t.context as { el: Element; callback: () => undefined };
+test.serial.cb('Element.addEventListener mutation observed when node is connected.', t => {
+  const { document, el, callback } = t.context;
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
       t.deepEqual(mutations, [
@@ -58,8 +67,8 @@ test.cb.serial('Element.addEventListener mutation observed when node is connecte
   el.addEventListener('mouseenter', callback);
 });
 
-test.cb.serial('Element.addEventListener mutation observed when node is not yet connected.', t => {
-  const { el, callback } = t.context as { el: Element; callback: () => undefined };
+test.serial.cb('Element.addEventListener mutation observed when node is not yet connected.', t => {
+  const { document, el, callback } = t.context;
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
       t.deepEqual(mutations, [

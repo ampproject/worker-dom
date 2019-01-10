@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
-import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
+import anyTest, { TestInterface } from 'ava';
+import { Document, createDocument } from '../../worker-thread/dom/Document';
+import { Element } from '../../worker-thread/dom/Element';
 
 const PARENT_DIV_ID = 'PARENT_DIV_ID';
 const PARENT_DIV_CLASS = 'PARENT_DIV_CLASS';
-
 const DIV_ID = 'DIV_ID';
 const DIV_CLASS = 'DIV_CLASS';
 
+const test = anyTest as TestInterface<{
+  document: Document;
+  parentDiv: Element;
+  div: Element;
+}>;
+
 test.beforeEach(t => {
+  const document = createDocument();
   const parentDiv = document.createElement('div');
   parentDiv.setAttribute('id', PARENT_DIV_ID);
   parentDiv.setAttribute('class', PARENT_DIV_CLASS);
@@ -33,35 +39,37 @@ test.beforeEach(t => {
   div.setAttribute('class', DIV_CLASS);
   parentDiv.appendChild(div);
   document.body.appendChild(parentDiv);
+
   t.context = {
+    document,
     parentDiv,
     div,
   };
 });
 
-test.afterEach(t => {
-  document.body.childNodes.forEach(childNode => childNode.remove());
-});
-
 test('test Element.querySelector on id selectors', t => {
-  const { div } = t.context as { div: HTMLElement };
+  const { document, div } = t.context;
+
   t.deepEqual(document.querySelector(`#${DIV_ID}`), div);
 });
 
 test('test Element.querySelector on class selectors', t => {
-  const { div } = t.context as { div: HTMLElement };
+  const { document, div } = t.context;
+
   t.deepEqual(document.querySelector(`.${DIV_CLASS}`), div);
 });
 
 test('test Element.querySelector on tag selectors', t => {
-  const { parentDiv, div } = t.context as { parentDiv: HTMLElement; div: HTMLElement };
+  const { document, parentDiv, div } = t.context;
+
   t.deepEqual(document.querySelector('div'), parentDiv);
   t.deepEqual(document.querySelector('div'), document.body.querySelector('div'));
   t.deepEqual(parentDiv.querySelector('div'), div);
 });
 
 test('test Element.querySelector is case insensitive with regards to tags', t => {
-  const { parentDiv, div } = t.context as { parentDiv: HTMLElement; div: HTMLElement };
+  const { document, parentDiv, div } = t.context;
+
   t.deepEqual(document.querySelector('div'), parentDiv);
   t.deepEqual(parentDiv.querySelector('div'), div);
   t.deepEqual(document.querySelector('DIV'), parentDiv);

@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { Document, createDocument } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
-test.cb.serial('Element.classList.replace mutation observed, single pre-existing value', t => {
+const test = anyTest as TestInterface<{
+  document: Document;
+}>;
+
+test.beforeEach(t => {
+  t.context = {
+    document: createDocument(),
+  };
+});
+
+test.serial.cb('Element.classList.replace mutation observed, single pre-existing value', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   el.classList.value = 'foo';
   const observer = new document.defaultView.MutationObserver(
@@ -42,7 +53,8 @@ test.cb.serial('Element.classList.replace mutation observed, single pre-existing
   el.classList.replace('foo', 'bar');
 });
 
-test.cb.serial('Element.classList.replace mutation observed, multiple pre-existing values', t => {
+test.serial.cb('Element.classList.replace mutation observed, multiple pre-existing values', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   el.classList.value = 'foo bar baz';
   const observer = new document.defaultView.MutationObserver(
