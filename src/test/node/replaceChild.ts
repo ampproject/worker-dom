@@ -14,21 +14,30 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+  child: Element;
+  childTwo: Element;
+  childThree: Element;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
-    child: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
-    childTwo: new Element(NodeType.ELEMENT_NODE, 'p', HTML_NAMESPACE),
-    childThree: new Element(NodeType.ELEMENT_NODE, 'section', HTML_NAMESPACE),
+    node: document.createElement('div'),
+    child: document.createElement('div'),
+    childTwo: document.createElement('p'),
+    childThree: document.createElement('section'),
   };
 });
 
 test('replacing the same child results in no changes', t => {
-  const { node, child } = t.context as { node: Element; child: Element };
+  const { node, child } = t.context;
 
   node.appendChild(child);
   var previousNodes = node.childNodes;
@@ -37,7 +46,7 @@ test('replacing the same child results in no changes', t => {
 });
 
 test('replacing a child with another when there is only a single child', t => {
-  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Element };
+  const { node, child, childTwo } = t.context;
 
   node.appendChild(child);
   t.deepEqual(node.replaceChild(childTwo, child), child, 'replacing a child returns the removed child');
@@ -46,7 +55,7 @@ test('replacing a child with another when there is only a single child', t => {
 });
 
 test('replacing a child with another when there are multiple children', t => {
-  const { node, child, childTwo, childThree } = t.context as { node: Element; child: Element; childTwo: Element; childThree: Element };
+  const { node, child, childTwo, childThree } = t.context;
 
   node.appendChild(child);
   node.appendChild(childTwo);

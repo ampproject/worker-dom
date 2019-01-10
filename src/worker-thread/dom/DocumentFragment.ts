@@ -19,10 +19,11 @@ import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { NumericBoolean } from '../../utils';
 import { store as storeString } from '../strings';
+import { Node } from './Node';
 
 export class DocumentFragment extends ParentNode {
-  constructor() {
-    super(NodeType.DOCUMENT_FRAGMENT_NODE, '#document-fragment');
+  constructor(ownerDocument: Node) {
+    super(NodeType.DOCUMENT_FRAGMENT_NODE, '#document-fragment', ownerDocument);
 
     this[TransferrableKeys.creationFormat] = {
       [TransferrableKeys.index]: this[TransferrableKeys.index],

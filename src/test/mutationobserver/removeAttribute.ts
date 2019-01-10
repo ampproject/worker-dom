@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { Document, createDocument } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
-test.cb.serial('Element.removeAttribute mutation observed', t => {
+const test = anyTest as TestInterface<{
+  document: Document;
+}>;
+
+test.beforeEach(t => {
+  t.context = {
+    document: createDocument(),
+  };
+});
+
+test.serial.cb('Element.removeAttribute mutation observed', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
@@ -43,7 +54,8 @@ test.cb.serial('Element.removeAttribute mutation observed', t => {
   el.removeAttribute('data-foo');
 });
 
-test.cb.serial('Element.removeAttribute mutation observed, with namespace', t => {
+test.serial.cb('Element.removeAttribute mutation observed, with namespace', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {

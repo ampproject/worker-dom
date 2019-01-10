@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
+import anyTest, { TestInterface } from 'ava';
 import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement';
 import { Text } from '../../worker-thread/dom/Text';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
+import { Element } from '../../worker-thread/dom/Element';
+
+const test = anyTest as TestInterface<{
+  element: HTMLAnchorElement;
+  child: Element;
+  text: Text;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLAnchorElement(NodeType.ELEMENT_NODE, 'a', HTML_NAMESPACE),
-    child: new HTMLElement(NodeType.ELEMENT_NODE, 'p', HTML_NAMESPACE),
-    text: new Text('default text'),
+    element: document.createElement('a') as HTMLAnchorElement,
+    child: document.createElement('p'),
+    text: document.createTextNode('default text'),
   };
 });
 
 test('text setter adds a child text node to HTMLAnchorElement.', t => {
-  const { element } = t.context as { element: HTMLAnchorElement };
+  const { element } = t.context;
 
   t.is(element.childNodes.length, 0);
   element.text = 'foo';
@@ -37,7 +45,7 @@ test('text setter adds a child text node to HTMLAnchorElement.', t => {
 });
 
 test('clearing text via setter removes value stored as text inside element', t => {
-  const { element, text } = t.context as { element: HTMLAnchorElement; text: Text };
+  const { element, text } = t.context;
 
   element.appendChild(text);
   t.is(element.childNodes[0].data, 'default text');
@@ -47,7 +55,7 @@ test('clearing text via setter removes value stored as text inside element', t =
 });
 
 test('text setter replaces childNodes with single text node.', t => {
-  const { element, child, text } = t.context as { element: HTMLAnchorElement; child: HTMLElement; text: Text };
+  const { element, child, text } = t.context;
 
   child.appendChild(text);
   element.appendChild(child);

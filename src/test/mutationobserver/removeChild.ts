@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { Document, createDocument } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
-test.cb.serial('removeChild mutation observed, first node', t => {
+const test = anyTest as TestInterface<{
+  document: Document;
+}>;
+
+test.beforeEach(t => {
+  t.context = {
+    document: createDocument(),
+  };
+});
+
+test.serial.cb('removeChild mutation observed, first node', t => {
+  const { document } = t.context;
   const div = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
@@ -39,7 +50,8 @@ test.cb.serial('removeChild mutation observed, first node', t => {
   document.body.removeChild(div);
 });
 
-test.cb.serial('removeChild mutation observed, sibling node', t => {
+test.serial.cb('removeChild mutation observed, sibling node', t => {
+  const { document } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver(
@@ -62,7 +74,8 @@ test.cb.serial('removeChild mutation observed, sibling node', t => {
   document.body.removeChild(div);
 });
 
-test.cb.serial('removeChild mutation observed, multiple sibling nodes', t => {
+test.serial.cb('removeChild mutation observed, multiple sibling nodes', t => {
+  const { document } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');
   const input = document.createElement('input');
@@ -93,7 +106,8 @@ test.cb.serial('removeChild mutation observed, multiple sibling nodes', t => {
   document.body.removeChild(input);
 });
 
-test.cb.serial('removeChild mutation observed, tree > 1 depth', t => {
+test.serial.cb('removeChild mutation observed, tree > 1 depth', t => {
+  const { document } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver(

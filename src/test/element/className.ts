@@ -14,31 +14,37 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
+    node: document.createElement('div'),
   };
 });
 
 test('className should be empty by default', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   t.is(node.className, '');
 });
 
 test('className should be settable to a single value', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   node.className = 'foo';
   t.is(node.className, 'foo');
 });
 
 test('className should be settable to multiple values', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   node.className = 'foo bar baz';
   t.is(node.className, 'foo bar baz');

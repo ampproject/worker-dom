@@ -14,44 +14,45 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { createDocument } from '../../worker-thread/dom/Document';
 import { Text } from '../../worker-thread/dom/Text';
-import { Node } from '../../worker-thread/dom/Node';
 import { DocumentFragment } from '../../worker-thread/dom/DocumentFragment';
+import { Element } from '../../worker-thread/dom/Element';
+
+const test = anyTest as TestInterface<{
+  parentFragment: DocumentFragment;
+  node: Element;
+  sibling: Element;
+  text: Text;
+}>;
 
 test.beforeEach(t => {
-  const parentFragment = document.createDocumentFragment();
-  const node = document.createElement('div');
-  const sibling = document.createElement('div');
-  const text = document.createTextNode('text');
+  const document = createDocument();
 
   t.context = {
-    parentFragment,
-    node,
-    sibling,
-    text,
+    parentFragment: document.createDocumentFragment(),
+    node: document.createElement('div'),
+    sibling: document.createElement('div'),
+    text: document.createTextNode('text'),
   };
-});
-test.afterEach(t => {
-  (t.context.parentFragment.childNodes as Node[]).forEach(childNode => childNode.remove());
 });
 
 test('should return 0 when no elements are appended', t => {
-  const { parentFragment } = t.context as { parentFragment: DocumentFragment };
+  const { parentFragment } = t.context;
 
   t.is(parentFragment.childElementCount, 0);
 });
 
 test('should return 1 when only one Element is appended', t => {
-  const { parentFragment, node } = t.context as { parentFragment: DocumentFragment; node: Node };
+  const { parentFragment, node } = t.context;
 
   parentFragment.appendChild(node);
   t.is(parentFragment.childElementCount, 1);
 });
 
 test('should return only the number of Elements, not childNodes', t => {
-  const { parentFragment, node, text } = t.context as { parentFragment: DocumentFragment; node: Node; text: Text };
+  const { parentFragment, node, text } = t.context;
 
   parentFragment.appendChild(node);
   parentFragment.appendChild(text);
@@ -59,7 +60,7 @@ test('should return only the number of Elements, not childNodes', t => {
 });
 
 test('should return 0 when an Element only contains Nodes of other types', t => {
-  const { parentFragment, text } = t.context as { parentFragment: DocumentFragment; text: Text };
+  const { parentFragment, text } = t.context;
 
   parentFragment.appendChild(text);
   t.is(parentFragment.childElementCount, 0);

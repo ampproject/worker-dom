@@ -14,27 +14,30 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import { createDocument } from '../../worker-thread/dom/Document';
+
+const test = anyTest as TestInterface<{
+  option: HTMLOptionElement;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    option: document.createElement('option'),
+    option: document.createElement('option') as HTMLOptionElement,
   };
-});
-test.afterEach(t => {
-  document.body.childNodes.forEach(childNode => childNode.remove());
 });
 
 test('selected should be false by default', t => {
-  const { option } = t.context as { option: HTMLOptionElement };
+  const { option } = t.context;
 
   t.is(option.selected, false);
 });
 
 test('selected should be settable to a boolean value', t => {
-  const { option } = t.context as { option: HTMLOptionElement };
+  const { option } = t.context;
 
   option.selected = true;
   t.is(option.selected, true);

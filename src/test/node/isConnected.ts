@@ -14,26 +14,34 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+  child: Element;
+  childTwo: Element;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
-    child: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
-    childTwo: new Element(NodeType.ELEMENT_NODE, 'p', HTML_NAMESPACE),
+    node: document.createElement('div'),
+    child: document.createElement('div'),
+    childTwo: document.createElement('p'),
   };
 });
 
 test('without a connected parent, tree depth 1 nodes are not connected', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   t.is(node.isConnected, false);
 });
 
 test('without a connected parent, tree depth > 1 are not connected', t => {
-  const { node, child } = t.context as { node: Element; child: Element };
+  const { node, child } = t.context;
 
   node.appendChild(child);
 
@@ -42,7 +50,7 @@ test('without a connected parent, tree depth > 1 are not connected', t => {
 });
 
 test('with a connected parent, nodes are connected during append', t => {
-  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Element };
+  const { node, child, childTwo } = t.context;
 
   node.isConnected = true;
   child.appendChild(childTwo);
@@ -54,7 +62,7 @@ test('with a connected parent, nodes are connected during append', t => {
 });
 
 test('nodes are disconnected during removal', t => {
-  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Element };
+  const { node, child, childTwo } = t.context;
 
   node.isConnected = true;
   child.appendChild(childTwo);

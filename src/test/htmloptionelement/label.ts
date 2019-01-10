@@ -14,23 +14,27 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import { createDocument } from '../../worker-thread/dom/Document';
 import { Text } from '../../worker-thread/dom/Text';
 
+const test = anyTest as TestInterface<{
+  option: HTMLOptionElement;
+  text: Text;
+}>;
+
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    option: document.createElement('option'),
+    option: document.createElement('option') as HTMLOptionElement,
     text: document.createTextNode('sample text'),
   };
 });
-test.afterEach(t => {
-  document.body.childNodes.forEach(childNode => childNode.remove());
-});
 
 test('label should be Node.textContent by default', t => {
-  const { option, text } = t.context as { option: HTMLOptionElement; text: Text };
+  const { option, text } = t.context;
 
   t.is(option.label, '');
   option.appendChild(text);
@@ -38,7 +42,7 @@ test('label should be Node.textContent by default', t => {
 });
 
 test('label is reflected from attribute when present', t => {
-  const { option, text } = t.context as { option: HTMLOptionElement; text: Text };
+  const { option, text } = t.context;
 
   option.setAttribute('label', 'label attribute');
   t.is(option.label, 'label attribute');
@@ -47,7 +51,7 @@ test('label is reflected from attribute when present', t => {
 });
 
 test('label is Node.textContent when attribute is removed', t => {
-  const { option, text } = t.context as { option: HTMLOptionElement; text: Text };
+  const { option, text } = t.context;
 
   option.setAttribute('label', 'label attribute');
   t.is(option.label, 'label attribute');

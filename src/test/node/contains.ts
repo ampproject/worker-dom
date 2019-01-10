@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { createDocument, Document } from '../../worker-thread/dom/Document';
+import { Element } from '../../worker-thread/dom/Element';
+
+const test = anyTest as TestInterface<{
+  document: Document;
+  node: Element;
+  child: Element;
+  childTwo: Element;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
+    document,
     node: document.createElement('div'),
     child: document.createElement('div'),
     childTwo: document.createElement('div'),
   };
-});
-
-test.afterEach(t => {
-  document.body.childNodes.forEach(childNode => childNode.remove());
 });
 
 test('returns true for a node containing itself', t => {
@@ -41,14 +48,8 @@ test('returns false for a node not contained by a parent', t => {
   t.is(node.contains(child), false);
 });
 
-test('returns false for a node not contained by a parent', t => {
-  const { node, child } = t.context;
-
-  t.is(node.contains(child), false);
-});
-
 test('returns true for a node contained in the document', t => {
-  const { node, child } = t.context;
+  const { document, node, child } = t.context;
 
   node.appendChild(child);
   document.body.appendChild(node);

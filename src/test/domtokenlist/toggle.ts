@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
+
+const test = anyTest as TestInterface<{
+  tokenList: DOMTokenList;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    tokenList: new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE), 'class', null, null),
+    tokenList: new DOMTokenList(Element, document.createElement('div'), 'class', null, null),
   };
 });
 
 test('toggle off a token', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = 'foo';
   t.is(tokenList.toggle('foo'), false);
@@ -34,7 +40,7 @@ test('toggle off a token', t => {
 });
 
 test('toggle on a token', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = '';
   t.is(tokenList.toggle('foo'), true);
@@ -42,7 +48,7 @@ test('toggle on a token', t => {
 });
 
 test('toggle off a token removes duplicates', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = 'foo foo';
   t.is(tokenList.toggle('foo'), false);
@@ -50,7 +56,7 @@ test('toggle off a token removes duplicates', t => {
 });
 
 test('toggle off a token removes duplicates and leaves other values', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = 'foo foo bar';
   t.is(tokenList.toggle('foo'), false);
@@ -62,7 +68,7 @@ test('toggle off a token removes duplicates and leaves other values', t => {
 });
 
 test('toggle on a token removes duplicates and leaves other values', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = 'foo foo bar';
   t.is(tokenList.toggle('baz'), true);
@@ -74,7 +80,7 @@ test('toggle on a token removes duplicates and leaves other values', t => {
 });
 
 test('toggle a token with force=false value', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = 'foo foo bar';
   t.is(tokenList.toggle('foo', false), false);
@@ -86,7 +92,7 @@ test('toggle a token with force=false value', t => {
 });
 
 test('toggle a token with force=true value', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const { tokenList } = t.context;
 
   tokenList.value = 'foo foo bar';
   t.is(tokenList.toggle('foo', true), true);

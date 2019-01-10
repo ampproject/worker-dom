@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
+import anyTest, { TestInterface } from 'ava';
 import { PropertyPair } from '../worker-thread/dom/enhanceElement';
-import test from 'ava';
+import { Element } from '../worker-thread/dom/Element';
+
+const test = anyTest as TestInterface<{
+  element: Element;
+}>;
 
 export function testReflectedProperties(propertyPairs: Array<PropertyPair>) {
   propertyPairs.forEach(pair => {

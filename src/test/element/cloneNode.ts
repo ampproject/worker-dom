@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { createDocument } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { Text } from '../../worker-thread/dom/Text';
+
+const test = anyTest as TestInterface<{
+  parent: Element;
+  child: Element;
+  text: Text;
+  sibling: Element;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
     parent: document.createElement('div'),
     child: document.createElement('p'),
@@ -32,31 +42,28 @@ test.beforeEach(t => {
   t.context.parent.appendChild(t.context.sibling);
   document.body.appendChild(t.context.parent);
 });
-test.afterEach(_ => {
-  document.body.childNodes.forEach(childNode => childNode.remove());
-});
 
 test('cloneNode should create a new node with the same tagName', t => {
-  const { parent } = t.context as { parent: Element };
+  const { parent } = t.context;
 
   t.is(parent.cloneNode().tagName, parent.tagName);
 });
 
 test('cloneNode should create a new node with a different index', t => {
-  const { parent } = t.context as { parent: Element };
+  const { parent } = t.context;
 
   t.not(parent.cloneNode()[TransferrableKeys.index], parent[TransferrableKeys.index]);
 });
 
 test('cloneNode should create a new node with the same attribute', t => {
-  const { parent } = t.context as { parent: Element };
+  const { parent } = t.context;
   parent.setAttribute('fancy', 'yes');
 
   t.is(parent.cloneNode().getAttribute('fancy'), 'yes');
 });
 
 test('cloneNode should create a new node with the same attributes', t => {
-  const { parent } = t.context as { parent: Element };
+  const { parent } = t.context;
   parent.setAttribute('fancy', 'yes');
   parent.setAttribute('virtual', 'no');
 
@@ -65,7 +72,7 @@ test('cloneNode should create a new node with the same attributes', t => {
 });
 
 test('cloneNode should create a new node with the same attributes, but not preserve attributes across the instances', t => {
-  const { parent } = t.context as { parent: Element };
+  const { parent } = t.context;
   parent.setAttribute('fancy', 'yes');
   const clone = parent.cloneNode();
   parent.setAttribute('fancy', 'no');
@@ -75,21 +82,21 @@ test('cloneNode should create a new node with the same attributes, but not prese
 });
 
 test('cloneNode should create a new node without the same properties', t => {
-  const { parent } = t.context as { parent: Element };
+  const { parent } = t.context;
   parent.value = 'property value';
 
   t.not(parent.cloneNode().value, 'property value');
 });
 
 test('cloneNode should create a new node without the same children when the deep flag is not set', t => {
-  const { parent } = t.context as { parent: Element };
+  const { parent } = t.context;
   const clone = parent.cloneNode();
 
   t.is(clone.childNodes.length, 0);
 });
 
 test('cloneNode should create a new node with the same children when the deep flag is set', t => {
-  const { parent } = t.context as { parent: Element };
+  const { parent } = t.context;
   const clone = parent.cloneNode(true);
 
   t.is(parent.childNodes.length, clone.childNodes.length);

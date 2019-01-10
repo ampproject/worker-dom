@@ -14,35 +14,45 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Attr } from '../../worker-thread/dom/Attr';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+  attr: Attr;
+  attrOverride: Attr;
+  attrTwo: Attr;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
+    node: document.createElement('div'),
     attr: { namespaceURI: HTML_NAMESPACE, name: 'name', value: 'value' } as Attr,
-    attrOveride: { namespaceURI: HTML_NAMESPACE, name: 'name', value: 'value-overide' } as Attr,
+    attrOverride: { namespaceURI: HTML_NAMESPACE, name: 'name', value: 'value-overide' } as Attr,
     attrTwo: { namespaceURI: HTML_NAMESPACE, name: 'name-two', value: 'value-two' } as Attr,
   };
 });
 
 test('getAttribute returns null when the attribute does not exist', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   t.is(node.getAttribute('undefined'), null);
 });
 
 test('getAttribute returns value when the attribute does exist', t => {
-  const { node, attr } = t.context as { node: Element; attr: Attr };
+  const { node, attr } = t.context;
 
   node.attributes.push(attr);
   t.is(node.getAttribute(attr.name), attr.value);
 });
 
 test('setAttribute creates a new attribute when one does not exist', t => {
-  const { node, attr } = t.context as { node: Element; attr: Attr };
+  const { node, attr } = t.context;
 
   t.is(node.attributes.length, 0);
   node.setAttribute(attr.name, attr.value);
@@ -51,17 +61,17 @@ test('setAttribute creates a new attribute when one does not exist', t => {
 });
 
 test('setAttribute overwrites the value if the attribute already exists', t => {
-  const { node, attr, attrTwo, attrOveride } = t.context as { node: Element; attr: Attr; attrTwo: Attr; attrOveride: Attr };
+  const { node, attr, attrTwo, attrOverride } = t.context;
 
   node.setAttribute(attr.name, attr.value);
   node.setAttribute(attrTwo.name, attrTwo.value);
-  node.setAttribute(attr.name, attrOveride.value);
+  node.setAttribute(attr.name, attrOverride.value);
   t.is(node.attributes.length, 2);
-  t.deepEqual(node.attributes[0], attrOveride);
+  t.deepEqual(node.attributes[0], attrOverride);
 });
 
 test('removeAttribute deletes a value from the attributes', t => {
-  const { node, attr } = t.context as { node: Element; attr: Attr };
+  const { node, attr } = t.context;
 
   node.attributes.push(attr);
   node.removeAttribute(attr.name);
@@ -69,7 +79,7 @@ test('removeAttribute deletes a value from the attributes', t => {
 });
 
 test('removeAttribute deletes only a specific value from the attributes', t => {
-  const { node, attr, attrTwo } = t.context as { node: Element; attr: Attr; attrTwo: Attr };
+  const { node, attr, attrTwo } = t.context;
 
   node.attributes.push(attr);
   node.attributes.push(attrTwo);
@@ -79,33 +89,33 @@ test('removeAttribute deletes only a specific value from the attributes', t => {
 });
 
 test('hasAttribute returns false when the attribute is not present', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   t.is(node.hasAttribute('undefined'), false);
 });
 
 test('hasAttribute returns true when the attribute is present', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   node.setAttribute('defined', 'yeppers');
   t.is(node.hasAttribute('defined'), true);
 });
 
 test('hasAttributes return false when the Element does not have attributes', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   t.is(node.hasAttributes(), false);
 });
 
 test('hasAttributes return true when the Element has attributes in the null namespaceURI', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   node.setAttribute('defined', 'yeppers');
   t.is(node.hasAttributes(), true);
 });
 
 test('hasAttributes return true when the Element has attributes in other namespaceURIs', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   node.setAttributeNS('namespace', 'defined', 'yeppers');
   t.is(node.hasAttributes(), true);

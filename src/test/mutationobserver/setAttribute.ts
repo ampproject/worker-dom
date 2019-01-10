@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { createDocument, Document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
-test.cb.serial('Element.setAttribute mutation observed, new attribute', t => {
+const test = anyTest as TestInterface<{
+  document: Document;
+}>;
+
+test.beforeEach(t => {
+  t.context = {
+    document: createDocument(),
+  };
+});
+
+test.serial.cb('Element.setAttribute mutation observed, new attribute', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
@@ -43,7 +54,8 @@ test.cb.serial('Element.setAttribute mutation observed, new attribute', t => {
   el.setAttribute('data-foo', 'bar');
 });
 
-test.cb.serial('Element.setAttribute mutation observed, overwrite attribute', t => {
+test.serial.cb('Element.setAttribute mutation observed, overwrite attribute', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
@@ -68,7 +80,8 @@ test.cb.serial('Element.setAttribute mutation observed, overwrite attribute', t 
   el.setAttribute('data-foo', 'baz');
 });
 
-test.cb.serial('Element.setAttribute mutation observed, new attribute with namespace', t => {
+test.serial.cb('Element.setAttribute mutation observed, new attribute with namespace', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
@@ -92,7 +105,8 @@ test.cb.serial('Element.setAttribute mutation observed, new attribute with names
   el.setAttributeNS('namespace', 'data-foo', 'bar');
 });
 
-test.cb.serial('Element.setAttribute mutation observed, overwrite attribute with namespace', t => {
+test.serial.cb('Element.setAttribute mutation observed, overwrite attribute with namespace', t => {
+  const { document } = t.context;
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {

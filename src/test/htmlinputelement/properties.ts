@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { HTMLInputElement } from '../../worker-thread/dom/HTMLInputElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
+
+const test = anyTest as TestInterface<{
+  element: HTMLInputElement;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLInputElement(NodeType.ELEMENT_NODE, 'input', HTML_NAMESPACE),
+    element: document.createElement('input') as HTMLInputElement,
   };
 });
 
 test('value', t => {
-  const input = t.context.element as HTMLInputElement;
+  const { element: input } = t.context;
 
   t.is(input.value, '', 'Default value should be empty string.');
 
@@ -40,7 +46,7 @@ test('value', t => {
 });
 
 test('valueAsNumber', t => {
-  const input = t.context.element as HTMLInputElement;
+  const { element: input } = t.context;
 
   t.is(input.valueAsNumber, NaN, 'Default valueAsNumber should be NaN.');
 
@@ -54,7 +60,7 @@ test('valueAsNumber', t => {
 });
 
 test('valueAsDate', t => {
-  const input = t.context.element as HTMLInputElement;
+  const { element: input } = t.context;
 
   t.is(input.valueAsDate, null, 'Default valueAsDate should be null.');
 
@@ -73,7 +79,7 @@ test('valueAsDate', t => {
 });
 
 test('checked', t => {
-  const input = t.context.element as HTMLInputElement;
+  const { element: input } = t.context;
 
   t.false(input.checked, 'Default checked should be false.');
 

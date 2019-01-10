@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { documentForTesting as document } from '../../worker-thread/dom/Document';
-import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
-import { Node } from '../../worker-thread/dom/Node';
+import anyTest, { TestInterface } from 'ava';
+import { createDocument } from '../../worker-thread/dom/Document';
 import { DocumentFragment } from '../../worker-thread/dom/DocumentFragment';
+import { Element } from '../../worker-thread/dom/Element';
 
 const PARENT_DIV_ID = 'PARENT_DIV_ID';
 const PARENT_DIV_CLASS = 'PARENT_DIV_CLASS';
-
 const DIV_ID = 'DIV_ID';
 const DIV_CLASS = 'DIV_CLASS';
 
+const test = anyTest as TestInterface<{
+  parentFragment: DocumentFragment;
+  parentDiv: Element;
+  div: Element;
+}>;
+
 test.beforeEach(t => {
+  const document = createDocument();
   const parentFragment = document.createDocumentFragment();
   const parentDiv = document.createElement('div');
   parentDiv.setAttribute('id', PARENT_DIV_ID);
@@ -36,6 +41,7 @@ test.beforeEach(t => {
   div.setAttribute('class', DIV_CLASS);
   parentDiv.appendChild(div);
   parentFragment.appendChild(parentDiv);
+
   t.context = {
     parentFragment,
     parentDiv,
@@ -43,28 +49,28 @@ test.beforeEach(t => {
   };
 });
 
-test.afterEach(t => {
-  (t.context.parentFragment.childNodes as Node[]).forEach(childNode => childNode.remove());
-});
-
 test('test Element.querySelector on id selectors', t => {
-  const { parentFragment, div } = t.context as { parentFragment: DocumentFragment; div: HTMLElement };
+  const { parentFragment, div } = t.context;
+
   t.deepEqual(parentFragment.querySelector(`#${DIV_ID}`), div);
 });
 
 test('test Element.querySelector on class selectors', t => {
-  const { parentFragment, div } = t.context as { parentFragment: DocumentFragment; div: HTMLElement };
+  const { parentFragment, div } = t.context;
+
   t.deepEqual(parentFragment.querySelector(`.${DIV_CLASS}`), div);
 });
 
 test('test Element.querySelector on tag selectors', t => {
-  const { parentFragment, parentDiv, div } = t.context as { parentFragment: DocumentFragment; parentDiv: HTMLElement; div: HTMLElement };
+  const { parentFragment, parentDiv, div } = t.context;
+
   t.deepEqual(parentFragment.querySelector('div'), parentDiv);
   t.deepEqual(parentDiv.querySelector('div'), div);
 });
 
 test('test Element.querySelector is case insensitive with regards to tags', t => {
-  const { parentFragment, parentDiv, div } = t.context as { parentFragment: DocumentFragment; parentDiv: HTMLElement; div: HTMLElement };
+  const { parentFragment, parentDiv, div } = t.context;
+
   t.deepEqual(parentFragment.querySelector('div'), parentDiv);
   t.deepEqual(parentDiv.querySelector('div'), div);
   t.deepEqual(parentFragment.querySelector('DIV'), parentDiv);

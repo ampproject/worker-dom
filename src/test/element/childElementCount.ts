@@ -14,35 +14,42 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { Node } from '../../worker-thread/dom/Node';
+import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
+
+const test = anyTest as TestInterface<{
+  node: Element;
+  child: Element;
+  childTwo: Text;
+}>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
-    child: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
-    childTwo: new Text(''),
+    node: document.createElement('div'),
+    child: document.createElement('div'),
+    childTwo: document.createTextNode(''),
   };
 });
 
 test('should return 0 when no elements are appended', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context;
 
   t.is(node.childElementCount, 0);
 });
 
 test('should return 1 when only one Element is appended', t => {
-  const { node, child } = t.context as { node: Element; child: Element };
+  const { node, child } = t.context;
 
   node.appendChild(child);
   t.is(node.childElementCount, 1);
 });
 
 test('should return only the number of Elements, not childNodes', t => {
-  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Node };
+  const { node, child, childTwo } = t.context;
 
   node.appendChild(child);
   node.appendChild(childTwo);
@@ -50,7 +57,7 @@ test('should return only the number of Elements, not childNodes', t => {
 });
 
 test('should return 0 when an Element only contains Nodes of other types', t => {
-  const { node, childTwo } = t.context as { node: Element; childTwo: Node };
+  const { node, childTwo } = t.context;
 
   node.appendChild(childTwo);
   t.is(node.childElementCount, 0);
