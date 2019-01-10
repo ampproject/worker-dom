@@ -15,26 +15,32 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { Element } from '../../worker-thread/dom/Element';
-import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { HydrateableNode, NodeType, SVG_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { get } from '../../worker-thread/strings';
+import { createDocument, Document } from '../../worker-thread/dom/Document';
+import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 
 const RANDOM_TEXT_CONTENT = `TEXT_CONTENT-${Math.random()}`;
 const DIV_ID = 'DIV_ID';
 const DIV_CLASS = 'DIV_CLASS';
 
 const test = anyTest as TestInterface<{
-  div: Element;
+  document: Document;
+  div: HTMLElement;
 }>;
 
 test.beforeEach(t => {
-  const div = new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE);
+  const document = createDocument();
+  const div = document.createElement('div');
+
   div.setAttribute('id', DIV_ID);
   div.setAttribute('class', DIV_CLASS);
   div.textContent = RANDOM_TEXT_CONTENT;
+
   t.context = {
-    div,
+    document,
+    div: div as HTMLElement,
   };
 });
 
@@ -59,15 +65,17 @@ test('Element should serialize to a TransferrableNode', t => {
 });
 
 test('Element should serialize namespace', t => {
-  const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
-  const svg = new Element(NodeType.ELEMENT_NODE, 'svg', SVG_NAMESPACE);
+  const { document } = t.context;
+  const svg = document.createElementNS(SVG_NAMESPACE, 'svg');
   t.is((svg.hydrate() as HydrateableNode)[TransferrableKeys.namespaceURI], get(SVG_NAMESPACE) as number);
 });
 
 test('Element should serialize child node as well', t => {
-  const div = new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE);
-  const childDiv = new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE);
+  const { document } = t.context;
+  const div = document.createElement('div');
+  const childDiv = document.createElement('div');
   div.appendChild(childDiv);
+
   const serializedDiv = div.hydrate() as HydrateableNode;
   const childNodes = serializedDiv[TransferrableKeys.childNodes] || [];
   t.is(childNodes.length, 1);

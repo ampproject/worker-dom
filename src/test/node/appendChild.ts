@@ -16,20 +16,23 @@
 
 import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
-import { DocumentFragment } from '../../worker-thread/dom/DocumentFragment';
+import { createDocument, Document } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
+  document: Document;
   node: Element;
   child: Element;
   childTwo: Element;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
-    child: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
-    childTwo: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
+    document,
+    node: document.createElement('div'),
+    child: document.createElement('div'),
+    childTwo: document.createElement('div'),
   };
 });
 
@@ -67,8 +70,8 @@ test('appending returns the appended child', t => {
 });
 
 test('appending a document fragment with a single child', t => {
-  const { node, child } = t.context;
-  const fragment = new DocumentFragment();
+  const { document, node, child } = t.context;
+  const fragment = document.createDocumentFragment();
 
   fragment.appendChild(child);
   node.appendChild(fragment);
@@ -76,8 +79,8 @@ test('appending a document fragment with a single child', t => {
 });
 
 test('appending a document fragment with a multiple children', t => {
-  const { node, child, childTwo } = t.context;
-  const fragment = new DocumentFragment();
+  const { document, node, child, childTwo } = t.context;
+  const fragment = document.createDocumentFragment();
 
   fragment.appendChild(child);
   fragment.appendChild(childTwo);

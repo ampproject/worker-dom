@@ -17,7 +17,8 @@
 import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Attr } from '../../worker-thread/dom/Attr';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   node: Element;
@@ -27,8 +28,10 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
+    node: document.createElement('div'),
     attr: { namespaceURI: HTML_NAMESPACE, name: 'name', value: 'value' } as Attr,
     attrOverride: { namespaceURI: HTML_NAMESPACE, name: 'name', value: 'value-overide' } as Attr,
     attrTwo: { namespaceURI: HTML_NAMESPACE, name: 'name-two', value: 'value-two' } as Attr,

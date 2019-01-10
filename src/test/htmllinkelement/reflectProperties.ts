@@ -17,15 +17,17 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLLinkElement } from '../../worker-thread/dom/HTMLLinkElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   element: HTMLLinkElement;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLLinkElement(NodeType.ELEMENT_NODE, 'link', HTML_NAMESPACE),
+    element: document.createElement('link') as HTMLLinkElement,
   };
 });
 

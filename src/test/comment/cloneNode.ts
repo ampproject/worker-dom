@@ -27,13 +27,16 @@ const test = anyTest as TestInterface<{
 
 test.beforeEach(t => {
   const document = createDocument();
-  t.context = {
-    parent: document.createElement('div'),
-    comment: document.createComment('Super Comment'),
-  };
+  const parent = document.createElement('div');
+  const comment = document.createComment('Super Comment');
 
-  t.context.parent.appendChild(t.context.comment);
-  document.body.appendChild(t.context.parent);
+  parent.appendChild(comment);
+  document.body.appendChild(parent);
+
+  t.context = {
+    parent,
+    comment,
+  };
 });
 
 test('cloneNode should create a new node with the same tagName', t => {

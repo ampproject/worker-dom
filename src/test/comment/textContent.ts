@@ -16,14 +16,17 @@
 
 import anyTest, { TestInterface } from 'ava';
 import { Comment } from '../../worker-thread/dom/Comment';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   comment: Comment;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    comment: new Comment('default value'),
+    comment: document.createComment('default value'),
   };
 });
 

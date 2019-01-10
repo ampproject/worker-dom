@@ -17,15 +17,17 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLFormElement } from '../../worker-thread/dom/HTMLFormElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   element: HTMLFormElement;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLFormElement(NodeType.ELEMENT_NODE, 'form', HTML_NAMESPACE),
+    element: document.createElement('form') as HTMLFormElement,
   };
 });
 

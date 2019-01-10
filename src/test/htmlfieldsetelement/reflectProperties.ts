@@ -17,15 +17,17 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLFieldSetElement } from '../../worker-thread/dom/HTMLFieldSetElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   element: HTMLFieldSetElement;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', HTML_NAMESPACE),
+    element: document.createElement('fieldset') as HTMLFieldSetElement,
   };
 });
 

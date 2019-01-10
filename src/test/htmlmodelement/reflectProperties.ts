@@ -17,15 +17,17 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLModElement } from '../../worker-thread/dom/HTMLModElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   element: HTMLModElement;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLModElement(NodeType.ELEMENT_NODE, 'del', HTML_NAMESPACE),
+    element: document.createElement('del') as HTMLModElement,
   };
 });
 

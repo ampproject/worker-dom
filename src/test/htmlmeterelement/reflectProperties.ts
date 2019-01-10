@@ -17,15 +17,17 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLMeterElement } from '../../worker-thread/dom/HTMLMeterElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   element: HTMLMeterElement;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLMeterElement(NodeType.ELEMENT_NODE, 'meter', HTML_NAMESPACE),
+    element: document.createElement('meter') as HTMLMeterElement,
   };
 });
 

@@ -17,15 +17,17 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLStyleElement } from '../../worker-thread/dom/HTMLStyleElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   element: HTMLStyleElement;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLStyleElement(NodeType.ELEMENT_NODE, 'style', HTML_NAMESPACE),
+    element: document.createElement('style') as HTMLStyleElement,
   };
 });
 

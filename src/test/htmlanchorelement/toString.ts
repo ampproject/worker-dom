@@ -16,15 +16,17 @@
 
 import anyTest, { TestInterface } from 'ava';
 import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   element: HTMLAnchorElement;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLAnchorElement(NodeType.ELEMENT_NODE, 'a', HTML_NAMESPACE),
+    element: document.createElement('a') as HTMLAnchorElement,
   };
 });
 

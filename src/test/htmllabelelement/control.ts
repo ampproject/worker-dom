@@ -19,6 +19,11 @@ import { HTMLLabelElement } from '../../worker-thread/dom/HTMLLabelElement';
 import { createDocument, Document } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
 
+// NOTE FOR KRIS
+// --
+// The issue is the `globalDocument` in `Node` is set once and cannot be reassigned when a new document is created.
+// for testing purposes, this needs to be altered.
+
 const test = anyTest as TestInterface<{
   document: Document;
   label: HTMLLabelElement;
@@ -39,11 +44,11 @@ test.beforeEach(t => {
   };
 });
 
-test.serial('control should be null by default', t => {
-  const { label } = t.context;
+// test.serial('control should be null by default', t => {
+//   const { label } = t.context;
 
-  t.is(label.control, null);
-});
+//   t.is(label.control, null);
+// });
 
 test.serial('control should be sibling element with matching id to "for" attribute', t => {
   const { document, label, div, input } = t.context;
@@ -58,14 +63,14 @@ test.serial('control should be sibling element with matching id to "for" attribu
   t.is(label.control, input);
 });
 
-// test('control should be null when there is no matching element to the id in "for" attribute', t => {
-//   const { document, label } = t.context;
+test('control should be null when there is no matching element to the id in "for" attribute', t => {
+  const { document, label } = t.context;
 
-//   label.htmlFor = 'identifier';
-//   document.body.appendChild(label);
-//   t.is(document.body.childElementCount, 1);
-//   t.is(label.control, null);
-// });
+  label.htmlFor = 'identifier';
+  document.body.appendChild(label);
+  t.is(document.body.childElementCount, 1);
+  t.is(label.control, null);
+});
 
 // test('control should be element with matching id to "for" attribute', t => {
 //   const { label, form, div, input } = t.context;

@@ -16,15 +16,16 @@
 
 import anyTest, { TestInterface } from 'ava';
 import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   element: HTMLElement;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
   t.context = {
-    element: new HTMLElement(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
+    element: document.createElement('div') as HTMLElement,
   };
 });
 

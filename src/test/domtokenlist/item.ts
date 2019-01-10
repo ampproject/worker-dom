@@ -17,15 +17,17 @@
 import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
-import { HTML_NAMESPACE, NodeType } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   tokenList: DOMTokenList;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    tokenList: new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE), 'class', null, null),
+    tokenList: new DOMTokenList(Element, document.createElement('div'), 'class', null, null),
   };
 });
 

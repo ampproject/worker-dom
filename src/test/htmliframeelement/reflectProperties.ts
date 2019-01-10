@@ -17,15 +17,17 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLIFrameElement } from '../../worker-thread/dom/HTMLIFrameElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   element: HTMLIFrameElement;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLIFrameElement(NodeType.ELEMENT_NODE, 'iframe', HTML_NAMESPACE),
+    element: document.createElement('iframe') as HTMLIFrameElement,
   };
 });
 

@@ -17,15 +17,17 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperty } from '../reflectPropertiesHelper';
 import { HTMLButtonElement } from '../../worker-thread/dom/HTMLButtonElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   element: HTMLButtonElement;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLButtonElement(NodeType.ELEMENT_NODE, 'button', HTML_NAMESPACE),
+    element: document.createElement('button') as HTMLButtonElement,
   };
 });
 

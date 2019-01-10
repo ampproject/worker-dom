@@ -19,6 +19,7 @@ import { HTMLElement } from './HTMLElement';
 import './HTMLAnchorElement';
 import './HTMLButtonElement';
 import './HTMLDataElement';
+import './HTMLDataListElement';
 import './HTMLEmbedElement';
 import './HTMLFieldSetElement';
 import './HTMLFormElement';
@@ -74,7 +75,7 @@ export class Document extends Element {
   public body: Element;
 
   constructor() {
-    super(NodeType.DOCUMENT_NODE, '#document', HTML_NAMESPACE);
+    super(NodeType.DOCUMENT_NODE, '#document', HTML_NAMESPACE, null);
     this.documentElement = this;
     this.observe = (): void => {
       observeMutations(this, this.postMessageMethod);
@@ -98,18 +99,18 @@ export class Document extends Element {
     return this.createElementNS(HTML_NAMESPACE, tagName);
   }
   public createElementNS(namespaceURI: NamespaceURI, tagName: string): Element {
-    return new (NODE_NAME_MAPPING[toLower(tagName)] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
+    return new (NODE_NAME_MAPPING[toLower(tagName)] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI, this);
   }
 
   public createTextNode(text: string): Text {
-    return new Text(text);
+    return new Text(text, this);
   }
   public createComment(text: string): Comment {
-    return new Comment(text);
+    return new Comment(text, this);
   }
 
   public createDocumentFragment(): DocumentFragment {
-    return new DocumentFragment();
+    return new DocumentFragment(this);
   }
 
   /**

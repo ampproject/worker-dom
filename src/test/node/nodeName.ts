@@ -15,14 +15,14 @@
  */
 
 import test from 'ava';
-import { Text } from '../../worker-thread/dom/Text';
-import { Element } from '../../worker-thread/dom/Element';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 test('returns the name of the Node', t => {
-  const node = new Text('');
-  const nodeTwo = new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE);
+  const document = createDocument();
+  const node = document.createTextNode('');
+  const nodeTwo = document.createElement('div');
 
+  t.is(document.nodeName, '#document', 'document node returns a valid document node name');
   t.is(node.nodeName, '#text', 'text node returns a valid text node name');
   t.is(nodeTwo.nodeName, 'div', 'standard element node returns a valid node name');
 });

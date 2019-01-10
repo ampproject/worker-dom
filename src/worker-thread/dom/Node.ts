@@ -26,8 +26,6 @@ import { store as storeString } from '../strings';
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 export type NamespaceURI = string;
 
-export let globalDocument: Node | null = null;
-
 /**
  * Propagates a property change for a Node to itself and all childNodes.
  * @param node Node to start applying change to
@@ -63,15 +61,11 @@ export abstract class Node {
     [index: string]: EventHandler[];
   } = {};
 
-  constructor(nodeType: NodeType, nodeName: NodeName) {
+  constructor(nodeType: NodeType, nodeName: NodeName, ownerDocument: Node | null) {
     this.nodeType = nodeType;
     this.nodeName = nodeName;
 
-    // The first Node created is the global document.
-    if (globalDocument === null) {
-      globalDocument = this;
-    }
-    this.ownerDocument = globalDocument;
+    this.ownerDocument = ownerDocument || this;
     this[TransferrableKeys.scopingRoot] = this;
 
     this[TransferrableKeys.index] = storeNodeMapping(this);

@@ -18,7 +18,7 @@ import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { HTMLDataListElement } from '../../worker-thread/dom/HTMLDataListElement';
 import { Text } from '../../worker-thread/dom/Text';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   node: HTMLDataListElement;
@@ -29,12 +29,14 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    node: new HTMLDataListElement(NodeType.ELEMENT_NODE, 'datalist', HTML_NAMESPACE),
-    option: new Element(NodeType.ELEMENT_NODE, 'option', HTML_NAMESPACE),
-    optionTwo: new Element(NodeType.ELEMENT_NODE, 'option', HTML_NAMESPACE),
-    text: new Text(''),
-    invalidElement: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
+    node: document.createElement('datalist') as HTMLDataListElement,
+    option: document.createElement('option'),
+    optionTwo: document.createElement('option'),
+    text: document.createTextNode(''),
+    invalidElement: document.createElement('div'),
   };
 });
 

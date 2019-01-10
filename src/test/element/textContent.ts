@@ -17,7 +17,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   element: Element;
@@ -26,10 +26,12 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new Element(NodeType.ELEMENT_NODE, 'div', HTML_NAMESPACE),
-    child: new Element(NodeType.ELEMENT_NODE, 'p', HTML_NAMESPACE),
-    text: new Text('default text'),
+    element: document.createElement('div'),
+    child: document.createElement('p'),
+    text: document.createTextNode('default text'),
   };
 });
 

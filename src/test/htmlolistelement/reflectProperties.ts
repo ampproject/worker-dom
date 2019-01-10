@@ -17,15 +17,17 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLOListElement } from '../../worker-thread/dom/HTMLOListElement';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
   element: HTMLOListElement;
 }>;
 
 test.beforeEach(t => {
+  const document = createDocument();
+
   t.context = {
-    element: new HTMLOListElement(NodeType.ELEMENT_NODE, 'ol', HTML_NAMESPACE),
+    element: document.createElement('ol') as HTMLOListElement,
   };
 });
 

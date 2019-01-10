@@ -16,11 +16,11 @@
 
 import { Element, registerSubclass } from './Element';
 import { SVG_NAMESPACE, NodeType } from '../../transfer/TransferrableNodes';
-import { NodeName } from './Node';
+import { NodeName, Node, NamespaceURI } from './Node';
 
 export class SVGElement extends Element {
-  constructor(nodeType: NodeType, nodeName: NodeName) {
-    super(nodeType, nodeName, SVG_NAMESPACE);
+  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node) {
+    super(nodeType, nodeName, SVG_NAMESPACE, ownerDocument);
     this.localName = nodeName;
   }
 }
