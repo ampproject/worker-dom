@@ -59,7 +59,6 @@ test.serial('control should be sibling element with matching id to "for" attribu
   label.htmlFor = 'identifier';
   document.body.appendChild(div);
 
-  console.log(label.control);
   t.is(label.control, input);
 });
 
