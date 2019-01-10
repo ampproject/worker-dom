@@ -69,23 +69,20 @@ export function removeTestingDocument() {
     buildStart() {
       context = this;
     },
-    transformChunk: async (code) => {
+    renderChunk: async (code) => {
       const source = new MagicString(code);
+      const program = context.parse(code, { ranges: true });
 
-      if (context) {
-        const program = context.parse(code, { ranges: true });
-
-        walk.simple(program, {
-          VariableDeclarator(node) {
-            if (node.id && node.id.type === 'Identifier' && node.id.name && node.id.name === 'documentForTesting') {
-              const range = node.range;
-              if (range) {
-                source.overwrite(node.range[0], node.range[1], 'documentForTesting = undefined');
-              }
+      walk.simple(program, {
+        VariableDeclarator(node) {
+          if (node.id && node.id.type === 'Identifier' && node.id.name && node.id.name === 'documentForTesting') {
+            const range = node.range;
+            if (range) {
+              source.overwrite(node.range[0], node.range[1], 'documentForTesting = undefined');
             }
-          },
-        });
-      }
+          }
+        },
+      });
       
       return {
         code: source.toString(),
