@@ -9,7 +9,7 @@
     "url": "https://github.com/ampproject/worker-dom.git"
   },
   "engines": {
-    "node": ">=8.10.0"
+    "node": ">=10.14"
   },
   "author": "The AMP HTML Authors",
   "license": "Apache-2.0",
