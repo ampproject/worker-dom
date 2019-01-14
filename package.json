@@ -42,7 +42,7 @@
     "release": "npm-run-all --serial release:tag release:git release:gren release:changelog release:git"
   },
   "dependencies": {
-    "dompurify": "1.0.8"
+    "dompurify": "1.0.9"
   },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.8.5",
