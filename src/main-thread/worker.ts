@@ -15,7 +15,6 @@
  */
 
 import { MessageToWorker } from '../transfer/Messages';
-import { set as setPhase, Phases } from '../transfer/phase';
 import { createHydrateableNode, initialStrings } from './serialize';
 import { WorkerCallbacks } from './callbacks';
 
@@ -26,37 +25,21 @@ import { WorkerCallbacks } from './callbacks';
 let callbacks_: WorkerCallbacks | undefined;
 
 /**
- * TODO(KB): Fetch Polyfill for IE11.
- * @param baseElement
- * @param workerDOMURL
- * @param authorScriptURL
- * @param callbacks
- */
-export function fetchAndCreateWorker(
-  baseElement: HTMLElement,
-  workerDOMURL: string,
-  authorScriptURL: string,
-  callbacks?: WorkerCallbacks,
-): Promise<Worker | null> {
-  callbacks_ = callbacks;
-  return Promise.all([fetch(workerDOMURL).then(response => response.text()), fetch(authorScriptURL).then(response => response.text())])
-    .then(([workerDOMScript, authorScript]) => {
-      const worker = createWorker(baseElement, workerDOMScript, authorScript, authorScriptURL);
-      setPhase(Phases.Hydrating);
-      return worker;
-    })
-    .catch(error => {
-      return null;
-    });
-}
-
-/**
+ * Also stores `callbacks` in a global.
  * @param baseElement
  * @param workerDOMScript
  * @param authorScript
  * @param authorScriptURL
  */
-export function createWorker(baseElement: HTMLElement, workerDOMScript: string, authorScript: string, authorScriptURL: string): Worker {
+export function createWorker(
+  baseElement: HTMLElement,
+  workerDOMScript: string,
+  authorScript: string,
+  authorScriptURL: string,
+  callbacks?: WorkerCallbacks,
+): Worker {
+  callbacks_ = callbacks;
+
   // TODO(KB): Minify this output during build process.
   const keys: Array<string> = [];
   const hydratedNode = createHydrateableNode(baseElement);

@@ -55,8 +55,8 @@ export function upgradeElement(baseElement: Element, workerDOMUrl: string): void
 /**
  * This function's API will likely change frequently. Use at your own risk!
  * @param baseElement
- * @param fetchScripts Function that returns a Promise that resolves with a tuple containing the worker script, author script, and author script URL.
+ * @param fetchPromise Promise that resolves with a tuple containing the worker script, author script, and author script URL.
  */
-export function upgrade(baseElement: Element, fetchScripts: () => Promise<[string, string, string]>): void {
-  install(fetchScripts, baseElement as HTMLElement, wrappedCallbacks, sanitizer);
+export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string, string]>): void {
+  install(fetchPromise, baseElement as HTMLElement, wrappedCallbacks, sanitizer);
 }
