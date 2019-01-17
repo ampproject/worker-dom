@@ -15,7 +15,7 @@
  */
 
 import { prepareMutate, mutate } from './mutator';
-import { createWorker } from './worker';
+import { createWorker, fetchAndCreateWorker } from './worker';
 import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
@@ -23,40 +23,82 @@ import { WorkerCallbacks } from './callbacks';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
-export function install(
+/**
+ * @param baseElement
+ * @param authorURL
+ * @param workerDOMUrl
+ * @param callbacks
+ * @param sanitizer
+ */
+export function fetchAndInstall(
   baseElement: HTMLElement,
   authorURL: string,
   workerDOMUrl: string,
-  workerCallbacks?: WorkerCallbacks,
+  callbacks?: WorkerCallbacks,
   sanitizer?: Sanitizer,
 ): void {
-  prepareNodes(baseElement);
+  preinstall_(baseElement);
+  fetchAndCreateWorker(baseElement, workerDOMUrl, authorURL, callbacks).then(worker => {
+    if (worker) {
+      postInstall_(worker, sanitizer, callbacks);
+    }
+  });
+}
 
-  createWorker(baseElement, workerDOMUrl, authorURL, workerCallbacks).then(worker => {
-    if (worker === null) {
+/**
+ * @param fetchScripts
+ * @param baseElement
+ * @param callbacks
+ * @param sanitizer
+ */
+export function install(
+  fetchScripts: () => Promise<[string, string, string]>,
+  baseElement: HTMLElement,
+  callbacks?: WorkerCallbacks,
+  sanitizer?: Sanitizer,
+): void {
+  preinstall_(baseElement);
+  fetchScripts().then(([workerDOMScript, authorScript, authorScriptURL]) => {
+    if (workerDOMScript && authorScript && authorScriptURL) {
+      const worker = createWorker(baseElement, workerDOMScript, authorScript, authorScriptURL);
+      postInstall_(worker, sanitizer, callbacks);
+    }
+    return null;
+  });
+}
+
+/**
+ * @param baseElement
+ */
+function preinstall_(baseElement: HTMLElement): void {
+  prepareNodes(baseElement);
+}
+
+/**
+ * @param worker
+ * @param sanitizer
+ * @param callbacks
+ */
+function postInstall_(worker: Worker, sanitizer?: Sanitizer, callbacks?: WorkerCallbacks): void {
+  prepareMutate(worker, sanitizer);
+
+  worker.onmessage = (message: MessageFromWorker) => {
+    const { data } = message;
+
+    if (!ALLOWABLE_MESSAGE_TYPES.includes(data[TransferrableKeys.type])) {
       return;
     }
+    // TODO(KB): Hydration has special rules limiting the types of allowed mutations.
+    // Re-introduce Hydration and add a specialized handler.
+    mutate(
+      (data as MutationFromWorker)[TransferrableKeys.nodes],
+      (data as MutationFromWorker)[TransferrableKeys.strings],
+      (data as MutationFromWorker)[TransferrableKeys.mutations],
+    );
 
-    prepareMutate(worker, sanitizer);
-
-    worker.onmessage = (message: MessageFromWorker) => {
-      const { data } = message;
-
-      if (!ALLOWABLE_MESSAGE_TYPES.includes(data[TransferrableKeys.type])) {
-        return;
-      }
-      // TODO(KB): Hydration has special rules limiting the types of allowed mutations.
-      // Re-introduce Hydration and add a specialized handler.
-      mutate(
-        (data as MutationFromWorker)[TransferrableKeys.nodes],
-        (data as MutationFromWorker)[TransferrableKeys.strings],
-        (data as MutationFromWorker)[TransferrableKeys.mutations],
-      );
-
-      // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
-      if (workerCallbacks && workerCallbacks.onReceiveMessage) {
-        workerCallbacks.onReceiveMessage(message);
-      }
-    };
-  });
+    // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
+    if (callbacks && callbacks.onReceiveMessage) {
+      callbacks.onReceiveMessage(message);
+    }
+  };
 }

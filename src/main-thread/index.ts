@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { install } from './install';
+import { fetchAndInstall, install } from './install';
 
 export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
   const authorURL = baseElement.getAttribute('src');
@@ -24,5 +24,5 @@ export function upgradeElement(baseElement: Element, workerDOMUrl: string): void
 }
 
 export function upgrade(baseElement: Element, authorURL: string, workerDOMUrl: string): void {
-  install(baseElement as HTMLElement, authorURL, workerDOMUrl);
+  fetchAndInstall(baseElement as HTMLElement, authorURL, workerDOMUrl);
 }

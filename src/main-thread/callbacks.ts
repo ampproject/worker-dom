@@ -16,19 +16,9 @@
 
 import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
 
-/**
- * User-configurable callbacks for worker-dom events e.g. worker messaging.
- * Useful for adding logging hooks
- */
-export interface UserCallbacks {
-  onSendMessage?: (readableMessage: Object) => void;
-  onReceiveMessage?: (readableMessage: Object) => void;
-}
-
-/**
- * System-level callbacks for worker messaging.
- */
 export interface WorkerCallbacks {
+  // Called before a message is sent to the worker.
   onSendMessage?: (message: MessageToWorker) => void;
+  // Called after a message is received from the worker.
   onReceiveMessage?: (message: MessageFromWorker) => void;
 }
