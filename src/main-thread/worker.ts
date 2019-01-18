@@ -15,7 +15,6 @@
  */
 
 import { MessageToWorker } from '../transfer/Messages';
-import { set as setPhase, Phases } from '../transfer/phase';
 import { createHydrateableNode, initialStrings } from './serialize';
 import { WorkerCallbacks } from './callbacks';
 
@@ -25,58 +24,59 @@ import { WorkerCallbacks } from './callbacks';
  */
 let callbacks_: WorkerCallbacks | undefined;
 
-// TODO(KB): Fetch Polyfill for IE11.
+/**
+ * Also stores `callbacks` in a global.
+ * @param baseElement
+ * @param workerDOMScript
+ * @param authorScript
+ * @param authorScriptURL
+ */
 export function createWorker(
   baseElement: HTMLElement,
-  workerDomURL: string,
+  workerDOMScript: string,
+  authorScript: string,
   authorScriptURL: string,
   callbacks?: WorkerCallbacks,
-): Promise<Worker | null> {
+): Worker {
   callbacks_ = callbacks;
-  return Promise.all([fetch(workerDomURL).then(response => response.text()), fetch(authorScriptURL).then(response => response.text())])
-    .then(([workerScript, authorScript]) => {
-      // TODO(KB): Minify this output during build process.
-      const keys: Array<string> = [];
-      const hydratedNode = createHydrateableNode(baseElement);
-      for (const key in document.body.style) {
-        keys.push(`'${key}'`);
-      }
-      const code = `
-        'use strict';
-        ${workerScript}
-        (function() {
-          var self = this;
-          var window = this;
-          var document = this.document;
-          var localStorage = this.localStorage;
-          var location = this.location;
-          var defaultView = document.defaultView;
-          var Node = defaultView.Node;
-          var Text = defaultView.Text;
-          var Element = defaultView.Element;
-          var SVGElement = defaultView.SVGElement;
-          var Document = defaultView.Document;
-          var Event = defaultView.Event;
-          var MutationObserver = defaultView.MutationObserver;
 
-          function addEventListener(type, handler) {
-            return document.addEventListener(type, handler);
-          }
-          function removeEventListener(type, handler) {
-            return document.removeEventListener(type, handler);
-          }
-          this.consumeInitialDOM(document, ${JSON.stringify(initialStrings)}, ${JSON.stringify(hydratedNode)});
-          this.appendKeys([${keys}]);
-          document.observe();
-          ${authorScript}
-        }).call(WorkerThread.workerDOM);
+  // TODO(KB): Minify this output during build process.
+  const keys: Array<string> = [];
+  const hydratedNode = createHydrateableNode(baseElement);
+  for (const key in document.body.style) {
+    keys.push(`'${key}'`);
+  }
+  const code = `
+    'use strict';
+    ${workerDOMScript}
+    (function() {
+      var self = this;
+      var window = this;
+      var document = this.document;
+      var localStorage = this.localStorage;
+      var location = this.location;
+      var defaultView = document.defaultView;
+      var Node = defaultView.Node;
+      var Text = defaultView.Text;
+      var Element = defaultView.Element;
+      var SVGElement = defaultView.SVGElement;
+      var Document = defaultView.Document;
+      var Event = defaultView.Event;
+      var MutationObserver = defaultView.MutationObserver;
+
+      function addEventListener(type, handler) {
+        return document.addEventListener(type, handler);
+      }
+      function removeEventListener(type, handler) {
+        return document.removeEventListener(type, handler);
+      }
+      this.consumeInitialDOM(document, ${JSON.stringify(initialStrings)}, ${JSON.stringify(hydratedNode)});
+      this.appendKeys([${keys}]);
+      document.observe();
+      ${authorScript}
+    }).call(WorkerThread.workerDOM);
 //# sourceURL=${encodeURI(authorScriptURL)}`;
-      setPhase(Phases.Hydrating);
-      return new Worker(URL.createObjectURL(new Blob([code])));
-    })
-    .catch(error => {
-      return null;
-    });
+  return new Worker(URL.createObjectURL(new Blob([code])));
 }
 
 /**

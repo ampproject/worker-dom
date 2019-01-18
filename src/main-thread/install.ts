@@ -14,49 +14,75 @@
  * limitations under the License.
  */
 
-import { prepareMutate, mutate } from './mutator';
 import { createWorker } from './worker';
 import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
+import { prepareMutate, mutate } from './mutator';
+import { set as setPhase, Phases } from '../transfer/phase';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { WorkerCallbacks } from './callbacks';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
-export function install(
+/**
+ * @param baseElement
+ * @param authorScriptURL
+ * @param workerDOMURL
+ * @param callbacks
+ * @param sanitizer
+ */
+export function fetchAndInstall(
   baseElement: HTMLElement,
-  authorURL: string,
-  workerDOMUrl: string,
-  workerCallbacks?: WorkerCallbacks,
+  authorScriptURL: string,
+  workerDOMURL: string,
+  callbacks?: WorkerCallbacks,
+  sanitizer?: Sanitizer,
+): void {
+  const fetchPromise = Promise.all([
+    // TODO(KB): Fetch Polyfill for IE11.
+    fetch(workerDOMURL).then(response => response.text()),
+    fetch(authorScriptURL).then(response => response.text()),
+    Promise.resolve(authorScriptURL),
+  ]);
+  install(fetchPromise, baseElement, callbacks, sanitizer);
+}
+
+/**
+ * @param fetchPromise
+ * @param baseElement
+ * @param callbacks
+ * @param sanitizer
+ */
+export function install(
+  fetchPromise: Promise<[string, string, string]>,
+  baseElement: HTMLElement,
+  callbacks?: WorkerCallbacks,
   sanitizer?: Sanitizer,
 ): void {
   prepareNodes(baseElement);
-
-  createWorker(baseElement, workerDOMUrl, authorURL, workerCallbacks).then(worker => {
-    if (worker === null) {
-      return;
+  fetchPromise.then(([workerDOMScript, authorScript, authorScriptURL]) => {
+    if (workerDOMScript && authorScript && authorScriptURL) {
+      const worker = createWorker(baseElement, workerDOMScript, authorScript, authorScriptURL, callbacks);
+      setPhase(Phases.Hydrating);
+      prepareMutate(worker, sanitizer);
+      worker.onmessage = (message: MessageFromWorker) => {
+        const { data } = message;
+        if (!ALLOWABLE_MESSAGE_TYPES.includes(data[TransferrableKeys.type])) {
+          return;
+        }
+        // TODO(KB): Hydration has special rules limiting the types of allowed mutations.
+        // Re-introduce Hydration and add a specialized handler.
+        mutate(
+          (data as MutationFromWorker)[TransferrableKeys.nodes],
+          (data as MutationFromWorker)[TransferrableKeys.strings],
+          (data as MutationFromWorker)[TransferrableKeys.mutations],
+        );
+        // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
+        if (callbacks && callbacks.onReceiveMessage) {
+          callbacks.onReceiveMessage(message);
+        }
+      };
     }
-
-    prepareMutate(worker, sanitizer);
-
-    worker.onmessage = (message: MessageFromWorker) => {
-      const { data } = message;
-
-      if (!ALLOWABLE_MESSAGE_TYPES.includes(data[TransferrableKeys.type])) {
-        return;
-      }
-      // TODO(KB): Hydration has special rules limiting the types of allowed mutations.
-      // Re-introduce Hydration and add a specialized handler.
-      mutate(
-        (data as MutationFromWorker)[TransferrableKeys.nodes],
-        (data as MutationFromWorker)[TransferrableKeys.strings],
-        (data as MutationFromWorker)[TransferrableKeys.mutations],
-      );
-
-      // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
-      if (workerCallbacks && workerCallbacks.onReceiveMessage) {
-        workerCallbacks.onReceiveMessage(message);
-      }
-    };
+    return null;
   });
 }

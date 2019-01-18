@@ -15,40 +15,48 @@
  */
 
 import { DOMPurifySanitizer } from './DOMPurifySanitizer';
-import { UserCallbacks, WorkerCallbacks } from './callbacks';
-import { install } from './install';
+import { WorkerCallbacks } from './callbacks';
+import { fetchAndInstall, install } from './install';
 import { readableMessageFromWorker, readableMessageToWorker } from './debugging';
 
 /** Users can import this and configure the sanitizer with custom DOMPurify hooks, etc. */
 export const sanitizer = new DOMPurifySanitizer();
 
 /** Users can import this and set callback functions to add logging on worker messages, etc. */
-export const callbacks: UserCallbacks = {};
+export const callbacks: WorkerCallbacks = {};
 
-// Extra function wrapper around user callbacks to ensure that debugging.ts isn't bundled
-// in other entry points.
-const workerCallbacks: WorkerCallbacks = {
+// Wrapper around `callbacks` to ensure that debugging.ts isn't bundled into other entry points.
+const wrappedCallbacks: WorkerCallbacks = {
   onSendMessage: message => {
     if (callbacks.onSendMessage) {
       const readable = readableMessageToWorker(message);
-      callbacks.onSendMessage(readable);
+      callbacks.onSendMessage(readable as any);
     }
   },
   onReceiveMessage: message => {
     if (callbacks.onReceiveMessage) {
       const readable = readableMessageFromWorker(message);
-      callbacks.onReceiveMessage(readable);
+      callbacks.onReceiveMessage(readable as any);
     }
   },
 };
 
+/**
+ * @param baseElement
+ * @param workerDOMUrl
+ */
 export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
-    upgrade(baseElement, authorURL, workerDOMUrl);
+    fetchAndInstall(baseElement as HTMLElement, authorURL, workerDOMUrl, wrappedCallbacks, sanitizer);
   }
 }
 
-export function upgrade(baseElement: Element, authorURL: string, workerDOMUrl: string): void {
-  install(baseElement as HTMLElement, authorURL, workerDOMUrl, workerCallbacks, sanitizer);
+/**
+ * This function's API will likely change frequently. Use at your own risk!
+ * @param baseElement
+ * @param fetchPromise Promise that resolves with a tuple containing the worker script, author script, and author script URL.
+ */
+export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string, string]>): void {
+  install(fetchPromise, baseElement as HTMLElement, wrappedCallbacks, sanitizer);
 }
