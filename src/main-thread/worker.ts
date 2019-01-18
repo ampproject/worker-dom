@@ -44,7 +44,9 @@ export function createWorker(
   const keys: Array<string> = [];
   const hydratedNode = createHydrateableNode(baseElement);
   for (const key in document.body.style) {
-    keys.push(`'${key}'`);
+    if (isNaN(key as any)) {
+      keys.push(`'${key}'`);
+    }
   }
   const code = `
     'use strict';
