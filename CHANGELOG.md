@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.2.9 (23/01/2019)
+- [**question**] Question: Is DOM Batching implemented in worker-dom [#163](https://github.com/ampproject/worker-dom/issues/163)
+- [**build**] Release notes [#161](https://github.com/ampproject/worker-dom/issues/161)
+- [**mutation**] Better DOM property support [#122](https://github.com/ampproject/worker-dom/issues/122)
+
+---
+
 ## v0.2.8 (19/11/2018)
 *No changelog for this release.*
 
