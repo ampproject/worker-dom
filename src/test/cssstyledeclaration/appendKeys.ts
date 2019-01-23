@@ -47,6 +47,13 @@ test.serial('previously appended keys should exist on newly declared instances',
   t.is(declaration.width, '');
 });
 
+test('invalid keys are filtered', t => {
+  const initialLength = CSSStyleDeclaration.prototype.length;
+
+  appendKeys(['0']);
+  t.is(CSSStyleDeclaration.prototype.length, initialLength);
+});
+
 test('appending keys mutates all known declaration instances', t => {
   const firstDeclaration = new CSSStyleDeclaration(t.context.node);
   const secondDeclaration = new CSSStyleDeclaration(t.context.node);
