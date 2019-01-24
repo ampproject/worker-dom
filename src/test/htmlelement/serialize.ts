@@ -17,7 +17,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { HydrateableNode, NodeType, SVG_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { get } from '../../worker-thread/strings';
+import { getForTesting as get } from '../../worker-thread/strings';
 import { createDocument, Document } from '../../worker-thread/dom/Document';
 import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 
