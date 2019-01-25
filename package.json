@@ -38,8 +38,8 @@
     "postrelease:git": "git push origin master --no-verify",
     "release:gren": "gren release",
     "release:changelog": "gren changelog --override",
-    "prerelease": "npm run size",
-    "release": "npm-run-all --serial release:tag release:git release:gren release:changelog release:git"
+    "prerelease": "npm install",
+    "release": "npm-run-all --serial size release:tag release:git release:gren release:changelog release:git"
   },
   "dependencies": {
     "dompurify": "1.0.8"
