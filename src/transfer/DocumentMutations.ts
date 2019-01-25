@@ -73,6 +73,8 @@ function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
 function handleMutations(incoming: Array<MutationRecord>, postMessage?: Function): void {
   if (postMessage) {
     postMessage(serializeMutations(incoming));
+    // Only first set of mutations are sent in a "HYDRATE" message type.
+    // Afterwards, we enter "MUTATING" phase and subsequent mutations are sent in "MUTATE" message type.
     setPhase(Phases.Mutating);
   }
 }
