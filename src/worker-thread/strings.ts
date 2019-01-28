@@ -29,9 +29,9 @@ export function store(value: string): number {
     return mapping.get(value) as number;
   }
 
-  mapping.set(value, ++count);
+  mapping.set(value, count);
   transfer.push(value);
-  return count;
+  return count++;
 }
 
 /**
@@ -39,7 +39,7 @@ export function store(value: string): number {
  * @param value string value we need to know the index of
  * @returns index in the map for the string
  */
-export function get(value: string): number | undefined {
+export function getForTesting(value: string): number | undefined {
   return mapping.get(value);
 }
 
