@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.12 (28/01/2019)
+- [**build**] Releasing on npm [#248](https://github.com/ampproject/worker-dom/issues/248)
+- [**mutation**] Infinite recursion at CSSStyleDeclaration.getPropertyValue [#232](https://github.com/ampproject/worker-dom/issues/232)
+
+---
+
 ## v0.2.9 (23/01/2019)
 - [**question**] Question: Is DOM Batching implemented in worker-dom [#163](https://github.com/ampproject/worker-dom/issues/163)
 - [**build**] Release notes [#161](https://github.com/ampproject/worker-dom/issues/161)
