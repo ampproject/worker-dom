@@ -53,7 +53,7 @@
     "@babel/preset-env": "7.3.1",
     "acorn": "6.0.5",
     "acorn-walk": "6.1.1",
-    "ava": "1.1.0",
+    "ava": "1.2.0",
     "babel-plugin-minify-replace": "0.5.0",
     "babel-plugin-transform-remove-console": "6.9.4",
     "bundlesize": "0.17.1",
