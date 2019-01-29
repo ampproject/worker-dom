@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-let count: number = 0;
-const strings: Map<number, string> = new Map();
+const strings: Array<string> = [];
 
 /**
  * Return a string for the specified index.
@@ -23,7 +22,7 @@ const strings: Map<number, string> = new Map();
  * @returns string in map for the index.
  */
 export function get(index: number): string {
-  return strings.get(index) || '';
+  return strings[index] || '';
 }
 
 /**
@@ -32,5 +31,5 @@ export function get(index: number): string {
  * @return location in map
  */
 export function store(value: string): void {
-  strings.set(++count, value);
+  strings.push(value);
 }

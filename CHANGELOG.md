@@ -1,6 +1,7 @@
 # Changelog
 
-## v0.2.10 (25/01/2019)
+## v0.2.12 (28/01/2019)
+- [**build**] Releasing on npm [#248](https://github.com/ampproject/worker-dom/issues/248)
 - [**mutation**] Infinite recursion at CSSStyleDeclaration.getPropertyValue [#232](https://github.com/ampproject/worker-dom/issues/232)
 
 ---

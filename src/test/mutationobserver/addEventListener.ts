@@ -19,7 +19,7 @@ import { createDocument, Document } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { get } from '../../worker-thread/strings';
+import { getForTesting as get } from '../../worker-thread/strings';
 
 const test = anyTest as TestInterface<{
   document: Document;

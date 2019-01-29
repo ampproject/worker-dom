@@ -15,7 +15,7 @@
  */
 
 import { MessageToWorker } from '../transfer/Messages';
-import { createHydrateableNode, initialStrings } from './serialize';
+import { createHydrateableRootNode } from './serialize';
 import { WorkerCallbacks } from './callbacks';
 
 /**
@@ -42,9 +42,9 @@ export function createWorker(
 
   // TODO(KB): Minify this output during build process.
   const keys: Array<string> = [];
-  const hydratedNode = createHydrateableNode(baseElement);
+  const { skeleton, strings } = createHydrateableRootNode(baseElement);
   for (const key in document.body.style) {
-    keys.push(`'${key}'`);
+    keys.push(key);
   }
   const code = `
     'use strict';
@@ -70,8 +70,8 @@ export function createWorker(
       function removeEventListener(type, handler) {
         return document.removeEventListener(type, handler);
       }
-      this.consumeInitialDOM(document, ${JSON.stringify(initialStrings)}, ${JSON.stringify(hydratedNode)});
-      this.appendKeys([${keys}]);
+      this.consumeInitialDOM(document, ${JSON.stringify(strings)}, ${JSON.stringify(skeleton)});
+      this.appendKeys(${JSON.stringify(keys)});
       document.observe();
       ${authorScript}
     }).call(WorkerThread.workerDOM);
