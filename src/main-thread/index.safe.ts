@@ -33,6 +33,11 @@ const wrappedCallbacks: WorkerCallbacks = {
       callbacks.onCreateWorker(readable as any);
     }
   },
+  onHydration: () => {
+    if (callbacks.onHydration) {
+      callbacks.onHydration();
+    }
+  },
   onSendMessage: message => {
     if (callbacks.onSendMessage) {
       const readable = readableMessageToWorker(message);
