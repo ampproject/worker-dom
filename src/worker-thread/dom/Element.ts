@@ -409,7 +409,7 @@ export class Element extends ParentNode {
     };
 
     return new Promise(resolve => {
-      if (typeof addEventListener !== 'function' || !this.isConnected || this.ownerDocument.postMessageMethod === undefined) {
+      if (typeof addEventListener !== 'function' || !this.isConnected) {
         // Elements run within Node runtimes are missing addEventListener as a global.
         // In this case, treat the return value the same as a disconnected node.
         resolve(defaultValue);
