@@ -35,12 +35,12 @@ export function process(worker: Worker, mutation: TransferrableMutationRecord): 
   const target = getNode(mutation[TransferrableKeys.target]);
 
   if (commandType === TransferrableCommand.EVENT_SUBSCRIPTION) {
-    (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub => {
-      processListenerChange(worker, target, false, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]);
-    });
-    (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub => {
-      processListenerChange(worker, target, true, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]);
-    });
+    (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub =>
+      processListenerChange(worker, target, false, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
+    );
+    (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub =>
+      processListenerChange(worker, target, true, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
+    );
   } else if (commandType === TransferrableCommand.GET_BOUNDING_CLIENT_RECT) {
     const boundingRect = target.getBoundingClientRect();
     messageToWorker(worker, {
