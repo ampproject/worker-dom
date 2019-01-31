@@ -17,7 +17,7 @@
 import { DOMPurifySanitizer } from './DOMPurifySanitizer';
 import { WorkerCallbacks } from './callbacks';
 import { fetchAndInstall, install } from './install';
-import { readableMessageFromWorker, readableMessageToWorker } from './debugging';
+import { readableHydrateableNodeFromElement, readableMessageFromWorker, readableMessageToWorker } from './debugging';
 
 /** Users can import this and configure the sanitizer with custom DOMPurify hooks, etc. */
 export const sanitizer = new DOMPurifySanitizer();
@@ -27,6 +27,12 @@ export const callbacks: WorkerCallbacks = {};
 
 // Wrapper around `callbacks` to ensure that debugging.ts isn't bundled into other entry points.
 const wrappedCallbacks: WorkerCallbacks = {
+  onCreateWorker: initialDOM => {
+    if (callbacks.onCreateWorker) {
+      const readable = readableHydrateableNodeFromElement(initialDOM);
+      callbacks.onCreateWorker(readable as any);
+    }
+  },
   onSendMessage: message => {
     if (callbacks.onSendMessage) {
       const readable = readableMessageToWorker(message);

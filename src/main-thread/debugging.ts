@@ -24,12 +24,13 @@
 
 import { getNode } from './nodes';
 import { get as getString } from './strings';
-import { TransferredNode } from '../transfer/TransferrableNodes';
 import { EventToWorker, MessageFromWorker, MessageType, MessageToWorker, ValueSyncToWorker } from '../transfer/Messages';
+import { HydrateableNode, TransferredNode } from '../transfer/TransferrableNodes';
 import { TransferrableEvent } from '../transfer/TransferrableEvent';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
+import { createReadableHydrateableRootNode } from './serialize';
 
 /**
  * Reverse mapping of src/worker-thread/MutationRecord.MutationRecord enum.
@@ -41,6 +42,38 @@ const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
   '3': 'PROPERTIES',
   '4': 'COMMAND',
 };
+
+/**
+ * @param element
+ */
+export function readableHydrateableNodeFromElement(element: RenderableElement): Object {
+  const node = createReadableHydrateableRootNode(element);
+  return readableHydrateableNode(node);
+}
+
+/**
+ * @param node
+ */
+function readableHydrateableNode(node: HydrateableNode): Object {
+  const out: any = {
+    nodeType: node[TransferrableKeys.nodeType],
+    nodeName: node[TransferrableKeys.nodeName],
+  };
+  const attributes = node[TransferrableKeys.attributes];
+  if (attributes) {
+    out['attributes'] = attributes.map(attr => {
+      return {
+        name: attr[1],
+        value: attr[2],
+      };
+    });
+  }
+  const childNodes = node[TransferrableKeys.childNodes];
+  if (childNodes) {
+    out['childNodes'] = childNodes.map(child => readableHydrateableNode(child));
+  }
+  return out;
+}
 
 /**
  * @param message
