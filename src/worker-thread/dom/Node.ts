@@ -22,6 +22,7 @@ import { MutationRecordType } from '../MutationRecord';
 import { TransferredNode, TransferrableNode, HydrateableNode, NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { store as storeString } from '../strings';
+import { TransferrableCommand } from '../../transfer/TransferrableCommands';
 
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 export type NamespaceURI = string;
@@ -334,6 +335,7 @@ export abstract class Node {
     mutate({
       target: this,
       type: MutationRecordType.COMMAND,
+      commandType: TransferrableCommand.EVENT_SUBSCRIPTION,
       addedEvents: [
         {
           [TransferrableKeys.type]: storeString(type),
@@ -359,6 +361,7 @@ export abstract class Node {
       mutate({
         target: this,
         type: MutationRecordType.COMMAND,
+        commandType: TransferrableCommand.EVENT_SUBSCRIPTION,
         removedEvents: [
           {
             [TransferrableKeys.type]: storeString(type),

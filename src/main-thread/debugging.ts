@@ -25,7 +25,7 @@
 import { getNode } from './nodes';
 import { get as getString } from './strings';
 import { TransferredNode } from '../transfer/TransferrableNodes';
-import { EventToWorker, MessageFromWorker, MessageType, MessageToWorker, ValueSyncToWorker } from '../transfer/Messages';
+import { EventToWorker, MessageFromWorker, MessageType, MessageToWorker, ValueSyncToWorker, CommandResponseToWorker } from '../transfer/Messages';
 import { TransferrableEvent } from '../transfer/TransferrableEvent';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
@@ -40,6 +40,14 @@ const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
   '2': 'CHILD_LIST',
   '3': 'PROPERTIES',
   '4': 'COMMAND',
+};
+
+/**
+ * Reverse mapping of src/transfer/TransferrableCommands.TransferrableCommand enum.
+ */
+const COMMAND_TYPE_REVERSE_MAPPING = {
+  '0': 'EVENT_SUBSCRIPTION',
+  '1': 'GET_BOUNDING_CLIENT_RECT',
 };
 
 /**
@@ -109,6 +117,10 @@ function readableTransferrableMutationRecord(r: TransferrableMutationRecord): Ob
   if (oldValue !== undefined) {
     out['oldValue'] = getString(oldValue);
   }
+  const command = r[TransferrableKeys.command];
+  if (command !== undefined) {
+    out['command'] = COMMAND_TYPE_REVERSE_MAPPING[command];
+  }
   const addedEvents = r[TransferrableKeys.addedEvents];
   if (addedEvents !== undefined) {
     out['addedEvents'] = addedEvents;
@@ -144,6 +156,12 @@ export function readableMessageToWorker(message: MessageToWorker): Object {
       type: 'SYNC',
       sync: readableTransferrableSyncValue(sync),
     };
+  } else if (isCommandResponse(message)) {
+    return {
+      type: 'COMMAND',
+      commandType: message[TransferrableKeys.command],
+      target: readableTransferredNode(message[TransferrableKeys.target]),
+    };
   } else {
     return 'Unrecognized MessageToWorker type: ' + message[TransferrableKeys.type];
   }
@@ -152,15 +170,22 @@ export function readableMessageToWorker(message: MessageToWorker): Object {
 /**
  * @param data
  */
-function isEvent(message: EventToWorker | ValueSyncToWorker): message is EventToWorker {
+function isEvent(message: MessageToWorker): message is EventToWorker {
   return message[TransferrableKeys.type] == MessageType.EVENT;
 }
 
 /**
  * @param data
  */
-function isValueSync(message: EventToWorker | ValueSyncToWorker): message is ValueSyncToWorker {
+function isValueSync(message: MessageToWorker): message is ValueSyncToWorker {
   return message[TransferrableKeys.type] == MessageType.SYNC;
+}
+
+/**
+ * @param data
+ */
+function isCommandResponse(message: MessageToWorker): message is CommandResponseToWorker {
+  return message[TransferrableKeys.type] == MessageType.COMMAND;
 }
 
 /**

@@ -18,6 +18,7 @@ import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { TransferredNode } from './TransferrableNodes';
 import { TransferrableEventSubscriptionChange } from './TransferrableEvent';
 import { TransferrableKeys } from './TransferrableKeys';
+import { TransferrableCommand } from './TransferrableCommands';
 
 // The TransferrableMutationRecord interface is modification and extension of
 // the real MutationRecord, with changes to support the transferring of
@@ -37,6 +38,7 @@ export interface TransferrableMutationRecord {
   [TransferrableKeys.propertyName]?: number;
   [TransferrableKeys.value]?: number;
   [TransferrableKeys.oldValue]?: number;
+  [TransferrableKeys.command]?: TransferrableCommand;
   [TransferrableKeys.addedEvents]?: Array<TransferrableEventSubscriptionChange>;
   [TransferrableKeys.removedEvents]?: Array<TransferrableEventSubscriptionChange>;
 }

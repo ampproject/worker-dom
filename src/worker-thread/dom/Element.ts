@@ -29,10 +29,23 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
 import { toLower } from '../../utils';
+import { MessageToWorker, MessageType, CommandResponseToWorker } from '../../transfer/Messages';
+import { TransferrableCommand, TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
 
 export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
 export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
   NODE_NAME_MAPPING[nodeName] = subclass;
+}
+
+interface ClientRect {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 export class Element extends ParentNode {
@@ -374,6 +387,67 @@ export class Element extends ParentNode {
       this.childNodes.forEach((child: Node) => clone.appendChild(child.cloneNode(deep)));
     }
     return clone;
+  }
+
+  /**
+   * Return the ClientRect for an Element once determined by the main thread.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
+   * @return Promise<ClientRect>
+   *
+   * Note: Edge and IE11 do not return the x/y value, but top/left are equivalent. Normalize the values here.
+   */
+  public async getBoundingClientRectAsync(): Promise<ClientRect> {
+    const defaultValue = {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+    };
+
+    if (typeof addEventListener !== 'function' || !this.isConnected || this.ownerDocument.postMessageMethod === undefined) {
+      // Elements run within Node runtimes are missing addEventListener as a global.
+      // In this case, treat the return value the same as a disconnected node.
+      return defaultValue;
+    }
+
+    return new Promise(resolve => {
+      addEventListener('message', ({ data }: { data: MessageToWorker }) => {
+        if (
+          data[TransferrableKeys.type] === MessageType.COMMAND &&
+          (data as CommandResponseToWorker)[TransferrableKeys.command] === TransferrableCommand.GET_BOUNDING_CLIENT_RECT &&
+          (data as CommandResponseToWorker)[TransferrableKeys.target][TransferrableKeys.index] === this[TransferrableKeys.index]
+        ) {
+          const transferredBoundingClientRect: TransferrableBoundingClientRect = (data as CommandResponseToWorker)[TransferrableKeys.data];
+          resolve({
+            top: transferredBoundingClientRect[0],
+            right: transferredBoundingClientRect[1],
+            bottom: transferredBoundingClientRect[2],
+            left: transferredBoundingClientRect[3],
+            width: transferredBoundingClientRect[4],
+            height: transferredBoundingClientRect[5],
+            x: transferredBoundingClientRect[0],
+            y: transferredBoundingClientRect[3],
+          });
+        }
+
+        // Question: Should we populate layout information learned directly onto the Element?
+      });
+
+      // Requesting a boundingClientRect can be depdendent on mutations that have not yet
+      // applied in the main thread. As a result, ensure proper order of DOM mutation and reads
+      // by sending the request for a boundingClientRect as a mutation.
+      mutate({
+        type: MutationRecordType.COMMAND,
+        target: this,
+        commandType: TransferrableCommand.GET_BOUNDING_CLIENT_RECT,
+      });
+
+      setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.
+    });
   }
 }
 reflectProperties([{ id: [''] }], Element);

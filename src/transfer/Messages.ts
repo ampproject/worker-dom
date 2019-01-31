@@ -18,7 +18,8 @@ import { TransferrableEvent } from './TransferrableEvent';
 import { TransferrableMutationRecord } from './TransferrableRecord';
 import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
-import { TransferrableNode, HydrateableNode } from './TransferrableNodes';
+import { TransferrableNode, HydrateableNode, TransferredNode } from './TransferrableNodes';
+import { TransferrableCommand, TransferrableBoundingClientRect } from './TransferrableCommands';
 
 export const enum MessageType {
   // INIT = 0,
@@ -48,13 +49,17 @@ export interface HydrationToWorker {
   readonly [TransferrableKeys.nodes]: HydrateableNode;
 }
 export interface EventToWorker {
-  [key: number]: MessageType.EVENT | TransferrableEvent;
   [TransferrableKeys.type]: MessageType.EVENT;
   [TransferrableKeys.event]: TransferrableEvent;
 }
 export interface ValueSyncToWorker {
-  [key: number]: MessageType.SYNC | TransferrableSyncValue;
   [TransferrableKeys.type]: MessageType.SYNC;
   [TransferrableKeys.sync]: TransferrableSyncValue;
 }
-export type MessageToWorker = EventToWorker | ValueSyncToWorker;
+export interface CommandResponseToWorker {
+  [TransferrableKeys.type]: MessageType.COMMAND;
+  [TransferrableKeys.command]: TransferrableCommand;
+  [TransferrableKeys.target]: TransferredNode;
+  [TransferrableKeys.data]: TransferrableBoundingClientRect;
+}
+export type MessageToWorker = EventToWorker | ValueSyncToWorker | CommandResponseToWorker;
