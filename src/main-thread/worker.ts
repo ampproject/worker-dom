@@ -79,7 +79,7 @@ export function createWorker(
   const worker = new Worker(URL.createObjectURL(new Blob([code])));
   if (callbacks && callbacks.onCreateWorker) {
     // TODO(choumx): Useful to pass `initialStrings` and `keys` too?
-    callbacks.onCreateWorker(hydratedNode);
+    callbacks.onCreateWorker(baseElement);
   }
   return worker;
 }

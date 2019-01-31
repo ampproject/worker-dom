@@ -15,11 +15,10 @@
  */
 
 import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
-import { HydrateableNode } from '../transfer/TransferrableNodes';
 
 export interface WorkerCallbacks {
   // Called when worker consumes the page's initial DOM state.
-  onCreateWorker?: (initialDOM: HydrateableNode) => void;
+  onCreateWorker?: (initialDOM: RenderableElement) => void;
   // Called when the worker is hydrated (sends a HYDRATE message).
   onHydration?: () => void;
   // Called before a message is sent to the worker.

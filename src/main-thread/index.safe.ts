@@ -17,7 +17,7 @@
 import { DOMPurifySanitizer } from './DOMPurifySanitizer';
 import { WorkerCallbacks } from './callbacks';
 import { fetchAndInstall, install } from './install';
-import { readableMessageFromWorker, readableMessageToWorker, readableHydrateableNode } from './debugging';
+import { readableHydrateableNodeFromElement, readableMessageFromWorker, readableMessageToWorker } from './debugging';
 
 /** Users can import this and configure the sanitizer with custom DOMPurify hooks, etc. */
 export const sanitizer = new DOMPurifySanitizer();
@@ -29,7 +29,7 @@ export const callbacks: WorkerCallbacks = {};
 const wrappedCallbacks: WorkerCallbacks = {
   onCreateWorker: initialDOM => {
     if (callbacks.onCreateWorker) {
-      const readable = readableHydrateableNode(initialDOM);
+      const readable = readableHydrateableNodeFromElement(initialDOM);
       callbacks.onCreateWorker(readable as any);
     }
   },

@@ -20,45 +20,61 @@ import { NumericBoolean } from '../utils';
 
 const NODES_ALLOWED_TO_TRANSMIT_TEXT_CONTENT = [NodeType.COMMENT_NODE, NodeType.TEXT_NODE];
 
-function store(value: string, strings: Array<string>, stringMap: Map<string, number>): number {
-  if (stringMap.has(value)) {
-    // Safe to cast since we verified the mapping contains the value
-    return stringMap.get(value) as number;
-  }
-  const count = strings.length;
-  stringMap.set(value, count);
-  strings.push(value);
-
-  return count;
-}
-
-function createHydrateableNode(element: RenderableElement, strings: Array<string>, stringMap: Map<string, number>): HydrateableNode {
+/**
+ * Serializes a DOM element for transport to the worker.
+ * @param element
+ * @param minimizeString Function for minimizing strings for optimized ferrying across postMessage.
+ */
+function createHydrateableNode(element: RenderableElement, minimizeString: (value: string) => number): HydrateableNode {
   const hydrated: HydrateableNode = {
     [TransferrableKeys.index]: element._index_,
     [TransferrableKeys.transferred]: NumericBoolean.FALSE,
     [TransferrableKeys.nodeType]: element.nodeType,
-    [TransferrableKeys.nodeName]: store(element.nodeName, strings, stringMap),
-    [TransferrableKeys.childNodes]: [].map.call(element.childNodes || [], (child: RenderableElement) =>
-      createHydrateableNode(child, strings, stringMap),
-    ),
+    [TransferrableKeys.nodeName]: minimizeString(element.nodeName),
+    [TransferrableKeys.childNodes]: [].map.call(element.childNodes || [], (child: RenderableElement) => createHydrateableNode(child, minimizeString)),
     [TransferrableKeys.attributes]: [].map.call(element.attributes || [], (attribute: Attr) => [
-      store(attribute.namespaceURI || 'null', strings, stringMap),
-      store(attribute.name, strings, stringMap),
-      store(attribute.value, strings, stringMap),
+      minimizeString(attribute.namespaceURI || 'null'),
+      minimizeString(attribute.name),
+      minimizeString(attribute.value),
     ]),
   };
   if (element.namespaceURI !== null) {
-    hydrated[TransferrableKeys.namespaceURI] = store(element.namespaceURI, strings, stringMap);
+    hydrated[TransferrableKeys.namespaceURI] = minimizeString(element.namespaceURI);
   }
   if (NODES_ALLOWED_TO_TRANSMIT_TEXT_CONTENT.includes(element.nodeType) && (element as Text).textContent !== null) {
-    hydrated[TransferrableKeys.textContent] = store(element.textContent as string, strings, stringMap);
+    hydrated[TransferrableKeys.textContent] = minimizeString(element.textContent as string);
   }
   return hydrated;
 }
 
+/**
+ * @param element
+ */
 export function createHydrateableRootNode(element: RenderableElement): { skeleton: HydrateableNode; strings: Array<string> } {
   const strings: Array<string> = [];
   const stringMap: Map<string, number> = new Map();
-  const skeleton = createHydrateableNode(element, strings, stringMap);
+  const minimizeString = (value: string): number => {
+    if (stringMap.has(value)) {
+      // Safe to cast since we verified the mapping contains the value.
+      return stringMap.get(value) as number;
+    }
+    const count = strings.length;
+    stringMap.set(value, count);
+    strings.push(value);
+    return count;
+  };
+  const skeleton = createHydrateableNode(element, minimizeString);
   return { skeleton, strings };
+}
+
+/**
+ * @param element
+ */
+export function createReadableHydrateableRootNode(element: RenderableElement): HydrateableNode {
+  // "Readable" variant doesn't do any string minimization so we can output it for debugging purposes.
+  // Note that this intentionally breaks the type contract of createHydrateableNode() and HydrateableNode.
+  const noop = (value: string): string => {
+    return value;
+  };
+  return createHydrateableNode(element, noop as any);
 }

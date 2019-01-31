@@ -30,7 +30,7 @@ import { TransferrableEvent } from '../transfer/TransferrableEvent';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
-import { getHydrateableNodeString } from './serialize';
+import { createReadableHydrateableRootNode } from './serialize';
 
 /**
  * Reverse mapping of src/worker-thread/MutationRecord.MutationRecord enum.
@@ -44,19 +44,27 @@ const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
 };
 
 /**
+ * @param element
+ */
+export function readableHydrateableNodeFromElement(element: RenderableElement): Object {
+  const node = createReadableHydrateableRootNode(element);
+  return readableHydrateableNode(node);
+}
+
+/**
  * @param node
  */
-export function readableHydrateableNode(node: HydrateableNode): Object {
+function readableHydrateableNode(node: HydrateableNode): Object {
   const out: any = {
     nodeType: node[TransferrableKeys.nodeType],
-    nodeName: getHydrateableNodeString(node[TransferrableKeys.nodeName]),
+    nodeName: node[TransferrableKeys.nodeName],
   };
   const attributes = node[TransferrableKeys.attributes];
   if (attributes) {
     out['attributes'] = attributes.map(attr => {
       return {
-        name: getHydrateableNodeString(attr[1]),
-        value: getHydrateableNodeString(attr[2]),
+        name: attr[1],
+        value: attr[2],
       };
     });
   }
