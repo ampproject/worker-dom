@@ -78,7 +78,6 @@ export function createWorker(
 //# sourceURL=${encodeURI(authorScriptURL)}`;
   const worker = new Worker(URL.createObjectURL(new Blob([code])));
   if (callbacks && callbacks.onCreateWorker) {
-    // TODO(choumx): Useful to pass `initialStrings` and `keys` too?
     callbacks.onCreateWorker(baseElement);
   }
   return worker;
