@@ -67,7 +67,8 @@ export function install(
       prepareMutate(worker, sanitizer);
       worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
-        if (!ALLOWABLE_MESSAGE_TYPES.includes(data[TransferrableKeys.type])) {
+        const type = data[TransferrableKeys.type];
+        if (!ALLOWABLE_MESSAGE_TYPES.includes(type)) {
           return;
         }
         // TODO(KB): Hydration has special rules limiting the types of allowed mutations.
@@ -78,8 +79,13 @@ export function install(
           (data as MutationFromWorker)[TransferrableKeys.mutations],
         );
         // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
-        if (callbacks && callbacks.onReceiveMessage) {
-          callbacks.onReceiveMessage(message);
+        if (callbacks) {
+          if (type === MessageType.HYDRATE && callbacks.onHydration) {
+            callbacks.onHydration();
+          }
+          if (callbacks.onReceiveMessage) {
+            callbacks.onReceiveMessage(message);
+          }
         }
       };
     }
