@@ -52,7 +52,6 @@ function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
     mutation.oldValue != null && (transferable[TransferrableKeys.oldValue] = storeString(mutation.oldValue));
     mutation.propertyName && (transferable[TransferrableKeys.propertyName] = storeString(mutation.propertyName));
     mutation.value != null && (transferable[TransferrableKeys.value] = storeString(mutation.value));
-    mutation.commandType !== undefined && (transferable[TransferrableKeys.command] = mutation.commandType);
     mutation.addedEvents && (transferable[TransferrableKeys.addedEvents] = mutation.addedEvents);
     mutation.removedEvents && (transferable[TransferrableKeys.removedEvents] = mutation.removedEvents);
 

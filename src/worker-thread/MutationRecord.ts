@@ -16,7 +16,6 @@
 
 import { Node } from './dom/Node';
 import { TransferrableEventSubscriptionChange } from '../transfer/TransferrableEvent';
-import { TransferrableCommand } from '../transfer/TransferrableCommands';
 
 export type MutationRecordMutableKey =
   | 'addedNodes'
@@ -49,8 +48,6 @@ export interface MutationRecord {
   readonly propertyName?: string | null;
   // Mutation of attributes or properties must pass a value representing the new value.
   readonly value?: string | null;
-  // Command mutations require a type
-  readonly commandType?: TransferrableCommand;
   // Event subscription mutations
   readonly addedEvents?: Array<TransferrableEventSubscriptionChange>;
   readonly removedEvents?: Array<TransferrableEventSubscriptionChange>;
@@ -64,5 +61,6 @@ export const enum MutationRecordType {
   CHARACTER_DATA = 1,
   CHILD_LIST = 2,
   PROPERTIES = 3,
-  COMMAND = 4,
+  EVENT_SUBSCRIPTION = 4,
+  GET_BOUNDING_CLIENT_RECT = 5,
 }

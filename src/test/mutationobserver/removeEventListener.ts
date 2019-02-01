@@ -20,7 +20,6 @@ import { Element } from '../../worker-thread/dom/Element';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { getForTesting as get } from '../../worker-thread/strings';
-import { TransferrableCommand } from '../../transfer/TransferrableCommands';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -44,9 +43,8 @@ test.serial.cb('Element.removeEventListener mutation observed when node is conne
     (mutations: MutationRecord[]): void => {
       t.deepEqual(mutations, [
         {
-          type: MutationRecordType.COMMAND,
+          type: MutationRecordType.EVENT_SUBSCRIPTION,
           target: el,
-          commandType: TransferrableCommand.EVENT_SUBSCRIPTION,
           removedEvents: [
             {
               [TransferrableKeys.type]: get('mouseenter') as number,
@@ -73,9 +71,8 @@ test.serial.cb('Element.removeEventListener mutation observed when node is not y
     (mutations: MutationRecord[]): void => {
       t.deepEqual(mutations, [
         {
-          type: MutationRecordType.COMMAND,
+          type: MutationRecordType.EVENT_SUBSCRIPTION,
           target: el,
-          commandType: TransferrableCommand.EVENT_SUBSCRIPTION,
           removedEvents: [
             {
               [TransferrableKeys.type]: get('mouseenter') as number,

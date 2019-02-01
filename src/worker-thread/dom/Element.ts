@@ -29,8 +29,8 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
 import { toLower } from '../../utils';
-import { MessageToWorker, MessageType, CommandResponseToWorker } from '../../transfer/Messages';
-import { TransferrableCommand, TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
+import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
+import { TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
 
 export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
 export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
@@ -416,11 +416,10 @@ export class Element extends ParentNode {
       } else {
         addEventListener('message', ({ data }: { data: MessageToWorker }) => {
           if (
-            data[TransferrableKeys.type] === MessageType.COMMAND &&
-            (data as CommandResponseToWorker)[TransferrableKeys.command] === TransferrableCommand.GET_BOUNDING_CLIENT_RECT &&
-            (data as CommandResponseToWorker)[TransferrableKeys.target][TransferrableKeys.index] === this[TransferrableKeys.index]
+            data[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT &&
+            (data as BoundingClientRectToWorker)[TransferrableKeys.target][TransferrableKeys.index] === this[TransferrableKeys.index]
           ) {
-            const transferredBoundingClientRect: TransferrableBoundingClientRect = (data as CommandResponseToWorker)[TransferrableKeys.data];
+            const transferredBoundingClientRect: TransferrableBoundingClientRect = (data as BoundingClientRectToWorker)[TransferrableKeys.data];
             resolve({
               top: transferredBoundingClientRect[0],
               right: transferredBoundingClientRect[1],
@@ -437,9 +436,8 @@ export class Element extends ParentNode {
         // applied in the main thread. As a result, ensure proper order of DOM mutation and reads
         // by sending the request for a boundingClientRect as a mutation.
         mutate({
-          type: MutationRecordType.COMMAND,
+          type: MutationRecordType.GET_BOUNDING_CLIENT_RECT,
           target: this,
-          commandType: TransferrableCommand.GET_BOUNDING_CLIENT_RECT,
         });
 
         setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.

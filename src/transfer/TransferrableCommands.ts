@@ -14,10 +14,5 @@
  * limitations under the License.
  */
 
-export const enum TransferrableCommand {
-  EVENT_SUBSCRIPTION = 0,
-  GET_BOUNDING_CLIENT_RECT = 1,
-}
-
 // [top, right, bottom, left, width, height]
 export type TransferrableBoundingClientRect = [number, number, number, number, number, number];

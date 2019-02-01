@@ -24,7 +24,7 @@
 
 import { getNode } from './nodes';
 import { get as getString } from './strings';
-import { EventToWorker, MessageFromWorker, MessageType, MessageToWorker, ValueSyncToWorker, CommandResponseToWorker } from '../transfer/Messages';
+import { EventToWorker, MessageFromWorker, MessageType, MessageToWorker, ValueSyncToWorker, BoundingClientRectToWorker } from '../transfer/Messages';
 import { HydrateableNode, TransferredNode } from '../transfer/TransferrableNodes';
 import { TransferrableEvent } from '../transfer/TransferrableEvent';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
@@ -40,15 +40,8 @@ const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
   '1': 'CHARACTER_DATA',
   '2': 'CHILD_LIST',
   '3': 'PROPERTIES',
-  '4': 'COMMAND',
-};
-
-/**
- * Reverse mapping of src/transfer/TransferrableCommands.TransferrableCommand enum.
- */
-const COMMAND_TYPE_REVERSE_MAPPING = {
-  '0': 'EVENT_SUBSCRIPTION',
-  '1': 'GET_BOUNDING_CLIENT_RECT',
+  '4': 'EVENT_SUBSCRIPTION',
+  '5': 'GET_BOUNDING_CLIENT_RECT',
 };
 
 /**
@@ -150,10 +143,6 @@ function readableTransferrableMutationRecord(r: TransferrableMutationRecord): Ob
   if (oldValue !== undefined) {
     out['oldValue'] = getString(oldValue);
   }
-  const command = r[TransferrableKeys.command];
-  if (command !== undefined) {
-    out['command'] = COMMAND_TYPE_REVERSE_MAPPING[command];
-  }
   const addedEvents = r[TransferrableKeys.addedEvents];
   if (addedEvents !== undefined) {
     out['addedEvents'] = addedEvents;
@@ -189,10 +178,9 @@ export function readableMessageToWorker(message: MessageToWorker): Object {
       type: 'SYNC',
       sync: readableTransferrableSyncValue(sync),
     };
-  } else if (isCommandResponse(message)) {
+  } else if (isBoundingClientRect(message)) {
     return {
-      type: 'COMMAND',
-      commandType: message[TransferrableKeys.command],
+      type: 'GET_BOUNDING_CLIENT_RECT',
       target: readableTransferredNode(message[TransferrableKeys.target]),
     };
   } else {
@@ -217,8 +205,8 @@ function isValueSync(message: MessageToWorker): message is ValueSyncToWorker {
 /**
  * @param data
  */
-function isCommandResponse(message: MessageToWorker): message is CommandResponseToWorker {
-  return message[TransferrableKeys.type] == MessageType.COMMAND;
+function isBoundingClientRect(message: MessageToWorker): message is BoundingClientRectToWorker {
+  return message[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT;
 }
 
 /**
