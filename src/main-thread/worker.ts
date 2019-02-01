@@ -76,7 +76,11 @@ export function createWorker(
       ${authorScript}
     }).call(WorkerThread.workerDOM);
 //# sourceURL=${encodeURI(authorScriptURL)}`;
-  return new Worker(URL.createObjectURL(new Blob([code])));
+  const worker = new Worker(URL.createObjectURL(new Blob([code])));
+  if (callbacks && callbacks.onCreateWorker) {
+    callbacks.onCreateWorker(baseElement);
+  }
+  return worker;
 }
 
 /**
