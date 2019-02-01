@@ -32,6 +32,7 @@
     "build": "cross-env MINIFY_BUNDLE=true npm run ~rollup",
     "presize": "npm run build",
     "size": "bundlesize",
+    "prerelease": "npm run build",
     "release": "np"
   },
   "dependencies": {
