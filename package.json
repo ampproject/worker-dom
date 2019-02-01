@@ -32,8 +32,8 @@
     "build": "cross-env MINIFY_BUNDLE=true npm run ~rollup",
     "presize": "npm run build",
     "size": "bundlesize",
-    "prerelease": "npm run build",
-    "release": "np"
+    "release": "np",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "dompurify": "1.0.8"
