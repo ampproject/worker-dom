@@ -32,15 +32,7 @@
     "build": "cross-env MINIFY_BUNDLE=true npm run ~rollup",
     "presize": "npm run build",
     "size": "bundlesize",
-    "release:apply": "git add .",
-    "release:commit": "cross-var git commit -m 'Release $npm_package_version'",
-    "release:tag": "cross-var git tag -a v$npm_package_version -m '$npm_package_version'",
-    "release:push": "git push origin master --no-verify",
-    "release:gren": "gren release --override",
-    "release:changelog": "gren changelog --override",
-    "release:push-tag": "git push origin v$npm_package_version --no-verify",
-    "prerelease": "npm install",
-    "release": "npm-run-all --serial size release:apply release:commit release:tag release:gren release:changelog release:apply release:commit release:push release:push-tag"
+    "release": "np"
   },
   "dependencies": {
     "dompurify": "1.0.8"
@@ -61,10 +53,10 @@
     "cross-env": "5.2.0",
     "cross-var": "1.1.0",
     "esm": "3.2.0",
-    "github-release-notes": "0.17.0",
     "husky": "1.3.1",
     "lint-staged": "8.1.1",
     "magic-string": "0.25.1",
+    "np": "4.0.2",
     "npm-run-all": "4.1.5",
     "polka": "0.5.1",
     "prettier": "1.16.3",
