@@ -56,7 +56,7 @@
     "esm": "3.2.0",
     "husky": "1.3.1",
     "lint-staged": "8.1.1",
-    "magic-string": "0.25.1",
+    "magic-string": "0.25.2",
     "np": "4.0.2",
     "npm-run-all": "4.1.5",
     "polka": "0.5.1",
