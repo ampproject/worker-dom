@@ -15,7 +15,7 @@
  */
 
 import { Node } from './dom/Node';
-import { MutationRecord, MutationRecordType } from './MutationRecord';
+import { MutationRecord } from './MutationRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 const observers: MutationObserver[] = [];
@@ -43,7 +43,8 @@ const pushMutation = (observer: MutationObserver, record: MutationRecord): void 
  */
 export function mutate(record: MutationRecord): void {
   observers.forEach(observer => {
-    if (!observer.options[TransferrableKeys.subtreeFlattened] || record.type === MutationRecordType.COMMAND) {
+    if (!observer.options.flatten) {
+      // TODO: Restore? || record.type === MutationRecordType.COMMAND
       pushMutation(observer, record);
       return;
     }
@@ -73,7 +74,7 @@ interface MutationObserverInit {
 
   // Except for this one (not specced) that will force all mutations to be observed
   // Without flattening the record to the node requested to be observed.
-  [TransferrableKeys.subtreeFlattened]?: boolean;
+  flatten?: boolean;
 }
 
 export class MutationObserver {
@@ -94,7 +95,7 @@ export class MutationObserver {
   public observe(target: Node, options?: MutationObserverInit): void {
     this.disconnect();
     this.target = target;
-    this.options = Object.assign({ [TransferrableKeys.subtreeFlattened]: false }, options);
+    this.options = Object.assign({ flatten: false }, options);
 
     observers.push(this);
   }

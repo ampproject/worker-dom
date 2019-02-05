@@ -16,8 +16,8 @@
 
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { TransferredNode } from './TransferrableNodes';
-import { TransferrableEventSubscriptionChange } from './TransferrableEvent';
 import { TransferrableKeys } from './TransferrableKeys';
+import { TransferrableEventSubscriptionChange } from './TransferrableEvent';
 
 // The TransferrableMutationRecord interface is modification and extension of
 // the real MutationRecord, with changes to support the transferring of

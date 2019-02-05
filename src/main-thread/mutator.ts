@@ -20,7 +20,8 @@ import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { TransferrableNode } from '../transfer/TransferrableNodes';
 import { getNode, createNode } from './nodes';
 import { store as storeString, get as getString } from './strings';
-import { process } from './command';
+import { process as processEventSubscription } from './commands/event-subscription';
+import { process as processBoundingClientRect } from './commands/bounding-client-rect';
 
 let MUTATION_QUEUE: Array<TransferrableMutationRecord> = [];
 let PENDING_MUTATIONS: boolean = false;
@@ -104,8 +105,11 @@ const mutators: {
       }
     }
   },
-  [MutationRecordType.COMMAND](mutation: TransferrableMutationRecord) {
-    process(worker, mutation);
+  [MutationRecordType.EVENT_SUBSCRIPTION](mutation: TransferrableMutationRecord) {
+    processEventSubscription(worker, mutation);
+  },
+  [MutationRecordType.GET_BOUNDING_CLIENT_RECT](mutation: TransferrableMutationRecord) {
+    processBoundingClientRect(worker, mutation);
   },
 };
 

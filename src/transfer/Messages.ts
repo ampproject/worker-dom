@@ -18,18 +18,19 @@ import { TransferrableEvent } from './TransferrableEvent';
 import { TransferrableMutationRecord } from './TransferrableRecord';
 import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
-import { TransferrableNode, HydrateableNode } from './TransferrableNodes';
+import { TransferrableNode, HydrateableNode, TransferredNode } from './TransferrableNodes';
+import { TransferrableBoundingClientRect } from './TransferrableCommands';
 
 export const enum MessageType {
   // INIT = 0,
   EVENT = 1,
   HYDRATE = 2,
   MUTATE = 3,
-  COMMAND = 4,
-  SYNC = 5,
-  // NAVIGATION_PUSH_STATE = 5,
-  // NAVIGATION_REPLACE_STATE = 6,
-  // NAVIGATION_POP_STATE = 7,
+  SYNC = 4,
+  GET_BOUNDING_CLIENT_RECT = 5,
+  // NAVIGATION_PUSH_STATE = 6,
+  // NAVIGATION_REPLACE_STATE = 7,
+  // NAVIGATION_POP_STATE = 8,
 }
 
 export interface MutationFromWorker {
@@ -48,13 +49,16 @@ export interface HydrationToWorker {
   readonly [TransferrableKeys.nodes]: HydrateableNode;
 }
 export interface EventToWorker {
-  [key: number]: MessageType.EVENT | TransferrableEvent;
   [TransferrableKeys.type]: MessageType.EVENT;
   [TransferrableKeys.event]: TransferrableEvent;
 }
 export interface ValueSyncToWorker {
-  [key: number]: MessageType.SYNC | TransferrableSyncValue;
   [TransferrableKeys.type]: MessageType.SYNC;
   [TransferrableKeys.sync]: TransferrableSyncValue;
 }
-export type MessageToWorker = EventToWorker | ValueSyncToWorker;
+export interface BoundingClientRectToWorker {
+  [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT;
+  [TransferrableKeys.target]: TransferredNode;
+  [TransferrableKeys.data]: TransferrableBoundingClientRect;
+}
+export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker;
