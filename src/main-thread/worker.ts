@@ -93,3 +93,14 @@ export function messageToWorker(worker: Worker, message: MessageToWorker) {
   }
   worker.postMessage(message);
 }
+
+/**
+ *
+ * @param worker
+ */
+export function terminateWorker(worker: Worker): void {
+  if (callbacks_ && callbacks_.onTerminateWorker) {
+    callbacks_.onTerminateWorker();
+  }
+  worker.terminate();
+}

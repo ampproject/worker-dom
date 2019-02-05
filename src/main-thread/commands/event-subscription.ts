@@ -24,6 +24,7 @@ import { get as getString } from '../strings';
 
 // TODO(choumx): Support SYNC events for properties other than 'value', e.g. 'checked'.
 const KNOWN_LISTENERS: Array<(event: Event) => any> = [];
+export let LAST_VALID_INTERACTION: number | null = null;
 
 /**
  * Instead of a whitelist of elements that need their value tracked, use the existence
@@ -65,6 +66,10 @@ const fireValueChange = (worker: Worker, node: RenderableElement): void => {
  * @return eventHandler function consuming event and dispatching to worker thread
  */
 const eventHandler = (worker: Worker, index: number) => (event: Event | KeyboardEvent): void => {
+  // An event should be fired to the worker.
+  // This means we should reset the allow timer for mutations.
+  LAST_VALID_INTERACTION = Date.now();
+
   if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
     fireValueChange(worker, event.currentTarget as RenderableElement);
   }

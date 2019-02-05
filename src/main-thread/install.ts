@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { createWorker } from './worker';
+import { createWorker, terminateWorker } from './worker';
 import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
 import { prepareMutate, mutate } from './mutator';
 import { set as setPhase, Phases } from '../transfer/phase';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { WorkerCallbacks } from './callbacks';
+import { LAST_VALID_INTERACTION } from './commands/event-subscription';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
+const ALLOWED_INTERACTION_DELAY = 1000;
 
 /**
  * @param baseElement
@@ -59,6 +61,7 @@ export function install(
   callbacks?: WorkerCallbacks,
   sanitizer?: Sanitizer,
 ): void {
+  const interactionLimitsEnabled = sanitizer !== undefined;
   prepareNodes(baseElement);
   fetchPromise.then(([workerDOMScript, authorScript, authorScriptURL]) => {
     if (workerDOMScript && authorScript && authorScriptURL) {
@@ -68,9 +71,17 @@ export function install(
       worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
         const type = data[TransferrableKeys.type];
+
         if (!ALLOWABLE_MESSAGE_TYPES.includes(type)) {
           return;
         }
+
+        if (interactionLimitsEnabled && LAST_VALID_INTERACTION !== null && Date.now() - LAST_VALID_INTERACTION >= ALLOWED_INTERACTION_DELAY) {
+          // This request to mutate is beyond the interaction timeline. Terminate it.
+          terminateWorker(worker);
+          return;
+        }
+
         // TODO(KB): Hydration has special rules limiting the types of allowed mutations.
         // Re-introduce Hydration and add a specialized handler.
         mutate(

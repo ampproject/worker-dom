@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>DBMON</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="dbmon.css" rel="stylesheet" type="text/css">
+  <script src="/dist/index.safe.mjs" type="module"></script>
+  <script src="/dist/index.safe.js" nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/index.js" defer></script> -->
+</head>
+<body>
+  <div src="dbmon.js" id="upgrade-me"></div>
+  <script type="module">
+    import {upgradeElement} from '/dist/index.safe.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.safe.mjs');
+  </script>
+  <script nomodule async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.safe.js');
+    }, false);
+  </script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.safe.js');
+    }, false);
+  </script> -->
+</body>
+</html>

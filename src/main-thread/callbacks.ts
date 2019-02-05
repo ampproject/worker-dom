@@ -19,6 +19,8 @@ import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
 export interface WorkerCallbacks {
   // Called when worker consumes the page's initial DOM state.
   onCreateWorker?: (initialDOM: RenderableElement) => void;
+  // Called when a worker is terminated.
+  onTerminateWorker?: () => void;
   // Called when the worker is hydrated (sends a HYDRATE message).
   onHydration?: () => void;
   // Called before a message is sent to the worker.
