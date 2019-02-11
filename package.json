@@ -45,7 +45,7 @@
     "@babel/plugin-proposal-class-properties": "7.3.0",
     "@babel/plugin-proposal-object-rest-spread": "7.3.2",
     "@babel/preset-env": "7.3.1",
-    "acorn": "6.0.7",
+    "acorn": "6.1.0",
     "acorn-walk": "6.1.1",
     "ava": "1.2.1",
     "babel-plugin-minify-replace": "0.5.0",
