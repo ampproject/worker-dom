@@ -43,7 +43,7 @@ test.serial.cb('Element.removeEventListener mutation observed when node is conne
     (mutations: MutationRecord[]): void => {
       t.deepEqual(mutations, [
         {
-          type: MutationRecordType.COMMAND,
+          type: MutationRecordType.EVENT_SUBSCRIPTION,
           target: el,
           removedEvents: [
             {
@@ -71,7 +71,7 @@ test.serial.cb('Element.removeEventListener mutation observed when node is not y
     (mutations: MutationRecord[]): void => {
       t.deepEqual(mutations, [
         {
-          type: MutationRecordType.COMMAND,
+          type: MutationRecordType.EVENT_SUBSCRIPTION,
           target: el,
           removedEvents: [
             {

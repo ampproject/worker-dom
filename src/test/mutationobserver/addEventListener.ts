@@ -46,7 +46,7 @@ test.serial.cb('Element.addEventListener mutation observed when node is connecte
     (mutations: MutationRecord[]): void => {
       t.deepEqual(mutations, [
         {
-          type: MutationRecordType.COMMAND,
+          type: MutationRecordType.EVENT_SUBSCRIPTION,
           target: el,
           addedEvents: [
             {
@@ -73,7 +73,7 @@ test.serial.cb('Element.addEventListener mutation observed when node is not yet 
     (mutations: MutationRecord[]): void => {
       t.deepEqual(mutations, [
         {
-          type: MutationRecordType.COMMAND,
+          type: MutationRecordType.EVENT_SUBSCRIPTION,
           target: el,
           addedEvents: [
             {

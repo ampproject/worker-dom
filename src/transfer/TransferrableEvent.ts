@@ -20,20 +20,18 @@ import { MessageType, EventToWorker } from './Messages';
 import { get } from '../worker-thread/nodes';
 import { Event } from '../worker-thread/Event';
 
-type TransferrableTarget = TransferredNode;
-
 export interface TransferrableEvent {
   readonly [TransferrableKeys.index]: number;
   readonly [TransferrableKeys.bubbles]?: boolean;
   readonly [TransferrableKeys.cancelable]?: boolean;
   [TransferrableKeys.cancelBubble]?: boolean;
-  readonly [TransferrableKeys.currentTarget]?: TransferrableTarget;
+  readonly [TransferrableKeys.currentTarget]?: TransferredNode;
   readonly [TransferrableKeys.defaultPrevented]?: boolean;
   readonly [TransferrableKeys.eventPhase]?: number;
   readonly [TransferrableKeys.isTrusted]?: boolean;
   [TransferrableKeys.returnValue]?: boolean;
   // readonly srcElement: TransferrableTarget | null;
-  readonly [TransferrableKeys.target]?: TransferrableTarget | null;
+  readonly [TransferrableKeys.target]?: TransferredNode | null;
   readonly [TransferrableKeys.timeStamp]?: number;
   readonly [TransferrableKeys.type]: string;
   readonly [TransferrableKeys.scoped]?: boolean;

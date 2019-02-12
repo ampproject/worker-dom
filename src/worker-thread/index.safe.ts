@@ -177,7 +177,7 @@ function dereferenceGlobals(global: WorkerGlobalScope) {
       return;
     }
     try {
-      console.info(`  Deleting ${property}...`);
+      console.info(`Deleting ${property}...`);
       delete object[property];
     } catch (e) {
       console.warn(e);

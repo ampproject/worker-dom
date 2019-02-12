@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-import { MessageType } from '../transfer/Messages';
-import { messageToWorker } from './worker';
-import { NumericBoolean } from '../utils';
-import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { getNode } from './nodes';
-import { get as getString } from './strings';
+import { messageToWorker } from '../worker';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { MessageType } from '../../transfer/Messages';
+import { NumericBoolean } from '../../utils';
+import { getNode } from '../nodes';
+import { TransferrableMutationRecord } from '../../transfer/TransferrableRecord';
+import { get as getString } from '../strings';
 
 // TODO(choumx): Support SYNC events for properties other than 'value', e.g. 'checked'.
-
 const KNOWN_LISTENERS: Array<(event: Event) => any> = [];
 
 /**
@@ -96,24 +95,6 @@ const eventHandler = (worker: Worker, index: number) => (event: Event | Keyboard
 };
 
 /**
- * Process commands transfered from worker thread to main thread.
- * @param nodesInstance nodes instance to execute commands against.
- * @param worker whom to dispatch events toward.
- * @param mutation mutation record containing commands to execute.
- */
-export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
-  const index: number = mutation[TransferrableKeys.target];
-  const target = getNode(index);
-
-  (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub => {
-    processListenerChange(worker, target, false, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]);
-  });
-  (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub => {
-    processListenerChange(worker, target, true, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]);
-  });
-}
-
-/**
  * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,
  * ensure that only a single 'change' event is attached to prevent sending values multiple times.
  * @param worker worker issuing listener changes
@@ -122,7 +103,7 @@ export function process(worker: Worker, mutation: TransferrableMutationRecord): 
  * @param type event type requested to change
  * @param index number in the listeners array this event corresponds to.
  */
-export function processListenerChange(worker: Worker, target: RenderableElement, addEvent: boolean, type: string, index: number): void {
+function processListenerChange(worker: Worker, target: RenderableElement, addEvent: boolean, type: string, index: number): void {
   let changeEventSubscribed: boolean = target.onchange !== null;
   const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
   const isChangeEvent = type === 'change';
@@ -142,4 +123,20 @@ export function processListenerChange(worker: Worker, target: RenderableElement,
   if (shouldTrack && !changeEventSubscribed) {
     applyDefaultChangeListener(worker, target as RenderableElement);
   }
+}
+
+/**
+ * Process event subscription changes transfered from worker thread to main thread.
+ * @param worker whom to dispatch events toward.
+ * @param mutation mutation record containing commands to execute.
+ */
+export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
+  const target = getNode(mutation[TransferrableKeys.target]);
+
+  (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub =>
+    processListenerChange(worker, target, false, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
+  );
+  (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub =>
+    processListenerChange(worker, target, true, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
+  );
 }

@@ -24,7 +24,7 @@
 
 import { getNode } from './nodes';
 import { get as getString } from './strings';
-import { EventToWorker, MessageFromWorker, MessageType, MessageToWorker, ValueSyncToWorker } from '../transfer/Messages';
+import { EventToWorker, MessageFromWorker, MessageType, MessageToWorker, ValueSyncToWorker, BoundingClientRectToWorker } from '../transfer/Messages';
 import { HydrateableNode, TransferredNode } from '../transfer/TransferrableNodes';
 import { TransferrableEvent } from '../transfer/TransferrableEvent';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
@@ -40,7 +40,8 @@ const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
   '1': 'CHARACTER_DATA',
   '2': 'CHILD_LIST',
   '3': 'PROPERTIES',
-  '4': 'COMMAND',
+  '4': 'EVENT_SUBSCRIPTION',
+  '5': 'GET_BOUNDING_CLIENT_RECT',
 };
 
 /**
@@ -177,6 +178,11 @@ export function readableMessageToWorker(message: MessageToWorker): Object {
       type: 'SYNC',
       sync: readableTransferrableSyncValue(sync),
     };
+  } else if (isBoundingClientRect(message)) {
+    return {
+      type: 'GET_BOUNDING_CLIENT_RECT',
+      target: readableTransferredNode(message[TransferrableKeys.target]),
+    };
   } else {
     return 'Unrecognized MessageToWorker type: ' + message[TransferrableKeys.type];
   }
@@ -185,15 +191,22 @@ export function readableMessageToWorker(message: MessageToWorker): Object {
 /**
  * @param data
  */
-function isEvent(message: EventToWorker | ValueSyncToWorker): message is EventToWorker {
+function isEvent(message: MessageToWorker): message is EventToWorker {
   return message[TransferrableKeys.type] == MessageType.EVENT;
 }
 
 /**
  * @param data
  */
-function isValueSync(message: EventToWorker | ValueSyncToWorker): message is ValueSyncToWorker {
+function isValueSync(message: MessageToWorker): message is ValueSyncToWorker {
   return message[TransferrableKeys.type] == MessageType.SYNC;
+}
+
+/**
+ * @param data
+ */
+function isBoundingClientRect(message: MessageToWorker): message is BoundingClientRectToWorker {
+  return message[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT;
 }
 
 /**

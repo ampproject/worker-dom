@@ -333,7 +333,7 @@ export abstract class Node {
 
     mutate({
       target: this,
-      type: MutationRecordType.COMMAND,
+      type: MutationRecordType.EVENT_SUBSCRIPTION,
       addedEvents: [
         {
           [TransferrableKeys.type]: storeString(type),
@@ -358,7 +358,7 @@ export abstract class Node {
       handlers.splice(index, 1);
       mutate({
         target: this,
-        type: MutationRecordType.COMMAND,
+        type: MutationRecordType.EVENT_SUBSCRIPTION,
         removedEvents: [
           {
             [TransferrableKeys.type]: storeString(type),
