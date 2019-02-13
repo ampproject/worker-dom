@@ -48,6 +48,7 @@ import { HydrateableNode } from '../transfer/TransferrableNodes';
 
 export interface WorkerDOMGlobalScope {
   document: Document;
+  navigator: { userAgent: string };
   addEventListener: (type: string, handler: EventHandler) => void;
   removeEventListener: (type: string, handler: EventHandler) => void;
   localStorage: object;
