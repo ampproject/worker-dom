@@ -93,7 +93,7 @@ export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): 
  * @param id
  * @return RenderableElement | null
  */
-export function getNode(id: number): RenderableElement {
+export function getNode(id: number): RenderableElement | null {
   const node = NODES.get(id);
 
   if (node && node.nodeName === 'BODY') {
