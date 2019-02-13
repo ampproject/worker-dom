@@ -45,6 +45,7 @@ const mutators: {
     (mutation[TransferrableKeys.removedNodes] || []).forEach(node => {
       const retrieved = getNode(node[TransferrableKeys.index]);
       if (!retrieved) {
+        console.error('ERROR: getNode() yields a null value. Node id was not found.');
         return;
       }
       retrieved.remove();
@@ -151,6 +152,7 @@ function syncFlush(): void {
   MUTATION_QUEUE.forEach(mutation => {
     const node = getNode(mutation[TransferrableKeys.target]);
     if (!node) {
+      console.error('ERROR: getNode() yields a null value. Node id was not found.');
       return;
     }
     mutators[mutation[TransferrableKeys.type]](mutation, node);

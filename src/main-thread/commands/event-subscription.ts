@@ -134,6 +134,7 @@ export function process(worker: Worker, mutation: TransferrableMutationRecord): 
   const target = getNode(mutation[TransferrableKeys.target]);
 
   if (!target) {
+    console.error('ERROR: getNode() yields a null value. Node id was not found.');
     return;
   }
 
