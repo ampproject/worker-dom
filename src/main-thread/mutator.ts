@@ -42,14 +42,14 @@ const mutators: {
   [key: number]: (mutation: TransferrableMutationRecord, target: Node) => void;
 } = {
   [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, target: HTMLElement) {
-    (mutation[TransferrableKeys.removedNodes] || []).forEach(node => {
-      const nodeId = node[TransferrableKeys.index];
-      const retrieved = getNode(nodeId);
-      if (!retrieved) {
+    (mutation[TransferrableKeys.removedNodes] || []).forEach(nodeReference => {
+      const nodeId = nodeReference[TransferrableKeys.index];
+      const node = getNode(nodeId);
+      if (!node) {
         console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
         return;
       }
-      retrieved.remove();
+      node.remove();
     });
 
     const addedNodes = mutation[TransferrableKeys.addedNodes];
