@@ -91,7 +91,7 @@ export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): 
 /**
  * Returns the real DOM Element corresponding to a serialized Element object.
  * @param id
- * @return RenderableElement
+ * @return RenderableElement | null
  */
 export function getNode(id: number): RenderableElement {
   const node = NODES.get(id);
