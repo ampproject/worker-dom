@@ -30,6 +30,10 @@ import { NumericBoolean } from '../../utils';
 export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
   const target = getNode(mutation[TransferrableKeys.target]);
 
+  if (!target) {
+    return;
+  }
+
   const boundingRect = target.getBoundingClientRect();
   messageToWorker(worker, {
     [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,

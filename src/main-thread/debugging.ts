@@ -103,6 +103,7 @@ export function readableMessageFromWorker(message: MessageFromWorker): Object {
  */
 function readableTransferrableMutationRecord(r: TransferrableMutationRecord): Object {
   const target = r[TransferrableKeys.target];
+
   const out: any = {
     type: MUTATION_RECORD_TYPE_REVERSE_MAPPING[r[TransferrableKeys.type]],
     target: getNode(target) || target,

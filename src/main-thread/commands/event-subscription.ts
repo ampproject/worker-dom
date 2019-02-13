@@ -133,6 +133,10 @@ function processListenerChange(worker: Worker, target: RenderableElement, addEve
 export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
   const target = getNode(mutation[TransferrableKeys.target]);
 
+  if (!target) {
+    return;
+  }
+
   (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub =>
     processListenerChange(worker, target, false, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
   );
