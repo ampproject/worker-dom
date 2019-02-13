@@ -28,10 +28,11 @@ import { NumericBoolean } from '../../utils';
  * @param mutation mutation record containing commands to execute.
  */
 export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
-  const target = getNode(mutation[TransferrableKeys.target]);
+  const nodeId = mutation[TransferrableKeys.target];
+  const target = getNode(nodeId);
 
   if (!target) {
-    console.error('ERROR: getNode() yields a null value. Node id was not found.');
+    console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
     return;
   }
 

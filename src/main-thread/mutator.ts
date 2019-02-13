@@ -43,9 +43,10 @@ const mutators: {
 } = {
   [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, target: HTMLElement) {
     (mutation[TransferrableKeys.removedNodes] || []).forEach(node => {
-      const retrieved = getNode(node[TransferrableKeys.index]);
+      const nodeId = node[TransferrableKeys.index];
+      const retrieved = getNode(nodeId);
       if (!retrieved) {
-        console.error('ERROR: getNode() yields a null value. Node id was not found.');
+        console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
         return;
       }
       retrieved.remove();
@@ -150,9 +151,10 @@ export function mutate(nodes: Array<TransferrableNode>, stringValues: Array<stri
  */
 function syncFlush(): void {
   MUTATION_QUEUE.forEach(mutation => {
-    const node = getNode(mutation[TransferrableKeys.target]);
+    const nodeId = mutation[TransferrableKeys.target];
+    const node = getNode(nodeId);
     if (!node) {
-      console.error('ERROR: getNode() yields a null value. Node id was not found.');
+      console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
       return;
     }
     mutators[mutation[TransferrableKeys.type]](mutation, node);
