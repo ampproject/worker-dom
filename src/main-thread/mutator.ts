@@ -42,7 +42,13 @@ const mutators: {
   [key: number]: (mutation: TransferrableMutationRecord, target: Node) => void;
 } = {
   [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, target: HTMLElement) {
-    (mutation[TransferrableKeys.removedNodes] || []).forEach(node => getNode(node[TransferrableKeys.index]).remove());
+    (mutation[TransferrableKeys.removedNodes] || []).forEach(node => {
+      const retrieved = getNode(node[TransferrableKeys.index]);
+      if (!retrieved) {
+        return;
+      }
+      retrieved.remove();
+    });
 
     const addedNodes = mutation[TransferrableKeys.addedNodes];
     const nextSibling = mutation[TransferrableKeys.nextSibling];
@@ -142,7 +148,13 @@ export function mutate(nodes: Array<TransferrableNode>, stringValues: Array<stri
  * Investigations in using asyncFlush to resolve are worth considering.
  */
 function syncFlush(): void {
-  MUTATION_QUEUE.forEach(mutation => mutators[mutation[TransferrableKeys.type]](mutation, getNode(mutation[TransferrableKeys.target])));
+  MUTATION_QUEUE.forEach(mutation => {
+    const node = getNode(mutation[TransferrableKeys.target]);
+    if (!node) {
+      return;
+    }
+    mutators[mutation[TransferrableKeys.type]](mutation, node);
+  });
   MUTATION_QUEUE = [];
   PENDING_MUTATIONS = false;
 }
