@@ -42,7 +42,15 @@ const mutators: {
   [key: number]: (mutation: TransferrableMutationRecord, target: Node) => void;
 } = {
   [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, target: HTMLElement) {
-    (mutation[TransferrableKeys.removedNodes] || []).forEach(node => getNode(node[TransferrableKeys.index]).remove());
+    (mutation[TransferrableKeys.removedNodes] || []).forEach(nodeReference => {
+      const nodeId = nodeReference[TransferrableKeys.index];
+      const node = getNode(nodeId);
+      if (!node) {
+        console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
+        return;
+      }
+      node.remove();
+    });
 
     const addedNodes = mutation[TransferrableKeys.addedNodes];
     const nextSibling = mutation[TransferrableKeys.nextSibling];
@@ -142,7 +150,15 @@ export function mutate(nodes: Array<TransferrableNode>, stringValues: Array<stri
  * Investigations in using asyncFlush to resolve are worth considering.
  */
 function syncFlush(): void {
-  MUTATION_QUEUE.forEach(mutation => mutators[mutation[TransferrableKeys.type]](mutation, getNode(mutation[TransferrableKeys.target])));
+  MUTATION_QUEUE.forEach(mutation => {
+    const nodeId = mutation[TransferrableKeys.target];
+    const node = getNode(nodeId);
+    if (!node) {
+      console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
+      return;
+    }
+    mutators[mutation[TransferrableKeys.type]](mutation, node);
+  });
   MUTATION_QUEUE = [];
   PENDING_MUTATIONS = false;
 }

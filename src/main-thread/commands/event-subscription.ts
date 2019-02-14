@@ -131,7 +131,13 @@ function processListenerChange(worker: Worker, target: RenderableElement, addEve
  * @param mutation mutation record containing commands to execute.
  */
 export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
-  const target = getNode(mutation[TransferrableKeys.target]);
+  const nodeId = mutation[TransferrableKeys.target];
+  const target = getNode(nodeId);
+
+  if (!target) {
+    console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
+    return;
+  }
 
   (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub =>
     processListenerChange(worker, target, false, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
