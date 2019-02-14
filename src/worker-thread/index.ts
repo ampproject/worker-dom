@@ -52,6 +52,8 @@ declare var __ALLOW_POST_MESSAGE__: boolean;
 const doc = createDocument(__ALLOW_POST_MESSAGE__ ? (self as DedicatedWorkerGlobalScope).postMessage : undefined);
 export const workerDOM: WorkerDOMGlobalScope = {
   document: doc,
+  // navigator's userAgent is propagated at worker creation time.
+  navigator: { userAgent: '' },
   addEventListener: doc.addEventListener.bind(doc),
   removeEventListener: doc.removeEventListener.bind(doc),
   localStorage: {},

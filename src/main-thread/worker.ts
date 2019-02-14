@@ -46,6 +46,7 @@ export function createWorker(
   for (const key in document.body.style) {
     keys.push(key);
   }
+  const userAgent = window.navigator.userAgent;
   const code = `
     'use strict';
     ${workerDOMScript}
@@ -56,6 +57,7 @@ export function createWorker(
       var localStorage = this.localStorage;
       var location = this.location;
       var defaultView = document.defaultView;
+      var navigator = window.navigator;
       var Node = defaultView.Node;
       var Text = defaultView.Text;
       var Element = defaultView.Element;
@@ -63,6 +65,7 @@ export function createWorker(
       var Document = defaultView.Document;
       var Event = defaultView.Event;
       var MutationObserver = defaultView.MutationObserver;
+      navigator.userAgent = ${JSON.stringify(userAgent)};
 
       function addEventListener(type, handler) {
         return document.addEventListener(type, handler);
