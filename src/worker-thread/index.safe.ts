@@ -129,6 +129,7 @@ const WHITELISTED_GLOBALS = [
 const doc = createDocument((self as DedicatedWorkerGlobalScope).postMessage);
 export const workerDOM: WorkerDOMGlobalScope = {
   document: doc,
+  // navigator's userAgent is propagated at worker creation time.
   navigator: { userAgent: '' },
   addEventListener: doc.addEventListener.bind(doc),
   removeEventListener: doc.removeEventListener.bind(doc),
