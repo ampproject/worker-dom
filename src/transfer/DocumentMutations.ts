@@ -60,6 +60,9 @@ function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
     UInt32, // PropertyName (Identifier, 0 = not used)
     UInt32, // NewValue (Identifer, 0 = not used)
     UInt32, // OldValue (Identifer, 0 = not used)
+    ...Array<UInt32>.length(AddedNodeCount) // AddedNode Identifiers
+    ...Array<UInt32>.length(RemovedNodeCount) // RemovedNode Identifers
+    ...(Array<number, )
   ]
   // Structure [MutationRecordType]
   /*
