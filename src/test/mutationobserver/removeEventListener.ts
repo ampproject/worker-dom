@@ -18,7 +18,7 @@ import anyTest, { TestInterface } from 'ava';
 import { createDocument, Document } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+// import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { getForTesting as get } from '../../worker-thread/strings';
 
 const test = anyTest as TestInterface<{
@@ -45,13 +45,7 @@ test.serial.cb('Element.removeEventListener mutation observed when node is conne
         {
           type: MutationRecordType.EVENT_SUBSCRIPTION,
           target: el,
-          removedEvents: [
-            {
-              [TransferrableKeys.type]: get('mouseenter') as number,
-              [TransferrableKeys.index]: 3,
-              [TransferrableKeys.index]: 0,
-            },
-          ],
+          removedEvents: [[get('mouseenter') as number, 3, 0]],
         },
       ]);
       observer.disconnect();
@@ -73,13 +67,7 @@ test.serial.cb('Element.removeEventListener mutation observed when node is not y
         {
           type: MutationRecordType.EVENT_SUBSCRIPTION,
           target: el,
-          removedEvents: [
-            {
-              [TransferrableKeys.type]: get('mouseenter') as number,
-              [TransferrableKeys.index]: 4,
-              [TransferrableKeys.index]: 0,
-            },
-          ],
+          removedEvents: [[get('mouseenter') as number, 4, 0]],
         },
       ]);
       observer.disconnect();

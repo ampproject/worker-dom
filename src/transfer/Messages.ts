@@ -15,7 +15,7 @@
  */
 
 import { TransferrableEvent } from './TransferrableEvent';
-import { TransferrableMutationRecord } from './TransferrableRecord';
+import { TransferrableMutationRecords } from './TransferrableRecord';
 import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
 import { TransferrableNode, HydrateableNode, TransferredNode } from './TransferrableNodes';
@@ -37,7 +37,7 @@ export interface MutationFromWorker {
   readonly [TransferrableKeys.type]: MessageType;
   readonly [TransferrableKeys.strings]: Array<string>;
   readonly [TransferrableKeys.nodes]: Array<TransferrableNode>;
-  readonly [TransferrableKeys.mutations]: Array<TransferrableMutationRecord>;
+  readonly [TransferrableKeys.mutations]: TransferrableMutationRecords;
 }
 export type MessageFromWorker = {
   data: MutationFromWorker;

@@ -16,10 +16,10 @@
 
 import { store as storeNodeMapping } from '../nodes';
 import { Event, EventHandler } from '../Event';
-import { toLower, NumericBoolean } from '../../utils';
+import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferredNode, TransferrableNode, HydrateableNode, NodeType } from '../../transfer/TransferrableNodes';
+import { TransferredNode, TransferrableNode, NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { store as storeString } from '../strings';
 
@@ -69,18 +69,7 @@ export abstract class Node {
     this[TransferrableKeys.scopingRoot] = this;
 
     this[TransferrableKeys.index] = storeNodeMapping(this);
-    this[TransferrableKeys.transferredFormat] = {
-      [TransferrableKeys.index]: this[TransferrableKeys.index],
-      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-    };
-  }
-
-  /**
-   * When hydrating the tree, we need to send HydrateableNode representations
-   * for the main thread to process and store items from for future modifications.
-   */
-  public hydrate(): HydrateableNode {
-    return this[TransferrableKeys.creationFormat];
+    this[TransferrableKeys.transferredFormat] = [this[TransferrableKeys.index]];
   }
 
   // Unimplemented Properties
@@ -334,13 +323,7 @@ export abstract class Node {
     mutate({
       target: this,
       type: MutationRecordType.EVENT_SUBSCRIPTION,
-      addedEvents: [
-        {
-          [TransferrableKeys.type]: storeString(type),
-          [TransferrableKeys.index]: this[TransferrableKeys.index],
-          [TransferrableKeys.index]: index,
-        },
-      ],
+      addedEvents: [[storeString(type), this[TransferrableKeys.index], index]],
     });
   }
 
@@ -359,13 +342,7 @@ export abstract class Node {
       mutate({
         target: this,
         type: MutationRecordType.EVENT_SUBSCRIPTION,
-        removedEvents: [
-          {
-            [TransferrableKeys.type]: storeString(type),
-            [TransferrableKeys.index]: this[TransferrableKeys.index],
-            [TransferrableKeys.index]: index,
-          },
-        ],
+        removedEvents: [[storeString(type), this[TransferrableKeys.index], index]],
       });
     }
   }

@@ -84,7 +84,7 @@ export function createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): 
     }
   }
 
-  storeNode(node, skeleton[TransferrableKeys.index]);
+  storeNode(node, skeleton[0]);
   return node;
 }
 

@@ -25,13 +25,15 @@ import { Node } from './Node';
 export class Comment extends CharacterData {
   constructor(data: string, ownerDocument: Node) {
     super(data, NodeType.COMMENT_NODE, '#comment', ownerDocument);
-    this[TransferrableKeys.creationFormat] = {
-      [TransferrableKeys.index]: this[TransferrableKeys.index],
-      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: NodeType.COMMENT_NODE,
-      [TransferrableKeys.nodeName]: storeString(this.nodeName),
-      [TransferrableKeys.textContent]: storeString(this.data),
-    };
+    this[TransferrableKeys.creationFormat] = [
+      this[TransferrableKeys.index],
+      NodeType.COMMENT_NODE,
+      storeString(this.nodeName),
+      NumericBoolean.TRUE,
+      storeString(this.data),
+      NumericBoolean.FALSE,
+      0,
+    ];
   }
 
   /**

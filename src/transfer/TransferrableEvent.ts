@@ -38,11 +38,7 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.keyCode]?: number;
 }
 
-export interface TransferrableEventSubscriptionChange {
-  readonly [TransferrableKeys.type]: number;
-  readonly [TransferrableKeys.index]: number;
-  readonly [TransferrableKeys.index]: number;
-}
+export type TransferrableEventSubscriptionChange = [number, number, number];
 
 /**
  * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.
@@ -71,7 +67,7 @@ export function propagate(): void {
             eventPhase: event[TransferrableKeys.eventPhase],
             isTrusted: event[TransferrableKeys.isTrusted],
             returnValue: event[TransferrableKeys.returnValue],
-            target: get(target ? target[TransferrableKeys.index] : null),
+            target: get(target ? target[0] : null),
             timeStamp: event[TransferrableKeys.timeStamp],
             scoped: event[TransferrableKeys.scoped],
             keyCode: event[TransferrableKeys.keyCode],

@@ -17,45 +17,89 @@
 import { Node } from '../worker-thread/dom/Node';
 import { Document } from '../worker-thread/dom/Document';
 import { MutationRecord } from '../worker-thread/MutationRecord';
-import { TransferrableMutationRecord } from './TransferrableRecord';
-import { TransferrableNode, TransferredNode } from './TransferrableNodes';
+import { TransferrableMutationRecords } from './TransferrableRecord';
+import { TransferrableNode } from './TransferrableNodes';
 import { MessageType, MutationFromWorker } from './Messages';
 import { TransferrableKeys } from './TransferrableKeys';
 import { consume as consumeNodes } from '../worker-thread/nodes';
 import { store as storeString, consume as consumeStrings } from '../worker-thread/strings';
 import { phase, set as setPhase, Phases } from '../transfer/phase';
+import { NumericBoolean } from '../utils';
 
 let observing = false;
 
-const serializeNodes = (nodes: Array<Node>): Array<TransferredNode> => nodes.map(node => node[TransferrableKeys.transferredFormat]);
+const serializeNodes = (nodes: Array<Node>): Array<number> => nodes.map(node => node[TransferrableKeys.transferredFormat][0]);
 
+const numericBooleanHelper = (condition?: any | null) => (condition ? NumericBoolean.TRUE : NumericBoolean.FALSE);
+const transferrableNodeHelper = (node?: Node | null) => (node ? node[TransferrableKeys.index] : 0);
+const transferrableStringHelper = (value?: string | null): number => (value ? storeString(value) : 0);
 /**
  *
  * @param mutations
  */
 function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
   const nodes: Array<TransferrableNode> = consumeNodes().map(node => node[TransferrableKeys.creationFormat]);
-  const transferrableMutations: TransferrableMutationRecord[] = [];
   const type = phase === Phases.Mutating ? MessageType.MUTATE : MessageType.HYDRATE;
+  // let transferrableMutations: TransferrableMutationRecords = [];
+  const buffer: ArrayBuffer = new ArrayBuffer(256);
+  const view: DataView = new DataView(buffer);
+  let position: number = 0;
 
+  /* Structure 
+  [
+    UInt8,  // MutationRecordType
+    UInt32, // MutationRecordTarget (Identifier)
+    UInt8,  // AddedNodeCount
+    UInt8,  // RemovedNodeCount
+    UInt8,  // AddedEventCount
+    UInt8,  // RemovedEventCount
+    UInt32, // PreviousSibling (Identifier, 0 = not used)
+    UInt32, // NextSibling (Identifier, 0 = not used)
+    UInt32, // AttributeName (Identifier, 0 = not used)
+    UInt32, // AttributeNamespace (Identifier, 0 = not used)
+    UInt32, // PropertyName (Identifier, 0 = not used)
+    UInt32, // NewValue (Identifer, 0 = not used)
+    UInt32, // OldValue (Identifer, 0 = not used)
+  ]
+  // Structure [MutationRecordType]
+  /*
+
+  // Following value 17 is a spread of values, unrepresentable in TypeScript.
+  // ...AddedNodes,
+  // ...RemovedNodes,
+  // ...AddedEvents,
+  // ...RemovedEvents,
+
+  */
+
+  console.log('serialize mutations', mutations);
   mutations.forEach(mutation => {
-    let transferable: TransferrableMutationRecord = {
-      [TransferrableKeys.type]: mutation.type,
-      [TransferrableKeys.target]: mutation.target[TransferrableKeys.index],
-    };
+    view.setInt.push(
+      mutation.type,
+      mutation.target[TransferrableKeys.index],
+      (mutation.addedNodes || []).length,
+      (mutation.removedNodes || []).length,
+      (mutation.addedEvents || []).length,
+      (mutation.removedEvents || []).length,
+      numericBooleanHelper(mutation.previousSibling),
+      transferrableNodeHelper(mutation.previousSibling),
+      numericBooleanHelper(mutation.nextSibling),
+      transferrableNodeHelper(mutation.nextSibling),
 
-    mutation.addedNodes && (transferable[TransferrableKeys.addedNodes] = serializeNodes(mutation.addedNodes));
-    mutation.removedNodes && (transferable[TransferrableKeys.removedNodes] = serializeNodes(mutation.removedNodes));
-    mutation.nextSibling && (transferable[TransferrableKeys.nextSibling] = mutation.nextSibling[TransferrableKeys.transferredFormat]);
-    mutation.attributeName != null && (transferable[TransferrableKeys.attributeName] = storeString(mutation.attributeName));
-    mutation.attributeNamespace != null && (transferable[TransferrableKeys.attributeNamespace] = storeString(mutation.attributeNamespace));
-    mutation.oldValue != null && (transferable[TransferrableKeys.oldValue] = storeString(mutation.oldValue));
-    mutation.propertyName && (transferable[TransferrableKeys.propertyName] = storeString(mutation.propertyName));
-    mutation.value != null && (transferable[TransferrableKeys.value] = storeString(mutation.value));
-    mutation.addedEvents && (transferable[TransferrableKeys.addedEvents] = mutation.addedEvents);
-    mutation.removedEvents && (transferable[TransferrableKeys.removedEvents] = mutation.removedEvents);
+      numericBooleanHelper(mutation.attributeName),
+      transferrableStringHelper(mutation.attributeName),
+      numericBooleanHelper(mutation.attributeNamespace),
+      transferrableStringHelper(mutation.attributeNamespace),
+      numericBooleanHelper(mutation.propertyName),
+      transferrableStringHelper(mutation.propertyName),
+      transferrableStringHelper(mutation.value),
+      transferrableStringHelper(mutation.oldValue),
 
-    transferrableMutations.push(transferable);
+      ...serializeNodes(mutation.addedNodes || []),
+      ...serializeNodes(mutation.removedNodes || []),
+      ...[].concat.apply([], mutation.addedEvents),
+      ...[].concat.apply([], mutation.removedEvents),
+    );
   });
   return {
     [TransferrableKeys.type]: type,

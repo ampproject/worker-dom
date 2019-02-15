@@ -35,23 +35,33 @@ export const enum NodeType {
 export const HTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
 export const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
-export interface HydrateableNode extends TransferrableNode {
+export interface HydrateableNode {
+  readonly [TransferrableKeys.index]: number;
+  readonly [TransferrableKeys.transferred]: NumericBoolean;
+  readonly [TransferrableKeys.nodeType]: NodeType;
+  readonly [TransferrableKeys.nodeName]: number;
+  [TransferrableKeys.textContent]?: number;
+  [TransferrableKeys.namespaceURI]?: number;
   [TransferrableKeys.attributes]?: Array<[number, number, number]>;
   [TransferrableKeys.childNodes]?: Array<HydrateableNode>;
 }
 
+// If a Node has been transferred once already to main thread then we need only pass its index.
+export interface TransferredNode {
+  readonly [0]: number;
+}
+
+type TransferrableNodeName = number;
+type TransferrableTextContent = number;
+type TransferrableNamespaceURI = number;
 export interface TransferrableNode extends TransferredNode {
-  readonly [TransferrableKeys.nodeType]: NodeType;
-  readonly [TransferrableKeys.nodeName]: number;
+  readonly [1]: NodeType;
+  readonly [2]: TransferrableNodeName;
 
   // Optional keys that are defined at construction of a `Text` or `Element`.
   // This makes the keys observed.
-  [TransferrableKeys.textContent]?: number;
-  [TransferrableKeys.namespaceURI]?: number;
-}
-
-// If a Node has been transferred once already to main thread then we need only pass its index.
-export interface TransferredNode {
-  readonly [TransferrableKeys.index]: number;
-  readonly [TransferrableKeys.transferred]: NumericBoolean;
+  readonly [3]: NumericBoolean;
+  readonly [4]: TransferrableTextContent;
+  readonly [5]: NumericBoolean;
+  readonly [6]: TransferrableNamespaceURI;
 }

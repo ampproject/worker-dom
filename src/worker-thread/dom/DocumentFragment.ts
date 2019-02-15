@@ -25,12 +25,15 @@ export class DocumentFragment extends ParentNode {
   constructor(ownerDocument: Node) {
     super(NodeType.DOCUMENT_FRAGMENT_NODE, '#document-fragment', ownerDocument);
 
-    this[TransferrableKeys.creationFormat] = {
-      [TransferrableKeys.index]: this[TransferrableKeys.index],
-      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: NodeType.DOCUMENT_FRAGMENT_NODE,
-      [TransferrableKeys.nodeName]: storeString(this.nodeName),
-    };
+    this[TransferrableKeys.creationFormat] = [
+      this[TransferrableKeys.index],
+      NodeType.DOCUMENT_FRAGMENT_NODE,
+      storeString(this.nodeName),
+      NumericBoolean.FALSE,
+      0,
+      NumericBoolean.FALSE,
+      0,
+    ];
   }
 
   /**

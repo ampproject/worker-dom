@@ -17,13 +17,10 @@
 import { messageToWorker } from '../worker';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { MessageType } from '../../transfer/Messages';
-import { NumericBoolean } from '../../utils';
-import { getNode } from '../nodes';
 import { TransferrableMutationRecord } from '../../transfer/TransferrableRecord';
-import { get as getString } from '../strings';
 
 // TODO(choumx): Support SYNC events for properties other than 'value', e.g. 'checked'.
-const KNOWN_LISTENERS: Array<(event: Event) => any> = [];
+// const KNOWN_LISTENERS: Array<(event: Event) => any> = [];
 
 /**
  * Instead of a whitelist of elements that need their value tracked, use the existence
@@ -64,66 +61,64 @@ const fireValueChange = (worker: Worker, node: RenderableElement): void => {
  * @param index node index the event comes from (used to dispatchEvent in worker thread).
  * @return eventHandler function consuming event and dispatching to worker thread
  */
-const eventHandler = (worker: Worker, index: number) => (event: Event | KeyboardEvent): void => {
-  if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
-    fireValueChange(worker, event.currentTarget as RenderableElement);
-  }
-  messageToWorker(worker, {
-    [TransferrableKeys.type]: MessageType.EVENT,
-    [TransferrableKeys.event]: {
-      [TransferrableKeys.index]: index,
-      [TransferrableKeys.bubbles]: event.bubbles,
-      [TransferrableKeys.cancelable]: event.cancelable,
-      [TransferrableKeys.cancelBubble]: event.cancelBubble,
-      [TransferrableKeys.currentTarget]: {
-        [TransferrableKeys.index]: (event.currentTarget as RenderableElement)._index_,
-        [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-      },
-      [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
-      [TransferrableKeys.eventPhase]: event.eventPhase,
-      [TransferrableKeys.isTrusted]: event.isTrusted,
-      [TransferrableKeys.returnValue]: event.returnValue,
-      [TransferrableKeys.target]: {
-        [TransferrableKeys.index]: (event.target as RenderableElement)._index_,
-        [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-      },
-      [TransferrableKeys.timeStamp]: event.timeStamp,
-      [TransferrableKeys.type]: event.type,
-      [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
-    },
-  });
-};
+// const eventHandler = (worker: Worker, index: number) => (event: Event | KeyboardEvent): void => {
+//   if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
+//     fireValueChange(worker, event.currentTarget as RenderableElement);
+//   }
+//   messageToWorker(worker, {
+//     [TransferrableKeys.type]: MessageType.EVENT,
+//     [TransferrableKeys.event]: {
+//       [TransferrableKeys.index]: index,
+//       [TransferrableKeys.bubbles]: event.bubbles,
+//       [TransferrableKeys.cancelable]: event.cancelable,
+//       [TransferrableKeys.cancelBubble]: event.cancelBubble,
+//       [TransferrableKeys.currentTarget]: [
+//         (event.currentTarget as RenderableElement)._index_,
+//       ],
+//       [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
+//       [TransferrableKeys.eventPhase]: event.eventPhase,
+//       [TransferrableKeys.isTrusted]: event.isTrusted,
+//       [TransferrableKeys.returnValue]: event.returnValue,
+//       [TransferrableKeys.target]: [
+//         (event.target as RenderableElement)._index_,
+//       ],
+//       [TransferrableKeys.timeStamp]: event.timeStamp,
+//       [TransferrableKeys.type]: event.type,
+//       [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
+//     },
+//   });
+// };
 
-/**
- * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,
- * ensure that only a single 'change' event is attached to prevent sending values multiple times.
- * @param worker worker issuing listener changes
- * @param target node to change listeners on
- * @param addEvent is this an 'addEvent' or 'removeEvent' change
- * @param type event type requested to change
- * @param index number in the listeners array this event corresponds to.
- */
-function processListenerChange(worker: Worker, target: RenderableElement, addEvent: boolean, type: string, index: number): void {
-  let changeEventSubscribed: boolean = target.onchange !== null;
-  const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
-  const isChangeEvent = type === 'change';
+// /**
+//  * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,
+//  * ensure that only a single 'change' event is attached to prevent sending values multiple times.
+//  * @param worker worker issuing listener changes
+//  * @param target node to change listeners on
+//  * @param addEvent is this an 'addEvent' or 'removeEvent' change
+//  * @param type event type requested to change
+//  * @param index number in the listeners array this event corresponds to.
+//  */
+// function processListenerChange(worker: Worker, target: RenderableElement, addEvent: boolean, type: string, index: number): void {
+//   let changeEventSubscribed: boolean = target.onchange !== null;
+//   const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
+//   const isChangeEvent = type === 'change';
 
-  if (addEvent) {
-    if (isChangeEvent) {
-      changeEventSubscribed = true;
-      target.onchange = null;
-    }
-    (target as HTMLElement).addEventListener(type, (KNOWN_LISTENERS[index] = eventHandler(worker, target._index_)));
-  } else {
-    if (isChangeEvent) {
-      changeEventSubscribed = false;
-    }
-    (target as HTMLElement).removeEventListener(type, KNOWN_LISTENERS[index]);
-  }
-  if (shouldTrack && !changeEventSubscribed) {
-    applyDefaultChangeListener(worker, target as RenderableElement);
-  }
-}
+//   if (addEvent) {
+//     if (isChangeEvent) {
+//       changeEventSubscribed = true;
+//       target.onchange = null;
+//     }
+//     (target as HTMLElement).addEventListener(type, (KNOWN_LISTENERS[index] = eventHandler(worker, target._index_)));
+//   } else {
+//     if (isChangeEvent) {
+//       changeEventSubscribed = false;
+//     }
+//     (target as HTMLElement).removeEventListener(type, KNOWN_LISTENERS[index]);
+//   }
+//   if (shouldTrack && !changeEventSubscribed) {
+//     applyDefaultChangeListener(worker, target as RenderableElement);
+//   }
+// }
 
 /**
  * Process event subscription changes transfered from worker thread to main thread.
@@ -131,12 +126,6 @@ function processListenerChange(worker: Worker, target: RenderableElement, addEve
  * @param mutation mutation record containing commands to execute.
  */
 export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
-  const target = getNode(mutation[TransferrableKeys.target]);
-
-  (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub =>
-    processListenerChange(worker, target, false, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
-  );
-  (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub =>
-    processListenerChange(worker, target, true, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
-  );
+  //const target = getNode(mutation[TransferrableKeys.target]);
+  // TODO: KB – Process is unimplemented.
 }

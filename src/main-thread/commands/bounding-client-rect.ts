@@ -19,7 +19,6 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { getNode } from '../nodes';
 import { messageToWorker } from '../worker';
 import { MessageType } from '../../transfer/Messages';
-import { NumericBoolean } from '../../utils';
 
 /**
  * Process commands transfered from worker thread to main thread.
@@ -33,10 +32,7 @@ export function process(worker: Worker, mutation: TransferrableMutationRecord): 
   const boundingRect = target.getBoundingClientRect();
   messageToWorker(worker, {
     [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
-    [TransferrableKeys.target]: {
-      [TransferrableKeys.index]: target._index_,
-      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-    },
+    [TransferrableKeys.target]: [target._index_],
     [TransferrableKeys.data]: [boundingRect.top, boundingRect.right, boundingRect.bottom, boundingRect.left, boundingRect.width, boundingRect.height],
   });
 }

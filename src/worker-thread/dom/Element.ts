@@ -26,7 +26,7 @@ import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
 import { toLower } from '../../utils';
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
@@ -60,28 +60,15 @@ export class Element extends ParentNode {
     super(nodeType, nodeName, ownerDocument);
     this.namespaceURI = namespaceURI || HTML_NAMESPACE;
     this.localName = toLower(nodeName);
-    this[TransferrableKeys.creationFormat] = {
-      [TransferrableKeys.index]: this[TransferrableKeys.index],
-      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: this.nodeType,
-      [TransferrableKeys.nodeName]: storeString(this.nodeName),
-      [TransferrableKeys.namespaceURI]: this.namespaceURI === null ? undefined : storeString(this.namespaceURI),
-    };
-  }
-
-  /**
-   * When hydrating the tree, we need to send HydrateableNode representations
-   * for the main thread to process and store items from for future modifications.
-   */
-  public hydrate(): HydrateableNode {
-    return Object.assign(this[TransferrableKeys.creationFormat], {
-      [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
-      [TransferrableKeys.attributes]: this.attributes.map(attribute => [
-        storeString(attribute.namespaceURI || 'null'),
-        storeString(attribute.name),
-        storeString(attribute.value),
-      ]),
-    });
+    this[TransferrableKeys.creationFormat] = [
+      this[TransferrableKeys.index],
+      this.nodeType,
+      storeString(this.nodeName),
+      NumericBoolean.FALSE,
+      0,
+      this.namespaceURI === null ? NumericBoolean.TRUE : NumericBoolean.FALSE,
+      this.namespaceURI === null ? 0 : storeString(this.namespaceURI),
+    ];
   }
 
   // Unimplemented properties
@@ -417,7 +404,7 @@ export class Element extends ParentNode {
         addEventListener('message', ({ data }: { data: MessageToWorker }) => {
           if (
             data[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT &&
-            (data as BoundingClientRectToWorker)[TransferrableKeys.target][TransferrableKeys.index] === this[TransferrableKeys.index]
+            (data as BoundingClientRectToWorker)[TransferrableKeys.target][0] === this[TransferrableKeys.index]
           ) {
             const transferredBoundingClientRect: TransferrableBoundingClientRect = (data as BoundingClientRectToWorker)[TransferrableKeys.data];
             resolve({

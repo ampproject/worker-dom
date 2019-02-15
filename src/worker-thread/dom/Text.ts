@@ -25,13 +25,15 @@ import { Node } from './Node';
 export class Text extends CharacterData {
   constructor(data: string, ownerDocument: Node) {
     super(data, NodeType.TEXT_NODE, '#text', ownerDocument);
-    this[TransferrableKeys.creationFormat] = {
-      [TransferrableKeys.index]: this[TransferrableKeys.index],
-      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: NodeType.TEXT_NODE,
-      [TransferrableKeys.nodeName]: storeString('#text'),
-      [TransferrableKeys.textContent]: storeString(this.data),
-    };
+    this[TransferrableKeys.creationFormat] = [
+      this[TransferrableKeys.index],
+      NodeType.TEXT_NODE,
+      storeString('#text'),
+      NumericBoolean.TRUE,
+      storeString(this.data),
+      NumericBoolean.FALSE,
+      0,
+    ];
   }
 
   // Unimplemented Properties
