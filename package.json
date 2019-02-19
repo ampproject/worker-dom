@@ -36,7 +36,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "dompurify": "1.0.8"
+    "dompurify": "1.0.10"
   },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.8.5",
