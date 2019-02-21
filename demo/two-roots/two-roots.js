@@ -15,11 +15,9 @@
  */
 
 const btn = document.getElementsByTagName('button')[0];
-console.log('QQQQ: ', document.querySelectorAll('button'));
 
 btn.addEventListener('click', async () => {
   const infoEl = document.getElementById('info');
   const boundingClientRect = await infoEl.getBoundingClientRectAsync();
-  console.log('QQQ: returned bcr: ', boundingClientRect, JSON.stringify(boundingClientRect));
   infoEl.textContent = JSON.stringify(boundingClientRect);
 });

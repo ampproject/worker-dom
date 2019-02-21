@@ -31,8 +31,6 @@ export class MutatorContext {
   pendingMutations_: boolean;
   workerContext_: WorkerContext;
   sanitizer_: Sanitizer | undefined;
-  eventSubscriptionProcessor_: EventSubscriptionProcessor;
-  boundingClientRectProcessor_: BoundingClientRectProcessor;
   mutators_: {
     [key: number]: (mutation: TransferrableMutationRecord, target: Node) => void;
   };
@@ -51,16 +49,16 @@ export class MutatorContext {
     this.mutationQueue_ = [];
     this.pendingMutations_ = false;
 
-    this.eventSubscriptionProcessor_ = new EventSubscriptionProcessor(strings, nodeContext, workerContext);
-    this.boundingClientRectProcessor_ = new BoundingClientRectProcessor(nodeContext, workerContext);
+    const eventSubscriptionProcessor = new EventSubscriptionProcessor(strings, nodeContext, workerContext);
+    const boundingClientRectProcessor = new BoundingClientRectProcessor(nodeContext, workerContext);
 
     this.mutators_ = {
       [MutationRecordType.CHILD_LIST]: this.mutateChildList_.bind(this),
       [MutationRecordType.ATTRIBUTES]: this.mutateAttributes_.bind(this),
       [MutationRecordType.CHARACTER_DATA]: this.mutateCharacterData_.bind(this),
       [MutationRecordType.PROPERTIES]: this.mutateProperties_.bind(this),
-      [MutationRecordType.EVENT_SUBSCRIPTION]: this.eventSubscriptionProcessor_.process.bind(this.eventSubscriptionProcessor_),
-      [MutationRecordType.GET_BOUNDING_CLIENT_RECT]: this.boundingClientRectProcessor_.process.bind(this.boundingClientRectProcessor_),
+      [MutationRecordType.EVENT_SUBSCRIPTION]: eventSubscriptionProcessor.process.bind(eventSubscriptionProcessor),
+      [MutationRecordType.GET_BOUNDING_CLIENT_RECT]: boundingClientRectProcessor.process.bind(boundingClientRectProcessor),
     };
   }
 
