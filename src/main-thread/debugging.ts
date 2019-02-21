@@ -22,11 +22,11 @@
  * @see https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#9.4
  */
 
-import { getNode } from './nodes';
-import { get as getString } from './strings';
 import { EventToWorker, MessageFromWorker, MessageType, MessageToWorker, ValueSyncToWorker, BoundingClientRectToWorker } from '../transfer/Messages';
 import { HydrateableNode, TransferredNode } from '../transfer/TransferrableNodes';
+import { NodeContext } from './nodes';
 import { TransferrableEvent } from '../transfer/TransferrableEvent';
+import { Strings } from './strings';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
@@ -44,12 +44,127 @@ const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
   '5': 'GET_BOUNDING_CLIENT_RECT',
 };
 
-/**
- * @param element
- */
-export function readableHydrateableNodeFromElement(element: RenderableElement): Object {
-  const node = createReadableHydrateableRootNode(element);
-  return readableHydrateableNode(node);
+export class DebuggingContext {
+  strings_: Strings;
+  nodeContext_: NodeContext;
+
+  constructor(strings: Strings, nodeContext: NodeContext) {
+    this.strings_ = strings;
+    this.nodeContext_ = nodeContext;
+  }
+
+  /**
+   * @param element
+   */
+  readableHydrateableNodeFromElement(element: RenderableElement): Object {
+    const node = createReadableHydrateableRootNode(element);
+    return readableHydrateableNode(node);
+  }
+
+  /**
+   * @param message
+   */
+  readableMessageFromWorker(message: MessageFromWorker): Object {
+    const { data } = message;
+
+    if (data[TransferrableKeys.type] === MessageType.MUTATE || data[TransferrableKeys.type] === MessageType.HYDRATE) {
+      const mutations = data[TransferrableKeys.mutations];
+      const mutate: any = {
+        type: data[TransferrableKeys.type] === MessageType.MUTATE ? 'MUTATE' : 'HYDRATE',
+        mutations: mutations.map(n => this.readableTransferrableMutationRecord_(n)),
+        // Omit 'strings' key.
+      };
+      // TODO(choumx): Like 'strings', I'm not sure 'nodes' is actually useful.
+      // const nodes = data[TransferrableKeys.nodes];
+      // mutate['nodes'] = nodes.map(n => readableTransferrableNode(n));
+      return mutate;
+    } else {
+      return 'Unrecognized MessageFromWorker type: ' + data[TransferrableKeys.type];
+    }
+  }
+
+  /**
+   * @param message
+   */
+  readableMessageToWorker(message: MessageToWorker): Object {
+    if (isEvent(message)) {
+      const event = message[TransferrableKeys.event];
+      return {
+        type: 'EVENT',
+        event: readableTransferrableEvent(this.nodeContext_, event),
+      };
+    } else if (isValueSync(message)) {
+      const sync = message[TransferrableKeys.sync];
+      return {
+        type: 'SYNC',
+        sync: readableTransferrableSyncValue(this.nodeContext_, sync),
+      };
+    } else if (isBoundingClientRect(message)) {
+      return {
+        type: 'GET_BOUNDING_CLIENT_RECT',
+        target: readableTransferredNode(this.nodeContext_, message[TransferrableKeys.target]),
+      };
+    } else {
+      return 'Unrecognized MessageToWorker type: ' + message[TransferrableKeys.type];
+    }
+  }
+
+  /**
+   * @param r
+   */
+  readableTransferrableMutationRecord_(r: TransferrableMutationRecord): Object {
+    const target = r[TransferrableKeys.target];
+
+    const out: any = {
+      type: MUTATION_RECORD_TYPE_REVERSE_MAPPING[r[TransferrableKeys.type]],
+      target: this.nodeContext_.getNode(target) || target,
+    };
+    const added = r[TransferrableKeys.addedNodes];
+    if (added) {
+      out['addedNodes'] = added.map(n => readableTransferredNode(this.nodeContext_, n));
+    }
+    const removed = r[TransferrableKeys.removedNodes];
+    if (removed) {
+      out['removedNodes'] = removed.map(n => readableTransferredNode(this.nodeContext_, n));
+    }
+    const previousSibling = r[TransferrableKeys.previousSibling];
+    if (previousSibling) {
+      out['previousSibling'] = previousSibling;
+    }
+    const nextSibling = r[TransferrableKeys.nextSibling];
+    if (nextSibling) {
+      out['nextSibling'] = nextSibling;
+    }
+    const attributeName = r[TransferrableKeys.attributeName];
+    if (attributeName !== undefined) {
+      out['attributeName'] = this.strings_.get(attributeName);
+    }
+    const attributeNamespace = r[TransferrableKeys.attributeNamespace];
+    if (attributeNamespace !== undefined) {
+      out['attributeNamespace'] = attributeNamespace;
+    }
+    const propertyName = r[TransferrableKeys.propertyName];
+    if (propertyName !== undefined) {
+      out['propertyName'] = propertyName;
+    }
+    const value = r[TransferrableKeys.value];
+    if (value !== undefined) {
+      out['value'] = this.strings_.get(value);
+    }
+    const oldValue = r[TransferrableKeys.oldValue];
+    if (oldValue !== undefined) {
+      out['oldValue'] = this.strings_.get(oldValue);
+    }
+    const addedEvents = r[TransferrableKeys.addedEvents];
+    if (addedEvents !== undefined) {
+      out['addedEvents'] = addedEvents;
+    }
+    const removedEvents = r[TransferrableKeys.removedEvents];
+    if (removedEvents !== undefined) {
+      out['removedEvents'] = removedEvents;
+    }
+    return out;
+  }
 }
 
 /**
@@ -77,116 +192,11 @@ function readableHydrateableNode(node: HydrateableNode): Object {
 }
 
 /**
- * @param message
- */
-export function readableMessageFromWorker(message: MessageFromWorker): Object {
-  const { data } = message;
-
-  if (data[TransferrableKeys.type] === MessageType.MUTATE || data[TransferrableKeys.type] === MessageType.HYDRATE) {
-    const mutations = data[TransferrableKeys.mutations];
-    const mutate: any = {
-      type: data[TransferrableKeys.type] === MessageType.MUTATE ? 'MUTATE' : 'HYDRATE',
-      mutations: mutations.map(n => readableTransferrableMutationRecord(n)),
-      // Omit 'strings' key.
-    };
-    // TODO(choumx): Like 'strings', I'm not sure 'nodes' is actually useful.
-    // const nodes = data[TransferrableKeys.nodes];
-    // mutate['nodes'] = nodes.map(n => readableTransferrableNode(n));
-    return mutate;
-  } else {
-    return 'Unrecognized MessageFromWorker type: ' + data[TransferrableKeys.type];
-  }
-}
-
-/**
- * @param r
- */
-function readableTransferrableMutationRecord(r: TransferrableMutationRecord): Object {
-  const target = r[TransferrableKeys.target];
-
-  const out: any = {
-    type: MUTATION_RECORD_TYPE_REVERSE_MAPPING[r[TransferrableKeys.type]],
-    target: getNode(target) || target,
-  };
-  const added = r[TransferrableKeys.addedNodes];
-  if (added) {
-    out['addedNodes'] = added.map(n => readableTransferredNode(n));
-  }
-  const removed = r[TransferrableKeys.removedNodes];
-  if (removed) {
-    out['removedNodes'] = removed.map(n => readableTransferredNode(n));
-  }
-  const previousSibling = r[TransferrableKeys.previousSibling];
-  if (previousSibling) {
-    out['previousSibling'] = previousSibling;
-  }
-  const nextSibling = r[TransferrableKeys.nextSibling];
-  if (nextSibling) {
-    out['nextSibling'] = nextSibling;
-  }
-  const attributeName = r[TransferrableKeys.attributeName];
-  if (attributeName !== undefined) {
-    out['attributeName'] = getString(attributeName);
-  }
-  const attributeNamespace = r[TransferrableKeys.attributeNamespace];
-  if (attributeNamespace !== undefined) {
-    out['attributeNamespace'] = attributeNamespace;
-  }
-  const propertyName = r[TransferrableKeys.propertyName];
-  if (propertyName !== undefined) {
-    out['propertyName'] = propertyName;
-  }
-  const value = r[TransferrableKeys.value];
-  if (value !== undefined) {
-    out['value'] = getString(value);
-  }
-  const oldValue = r[TransferrableKeys.oldValue];
-  if (oldValue !== undefined) {
-    out['oldValue'] = getString(oldValue);
-  }
-  const addedEvents = r[TransferrableKeys.addedEvents];
-  if (addedEvents !== undefined) {
-    out['addedEvents'] = addedEvents;
-  }
-  const removedEvents = r[TransferrableKeys.removedEvents];
-  if (removedEvents !== undefined) {
-    out['removedEvents'] = removedEvents;
-  }
-  return out;
-}
-
-/**
  * @param n
  */
-function readableTransferredNode(n: TransferredNode): Object {
+function readableTransferredNode(nodeContext: NodeContext, n: TransferredNode): Object {
   const index = n[TransferrableKeys.index];
-  return getNode(index) || index;
-}
-
-/**
- * @param message
- */
-export function readableMessageToWorker(message: MessageToWorker): Object {
-  if (isEvent(message)) {
-    const event = message[TransferrableKeys.event];
-    return {
-      type: 'EVENT',
-      event: readableTransferrableEvent(event),
-    };
-  } else if (isValueSync(message)) {
-    const sync = message[TransferrableKeys.sync];
-    return {
-      type: 'SYNC',
-      sync: readableTransferrableSyncValue(sync),
-    };
-  } else if (isBoundingClientRect(message)) {
-    return {
-      type: 'GET_BOUNDING_CLIENT_RECT',
-      target: readableTransferredNode(message[TransferrableKeys.target]),
-    };
-  } else {
-    return 'Unrecognized MessageToWorker type: ' + message[TransferrableKeys.type];
-  }
+  return nodeContext.getNode(index) || index;
 }
 
 /**
@@ -213,7 +223,7 @@ function isBoundingClientRect(message: MessageToWorker): message is BoundingClie
 /**
  * @param e
  */
-function readableTransferrableEvent(e: TransferrableEvent): Object {
+function readableTransferrableEvent(nodeContext: NodeContext, e: TransferrableEvent): Object {
   const out: any = {
     type: e[TransferrableKeys.type],
   };
@@ -247,11 +257,11 @@ function readableTransferrableEvent(e: TransferrableEvent): Object {
   }
   const currentTarget = e[TransferrableKeys.currentTarget];
   if (currentTarget) {
-    out['currentTarget'] = readableTransferredNode(currentTarget);
+    out['currentTarget'] = readableTransferredNode(nodeContext, currentTarget);
   }
   const target = e[TransferrableKeys.target];
   if (target) {
-    out['target'] = readableTransferredNode(target);
+    out['target'] = readableTransferredNode(nodeContext, target);
   }
   const scoped = e[TransferrableKeys.scoped];
   if (scoped !== undefined) {
@@ -267,10 +277,10 @@ function readableTransferrableEvent(e: TransferrableEvent): Object {
 /**
  * @param v
  */
-function readableTransferrableSyncValue(v: TransferrableSyncValue): Object {
+function readableTransferrableSyncValue(nodeContext: NodeContext, v: TransferrableSyncValue): Object {
   const index = v[TransferrableKeys.index];
   return {
-    target: getNode(index) || index,
+    target: nodeContext.getNode(index) || index,
     value: v[TransferrableKeys.value],
   };
 }

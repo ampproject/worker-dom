@@ -14,22 +14,36 @@
  * limitations under the License.
  */
 
-const strings: Array<string> = [];
+export class Strings {
+  strings_: Array<string>;
 
-/**
- * Return a string for the specified index.
- * @param index string index to retrieve.
- * @returns string in map for the index.
- */
-export function get(index: number): string {
-  return strings[index] || '';
-}
+  constructor() {
+    this.strings_ = [];
+  }
 
-/**
- * Stores a string in mapping and returns the index of the location.
- * @param value string to store
- * @return location in map
- */
-export function store(value: string): void {
-  strings.push(value);
+  /**
+   * Return a string for the specified index.
+   * @param index string index to retrieve.
+   * @returns string in map for the index.
+   */
+  get(index: number): string {
+    return this.strings_[index] || '';
+  }
+
+  /**
+   * Stores a string in mapping and returns the index of the location.
+   * @param value string to store
+   * @return location in map
+   */
+  store(value: string): void {
+    this.strings_.push(value);
+  }
+
+  /**
+   * Stores a set of strings.
+   * @param values
+   */
+  storeValues(values: Array<string>): void {
+    values.forEach(this.store.bind(this));
+  }
 }

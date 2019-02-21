@@ -18,33 +18,98 @@ import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { TransferrableNode } from '../transfer/TransferrableNodes';
-import { getNode, createNode } from './nodes';
-import { store as storeString, get as getString } from './strings';
-import { process as processEventSubscription } from './commands/event-subscription';
-import { process as processBoundingClientRect } from './commands/bounding-client-rect';
+import { NodeContext } from './nodes';
+import { Strings } from './strings';
+import { WorkerContext } from './worker';
+import { EventSubscriptionProcessor } from './commands/event-subscription';
+import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
 
-let MUTATION_QUEUE: Array<TransferrableMutationRecord> = [];
-let PENDING_MUTATIONS: boolean = false;
-let worker: Worker;
-let sanitizer: Sanitizer | undefined;
+export class MutatorContext {
+  strings_: Strings;
+  nodeContext_: NodeContext;
+  mutationQueue_: Array<TransferrableMutationRecord>;
+  pendingMutations_: boolean;
+  workerContext_: WorkerContext;
+  sanitizer_: Sanitizer | undefined;
+  eventSubscriptionProcessor_: EventSubscriptionProcessor;
+  boundingClientRectProcessor_: BoundingClientRectProcessor;
+  mutators_: {
+    [key: number]: (mutation: TransferrableMutationRecord, target: Node) => void;
+  };
 
-/**
- *
- * @param passedWorker
- * @param passedSanitizer Sanitizer to apply to content if needed.
- */
-export function prepareMutate(passedWorker: Worker, passedSanitizer?: Sanitizer): void {
-  worker = passedWorker;
-  sanitizer = passedSanitizer;
-}
+  /**
+   * @param strings
+   * @param nodeContext
+   * @param workerContext
+   * @param passedSanitizer Sanitizer to apply to content if needed.
+   */
+  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, passedSanitizer?: Sanitizer) {
+    this.strings_ = strings;
+    this.nodeContext_ = nodeContext;
+    this.workerContext_ = workerContext;
+    this.sanitizer_ = passedSanitizer;
+    this.mutationQueue_ = [];
+    this.pendingMutations_ = false;
 
-const mutators: {
-  [key: number]: (mutation: TransferrableMutationRecord, target: Node) => void;
-} = {
-  [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, target: HTMLElement) {
+    this.eventSubscriptionProcessor_ = new EventSubscriptionProcessor(strings, nodeContext, workerContext);
+    this.boundingClientRectProcessor_ = new BoundingClientRectProcessor(nodeContext, workerContext);
+
+    this.mutators_ = {
+      [MutationRecordType.CHILD_LIST]: this.mutateChildList_.bind(this),
+      [MutationRecordType.ATTRIBUTES]: this.mutateAttributes_.bind(this),
+      [MutationRecordType.CHARACTER_DATA]: this.mutateCharacterData_.bind(this),
+      [MutationRecordType.PROPERTIES]: this.mutateProperties_.bind(this),
+      [MutationRecordType.EVENT_SUBSCRIPTION]: this.eventSubscriptionProcessor_.process.bind(this.eventSubscriptionProcessor_),
+      [MutationRecordType.GET_BOUNDING_CLIENT_RECT]: this.boundingClientRectProcessor_.process.bind(this.boundingClientRectProcessor_),
+    };
+  }
+
+  /**
+   * Process MutationRecords from worker thread applying changes to the existing DOM.
+   * @param nodes New nodes to add in the main thread with the incoming mutations.
+   * @param stringValues Additional string values to use in decoding messages.
+   * @param mutations Changes to apply in both graph shape and content of Elements.
+   */
+  mutate(nodes: Array<TransferrableNode>, stringValues: Array<string>, mutations: Array<TransferrableMutationRecord>): void {
+    //mutations: TransferrableMutationRecord[]): void {
+    // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
+    // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
+    //   return;
+    // }
+    // this.lastGestureTime = lastGestureTime;
+    this.strings_.storeValues(stringValues);
+    nodes.forEach(node => this.nodeContext_.createNode(node, this.sanitizer_));
+    this.mutationQueue_ = this.mutationQueue_.concat(mutations);
+    if (!this.pendingMutations_) {
+      this.pendingMutations_ = true;
+      requestAnimationFrame(this.syncFlush_.bind(this));
+    }
+  }
+
+  /**
+   * Apply all stored mutations syncronously. This method works well, but can cause jank if there are too many
+   * mutations to apply in a single frame.
+   *
+   * Investigations in using asyncFlush to resolve are worth considering.
+   */
+  syncFlush_(): void {
+    this.mutationQueue_.forEach(mutation => {
+      const nodeId = mutation[TransferrableKeys.target];
+      const node = this.nodeContext_.getNode(nodeId);
+      if (!node) {
+        console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
+        return;
+      }
+      this.mutators_[mutation[TransferrableKeys.type]](mutation, node);
+    });
+    this.mutationQueue_ = [];
+    this.pendingMutations_ = false;
+  }
+
+  mutateChildList_(mutation: TransferrableMutationRecord, target: HTMLElement) {
     (mutation[TransferrableKeys.removedNodes] || []).forEach(nodeReference => {
       const nodeId = nodeReference[TransferrableKeys.index];
-      const node = getNode(nodeId);
+      const node = this.nodeContext_.getNode(nodeId);
       if (!node) {
         console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
         return;
@@ -57,54 +122,57 @@ const mutators: {
     if (addedNodes) {
       addedNodes.forEach(node => {
         let newChild = null;
-        newChild = getNode(node[TransferrableKeys.index]);
+        newChild = this.nodeContext_.getNode(node[TransferrableKeys.index]);
 
         if (!newChild) {
           // Transferred nodes that are not stored were previously removed by the sanitizer.
           if (node[TransferrableKeys.transferred]) {
             return;
           } else {
-            newChild = createNode(node as TransferrableNode, sanitizer);
+            newChild = this.nodeContext_.createNode(node as TransferrableNode, this.sanitizer_);
           }
         }
         if (newChild) {
-          target.insertBefore(newChild, (nextSibling && getNode(nextSibling[TransferrableKeys.index])) || null);
+          target.insertBefore(newChild, (nextSibling && this.nodeContext_.getNode(nextSibling[TransferrableKeys.index])) || null);
         } else {
           // TODO(choumx): Inform worker that sanitizer removed newChild.
         }
       });
     }
-  },
-  [MutationRecordType.ATTRIBUTES](mutation: TransferrableMutationRecord, target: HTMLElement | SVGElement) {
+  }
+
+  mutateAttributes_(mutation: TransferrableMutationRecord, target: HTMLElement | SVGElement) {
     const attributeName =
-      mutation[TransferrableKeys.attributeName] !== undefined ? getString(mutation[TransferrableKeys.attributeName] as number) : null;
-    const value = mutation[TransferrableKeys.value] !== undefined ? getString(mutation[TransferrableKeys.value] as number) : null;
+      mutation[TransferrableKeys.attributeName] !== undefined ? this.strings_.get(mutation[TransferrableKeys.attributeName] as number) : null;
+    const value = mutation[TransferrableKeys.value] !== undefined ? this.strings_.get(mutation[TransferrableKeys.value] as number) : null;
     if (attributeName != null) {
       if (value == null) {
         target.removeAttribute(attributeName);
       } else {
-        if (!sanitizer || sanitizer.validAttribute(target.nodeName, attributeName, value)) {
+        if (!this.sanitizer_ || this.sanitizer_.validAttribute(target.nodeName, attributeName, value)) {
           target.setAttribute(attributeName, value);
         } else {
           // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
         }
       }
     }
-  },
-  [MutationRecordType.CHARACTER_DATA](mutation: TransferrableMutationRecord, target: CharacterData) {
+  }
+
+  mutateCharacterData_(mutation: TransferrableMutationRecord, target: CharacterData) {
     const value = mutation[TransferrableKeys.value];
     if (value) {
       // Sanitization not necessary for textContent.
-      target.textContent = getString(value);
+      target.textContent = this.strings_.get(value);
     }
-  },
-  [MutationRecordType.PROPERTIES](mutation: TransferrableMutationRecord, target: RenderableElement) {
+  }
+
+  mutateProperties_(mutation: TransferrableMutationRecord, target: RenderableElement) {
     const propertyName =
-      mutation[TransferrableKeys.propertyName] !== undefined ? getString(mutation[TransferrableKeys.propertyName] as number) : null;
-    const value = mutation[TransferrableKeys.value] !== undefined ? getString(mutation[TransferrableKeys.value] as number) : null;
+      mutation[TransferrableKeys.propertyName] !== undefined ? this.strings_.get(mutation[TransferrableKeys.propertyName] as number) : null;
+    const value = mutation[TransferrableKeys.value] !== undefined ? this.strings_.get(mutation[TransferrableKeys.value] as number) : null;
     if (propertyName && value != null) {
       const stringValue = String(value);
-      if (!sanitizer || sanitizer.validProperty(target.nodeName, propertyName, stringValue)) {
+      if (!this.sanitizer_ || this.sanitizer_.validProperty(target.nodeName, propertyName, stringValue)) {
         // TODO(choumx, #122): Proper support for non-string property mutations.
         const isBooleanProperty = propertyName == 'checked';
         target[propertyName] = isBooleanProperty ? value === 'true' : value;
@@ -112,53 +180,5 @@ const mutators: {
         // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
       }
     }
-  },
-  [MutationRecordType.EVENT_SUBSCRIPTION](mutation: TransferrableMutationRecord) {
-    processEventSubscription(worker, mutation);
-  },
-  [MutationRecordType.GET_BOUNDING_CLIENT_RECT](mutation: TransferrableMutationRecord) {
-    processBoundingClientRect(worker, mutation);
-  },
-};
-
-/**
- * Process MutationRecords from worker thread applying changes to the existing DOM.
- * @param nodes New nodes to add in the main thread with the incoming mutations.
- * @param stringValues Additional string values to use in decoding messages.
- * @param mutations Changes to apply in both graph shape and content of Elements.
- */
-export function mutate(nodes: Array<TransferrableNode>, stringValues: Array<string>, mutations: Array<TransferrableMutationRecord>): void {
-  //mutations: TransferrableMutationRecord[]): void {
-  // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
-  // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
-  //   return;
-  // }
-  // this.lastGestureTime = lastGestureTime;
-  stringValues.forEach(storeString);
-  nodes.forEach(node => createNode(node, sanitizer));
-  MUTATION_QUEUE = MUTATION_QUEUE.concat(mutations);
-  if (!PENDING_MUTATIONS) {
-    PENDING_MUTATIONS = true;
-    requestAnimationFrame(syncFlush);
   }
-}
-
-/**
- * Apply all stored mutations syncronously. This method works well, but can cause jank if there are too many
- * mutations to apply in a single frame.
- *
- * Investigations in using asyncFlush to resolve are worth considering.
- */
-function syncFlush(): void {
-  MUTATION_QUEUE.forEach(mutation => {
-    const nodeId = mutation[TransferrableKeys.target];
-    const node = getNode(nodeId);
-    if (!node) {
-      console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
-      return;
-    }
-    mutators[mutation[TransferrableKeys.type]](mutation, node);
-  });
-  MUTATION_QUEUE = [];
-  PENDING_MUTATIONS = false;
 }
