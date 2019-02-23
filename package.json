@@ -67,7 +67,7 @@
     "rollup-plugin-node-resolve": "4.0.0",
     "rollup-plugin-terser": "4.0.4",
     "serve-static": "1.13.2",
-    "tslint": "5.12.1",
+    "tslint": "5.13.0",
     "typescript": "3.3.3"
   },
   "lint-staged": {
