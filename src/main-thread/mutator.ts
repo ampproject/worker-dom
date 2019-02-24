@@ -24,14 +24,13 @@ import { WorkerContext } from './worker';
 import { EventSubscriptionProcessor } from './commands/event-subscription';
 import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
 
-export class MutatorContext {
-  strings_: Strings;
-  nodeContext_: NodeContext;
-  mutationQueue_: Array<TransferrableMutationRecord>;
-  pendingMutations_: boolean;
-  workerContext_: WorkerContext;
-  sanitizer_: Sanitizer | undefined;
-  mutators_: {
+export class MutatorProcessor {
+  private strings: Strings;
+  private nodeContext: NodeContext;
+  private mutationQueue: Array<TransferrableMutationRecord>;
+  private pendingMutations: boolean;
+  private sanitizer: Sanitizer | undefined;
+  private mutators: {
     [key: number]: (mutation: TransferrableMutationRecord, target: Node) => void;
   };
 
@@ -42,21 +41,20 @@ export class MutatorContext {
    * @param passedSanitizer Sanitizer to apply to content if needed.
    */
   constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, passedSanitizer?: Sanitizer) {
-    this.strings_ = strings;
-    this.nodeContext_ = nodeContext;
-    this.workerContext_ = workerContext;
-    this.sanitizer_ = passedSanitizer;
-    this.mutationQueue_ = [];
-    this.pendingMutations_ = false;
+    this.strings = strings;
+    this.nodeContext = nodeContext;
+    this.sanitizer = passedSanitizer;
+    this.mutationQueue = [];
+    this.pendingMutations = false;
 
     const eventSubscriptionProcessor = new EventSubscriptionProcessor(strings, nodeContext, workerContext);
     const boundingClientRectProcessor = new BoundingClientRectProcessor(nodeContext, workerContext);
 
-    this.mutators_ = {
-      [MutationRecordType.CHILD_LIST]: this.mutateChildList_.bind(this),
-      [MutationRecordType.ATTRIBUTES]: this.mutateAttributes_.bind(this),
-      [MutationRecordType.CHARACTER_DATA]: this.mutateCharacterData_.bind(this),
-      [MutationRecordType.PROPERTIES]: this.mutateProperties_.bind(this),
+    this.mutators = {
+      [MutationRecordType.CHILD_LIST]: this.mutateChildList.bind(this),
+      [MutationRecordType.ATTRIBUTES]: this.mutateAttributes.bind(this),
+      [MutationRecordType.CHARACTER_DATA]: this.mutateCharacterData.bind(this),
+      [MutationRecordType.PROPERTIES]: this.mutateProperties.bind(this),
       [MutationRecordType.EVENT_SUBSCRIPTION]: eventSubscriptionProcessor.process.bind(eventSubscriptionProcessor),
       [MutationRecordType.GET_BOUNDING_CLIENT_RECT]: boundingClientRectProcessor.process.bind(boundingClientRectProcessor),
     };
@@ -75,12 +73,12 @@ export class MutatorContext {
     //   return;
     // }
     // this.lastGestureTime = lastGestureTime;
-    this.strings_.storeValues(stringValues);
-    nodes.forEach(node => this.nodeContext_.createNode(node, this.sanitizer_));
-    this.mutationQueue_ = this.mutationQueue_.concat(mutations);
-    if (!this.pendingMutations_) {
-      this.pendingMutations_ = true;
-      requestAnimationFrame(this.syncFlush_.bind(this));
+    this.strings.storeValues(stringValues);
+    nodes.forEach(node => this.nodeContext.createNode(node, this.sanitizer));
+    this.mutationQueue = this.mutationQueue.concat(mutations);
+    if (!this.pendingMutations) {
+      this.pendingMutations = true;
+      requestAnimationFrame(this.syncFlush.bind(this));
     }
   }
 
@@ -90,24 +88,24 @@ export class MutatorContext {
    *
    * Investigations in using asyncFlush to resolve are worth considering.
    */
-  syncFlush_(): void {
-    this.mutationQueue_.forEach(mutation => {
+  private syncFlush(): void {
+    this.mutationQueue.forEach(mutation => {
       const nodeId = mutation[TransferrableKeys.target];
-      const node = this.nodeContext_.getNode(nodeId);
+      const node = this.nodeContext.getNode(nodeId);
       if (!node) {
         console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
         return;
       }
-      this.mutators_[mutation[TransferrableKeys.type]](mutation, node);
+      this.mutators[mutation[TransferrableKeys.type]](mutation, node);
     });
-    this.mutationQueue_ = [];
-    this.pendingMutations_ = false;
+    this.mutationQueue = [];
+    this.pendingMutations = false;
   }
 
-  mutateChildList_(mutation: TransferrableMutationRecord, target: HTMLElement) {
+  private mutateChildList(mutation: TransferrableMutationRecord, target: HTMLElement) {
     (mutation[TransferrableKeys.removedNodes] || []).forEach(nodeReference => {
       const nodeId = nodeReference[TransferrableKeys.index];
-      const node = this.nodeContext_.getNode(nodeId);
+      const node = this.nodeContext.getNode(nodeId);
       if (!node) {
         console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
         return;
@@ -120,18 +118,18 @@ export class MutatorContext {
     if (addedNodes) {
       addedNodes.forEach(node => {
         let newChild = null;
-        newChild = this.nodeContext_.getNode(node[TransferrableKeys.index]);
+        newChild = this.nodeContext.getNode(node[TransferrableKeys.index]);
 
         if (!newChild) {
           // Transferred nodes that are not stored were previously removed by the sanitizer.
           if (node[TransferrableKeys.transferred]) {
             return;
           } else {
-            newChild = this.nodeContext_.createNode(node as TransferrableNode, this.sanitizer_);
+            newChild = this.nodeContext.createNode(node as TransferrableNode, this.sanitizer);
           }
         }
         if (newChild) {
-          target.insertBefore(newChild, (nextSibling && this.nodeContext_.getNode(nextSibling[TransferrableKeys.index])) || null);
+          target.insertBefore(newChild, (nextSibling && this.nodeContext.getNode(nextSibling[TransferrableKeys.index])) || null);
         } else {
           // TODO(choumx): Inform worker that sanitizer removed newChild.
         }
@@ -139,15 +137,15 @@ export class MutatorContext {
     }
   }
 
-  mutateAttributes_(mutation: TransferrableMutationRecord, target: HTMLElement | SVGElement) {
+  private mutateAttributes(mutation: TransferrableMutationRecord, target: HTMLElement | SVGElement) {
     const attributeName =
-      mutation[TransferrableKeys.attributeName] !== undefined ? this.strings_.get(mutation[TransferrableKeys.attributeName] as number) : null;
-    const value = mutation[TransferrableKeys.value] !== undefined ? this.strings_.get(mutation[TransferrableKeys.value] as number) : null;
+      mutation[TransferrableKeys.attributeName] !== undefined ? this.strings.get(mutation[TransferrableKeys.attributeName] as number) : null;
+    const value = mutation[TransferrableKeys.value] !== undefined ? this.strings.get(mutation[TransferrableKeys.value] as number) : null;
     if (attributeName != null) {
       if (value == null) {
         target.removeAttribute(attributeName);
       } else {
-        if (!this.sanitizer_ || this.sanitizer_.validAttribute(target.nodeName, attributeName, value)) {
+        if (!this.sanitizer || this.sanitizer.validAttribute(target.nodeName, attributeName, value)) {
           target.setAttribute(attributeName, value);
         } else {
           // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
@@ -156,21 +154,21 @@ export class MutatorContext {
     }
   }
 
-  mutateCharacterData_(mutation: TransferrableMutationRecord, target: CharacterData) {
+  private mutateCharacterData(mutation: TransferrableMutationRecord, target: CharacterData) {
     const value = mutation[TransferrableKeys.value];
     if (value) {
       // Sanitization not necessary for textContent.
-      target.textContent = this.strings_.get(value);
+      target.textContent = this.strings.get(value);
     }
   }
 
-  mutateProperties_(mutation: TransferrableMutationRecord, target: RenderableElement) {
+  private mutateProperties(mutation: TransferrableMutationRecord, target: RenderableElement) {
     const propertyName =
-      mutation[TransferrableKeys.propertyName] !== undefined ? this.strings_.get(mutation[TransferrableKeys.propertyName] as number) : null;
-    const value = mutation[TransferrableKeys.value] !== undefined ? this.strings_.get(mutation[TransferrableKeys.value] as number) : null;
+      mutation[TransferrableKeys.propertyName] !== undefined ? this.strings.get(mutation[TransferrableKeys.propertyName] as number) : null;
+    const value = mutation[TransferrableKeys.value] !== undefined ? this.strings.get(mutation[TransferrableKeys.value] as number) : null;
     if (propertyName && value != null) {
       const stringValue = String(value);
-      if (!this.sanitizer_ || this.sanitizer_.validProperty(target.nodeName, propertyName, stringValue)) {
+      if (!this.sanitizer || this.sanitizer.validProperty(target.nodeName, propertyName, stringValue)) {
         // TODO(choumx, #122): Proper support for non-string property mutations.
         const isBooleanProperty = propertyName == 'checked';
         target[propertyName] = isBooleanProperty ? value === 'true' : value;

@@ -16,7 +16,7 @@
 
 import { DebuggingContext } from './debugging';
 import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
-import { MutatorContext } from './mutator';
+import { MutatorProcessor } from './mutator';
 import { NodeContext } from './nodes';
 import { Strings } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
@@ -76,7 +76,7 @@ export function install(
       const workerContext = new WorkerContext(baseElement, workerDOMScript, authorScript, authorScriptURL, callbacks);
       const worker = workerContext.getWorker();
       setPhase(Phases.Hydrating);
-      const mutatorContext = new MutatorContext(strings, nodeContext, workerContext, sanitizer);
+      const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, sanitizer);
       worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
         const type = data[TransferrableKeys.type];

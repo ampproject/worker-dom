@@ -15,10 +15,10 @@
  */
 
 export class Strings {
-  strings_: Array<string>;
+  private strings: Array<string>;
 
   constructor() {
-    this.strings_ = [];
+    this.strings = [];
   }
 
   /**
@@ -27,7 +27,7 @@ export class Strings {
    * @returns string in map for the index.
    */
   get(index: number): string {
-    return this.strings_[index] || '';
+    return this.strings[index] || '';
   }
 
   /**
@@ -36,7 +36,7 @@ export class Strings {
    * @return location in map
    */
   store(value: string): void {
-    this.strings_.push(value);
+    this.strings.push(value);
   }
 
   /**

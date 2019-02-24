@@ -45,12 +45,12 @@ const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
 };
 
 export class DebuggingContext {
-  strings_: Strings;
-  nodeContext_: NodeContext;
+  private strings: Strings;
+  private nodeContext: NodeContext;
 
   constructor(strings: Strings, nodeContext: NodeContext) {
-    this.strings_ = strings;
-    this.nodeContext_ = nodeContext;
+    this.strings = strings;
+    this.nodeContext = nodeContext;
   }
 
   /**
@@ -71,7 +71,7 @@ export class DebuggingContext {
       const mutations = data[TransferrableKeys.mutations];
       const mutate: any = {
         type: data[TransferrableKeys.type] === MessageType.MUTATE ? 'MUTATE' : 'HYDRATE',
-        mutations: mutations.map(n => this.readableTransferrableMutationRecord_(n)),
+        mutations: mutations.map(n => this.readableTransferrableMutationRecord(n)),
         // Omit 'strings' key.
       };
       // TODO(choumx): Like 'strings', I'm not sure 'nodes' is actually useful.
@@ -91,18 +91,18 @@ export class DebuggingContext {
       const event = message[TransferrableKeys.event];
       return {
         type: 'EVENT',
-        event: readableTransferrableEvent(this.nodeContext_, event),
+        event: readableTransferrableEvent(this.nodeContext, event),
       };
     } else if (isValueSync(message)) {
       const sync = message[TransferrableKeys.sync];
       return {
         type: 'SYNC',
-        sync: readableTransferrableSyncValue(this.nodeContext_, sync),
+        sync: readableTransferrableSyncValue(this.nodeContext, sync),
       };
     } else if (isBoundingClientRect(message)) {
       return {
         type: 'GET_BOUNDING_CLIENT_RECT',
-        target: readableTransferredNode(this.nodeContext_, message[TransferrableKeys.target]),
+        target: readableTransferredNode(this.nodeContext, message[TransferrableKeys.target]),
       };
     } else {
       return 'Unrecognized MessageToWorker type: ' + message[TransferrableKeys.type];
@@ -112,20 +112,20 @@ export class DebuggingContext {
   /**
    * @param r
    */
-  readableTransferrableMutationRecord_(r: TransferrableMutationRecord): Object {
+  private readableTransferrableMutationRecord(r: TransferrableMutationRecord): Object {
     const target = r[TransferrableKeys.target];
 
     const out: any = {
       type: MUTATION_RECORD_TYPE_REVERSE_MAPPING[r[TransferrableKeys.type]],
-      target: this.nodeContext_.getNode(target) || target,
+      target: this.nodeContext.getNode(target) || target,
     };
     const added = r[TransferrableKeys.addedNodes];
     if (added) {
-      out['addedNodes'] = added.map(n => readableTransferredNode(this.nodeContext_, n));
+      out['addedNodes'] = added.map(n => readableTransferredNode(this.nodeContext, n));
     }
     const removed = r[TransferrableKeys.removedNodes];
     if (removed) {
-      out['removedNodes'] = removed.map(n => readableTransferredNode(this.nodeContext_, n));
+      out['removedNodes'] = removed.map(n => readableTransferredNode(this.nodeContext, n));
     }
     const previousSibling = r[TransferrableKeys.previousSibling];
     if (previousSibling) {
@@ -137,7 +137,7 @@ export class DebuggingContext {
     }
     const attributeName = r[TransferrableKeys.attributeName];
     if (attributeName !== undefined) {
-      out['attributeName'] = this.strings_.get(attributeName);
+      out['attributeName'] = this.strings.get(attributeName);
     }
     const attributeNamespace = r[TransferrableKeys.attributeNamespace];
     if (attributeNamespace !== undefined) {
@@ -149,11 +149,11 @@ export class DebuggingContext {
     }
     const value = r[TransferrableKeys.value];
     if (value !== undefined) {
-      out['value'] = this.strings_.get(value);
+      out['value'] = this.strings.get(value);
     }
     const oldValue = r[TransferrableKeys.oldValue];
     if (oldValue !== undefined) {
-      out['oldValue'] = this.strings_.get(oldValue);
+      out['oldValue'] = this.strings.get(oldValue);
     }
     const addedEvents = r[TransferrableKeys.addedEvents];
     if (addedEvents !== undefined) {

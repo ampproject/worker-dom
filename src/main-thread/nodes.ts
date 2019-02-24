@@ -19,10 +19,10 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { Strings } from './strings';
 
 export class NodeContext {
-  baseElement_: HTMLElement;
-  strings_: Strings;
-  count_: number;
-  nodes_: Map<number, Node>;
+  private baseElement: HTMLElement;
+  private strings: Strings;
+  private count: number;
+  private nodes: Map<number, Node>;
 
   /**
    * Called when initializing a Worker, ensures the nodes in baseElement are
@@ -31,24 +31,24 @@ export class NodeContext {
    * @param baseElement Element that will be controlled by a Worker
    */
   constructor(strings: Strings, baseElement: Element) {
-    this.count_ = 2;
-    this.strings_ = strings;
+    this.count = 2;
+    this.strings = strings;
 
-    // The nodes_ map is populated with two default values pointing to
+    // The nodes map is populated with two default values pointing to
     // baseElement.
     // These are [document, document.body] from the worker.
-    this.nodes_ = new Map([[1, baseElement], [2, baseElement]]);
-    this.baseElement_ = baseElement as HTMLElement;
+    this.nodes = new Map([[1, baseElement], [2, baseElement]]);
+    this.baseElement = baseElement as HTMLElement;
     // To ensure a lookup works correctly from baseElement
     // add an index equal to the background thread document.body.
     baseElement._index_ = 2;
     // Lastly, it's important while initializing the document that we store
     // the default nodes present in the server rendered document.
-    baseElement.childNodes.forEach(n => this.storeNodes_(n));
+    baseElement.childNodes.forEach(n => this.storeNodes(n));
   }
 
   getBaseElement(): HTMLElement {
-    return this.baseElement_;
+    return this.baseElement;
   }
 
   /**
@@ -61,13 +61,13 @@ export class NodeContext {
   createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): Node | null {
     let node: Node;
     if (skeleton[TransferrableKeys.nodeType] === NodeType.TEXT_NODE) {
-      node = document.createTextNode(this.strings_.get(skeleton[TransferrableKeys.textContent] as number));
+      node = document.createTextNode(this.strings.get(skeleton[TransferrableKeys.textContent] as number));
     } else if (skeleton[TransferrableKeys.nodeType] === NodeType.DOCUMENT_FRAGMENT_NODE) {
       node = document.createDocumentFragment();
     } else {
       const namespace =
-        skeleton[TransferrableKeys.namespaceURI] !== undefined ? this.strings_.get(skeleton[TransferrableKeys.namespaceURI] as number) : undefined;
-      const nodeName = this.strings_.get(skeleton[TransferrableKeys.nodeName]);
+        skeleton[TransferrableKeys.namespaceURI] !== undefined ? this.strings.get(skeleton[TransferrableKeys.namespaceURI] as number) : undefined;
+      const nodeName = this.strings.get(skeleton[TransferrableKeys.nodeName]);
       node = namespace ? document.createElementNS(namespace, nodeName) : document.createElement(nodeName);
 
       // TODO(KB): Restore Properties
@@ -86,7 +86,7 @@ export class NodeContext {
       }
     }
 
-    this.storeNode_(node, skeleton[TransferrableKeys.index]);
+    this.storeNode(node, skeleton[TransferrableKeys.index]);
     return node;
   }
 
@@ -96,13 +96,13 @@ export class NodeContext {
    * @return RenderableElement | null
    */
   getNode(id: number): RenderableElement | null {
-    const node = this.nodes_.get(id);
+    const node = this.nodes.get(id);
 
     if (node && node.nodeName === 'BODY') {
       // If the node requested is the "BODY"
       // Then we return the base node this specific <amp-script> comes from.
       // This encapsulates each <amp-script> node.
-      return this.baseElement_ as RenderableElement;
+      return this.baseElement as RenderableElement;
     }
     return node as RenderableElement;
   }
@@ -111,9 +111,9 @@ export class NodeContext {
    * Store the requested node and all of its children.
    * @param node node to store.
    */
-  storeNodes_(node: Node): void {
-    this.storeNode_(node, ++this.count_);
-    node.childNodes.forEach(n => this.storeNodes_(n));
+  private storeNodes(node: Node): void {
+    this.storeNode(node, ++this.count);
+    node.childNodes.forEach(n => this.storeNodes(n));
   }
 
   /**
@@ -125,8 +125,8 @@ export class NodeContext {
    * @param node
    * @param id
    */
-  storeNode_(node: Node, id: number): void {
+  private storeNode(node: Node, id: number): void {
     (node as Node)._index_ = id;
-    this.nodes_.set(id, node as Node);
+    this.nodes.set(id, node as Node);
   }
 }

@@ -19,13 +19,13 @@ import { WorkerCallbacks } from './callbacks';
 import { createHydrateableRootNode } from './serialize';
 
 export class WorkerContext {
-  worker_: Worker;
+  private worker: Worker;
 
   /**
    * Stored callbacks for the most recently created worker.
    * Note: This can be easily changed to a lookup table to support multiple workers.
    */
-  callbacks_: WorkerCallbacks | undefined;
+  private callbacks: WorkerCallbacks | undefined;
 
   /**
    * @param baseElement
@@ -34,7 +34,7 @@ export class WorkerContext {
    * @param authorScriptURL
    */
   constructor(baseElement: HTMLElement, workerDOMScript: string, authorScript: string, authorScriptURL: string, callbacks?: WorkerCallbacks) {
-    this.callbacks_ = callbacks;
+    this.callbacks = callbacks;
 
     // TODO(KB): Minify this output during build process.
     const keys: Array<string> = [];
@@ -72,23 +72,23 @@ export class WorkerContext {
         ${authorScript}
       }).call(WorkerThread.workerDOM);
   //# sourceURL=${encodeURI(authorScriptURL)}`;
-    this.worker_ = new Worker(URL.createObjectURL(new Blob([code])));
+    this.worker = new Worker(URL.createObjectURL(new Blob([code])));
     if (callbacks && callbacks.onCreateWorker) {
       callbacks.onCreateWorker(baseElement);
     }
   }
 
   getWorker(): Worker {
-    return this.worker_;
+    return this.worker;
   }
 
   /**
    * @param message
    */
   messageToWorker(message: MessageToWorker) {
-    if (this.callbacks_ && this.callbacks_.onSendMessage) {
-      this.callbacks_.onSendMessage(message);
+    if (this.callbacks && this.callbacks.onSendMessage) {
+      this.callbacks.onSendMessage(message);
     }
-    this.worker_.postMessage(message);
+    this.worker.postMessage(message);
   }
 }

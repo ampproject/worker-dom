@@ -23,17 +23,17 @@ import { TransferrableMutationRecord } from '../../transfer/TransferrableRecord'
 import { WorkerContext } from '../worker';
 
 export class EventSubscriptionProcessor {
-  strings_: Strings;
-  nodeContext_: NodeContext;
-  workerContext_: WorkerContext;
+  private strings: Strings;
+  private nodeContext: NodeContext;
+  private workerContext: WorkerContext;
   // TODO(choumx): Support SYNC events for properties other than 'value', e.g. 'checked'.
-  knownListeners_: Array<(event: Event) => any>;
+  private knownListeners: Array<(event: Event) => any>;
 
   constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext) {
-    this.strings_ = strings;
-    this.nodeContext_ = nodeContext;
-    this.workerContext_ = workerContext;
-    this.knownListeners_ = [];
+    this.strings = strings;
+    this.nodeContext = nodeContext;
+    this.workerContext = workerContext;
+    this.knownListeners = [];
   }
 
   /**
@@ -42,7 +42,7 @@ export class EventSubscriptionProcessor {
    */
   process(mutation: TransferrableMutationRecord): void {
     const nodeId = mutation[TransferrableKeys.target];
-    const target = this.nodeContext_.getNode(nodeId);
+    const target = this.nodeContext.getNode(nodeId);
 
     if (!target) {
       console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
@@ -50,10 +50,10 @@ export class EventSubscriptionProcessor {
     }
 
     (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub =>
-      this.processListenerChange_(target, false, this.strings_.get(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
+      this.processListenerChange(target, false, this.strings.get(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
     );
     (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub =>
-      this.processListenerChange_(target, true, this.strings_.get(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
+      this.processListenerChange(target, true, this.strings.get(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
     );
   }
 
@@ -65,7 +65,7 @@ export class EventSubscriptionProcessor {
    * @param type event type requested to change
    * @param index number in the listeners array this event corresponds to.
    */
-  processListenerChange_(target: RenderableElement, addEvent: boolean, type: string, index: number): void {
+  private processListenerChange(target: RenderableElement, addEvent: boolean, type: string, index: number): void {
     let changeEventSubscribed: boolean = target.onchange !== null;
     const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
     const isChangeEvent = type === 'change';
@@ -75,15 +75,15 @@ export class EventSubscriptionProcessor {
         changeEventSubscribed = true;
         target.onchange = null;
       }
-      (target as HTMLElement).addEventListener(type, (this.knownListeners_[index] = eventHandler(this.workerContext_, target._index_)));
+      (target as HTMLElement).addEventListener(type, (this.knownListeners[index] = eventHandler(this.workerContext, target._index_)));
     } else {
       if (isChangeEvent) {
         changeEventSubscribed = false;
       }
-      (target as HTMLElement).removeEventListener(type, this.knownListeners_[index]);
+      (target as HTMLElement).removeEventListener(type, this.knownListeners[index]);
     }
     if (shouldTrack && !changeEventSubscribed) {
-      applyDefaultChangeListener(this.workerContext_, target as RenderableElement);
+      applyDefaultChangeListener(this.workerContext, target as RenderableElement);
     }
   }
 }

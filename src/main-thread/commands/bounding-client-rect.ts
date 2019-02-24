@@ -22,16 +22,16 @@ import { NumericBoolean } from '../../utils';
 import { WorkerContext } from '../worker';
 
 export class BoundingClientRectProcessor {
-  nodeContext_: NodeContext;
-  workerContext_: WorkerContext;
+  private nodeContext: NodeContext;
+  private workerContext: WorkerContext;
 
   /**
    * @param nodeContext
    * @param workerContext whom to dispatch events toward.
    */
   constructor(nodeContext: NodeContext, workerContext: WorkerContext) {
-    this.nodeContext_ = nodeContext;
-    this.workerContext_ = workerContext;
+    this.nodeContext = nodeContext;
+    this.workerContext = workerContext;
   }
 
   /**
@@ -40,7 +40,7 @@ export class BoundingClientRectProcessor {
    */
   process(mutation: TransferrableMutationRecord): void {
     const nodeId = mutation[TransferrableKeys.target];
-    const target = this.nodeContext_.getNode(nodeId);
+    const target = this.nodeContext.getNode(nodeId);
 
     if (!target) {
       console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
@@ -48,7 +48,7 @@ export class BoundingClientRectProcessor {
     }
 
     const boundingRect = target.getBoundingClientRect();
-    this.workerContext_.messageToWorker({
+    this.workerContext.messageToWorker({
       [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
       [TransferrableKeys.target]: {
         [TransferrableKeys.index]: target._index_,
