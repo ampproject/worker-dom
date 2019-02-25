@@ -2,7 +2,7 @@
 
 ## DOM API Compatibility
 
-This section highlights the DOM APIs that are implemented in WorkerDOM currently. Please [file an issue](https://github.com/ampproject/worker-dom/issues/new) if you would like an API suppported.  
+This section highlights the DOM APIs that are implemented in WorkerDOM currently. Please [file an issue](https://github.com/ampproject/worker-dom/issues/new) if you would like an API suppported. 
 
 | API                                                 | Status | Notes                                            | 
 |-----------------------------------------------------|--------|--------------------------------------------------| 
@@ -21,11 +21,10 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | CharacterData.length                                | ✔️     |                                                  | 
 | CharacterData.replaceData()                         | ✖️     |                                                  | 
 | CharacterData.substringData()                       | ✖️     |                                                  | 
-| ChildNode.after()                                   |        |                                                  | 
-| ChildNode.before()                                  |        |                                                  | 
-| ChildNode.remove()                                  |        |                                                  | 
-| ChildNode.remove()                                  | ✔️     |                                                  | 
-| ChildNode.replaceWith()                             |        |                                                  | 
+| ChildNode.after()                                   | ✖️     |                                                  | 
+| ChildNode.before()                                  | ✖️     |                                                  | 
+| ChildNode.remove()                                  | ✖️     |                                                  | 
+| ChildNode.replaceWith()                             | ✖️     |                                                  | 
 | Comment                                             | ✔️     | See CharacterData and Node                       | 
 | CSSStyleDeclaration.cssText                         | ✔️     |                                                  | 
 | CSSStyleDeclaration.getPropertyPriority()           | ✖️     |                                                  | 
@@ -140,8 +139,8 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | document.write()                                    | ✖️     |                                                  | 
 | document.writeln()                                  | ✖️     |                                                  | 
 | DocumentFragment.getElementById()                   | ✔️     |                                                  | 
-| DocumentFragment.querySelector()                    | ✔️     | Partially ✔️                                     | 
-| DocumentFragment.querySelectorAll()                 | ✔️     | Partially ✔️                                     | 
+| DocumentFragment.querySelector()                    | ✔️     | Partial support                                  | 
+| DocumentFragment.querySelectorAll()                 | ✔️     | Partial support                                  | 
 | DocumentOrShadowRoot.activeElement                  | ✖️     |                                                  | 
 | DocumentOrShadowRoot.caretPositionFromPoint()       | ✖️     |                                                  | 
 | DocumentOrShadowRoot.elementFromPoint()             | ✖️     |                                                  | 
@@ -220,8 +219,8 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Element.openOrClosedShadowRoot                      | ✖️     |                                                  | 
 | Element.outerHTML                                   | ✔️     |                                                  | 
 | Element.prefix                                      | ✖️     |                                                  | 
-| Element.querySelector()                             | ✔️     | Partially ✔️                                     | 
-| Element.querySelectorAll()                          | ✔️     | Partially ✔️                                     | 
+| Element.querySelector()                             | ✔️     | Partial support                                  | 
+| Element.querySelectorAll()                          | ✔️     | Partial support                                  | 
 | Element.releasePointerCapture()                     | ✖️     |                                                  | 
 | Element.removeAttribute()                           | ✔️     |                                                  | 
 | Element.removeAttributeNode()                       | ✖️     |                                                  | 
@@ -247,63 +246,63 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Element.shadowRoot                                  | N/A    | Not supporting Custom Elements                   | 
 | Element.slot                                        | N/A    | Not supporting Custom Elements                   | 
 | Element.tabStop                                     | ✖️     |                                                  | 
-| Element.tagName                                     | ✔️     |                                                  | 
+| Element.tagName                                     | ✖️     |                                                  | 
 | Element.toggleAttribute()                           | ✖️     |                                                  | 
-| Event.bubbles                                       | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.bubbles                                       | ✔️     |                                                  | 
-| Event.cancelable                                    | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.cancelable                                    | ✔️     |                                                  | 
-| Event.cancelBubble                                  | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.cancelBubble                                  | ✔️     |                                                  | 
-| Event.composed                                      | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.composed                                      | ✖️     |                                                  | 
 | Event.composedPath()                                | ✖️     |                                                  | 
-| Event.currentTarget                                 | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.currentTarget                                 | ✔️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.deepPath                                      | ✖️     |                                                  | 
-| Event.deepPath                                      | ✖️     |                                                  | 
-| Event.defaultPrevented                              | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.defaultPrevented                              | ✔️     |                                                  | 
-| Event.eventPhase                                    | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.eventPhase                                    | ✔️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.explicitOriginalTarget                        | ✖️     |                                                  | 
-| Event.explicitOriginalTarget                        | ✖️     |                                                  | 
-| Event.isTrusted                                     | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.isTrusted                                     | ✔️     |                                                  | 
-| Event.originalTarget                                | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.originalTarget                                | ✖️     |                                                  | 
 | Event.preventDefault()                              | ✔️     |                                                  | 
-| Event.returnValue                                   | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.returnValue                                   | ✔️     |                                                  | 
 | Event.srcElement                                    | ✖️     |                                                  | 
-| Event.srcElement                                    | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.stopImmediatePropagation()                    | ✖️     |                                                  | 
 | Event.stopPropagation()                             | ✖️     |                                                  | 
-| Event.target                                        | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.target                                        | ✔️     |                                                  | 
-| Event.timeStamp                                     | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.timeStamp                                     | ✔️     |                                                  | 
-| Event.type                                          | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
 | Event.type                                          | ✔️     |                                                  | 
-| EventTarget.addEventListener()                      | ✖️     |                                                  | 
 | EventTarget.addEventListener()                      | ✔️     |                                                  | 
-| EventTarget.addEventListener()                      | ✖️     |                                                  | 
-| EventTarget.addEventListener()                      | ✖️     |                                                  | 
-| EventTarget.addEventListener()                      | ✖️     |                                                  | 
-| EventTarget.addEventListener()                      | ✖️     |                                                  | 
-| EventTarget.addEventListener()                      | ✖️     |                                                  | 
-| EventTarget.addEventListener()                      | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
 | EventTarget.dispatchEvent()                         | ✖️     |                                                  | 
-| EventTarget.dispatchEvent()                         | ✖️     |                                                  | 
-| EventTarget.removeEventListener                     | ✔️     |                                                  | 
-| EventTarget.removeEventListener                     | ✖️     |                                                  | 
-| EventTarget.removeEventListener                     | ✖️     |                                                  | 
-| EventTarget.removeEventListener                     | ✖️     |                                                  | 
-| EventTarget.removeEventListener                     | ✖️     |                                                  | 
-| EventTarget.removeEventListener                     | ✖️     |                                                  | 
-| EventTarget.removeEventListener                     | ✖️     |                                                  | 
-| EventTarget.removeEventListener()                   | ✖️     |                                                  | 
-| EventTarget.removeEventListener()                   | ✖️     |                                                  | 
+|                                                     |        |                                                  | 
+| EventTarget.removeEventListener()                   | ✔️     |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
+|                                                     |        |                                                  | 
 | GlobalEventHandlers.onabort                         | ✖️     |                                                  | 
 | GlobalEventHandlers.onanimationcancel               | ✖️     |                                                  | 
 | GlobalEventHandlers.onanimationend                  | ✖️     |                                                  | 
@@ -456,7 +455,6 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | HTMLElement.label                                   | ✔️     |                                                  | 
 | HTMLElement.lang                                    | ✔️     |                                                  | 
 | HTMLElement.noModule                                | ✔️     |                                                  | 
-| HTMLElement.noModule                                | ✔️     |                                                  | 
 | HTMLElement.nonce                                   | ✖️     |                                                  | 
 | HTMLElement.offsetHeight                            | ✖️     |                                                  | 
 | HTMLElement.offsetLeft                              | ✖️     |                                                  | 
@@ -466,14 +464,12 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | HTMLElement.properties                              | ✖️     |                                                  | 
 | HTMLElement.referrerPolicy                          | ✖️     |                                                  | 
 | HTMLElement.reportValidity()                        | ✖️     |                                                  | 
-| HTMLElement.reportValidity()                        | ✖️     |                                                  | 
 | HTMLElement.selected                                | ✔️     |                                                  | 
 | HTMLElement.setCustomValidity(in DOMString error)   | ✖️     |                                                  | 
 | HTMLElement.spellcheck                              | ✔️     |                                                  | 
 | HTMLElement.src                                     | ✔️     |                                                  | 
 | HTMLElement.style                                   | ✖️     |                                                  | 
 | HTMLElement.tabIndex                                | ✖️     |                                                  | 
-| HTMLElement.text                                    | ✔️     |                                                  | 
 | HTMLElement.text                                    | ✔️     |                                                  | 
 | HTMLElement.title                                   | ✖️     |                                                  | 
 | HTMLElement.translate                               | ✔️     |                                                  | 
@@ -734,7 +730,6 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | HTMLTableSectionElement.rows                        | ✔️     |                                                  | 
 | HTMLTimeElement.dateTime                            | ✔️     |                                                  | 
 | LinkStyle.sheet                                     | ✖️     |                                                  | 
-| LinkStyle.sheet                                     | ✖️     |                                                  | 
 | MutationObserver.disconnect()                       | ✔️     |                                                  | 
 | MutationObserver.observe()                          | ✔️     |                                                  | 
 | MutationObserver.takeRecords()                      | ✔️     |                                                  | 
@@ -808,8 +803,8 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | ParentNode.firstElementChild                        | ✔️     |                                                  | 
 | ParentNode.lastElementChild                         | ✔️     |                                                  | 
 | ParentNode.prepend()                                | ✖️     |                                                  | 
-| ParentNode.querySelector()                          | ✔️     | Partially ✔️                                     | 
-| ParentNode.querySelectorAll()                       | ✔️     | Partially ✔️                                     | 
+| ParentNode.querySelector()                          | ✔️     | Partial support                                  | 
+| ParentNode.querySelectorAll()                       | ✔️     | Partial support                                  | 
 | Range.cloneContents()                               | ✖️     |                                                  | 
 | Range.cloneRange()                                  | ✖️     |                                                  | 
 | Range.collapse()                                    | ✖️     |                                                  | 
@@ -910,745 +905,108 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | URL.toString()                                      | ✖️     |                                                  | 
 | URL.username                                        | ✖️     |                                                  | 
 | Window.alert()                                      | ✖️     |                                                  | 
-| Window.alert()                                      | ✖️     |                                                  | 
-| Window.alert()                                      | ✖️     |                                                  | 
-| Window.alert()                                      | ✖️     |                                                  | 
-| Window.alert()                                      | ✖️     |                                                  | 
-| Window.alert()                                      | ✖️     |                                                  | 
-| Window.alert()                                      | ✖️     |                                                  | 
-| Window.back()                                       | ✖️     |                                                  | 
-| Window.back()                                       | ✖️     |                                                  | 
-| Window.back()                                       | ✖️     |                                                  | 
-| Window.back()                                       | ✖️     |                                                  | 
-| Window.back()                                       | ✖️     |                                                  | 
-| Window.back()                                       | ✖️     |                                                  | 
 | Window.back()                                       | ✖️     |                                                  | 
 | Window.blur()                                       | ✖️     |                                                  | 
-| Window.blur()                                       | ✖️     |                                                  | 
-| Window.blur()                                       | ✖️     |                                                  | 
-| Window.blur()                                       | ✖️     |                                                  | 
-| Window.blur()                                       | ✖️     |                                                  | 
-| Window.blur()                                       | ✖️     |                                                  | 
-| Window.blur()                                       | ✖️     |                                                  | 
-| Window.cancelAnimationFrame()                       | ✖️     |                                                  | 
-| Window.cancelAnimationFrame()                       | ✖️     |                                                  | 
-| Window.cancelAnimationFrame()                       | ✖️     |                                                  | 
-| Window.cancelAnimationFrame()                       | ✖️     |                                                  | 
-| Window.cancelAnimationFrame()                       | ✖️     |                                                  | 
-| Window.cancelAnimationFrame()                       | ✖️     |                                                  | 
 | Window.cancelAnimationFrame()                       | ✖️     |                                                  | 
 | Window.cancelIdleCallback()                         | ✖️     |                                                  | 
-| Window.cancelIdleCallback()                         | ✖️     |                                                  | 
-| Window.cancelIdleCallback()                         | ✖️     |                                                  | 
-| Window.cancelIdleCallback()                         | ✖️     |                                                  | 
-| Window.cancelIdleCallback()                         | ✖️     |                                                  | 
-| Window.cancelIdleCallback()                         | ✖️     |                                                  | 
-| Window.cancelIdleCallback()                         | ✖️     |                                                  | 
-| Window.captureEvents()                              | ✖️     |                                                  | 
-| Window.captureEvents()                              | ✖️     |                                                  | 
-| Window.captureEvents()                              | ✖️     |                                                  | 
-| Window.captureEvents()                              | ✖️     |                                                  | 
-| Window.captureEvents()                              | ✖️     |                                                  | 
-| Window.captureEvents()                              | ✖️     |                                                  | 
 | Window.captureEvents()                              | ✖️     |                                                  | 
 | Window.clearImmediate()                             | ✖️     |                                                  | 
-| Window.clearImmediate()                             | ✖️     |                                                  | 
-| Window.clearImmediate()                             | ✖️     |                                                  | 
-| Window.clearImmediate()                             | ✖️     |                                                  | 
-| Window.clearImmediate()                             | ✖️     |                                                  | 
-| Window.clearImmediate()                             | ✖️     |                                                  | 
-| Window.clearImmediate()                             | ✖️     |                                                  | 
-| Window.close()                                      | ✖️     |                                                  | 
-| Window.close()                                      | ✖️     |                                                  | 
-| Window.close()                                      | ✖️     |                                                  | 
-| Window.close()                                      | ✖️     |                                                  | 
-| Window.close()                                      | ✖️     |                                                  | 
-| Window.close()                                      | ✖️     |                                                  | 
 | Window.close()                                      | ✖️     |                                                  | 
 | Window.closed                                       | ✖️     |                                                  | 
-| Window.closed                                       | ✖️     |                                                  | 
-| Window.closed                                       | ✖️     |                                                  | 
-| Window.closed                                       | ✖️     |                                                  | 
-| Window.closed                                       | ✖️     |                                                  | 
-| Window.closed                                       | ✖️     |                                                  | 
-| Window.closed                                       | ✖️     |                                                  | 
-| Window.confirm()                                    | ✖️     |                                                  | 
-| Window.confirm()                                    | ✖️     |                                                  | 
-| Window.confirm()                                    | ✖️     |                                                  | 
-| Window.confirm()                                    | ✖️     |                                                  | 
-| Window.confirm()                                    | ✖️     |                                                  | 
-| Window.confirm()                                    | ✖️     |                                                  | 
 | Window.confirm()                                    | ✖️     |                                                  | 
 | Window.content and Window._content                  | ✖️     |                                                  | 
-| Window.content and Window._content                  | ✖️     |                                                  | 
-| Window.content and Window._content                  | ✖️     |                                                  | 
-| Window.content and Window._content                  | ✖️     |                                                  | 
-| Window.content and Window._content                  | ✖️     |                                                  | 
-| Window.content and Window._content                  | ✖️     |                                                  | 
-| Window.content and Window._content                  | ✖️     |                                                  | 
-| Window.controllers                                  | ✖️     |                                                  | 
-| Window.controllers                                  | ✖️     |                                                  | 
-| Window.controllers                                  | ✖️     |                                                  | 
-| Window.controllers                                  | ✖️     |                                                  | 
-| Window.controllers                                  | ✖️     |                                                  | 
-| Window.controllers                                  | ✖️     |                                                  | 
 | Window.controllers                                  | ✖️     |                                                  | 
 | Window.crypto                                       | ✖️     |                                                  | 
-| Window.crypto                                       | ✖️     |                                                  | 
-| Window.crypto                                       | ✖️     |                                                  | 
-| Window.crypto                                       | ✖️     |                                                  | 
-| Window.crypto                                       | ✖️     |                                                  | 
-| Window.crypto                                       | ✖️     |                                                  | 
-| Window.crypto                                       | ✖️     |                                                  | 
-| Window.customElements                               | ✖️     |                                                  | 
-| Window.customElements                               | ✖️     |                                                  | 
-| Window.customElements                               | ✖️     |                                                  | 
-| Window.customElements                               | ✖️     |                                                  | 
-| Window.customElements                               | ✖️     |                                                  | 
-| Window.customElements                               | ✖️     |                                                  | 
 | Window.customElements                               | ✖️     |                                                  | 
 | Window.devicePixelRatio                             | ✖️     |                                                  | 
-| Window.devicePixelRatio                             | ✖️     |                                                  | 
-| Window.devicePixelRatio                             | ✖️     |                                                  | 
-| Window.devicePixelRatio                             | ✖️     |                                                  | 
-| Window.devicePixelRatio                             | ✖️     |                                                  | 
-| Window.devicePixelRatio                             | ✖️     |                                                  | 
-| Window.devicePixelRatio                             | ✖️     |                                                  | 
-| Window.dialogArguments                              | ✖️     |                                                  | 
-| Window.dialogArguments                              | ✖️     |                                                  | 
-| Window.dialogArguments                              | ✖️     |                                                  | 
-| Window.dialogArguments                              | ✖️     |                                                  | 
-| Window.dialogArguments                              | ✖️     |                                                  | 
-| Window.dialogArguments                              | ✖️     |                                                  | 
-| Window.dialogArguments                              | ✖️     |                                                  | 
-| Window.directories                                  | ✖️     |                                                  | 
-| Window.directories                                  | ✖️     |                                                  | 
-| Window.directories                                  | ✖️     |                                                  | 
-| Window.directories                                  | ✖️     |                                                  | 
-| Window.directories                                  | ✖️     |                                                  | 
-| Window.directories                                  | ✖️     |                                                  | 
 | Window.directories                                  | ✖️     |                                                  | 
 | Window.dispatchEvent()                              | ✖️     |                                                  | 
-| Window.dispatchEvent()                              | ✖️     |                                                  | 
-| Window.dispatchEvent()                              | ✖️     |                                                  | 
-| Window.dispatchEvent()                              | ✖️     |                                                  | 
-| Window.dispatchEvent()                              | ✖️     |                                                  | 
-| Window.dispatchEvent()                              | ✖️     |                                                  | 
-| Window.dispatchEvent()                              | ✖️     |                                                  | 
-| Window.document                                     | ✖️     |                                                  | 
-| Window.document                                     | ✖️     |                                                  | 
-| Window.document                                     | ✖️     |                                                  | 
-| Window.document                                     | ✖️     |                                                  | 
-| Window.document                                     | ✖️     |                                                  | 
-| Window.document                                     | ✖️     |                                                  | 
 | Window.document                                     | ✖️     |                                                  | 
 | Window.DOMMatrix                                    | ✖️     |                                                  | 
-| Window.DOMMatrix                                    | ✖️     |                                                  | 
-| Window.DOMMatrix                                    | ✖️     |                                                  | 
-| Window.DOMMatrix                                    | ✖️     |                                                  | 
-| Window.DOMMatrix                                    | ✖️     |                                                  | 
-| Window.DOMMatrix                                    | ✖️     |                                                  | 
-| Window.DOMMatrix                                    | ✖️     |                                                  | 
-| Window.DOMMatrixReadOnly                            | ✖️     |                                                  | 
-| Window.DOMMatrixReadOnly                            | ✖️     |                                                  | 
-| Window.DOMMatrixReadOnly                            | ✖️     |                                                  | 
-| Window.DOMMatrixReadOnly                            | ✖️     |                                                  | 
-| Window.DOMMatrixReadOnly                            | ✖️     |                                                  | 
-| Window.DOMMatrixReadOnly                            | ✖️     |                                                  | 
 | Window.DOMMatrixReadOnly                            | ✖️     |                                                  | 
 | Window.DOMPoint                                     | ✖️     |                                                  | 
-| Window.DOMPoint                                     | ✖️     |                                                  | 
-| Window.DOMPoint                                     | ✖️     |                                                  | 
-| Window.DOMPoint                                     | ✖️     |                                                  | 
-| Window.DOMPoint                                     | ✖️     |                                                  | 
-| Window.DOMPoint                                     | ✖️     |                                                  | 
-| Window.DOMPoint                                     | ✖️     |                                                  | 
-| Window.DOMPointReadOnly                             | ✖️     |                                                  | 
-| Window.DOMPointReadOnly                             | ✖️     |                                                  | 
-| Window.DOMPointReadOnly                             | ✖️     |                                                  | 
-| Window.DOMPointReadOnly                             | ✖️     |                                                  | 
-| Window.DOMPointReadOnly                             | ✖️     |                                                  | 
-| Window.DOMPointReadOnly                             | ✖️     |                                                  | 
 | Window.DOMPointReadOnly                             | ✖️     |                                                  | 
 | Window.DOMQuad                                      | ✖️     |                                                  | 
-| Window.DOMQuad                                      | ✖️     |                                                  | 
-| Window.DOMQuad                                      | ✖️     |                                                  | 
-| Window.DOMQuad                                      | ✖️     |                                                  | 
-| Window.DOMQuad                                      | ✖️     |                                                  | 
-| Window.DOMQuad                                      | ✖️     |                                                  | 
-| Window.DOMQuad                                      | ✖️     |                                                  | 
-| Window.DOMRect                                      | ✖️     |                                                  | 
-| Window.DOMRect                                      | ✖️     |                                                  | 
-| Window.DOMRect                                      | ✖️     |                                                  | 
-| Window.DOMRect                                      | ✖️     |                                                  | 
-| Window.DOMRect                                      | ✖️     |                                                  | 
-| Window.DOMRect                                      | ✖️     |                                                  | 
 | Window.DOMRect                                      | ✖️     |                                                  | 
 | Window.DOMRectReadOnly                              | ✖️     |                                                  | 
-| Window.DOMRectReadOnly                              | ✖️     |                                                  | 
-| Window.DOMRectReadOnly                              | ✖️     |                                                  | 
-| Window.DOMRectReadOnly                              | ✖️     |                                                  | 
-| Window.DOMRectReadOnly                              | ✖️     |                                                  | 
-| Window.DOMRectReadOnly                              | ✖️     |                                                  | 
-| Window.DOMRectReadOnly                              | ✖️     |                                                  | 
-| Window.event                                        | ✖️     |                                                  | 
-| Window.event                                        | ✖️     |                                                  | 
-| Window.event                                        | ✖️     |                                                  | 
-| Window.event                                        | ✖️     |                                                  | 
-| Window.event                                        | ✖️     |                                                  | 
-| Window.event                                        | ✖️     |                                                  | 
 | Window.event                                        | ✖️     |                                                  | 
 | Window.find()                                       | ✖️     |                                                  | 
-| Window.find()                                       | ✖️     |                                                  | 
-| Window.find()                                       | ✖️     |                                                  | 
-| Window.find()                                       | ✖️     |                                                  | 
-| Window.find()                                       | ✖️     |                                                  | 
-| Window.find()                                       | ✖️     |                                                  | 
-| Window.find()                                       | ✖️     |                                                  | 
-| Window.focus()                                      | ✖️     |                                                  | 
-| Window.focus()                                      | ✖️     |                                                  | 
-| Window.focus()                                      | ✖️     |                                                  | 
-| Window.focus()                                      | ✖️     |                                                  | 
-| Window.focus()                                      | ✖️     |                                                  | 
-| Window.focus()                                      | ✖️     |                                                  | 
 | Window.focus()                                      | ✖️     |                                                  | 
 | Window.forward()                                    | ✖️     |                                                  | 
-| Window.forward()                                    | ✖️     |                                                  | 
-| Window.forward()                                    | ✖️     |                                                  | 
-| Window.forward()                                    | ✖️     |                                                  | 
-| Window.forward()                                    | ✖️     |                                                  | 
-| Window.forward()                                    | ✖️     |                                                  | 
-| Window.forward()                                    | ✖️     |                                                  | 
-| Window.frameElement                                 | ✖️     |                                                  | 
-| Window.frameElement                                 | ✖️     |                                                  | 
-| Window.frameElement                                 | ✖️     |                                                  | 
-| Window.frameElement                                 | ✖️     |                                                  | 
-| Window.frameElement                                 | ✖️     |                                                  | 
-| Window.frameElement                                 | ✖️     |                                                  | 
 | Window.frameElement                                 | ✖️     |                                                  | 
 | Window.frames                                       | ✖️     |                                                  | 
-| Window.frames                                       | ✖️     |                                                  | 
-| Window.frames                                       | ✖️     |                                                  | 
-| Window.frames                                       | ✖️     |                                                  | 
-| Window.frames                                       | ✖️     |                                                  | 
-| Window.frames                                       | ✖️     |                                                  | 
-| Window.frames                                       | ✖️     |                                                  | 
-| Window.fullScreen                                   | ✖️     |                                                  | 
-| Window.fullScreen                                   | ✖️     |                                                  | 
-| Window.fullScreen                                   | ✖️     |                                                  | 
-| Window.fullScreen                                   | ✖️     |                                                  | 
-| Window.fullScreen                                   | ✖️     |                                                  | 
-| Window.fullScreen                                   | ✖️     |                                                  | 
 | Window.fullScreen                                   | ✖️     |                                                  | 
 | Window.getAttention()                               | ✖️     |                                                  | 
-| Window.getAttention()                               | ✖️     |                                                  | 
-| Window.getAttention()                               | ✖️     |                                                  | 
-| Window.getAttention()                               | ✖️     |                                                  | 
-| Window.getAttention()                               | ✖️     |                                                  | 
-| Window.getAttention()                               | ✖️     |                                                  | 
-| Window.getAttention()                               | ✖️     |                                                  | 
-| Window.getAttentionWithCycleCount()                 | ✖️     |                                                  | 
-| Window.getAttentionWithCycleCount()                 | ✖️     |                                                  | 
-| Window.getAttentionWithCycleCount()                 | ✖️     |                                                  | 
-| Window.getAttentionWithCycleCount()                 | ✖️     |                                                  | 
-| Window.getAttentionWithCycleCount()                 | ✖️     |                                                  | 
-| Window.getAttentionWithCycleCount()                 | ✖️     |                                                  | 
 | Window.getAttentionWithCycleCount()                 | ✖️     |                                                  | 
 | Window.getComputedStyle()                           | ✖️     |                                                  | 
-| Window.getComputedStyle()                           | ✖️     |                                                  | 
-| Window.getComputedStyle()                           | ✖️     |                                                  | 
-| Window.getComputedStyle()                           | ✖️     |                                                  | 
-| Window.getComputedStyle()                           | ✖️     |                                                  | 
-| Window.getComputedStyle()                           | ✖️     |                                                  | 
-| Window.getComputedStyle()                           | ✖️     |                                                  | 
-| Window.getDefaultComputedStyle()                    | ✖️     |                                                  | 
-| Window.getDefaultComputedStyle()                    | ✖️     |                                                  | 
-| Window.getDefaultComputedStyle()                    | ✖️     |                                                  | 
-| Window.getDefaultComputedStyle()                    | ✖️     |                                                  | 
-| Window.getDefaultComputedStyle()                    | ✖️     |                                                  | 
-| Window.getDefaultComputedStyle()                    | ✖️     |                                                  | 
 | Window.getDefaultComputedStyle()                    | ✖️     |                                                  | 
 | Window.getSelection()                               | ✖️     |                                                  | 
-| Window.getSelection()                               | ✖️     |                                                  | 
-| Window.getSelection()                               | ✖️     |                                                  | 
-| Window.getSelection()                               | ✖️     |                                                  | 
-| Window.getSelection()                               | ✖️     |                                                  | 
-| Window.getSelection()                               | ✖️     |                                                  | 
-| Window.getSelection()                               | ✖️     |                                                  | 
-| Window.history                                      | ✖️     |                                                  | 
-| Window.history                                      | ✖️     |                                                  | 
-| Window.history                                      | ✖️     |                                                  | 
-| Window.history                                      | ✖️     |                                                  | 
-| Window.history                                      | ✖️     |                                                  | 
-| Window.history                                      | ✖️     |                                                  | 
 | Window.history                                      | ✖️     |                                                  | 
 | Window.home()                                       | ✖️     |                                                  | 
-| Window.home()                                       | ✖️     |                                                  | 
-| Window.home()                                       | ✖️     |                                                  | 
-| Window.home()                                       | ✖️     |                                                  | 
-| Window.home()                                       | ✖️     |                                                  | 
-| Window.home()                                       | ✖️     |                                                  | 
-| Window.home()                                       | ✖️     |                                                  | 
-| Window.innerHeight                                  | ✖️     |                                                  | 
-| Window.innerHeight                                  | ✖️     |                                                  | 
-| Window.innerHeight                                  | ✖️     |                                                  | 
-| Window.innerHeight                                  | ✖️     |                                                  | 
-| Window.innerHeight                                  | ✖️     |                                                  | 
-| Window.innerHeight                                  | ✖️     |                                                  | 
 | Window.innerHeight                                  | ✖️     |                                                  | 
 | Window.innerWidth                                   | ✖️     |                                                  | 
-| Window.innerWidth                                   | ✖️     |                                                  | 
-| Window.innerWidth                                   | ✖️     |                                                  | 
-| Window.innerWidth                                   | ✖️     |                                                  | 
-| Window.innerWidth                                   | ✖️     |                                                  | 
-| Window.innerWidth                                   | ✖️     |                                                  | 
-| Window.innerWidth                                   | ✖️     |                                                  | 
 | Window.isSecureContext                              | ✖️     |                                                  | 
-| Window.isSecureContext                              | ✖️     |                                                  | 
-| Window.isSecureContext                              | ✖️     |                                                  | 
-| Window.isSecureContext                              | ✖️     |                                                  | 
-| Window.isSecureContext                              | ✖️     |                                                  | 
-| Window.isSecureContext                              | ✖️     |                                                  | 
-| Window.isSecureContext                              | ✖️     |                                                  | 
-| Window.length                                       | ✖️     |                                                  | 
-| Window.length                                       | ✖️     |                                                  | 
-| Window.length                                       | ✖️     |                                                  | 
-| Window.length                                       | ✖️     |                                                  | 
-| Window.length                                       | ✖️     |                                                  | 
-| Window.length                                       | ✖️     |                                                  | 
 | Window.length                                       | ✖️     |                                                  | 
 | Window.localStorage                                 | ✔️     |                                                  | 
-| Window.localStorage                                 | ✔️     |                                                  | 
-| Window.localStorage                                 | ✖️     |                                                  | 
-| Window.localStorage                                 | ✖️     |                                                  | 
-| Window.localStorage                                 | ✖️     |                                                  | 
-| Window.localStorage                                 | ✖️     |                                                  | 
-| Window.localStorage                                 | ✖️     |                                                  | 
-| Window.locationbar                                  | ✖️     |                                                  | 
-| Window.locationbar                                  | ✖️     |                                                  | 
-| Window.locationbar                                  | ✖️     |                                                  | 
-| Window.locationbar                                  | ✖️     |                                                  | 
-| Window.locationbar                                  | ✖️     |                                                  | 
-| Window.locationbar                                  | ✖️     |                                                  | 
 | Window.locationbar                                  | ✖️     |                                                  | 
 | Window.matchMedia()                                 | ✖️     |                                                  | 
-| Window.matchMedia()                                 | ✖️     |                                                  | 
-| Window.matchMedia()                                 | ✖️     |                                                  | 
-| Window.matchMedia()                                 | ✖️     |                                                  | 
-| Window.matchMedia()                                 | ✖️     |                                                  | 
-| Window.matchMedia()                                 | ✖️     |                                                  | 
-| Window.matchMedia()                                 | ✖️     |                                                  | 
-| Window.maximize()                                   | ✖️     |                                                  | 
-| Window.maximize()                                   | ✖️     |                                                  | 
-| Window.maximize()                                   | ✖️     |                                                  | 
-| Window.maximize()                                   | ✖️     |                                                  | 
-| Window.maximize()                                   | ✖️     |                                                  | 
-| Window.maximize()                                   | ✖️     |                                                  | 
 | Window.maximize()                                   | ✖️     |                                                  | 
 | Window.menubar                                      | ✖️     |                                                  | 
-| Window.menubar                                      | ✖️     |                                                  | 
-| Window.menubar                                      | ✖️     |                                                  | 
-| Window.menubar                                      | ✖️     |                                                  | 
-| Window.menubar                                      | ✖️     |                                                  | 
-| Window.menubar                                      | ✖️     |                                                  | 
-| Window.menubar                                      | ✖️     |                                                  | 
-| Window.messageManager                               | ✖️     |                                                  | 
-| Window.messageManager                               | ✖️     |                                                  | 
-| Window.messageManager                               | ✖️     |                                                  | 
-| Window.messageManager                               | ✖️     |                                                  | 
-| Window.messageManager                               | ✖️     |                                                  | 
-| Window.messageManager                               | ✖️     |                                                  | 
 | Window.messageManager                               | ✖️     |                                                  | 
 | Window.minimize() (top-level XUL windows only)      | ✖️     |                                                  | 
-| Window.minimize() (top-level XUL windows only)      | ✖️     |                                                  | 
-| Window.minimize() (top-level XUL windows only)      | ✖️     |                                                  | 
-| Window.minimize() (top-level XUL windows only)      | ✖️     |                                                  | 
-| Window.minimize() (top-level XUL windows only)      | ✖️     |                                                  | 
-| Window.minimize() (top-level XUL windows only)      | ✖️     |                                                  | 
-| Window.minimize() (top-level XUL windows only)      | ✖️     |                                                  | 
-| Window.moveBy()                                     | ✖️     |                                                  | 
-| Window.moveBy()                                     | ✖️     |                                                  | 
-| Window.moveBy()                                     | ✖️     |                                                  | 
-| Window.moveBy()                                     | ✖️     |                                                  | 
-| Window.moveBy()                                     | ✖️     |                                                  | 
-| Window.moveBy()                                     | ✖️     |                                                  | 
 | Window.moveBy()                                     | ✖️     |                                                  | 
 | Window.moveTo()                                     | ✖️     |                                                  | 
-| Window.moveTo()                                     | ✖️     |                                                  | 
-| Window.moveTo()                                     | ✖️     |                                                  | 
-| Window.moveTo()                                     | ✖️     |                                                  | 
-| Window.moveTo()                                     | ✖️     |                                                  | 
-| Window.moveTo()                                     | ✖️     |                                                  | 
-| Window.moveTo()                                     | ✖️     |                                                  | 
-| Window.mozAnimationStartTime                        | ✖️     |                                                  | 
-| Window.mozAnimationStartTime                        | ✖️     |                                                  | 
-| Window.mozAnimationStartTime                        | ✖️     |                                                  | 
-| Window.mozAnimationStartTime                        | ✖️     |                                                  | 
-| Window.mozAnimationStartTime                        | ✖️     |                                                  | 
-| Window.mozAnimationStartTime                        | ✖️     |                                                  | 
 | Window.mozAnimationStartTime                        | ✖️     |                                                  | 
 | Window.mozInnerScreenX                              | ✖️     |                                                  | 
-| Window.mozInnerScreenX                              | ✖️     |                                                  | 
-| Window.mozInnerScreenX                              | ✖️     |                                                  | 
-| Window.mozInnerScreenX                              | ✖️     |                                                  | 
-| Window.mozInnerScreenX                              | ✖️     |                                                  | 
-| Window.mozInnerScreenX                              | ✖️     |                                                  | 
-| Window.mozInnerScreenX                              | ✖️     |                                                  | 
-| Window.mozInnerScreenY                              | ✖️     |                                                  | 
-| Window.mozInnerScreenY                              | ✖️     |                                                  | 
-| Window.mozInnerScreenY                              | ✖️     |                                                  | 
-| Window.mozInnerScreenY                              | ✖️     |                                                  | 
-| Window.mozInnerScreenY                              | ✖️     |                                                  | 
-| Window.mozInnerScreenY                              | ✖️     |                                                  | 
 | Window.mozInnerScreenY                              | ✖️     |                                                  | 
 | Window.mozPaintCount                                | ✖️     |                                                  | 
-| Window.mozPaintCount                                | ✖️     |                                                  | 
-| Window.mozPaintCount                                | ✖️     |                                                  | 
-| Window.mozPaintCount                                | ✖️     |                                                  | 
-| Window.mozPaintCount                                | ✖️     |                                                  | 
-| Window.mozPaintCount                                | ✖️     |                                                  | 
-| Window.mozPaintCount                                | ✖️     |                                                  | 
-| Window.name                                         | ✖️     |                                                  | 
-| Window.name                                         | ✖️     |                                                  | 
-| Window.name                                         | ✖️     |                                                  | 
-| Window.name                                         | ✖️     |                                                  | 
-| Window.name                                         | ✖️     |                                                  | 
-| Window.name                                         | ✖️     |                                                  | 
 | Window.name                                         | ✖️     |                                                  | 
 | Window.open()                                       | ✖️     |                                                  | 
-| Window.open()                                       | ✖️     |                                                  | 
-| Window.open()                                       | ✖️     |                                                  | 
-| Window.open()                                       | ✖️     |                                                  | 
-| Window.open()                                       | ✖️     |                                                  | 
-| Window.open()                                       | ✖️     |                                                  | 
-| Window.open()                                       | ✖️     |                                                  | 
-| Window.openDialog()                                 | ✖️     |                                                  | 
-| Window.openDialog()                                 | ✖️     |                                                  | 
-| Window.openDialog()                                 | ✖️     |                                                  | 
-| Window.openDialog()                                 | ✖️     |                                                  | 
-| Window.openDialog()                                 | ✖️     |                                                  | 
-| Window.openDialog()                                 | ✖️     |                                                  | 
 | Window.openDialog()                                 | ✖️     |                                                  | 
 | Window.opener                                       | ✖️     |                                                  | 
-| Window.opener                                       | ✖️     |                                                  | 
-| Window.opener                                       | ✖️     |                                                  | 
-| Window.opener                                       | ✖️     |                                                  | 
-| Window.opener                                       | ✖️     |                                                  | 
-| Window.opener                                       | ✖️     |                                                  | 
-| Window.opener                                       | ✖️     |                                                  | 
-| Window.orientation                                  | ✖️     |                                                  | 
-| Window.orientation                                  | ✖️     |                                                  | 
-| Window.orientation                                  | ✖️     |                                                  | 
-| Window.orientation                                  | ✖️     |                                                  | 
-| Window.orientation                                  | ✖️     |                                                  | 
-| Window.orientation                                  | ✖️     |                                                  | 
 | Window.orientation                                  | ✖️     |                                                  | 
 | Window.outerHeight                                  | ✖️     |                                                  | 
-| Window.outerHeight                                  | ✖️     |                                                  | 
-| Window.outerHeight                                  | ✖️     |                                                  | 
-| Window.outerHeight                                  | ✖️     |                                                  | 
-| Window.outerHeight                                  | ✖️     |                                                  | 
-| Window.outerHeight                                  | ✖️     |                                                  | 
-| Window.outerHeight                                  | ✖️     |                                                  | 
-| Window.outerWidth                                   | ✖️     |                                                  | 
-| Window.outerWidth                                   | ✖️     |                                                  | 
-| Window.outerWidth                                   | ✖️     |                                                  | 
-| Window.outerWidth                                   | ✖️     |                                                  | 
-| Window.outerWidth                                   | ✖️     |                                                  | 
-| Window.outerWidth                                   | ✖️     |                                                  | 
 | Window.outerWidth                                   | ✖️     |                                                  | 
 | Window.pageXOffset                                  | ✖️     |                                                  | 
-| Window.pageXOffset                                  | ✖️     |                                                  | 
-| Window.pageXOffset                                  | ✖️     |                                                  | 
-| Window.pageXOffset                                  | ✖️     |                                                  | 
-| Window.pageXOffset                                  | ✖️     |                                                  | 
-| Window.pageXOffset                                  | ✖️     |                                                  | 
-| Window.pageXOffset                                  | ✖️     |                                                  | 
-| Window.pageYOffset                                  | ✖️     |                                                  | 
-| Window.pageYOffset                                  | ✖️     |                                                  | 
-| Window.pageYOffset                                  | ✖️     |                                                  | 
-| Window.pageYOffset                                  | ✖️     |                                                  | 
-| Window.pageYOffset                                  | ✖️     |                                                  | 
-| Window.pageYOffset                                  | ✖️     |                                                  | 
 | Window.pageYOffset                                  | ✖️     |                                                  | 
 | Window.parent                                       | ✖️     |                                                  | 
-| Window.parent                                       | ✖️     |                                                  | 
-| Window.parent                                       | ✖️     |                                                  | 
-| Window.parent                                       | ✖️     |                                                  | 
-| Window.parent                                       | ✖️     |                                                  | 
-| Window.parent                                       | ✖️     |                                                  | 
-| Window.parent                                       | ✖️     |                                                  | 
-| Window.personalbar                                  | ✖️     |                                                  | 
-| Window.personalbar                                  | ✖️     |                                                  | 
-| Window.personalbar                                  | ✖️     |                                                  | 
-| Window.personalbar                                  | ✖️     |                                                  | 
-| Window.personalbar                                  | ✖️     |                                                  | 
-| Window.personalbar                                  | ✖️     |                                                  | 
 | Window.personalbar                                  | ✖️     |                                                  | 
 | Window.postMessage()                                | ✖️     |                                                  | 
-| Window.postMessage()                                | ✖️     |                                                  | 
-| Window.postMessage()                                | ✖️     |                                                  | 
-| Window.postMessage()                                | ✖️     |                                                  | 
-| Window.postMessage()                                | ✖️     |                                                  | 
-| Window.postMessage()                                | ✖️     |                                                  | 
-| Window.postMessage()                                | ✖️     |                                                  | 
-| Window.print()                                      | ✖️     |                                                  | 
-| Window.print()                                      | ✖️     |                                                  | 
-| Window.print()                                      | ✖️     |                                                  | 
-| Window.print()                                      | ✖️     |                                                  | 
-| Window.print()                                      | ✖️     |                                                  | 
-| Window.print()                                      | ✖️     |                                                  | 
 | Window.print()                                      | ✖️     |                                                  | 
 | Window.prompt()                                     | ✖️     |                                                  | 
-| Window.prompt()                                     | ✖️     |                                                  | 
-| Window.prompt()                                     | ✖️     |                                                  | 
-| Window.prompt()                                     | ✖️     |                                                  | 
-| Window.prompt()                                     | ✖️     |                                                  | 
-| Window.prompt()                                     | ✖️     |                                                  | 
-| Window.prompt()                                     | ✖️     |                                                  | 
-| Window.releaseEvents()                              | ✖️     |                                                  | 
-| Window.releaseEvents()                              | ✖️     |                                                  | 
-| Window.releaseEvents()                              | ✖️     |                                                  | 
-| Window.releaseEvents()                              | ✖️     |                                                  | 
-| Window.releaseEvents()                              | ✖️     |                                                  | 
-| Window.releaseEvents()                              | ✖️     |                                                  | 
 | Window.releaseEvents()                              | ✖️     |                                                  | 
 | Window.requestAnimationFrame()                      | ✖️     |                                                  | 
-| Window.requestAnimationFrame()                      | ✖️     |                                                  | 
-| Window.requestAnimationFrame()                      | ✖️     |                                                  | 
-| Window.requestAnimationFrame()                      | ✖️     |                                                  | 
-| Window.requestAnimationFrame()                      | ✖️     |                                                  | 
-| Window.requestAnimationFrame()                      | ✖️     |                                                  | 
-| Window.requestAnimationFrame()                      | ✖️     |                                                  | 
-| Window.requestIdleCallback()                        | ✖️     |                                                  | 
-| Window.requestIdleCallback()                        | ✖️     |                                                  | 
-| Window.requestIdleCallback()                        | ✖️     |                                                  | 
-| Window.requestIdleCallback()                        | ✖️     |                                                  | 
-| Window.requestIdleCallback()                        | ✖️     |                                                  | 
-| Window.requestIdleCallback()                        | ✖️     |                                                  | 
 | Window.requestIdleCallback()                        | ✖️     |                                                  | 
 | Window.resizeBy()                                   | ✖️     |                                                  | 
-| Window.resizeBy()                                   | ✖️     |                                                  | 
-| Window.resizeBy()                                   | ✖️     |                                                  | 
-| Window.resizeBy()                                   | ✖️     |                                                  | 
-| Window.resizeBy()                                   | ✖️     |                                                  | 
-| Window.resizeBy()                                   | ✖️     |                                                  | 
-| Window.resizeBy()                                   | ✖️     |                                                  | 
-| Window.resizeTo()                                   | ✖️     |                                                  | 
-| Window.resizeTo()                                   | ✖️     |                                                  | 
-| Window.resizeTo()                                   | ✖️     |                                                  | 
-| Window.resizeTo()                                   | ✖️     |                                                  | 
-| Window.resizeTo()                                   | ✖️     |                                                  | 
-| Window.resizeTo()                                   | ✖️     |                                                  | 
-| Window.resizeTo()                                   | ✖️     |                                                  | 
-| Window.restore()                                    | ✖️     |                                                  | 
-| Window.restore()                                    | ✖️     |                                                  | 
-| Window.restore()                                    | ✖️     |                                                  | 
-| Window.restore()                                    | ✖️     |                                                  | 
-| Window.restore()                                    | ✖️     |                                                  | 
-| Window.restore()                                    | ✖️     |                                                  | 
 | Window.restore()                                    | ✖️     |                                                  | 
 | Window.returnValue                                  | ✖️     |                                                  | 
-| Window.returnValue                                  | ✖️     |                                                  | 
-| Window.returnValue                                  | ✖️     |                                                  | 
-| Window.returnValue                                  | ✖️     |                                                  | 
-| Window.returnValue                                  | ✖️     |                                                  | 
-| Window.returnValue                                  | ✖️     |                                                  | 
-| Window.returnValue                                  | ✖️     |                                                  | 
-| Window.screen                                       | ✖️     |                                                  | 
-| Window.screen                                       | ✖️     |                                                  | 
-| Window.screen                                       | ✖️     |                                                  | 
-| Window.screen                                       | ✖️     |                                                  | 
-| Window.screen                                       | ✖️     |                                                  | 
-| Window.screen                                       | ✖️     |                                                  | 
 | Window.screen                                       | ✖️     |                                                  | 
 | Window.screenX and Window.screenLeft                | ✖️     |                                                  | 
-| Window.screenX and Window.screenLeft                | ✖️     |                                                  | 
-| Window.screenX and Window.screenLeft                | ✖️     |                                                  | 
-| Window.screenX and Window.screenLeft                | ✖️     |                                                  | 
-| Window.screenX and Window.screenLeft                | ✖️     |                                                  | 
-| Window.screenX and Window.screenLeft                | ✖️     |                                                  | 
-| Window.screenX and Window.screenLeft                | ✖️     |                                                  | 
-| Window.screenY and Window.screenTop                 | ✖️     |                                                  | 
-| Window.screenY and Window.screenTop                 | ✖️     |                                                  | 
-| Window.screenY and Window.screenTop                 | ✖️     |                                                  | 
-| Window.screenY and Window.screenTop                 | ✖️     |                                                  | 
-| Window.screenY and Window.screenTop                 | ✖️     |                                                  | 
-| Window.screenY and Window.screenTop                 | ✖️     |                                                  | 
 | Window.screenY and Window.screenTop                 | ✖️     |                                                  | 
 | Window.scroll()                                     | ✖️     |                                                  | 
-| Window.scroll()                                     | ✖️     |                                                  | 
-| Window.scroll()                                     | ✖️     |                                                  | 
-| Window.scroll()                                     | ✖️     |                                                  | 
-| Window.scroll()                                     | ✖️     |                                                  | 
-| Window.scroll()                                     | ✖️     |                                                  | 
-| Window.scroll()                                     | ✖️     |                                                  | 
-| Window.scrollbars                                   | ✖️     |                                                  | 
-| Window.scrollbars                                   | ✖️     |                                                  | 
-| Window.scrollbars                                   | ✖️     |                                                  | 
-| Window.scrollbars                                   | ✖️     |                                                  | 
-| Window.scrollbars                                   | ✖️     |                                                  | 
-| Window.scrollbars                                   | ✖️     |                                                  | 
 | Window.scrollbars                                   | ✖️     |                                                  | 
 | Window.scrollBy()                                   | ✖️     |                                                  | 
-| Window.scrollBy()                                   | ✖️     |                                                  | 
-| Window.scrollBy()                                   | ✖️     |                                                  | 
-| Window.scrollBy()                                   | ✖️     |                                                  | 
-| Window.scrollBy()                                   | ✖️     |                                                  | 
-| Window.scrollBy()                                   | ✖️     |                                                  | 
-| Window.scrollBy()                                   | ✖️     |                                                  | 
-| Window.scrollByLines()                              | ✖️     |                                                  | 
-| Window.scrollByLines()                              | ✖️     |                                                  | 
-| Window.scrollByLines()                              | ✖️     |                                                  | 
-| Window.scrollByLines()                              | ✖️     |                                                  | 
-| Window.scrollByLines()                              | ✖️     |                                                  | 
-| Window.scrollByLines()                              | ✖️     |                                                  | 
 | Window.scrollByLines()                              | ✖️     |                                                  | 
 | Window.scrollByPages()                              | ✖️     |                                                  | 
-| Window.scrollByPages()                              | ✖️     |                                                  | 
-| Window.scrollByPages()                              | ✖️     |                                                  | 
-| Window.scrollByPages()                              | ✖️     |                                                  | 
-| Window.scrollByPages()                              | ✖️     |                                                  | 
-| Window.scrollByPages()                              | ✖️     |                                                  | 
-| Window.scrollByPages()                              | ✖️     |                                                  | 
-| Window.scrollMaxX                                   | ✖️     |                                                  | 
-| Window.scrollMaxX                                   | ✖️     |                                                  | 
-| Window.scrollMaxX                                   | ✖️     |                                                  | 
-| Window.scrollMaxX                                   | ✖️     |                                                  | 
-| Window.scrollMaxX                                   | ✖️     |                                                  | 
-| Window.scrollMaxX                                   | ✖️     |                                                  | 
 | Window.scrollMaxX                                   | ✖️     |                                                  | 
 | Window.scrollMaxY                                   | ✖️     |                                                  | 
-| Window.scrollMaxY                                   | ✖️     |                                                  | 
-| Window.scrollMaxY                                   | ✖️     |                                                  | 
-| Window.scrollMaxY                                   | ✖️     |                                                  | 
-| Window.scrollMaxY                                   | ✖️     |                                                  | 
-| Window.scrollMaxY                                   | ✖️     |                                                  | 
-| Window.scrollMaxY                                   | ✖️     |                                                  | 
-| Window.scrollTo()                                   | ✖️     |                                                  | 
-| Window.scrollTo()                                   | ✖️     |                                                  | 
-| Window.scrollTo()                                   | ✖️     |                                                  | 
-| Window.scrollTo()                                   | ✖️     |                                                  | 
-| Window.scrollTo()                                   | ✖️     |                                                  | 
-| Window.scrollTo()                                   | ✖️     |                                                  | 
 | Window.scrollTo()                                   | ✖️     |                                                  | 
 | Window.scrollX                                      | ✖️     |                                                  | 
-| Window.scrollX                                      | ✖️     |                                                  | 
-| Window.scrollX                                      | ✖️     |                                                  | 
-| Window.scrollX                                      | ✖️     |                                                  | 
-| Window.scrollX                                      | ✖️     |                                                  | 
-| Window.scrollX                                      | ✖️     |                                                  | 
-| Window.scrollX                                      | ✖️     |                                                  | 
-| Window.scrollY                                      | ✖️     |                                                  | 
-| Window.scrollY                                      | ✖️     |                                                  | 
-| Window.scrollY                                      | ✖️     |                                                  | 
-| Window.scrollY                                      | ✖️     |                                                  | 
-| Window.scrollY                                      | ✖️     |                                                  | 
-| Window.scrollY                                      | ✖️     |                                                  | 
 | Window.scrollY                                      | ✖️     |                                                  | 
 | Window.sessionStorage                               | ✖️     |                                                  | 
-| Window.sessionStorage                               | ✖️     |                                                  | 
-| Window.sessionStorage                               | ✖️     |                                                  | 
-| Window.sessionStorage                               | ✖️     |                                                  | 
-| Window.sessionStorage                               | ✖️     |                                                  | 
-| Window.sessionStorage                               | ✖️     |                                                  | 
-| Window.sessionStorage                               | ✖️     |                                                  | 
-| Window.setCursor()  (top-level XUL windows only)    | ✖️     |                                                  | 
-| Window.setCursor()  (top-level XUL windows only)    | ✖️     |                                                  | 
-| Window.setCursor()  (top-level XUL windows only)    | ✖️     |                                                  | 
-| Window.setCursor()  (top-level XUL windows only)    | ✖️     |                                                  | 
-| Window.setCursor()  (top-level XUL windows only)    | ✖️     |                                                  | 
-| Window.setCursor()  (top-level XUL windows only)    | ✖️     |                                                  | 
 | Window.setCursor()  (top-level XUL windows only)    | ✖️     |                                                  | 
 | Window.setImmediate()                               | ✖️     |                                                  | 
-| Window.setImmediate()                               | ✖️     |                                                  | 
-| Window.setImmediate()                               | ✖️     |                                                  | 
-| Window.setImmediate()                               | ✖️     |                                                  | 
-| Window.setImmediate()                               | ✖️     |                                                  | 
-| Window.setImmediate()                               | ✖️     |                                                  | 
-| Window.setImmediate()                               | ✖️     |                                                  | 
-| Window.setResizable()                               | ✖️     |                                                  | 
-| Window.setResizable()                               | ✖️     |                                                  | 
-| Window.setResizable()                               | ✖️     |                                                  | 
-| Window.setResizable()                               | ✖️     |                                                  | 
-| Window.setResizable()                               | ✖️     |                                                  | 
-| Window.setResizable()                               | ✖️     |                                                  | 
 | Window.setResizable()                               | ✖️     |                                                  | 
 | Window.sidebar                                      | ✖️     |                                                  | 
-| Window.sidebar                                      | ✖️     |                                                  | 
-| Window.sidebar                                      | ✖️     |                                                  | 
-| Window.sidebar                                      | ✖️     |                                                  | 
-| Window.sidebar                                      | ✖️     |                                                  | 
-| Window.sidebar                                      | ✖️     |                                                  | 
-| Window.sidebar                                      | ✖️     |                                                  | 
-| Window.sizeToContent()                              | ✖️     |                                                  | 
-| Window.sizeToContent()                              | ✖️     |                                                  | 
-| Window.sizeToContent()                              | ✖️     |                                                  | 
-| Window.sizeToContent()                              | ✖️     |                                                  | 
-| Window.sizeToContent()                              | ✖️     |                                                  | 
-| Window.sizeToContent()                              | ✖️     |                                                  | 
 | Window.sizeToContent()                              | ✖️     |                                                  | 
 | Window.speechSynthesis                              | ✖️     |                                                  | 
-| Window.speechSynthesis                              | ✖️     |                                                  | 
-| Window.speechSynthesis                              | ✖️     |                                                  | 
-| Window.speechSynthesis                              | ✖️     |                                                  | 
-| Window.speechSynthesis                              | ✖️     |                                                  | 
-| Window.speechSynthesis                              | ✖️     |                                                  | 
-| Window.speechSynthesis                              | ✖️     |                                                  | 
-| Window.status                                       | ✖️     |                                                  | 
-| Window.status                                       | ✖️     |                                                  | 
-| Window.status                                       | ✖️     |                                                  | 
-| Window.status                                       | ✖️     |                                                  | 
-| Window.status                                       | ✖️     |                                                  | 
-| Window.status                                       | ✖️     |                                                  | 
 | Window.status                                       | ✖️     |                                                  | 
 | Window.statusbar                                    | ✖️     |                                                  | 
-| Window.statusbar                                    | ✖️     |                                                  | 
-| Window.statusbar                                    | ✖️     |                                                  | 
-| Window.statusbar                                    | ✖️     |                                                  | 
-| Window.statusbar                                    | ✖️     |                                                  | 
-| Window.statusbar                                    | ✖️     |                                                  | 
-| Window.statusbar                                    | ✖️     |                                                  | 
-| Window.stop()                                       | ✖️     |                                                  | 
-| Window.stop()                                       | ✖️     |                                                  | 
-| Window.stop()                                       | ✖️     |                                                  | 
-| Window.stop()                                       | ✖️     |                                                  | 
-| Window.stop()                                       | ✖️     |                                                  | 
-| Window.stop()                                       | ✖️     |                                                  | 
 | Window.stop()                                       | ✖️     |                                                  | 
 | Window.toolbar                                      | ✖️     |                                                  | 
-| Window.toolbar                                      | ✖️     |                                                  | 
-| Window.toolbar                                      | ✖️     |                                                  | 
-| Window.toolbar                                      | ✖️     |                                                  | 
-| Window.toolbar                                      | ✖️     |                                                  | 
-| Window.toolbar                                      | ✖️     |                                                  | 
-| Window.toolbar                                      | ✖️     |                                                  | 
-| Window.top                                          | ✖️     |                                                  | 
-| Window.top                                          | ✖️     |                                                  | 
-| Window.top                                          | ✖️     |                                                  | 
-| Window.top                                          | ✖️     |                                                  | 
-| Window.top                                          | ✖️     |                                                  | 
-| Window.top                                          | ✖️     |                                                  | 
 | Window.top                                          | ✖️     |                                                  | 
 | Window.updateCommands()                             | ✖️     |                                                  | 
-| Window.updateCommands()                             | ✖️     |                                                  | 
-| Window.updateCommands()                             | ✖️     |                                                  | 
-| Window.updateCommands()                             | ✖️     |                                                  | 
-| Window.updateCommands()                             | ✖️     |                                                  | 
-| Window.updateCommands()                             | ✖️     |                                                  | 
-| Window.updateCommands()                             | ✖️     |                                                  | 
 | Window.visualViewport                               | ✖️     |                                                  | 
-| Window.visualViewport                               | ✖️     |                                                  | 
-| Window.visualViewport                               | ✖️     |                                                  | 
-| Window.visualViewport                               | ✖️     |                                                  | 
-| Window.visualViewport                               | ✖️     |                                                  | 
-| Window.visualViewport                               | ✖️     |                                                  | 
-| Window.visualViewport                               | ✖️     |                                                  | 
-| Window.window                                       | ✖️     |                                                  | 
-| Window.window                                       | ✖️     |                                                  | 
-| Window.window                                       | ✖️     |                                                  | 
-| Window.window                                       | ✖️     |                                                  | 
-| Window.window                                       | ✖️     |                                                  | 
-| Window.window                                       | ✖️     |                                                  | 
 | Window.window                                       | ✖️     |                                                  | 
 | Worker                                              | N/A    | Doesn't apply since this is on the Worker thread | 
+
