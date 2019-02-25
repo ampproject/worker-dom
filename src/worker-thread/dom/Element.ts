@@ -31,6 +31,7 @@ import { store as storeString } from '../strings';
 import { toLower } from '../../utils';
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
+import { parse } from '../../../third_party/html-parser/html-parser';
 
 export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
 export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
@@ -167,6 +168,24 @@ export class Element extends ParentNode {
         .join('');
     }
     return '';
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
+   * @param html The raw html string to parse.
+   */
+  set innerHTML(html: string) {
+    // Option 0
+    const root = parse(html);
+
+    // Option 1
+    // root.childNodes.forEach(n => { this.appendChild(n); }); // OK
+
+    // Option 2
+    //propagate(...);
+    //mutate({childNodes: root.childNodes}); // O(1)
+
+    console.log(root);
   }
 
   /**
