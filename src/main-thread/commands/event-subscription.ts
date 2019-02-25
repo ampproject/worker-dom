@@ -14,16 +14,79 @@
  * limitations under the License.
  */
 
-import { messageToWorker } from '../worker';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { MessageType } from '../../transfer/Messages';
 import { NumericBoolean } from '../../utils';
-import { getNode } from '../nodes';
+import { NodeContext } from '../nodes';
+import { Strings } from '../strings';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationRecord } from '../../transfer/TransferrableRecord';
-import { get as getString } from '../strings';
+import { WorkerContext } from '../worker';
 
-// TODO(choumx): Support SYNC events for properties other than 'value', e.g. 'checked'.
-const KNOWN_LISTENERS: Array<(event: Event) => any> = [];
+export class EventSubscriptionProcessor {
+  private strings: Strings;
+  private nodeContext: NodeContext;
+  private workerContext: WorkerContext;
+  // TODO(choumx): Support SYNC events for properties other than 'value', e.g. 'checked'.
+  private knownListeners: Array<(event: Event) => any>;
+
+  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext) {
+    this.strings = strings;
+    this.nodeContext = nodeContext;
+    this.workerContext = workerContext;
+    this.knownListeners = [];
+  }
+
+  /**
+   * Process event subscription changes transfered from worker thread to main thread.
+   * @param mutation mutation record containing commands to execute.
+   */
+  process(mutation: TransferrableMutationRecord): void {
+    const nodeId = mutation[TransferrableKeys.target];
+    const target = this.nodeContext.getNode(nodeId);
+
+    if (!target) {
+      console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
+      return;
+    }
+
+    (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub =>
+      this.processListenerChange(target, false, this.strings.get(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
+    );
+    (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub =>
+      this.processListenerChange(target, true, this.strings.get(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
+    );
+  }
+
+  /**
+   * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,
+   * ensure that only a single 'change' event is attached to prevent sending values multiple times.
+   * @param target node to change listeners on
+   * @param addEvent is this an 'addEvent' or 'removeEvent' change
+   * @param type event type requested to change
+   * @param index number in the listeners array this event corresponds to.
+   */
+  private processListenerChange(target: RenderableElement, addEvent: boolean, type: string, index: number): void {
+    let changeEventSubscribed: boolean = target.onchange !== null;
+    const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
+    const isChangeEvent = type === 'change';
+
+    if (addEvent) {
+      if (isChangeEvent) {
+        changeEventSubscribed = true;
+        target.onchange = null;
+      }
+      (target as HTMLElement).addEventListener(type, (this.knownListeners[index] = eventHandler(this.workerContext, target._index_)));
+    } else {
+      if (isChangeEvent) {
+        changeEventSubscribed = false;
+      }
+      (target as HTMLElement).removeEventListener(type, this.knownListeners[index]);
+    }
+    if (shouldTrack && !changeEventSubscribed) {
+      applyDefaultChangeListener(this.workerContext, target as RenderableElement);
+    }
+  }
+}
 
 /**
  * Instead of a whitelist of elements that need their value tracked, use the existence
@@ -39,8 +102,8 @@ const shouldTrackChanges = (node: HTMLElement): boolean => node && 'value' in no
  * @param worker whom to dispatch value toward.
  * @param node node to listen to value changes on.
  */
-export const applyDefaultChangeListener = (worker: Worker, node: RenderableElement): void => {
-  shouldTrackChanges(node as HTMLElement) && node.onchange === null && (node.onchange = () => fireValueChange(worker, node));
+const applyDefaultChangeListener = (workerContext: WorkerContext, node: RenderableElement): void => {
+  shouldTrackChanges(node as HTMLElement) && node.onchange === null && (node.onchange = () => fireValueChange(workerContext, node));
 };
 
 /**
@@ -48,8 +111,8 @@ export const applyDefaultChangeListener = (worker: Worker, node: RenderableEleme
  * @param worker whom to dispatch value toward.
  * @param node where to get the value from.
  */
-const fireValueChange = (worker: Worker, node: RenderableElement): void => {
-  messageToWorker(worker, {
+const fireValueChange = (workerContext: WorkerContext, node: RenderableElement): void => {
+  workerContext.messageToWorker({
     [TransferrableKeys.type]: MessageType.SYNC,
     [TransferrableKeys.sync]: {
       [TransferrableKeys.index]: node._index_,
@@ -64,11 +127,11 @@ const fireValueChange = (worker: Worker, node: RenderableElement): void => {
  * @param index node index the event comes from (used to dispatchEvent in worker thread).
  * @return eventHandler function consuming event and dispatching to worker thread
  */
-const eventHandler = (worker: Worker, index: number) => (event: Event | KeyboardEvent): void => {
+const eventHandler = (workerContext: WorkerContext, index: number) => (event: Event | KeyboardEvent): void => {
   if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
-    fireValueChange(worker, event.currentTarget as RenderableElement);
+    fireValueChange(workerContext, event.currentTarget as RenderableElement);
   }
-  messageToWorker(worker, {
+  workerContext.messageToWorker({
     [TransferrableKeys.type]: MessageType.EVENT,
     [TransferrableKeys.event]: {
       [TransferrableKeys.index]: index,
@@ -93,56 +156,3 @@ const eventHandler = (worker: Worker, index: number) => (event: Event | Keyboard
     },
   });
 };
-
-/**
- * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,
- * ensure that only a single 'change' event is attached to prevent sending values multiple times.
- * @param worker worker issuing listener changes
- * @param target node to change listeners on
- * @param addEvent is this an 'addEvent' or 'removeEvent' change
- * @param type event type requested to change
- * @param index number in the listeners array this event corresponds to.
- */
-function processListenerChange(worker: Worker, target: RenderableElement, addEvent: boolean, type: string, index: number): void {
-  let changeEventSubscribed: boolean = target.onchange !== null;
-  const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
-  const isChangeEvent = type === 'change';
-
-  if (addEvent) {
-    if (isChangeEvent) {
-      changeEventSubscribed = true;
-      target.onchange = null;
-    }
-    (target as HTMLElement).addEventListener(type, (KNOWN_LISTENERS[index] = eventHandler(worker, target._index_)));
-  } else {
-    if (isChangeEvent) {
-      changeEventSubscribed = false;
-    }
-    (target as HTMLElement).removeEventListener(type, KNOWN_LISTENERS[index]);
-  }
-  if (shouldTrack && !changeEventSubscribed) {
-    applyDefaultChangeListener(worker, target as RenderableElement);
-  }
-}
-
-/**
- * Process event subscription changes transfered from worker thread to main thread.
- * @param worker whom to dispatch events toward.
- * @param mutation mutation record containing commands to execute.
- */
-export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
-  const nodeId = mutation[TransferrableKeys.target];
-  const target = getNode(nodeId);
-
-  if (!target) {
-    console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
-    return;
-  }
-
-  (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub =>
-    processListenerChange(worker, target, false, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
-  );
-  (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub =>
-    processListenerChange(worker, target, true, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
-  );
-}

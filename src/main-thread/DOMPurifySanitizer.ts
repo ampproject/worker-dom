@@ -16,7 +16,7 @@
 
 import purify from 'dompurify';
 
-const propertyToAttribute: { [key: string]: string } = {}; // TODO(choumx): Fill this in.
+const PROPERTY_TO_ATTRIBUTE: { [key: string]: string } = {}; // TODO(choumx): Fill this in.
 
 /**
  * Object containing optional callbacks. Use this to configure
@@ -99,7 +99,7 @@ export class DOMPurifySanitizer implements Sanitizer {
    * @param value
    */
   validProperty(tag: string, prop: string, value: string): boolean {
-    const attr = propertyToAttribute[prop];
+    const attr = PROPERTY_TO_ATTRIBUTE[prop];
     if (attr) {
       return this.validAttribute(tag, attr, value);
     } else {
