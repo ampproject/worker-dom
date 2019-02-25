@@ -1,34 +1,5 @@
 # WorkerDOM compatibility 
 
-## Framework Compatibility
-
-This section covers the frameworks that are currently supported by WorkerDOM.  
-
-### General purpose frameworks
-
-| Framework      | Current Status  | Notes                                                                 | 
-|----------------|-----------------|-----------------------------------------------------------------------|
-| React          |Supported        | [Demo](https://github.com/ampproject/worker-dom/tree/master/demo)     | 
-| Preact         |Supported        | [Demo](https://github.com/ampproject/worker-dom/tree/master/demo)     | 
-| Vue            |Not Implemented  | [Issue](https://github.com/ampproject/worker-dom/issues/282)          | 
-| Svelte         |Not Implemented  |                                                                       | 
-| JQuery         |Not tested       |                                                                       | 
-| Ember          |Not tested       |                                                                       | 
-| Backbone       |Not tested       |                                                                       | 
-| Meteor         |Not tested       |                                                                       | 
-| lit-html       |Not tested       |                                                                       | 
-| Polymer        |Not supported    |                                                                       | 
-| Angular        |Not supported    |                                                                       | 
-
-### Visualization frameworks
-
-| Framework      | Current Status  | Notes                                                                | 
-|----------------|-----------------|----------------------------------------------------------------------|
-| D3             |Not tested       |                                                                      | 
-| ThreeJS        |Not tested       |                                                                      | 
-| ChartJS        |Not tested       |                                                                      | 
-
-
 ## DOM API Compatibility
 
 This section highlights the DOM APIs that are implemented in WorkerDOM currently. Please [file an issue](https://github.com/ampproject/worker-dom/issues/new) if you would like an API suppported.  
