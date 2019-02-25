@@ -18,7 +18,7 @@ import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
 import { Comment } from '../../worker-thread/dom/Comment';
-import { NodeType } from '../../transfer/TransferrableKeys';
+import { NodeType } from '../../transfer/TransferrableNodes';
 import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
@@ -78,28 +78,52 @@ test('set an element node', t => {
   const { node } = t.context;
   node.innerHTML = '<div></div>';
   t.is(node.childNodes.length, 1);
-  t.is(node.firstChild.nodeType, NodeType.ELEMENT_NODE);
+
+  const child = node.firstChild;
+  if (child) {
+    t.is(child.nodeType, NodeType.ELEMENT_NODE);
+  } else {
+    t.is(true, false);
+  }
 });
 
 test('set a text node', t => {
   const { node } = t.context;
   node.innerHTML = 'Hello World!';
   t.is(node.childNodes.length, 1);
-  t.is(node.firstChild.nodeType, NodeType.TEXT_NODE);
+
+  const child = node.firstChild;
+  if (child) {
+    t.is(child.nodeType, NodeType.TEXT_NODE);
+  } else {
+    t.is(true, false);
+  }
 });
 
 test('set comment node', t => {
   const { node } = t.context;
   node.innerHTML = '<!--this is a comment-->';
   t.is(node.childNodes.length, 1);
-  t.is(node.firstChild.nodeType, NodeType.COMMENT_NODE);
+
+  const child = node.firstChild;
+  if (child) {
+    t.is(child.nodeType, NodeType.COMMENT_NODE);
+  } else {
+    t.is(true, false);
+  }
 });
 
 test('set nested elements', t => {
   const { node } = t.context;
   node.innerHTML = '<div><div></div></div>';
   t.is(node.childNodes.length, 1);
-  t.is(node.firstChild().childNodes.length, 1);
+
+  const child = node.firstChild;
+  if (child) {
+    t.is(child.childNodes.length, 1);
+  } else {
+    t.is(true, false);
+  }
 });
 
 test('set non-nested elements', t => {
