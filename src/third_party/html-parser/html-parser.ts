@@ -88,7 +88,10 @@ export function parse(data: string, rootElement: Element) {
   const stack = [root as Node];
   let lastTextPos = -1;
   let match: RegExpExecArray | null;
+
+  // this will ensure detection of all text nodes.
   data = '<div>' + data + '</div>';
+
   while ((match = kMarkupPattern.exec(data))) {
     if (lastTextPos > -1) {
       if (lastTextPos + match[0].length < kMarkupPattern.lastIndex) {
@@ -101,7 +104,6 @@ export function parse(data: string, rootElement: Element) {
     if (match[0][1] == '!') {
       // this is a comment
       if (match[0].length > 7 /* 7 is the minimum: <!----> */) {
-        // if has content
         const text = match[0].substring(4, match[0].length - 3);
         currentParent.appendChild(new Comment(text, rootElement.ownerDocument));
       }
@@ -167,7 +169,7 @@ export function parse(data: string, rootElement: Element) {
   const valid = !!(stack.length === 1);
 
   if (!valid) {
-    //FAIL
+    throw new Error('Attempting to parse invalid tag.');
   }
 
   const response = root as Response;
@@ -211,6 +213,5 @@ export function parse(data: string, rootElement: Element) {
     return response.firstChild;
   }
 
-  // Actually should probably fail here
-  return response;
+  throw new Error('Attempting to parse invalid HTML.');
 }
