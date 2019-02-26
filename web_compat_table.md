@@ -248,61 +248,29 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Element.tabStop                                     | ✖️     |                                                  | 
 | Element.tagName                                     | ✖️     |                                                  | 
 | Element.toggleAttribute()                           | ✖️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.bubbles                                       | ✔️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.cancelable                                    | ✔️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.cancelBubble                                  | ✔️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.composed                                      | ✖️     |                                                  | 
 | Event.composedPath()                                | ✖️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.currentTarget                                 | ✔️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.deepPath                                      | ✖️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.defaultPrevented                              | ✔️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.eventPhase                                    | ✔️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.explicitOriginalTarget                        | ✖️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.isTrusted                                     | ✔️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.originalTarget                                | ✖️     |                                                  | 
 | Event.preventDefault()                              | ✔️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.returnValue                                   | ✔️     |                                                  | 
 | Event.srcElement                                    | ✖️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.stopImmediatePropagation()                    | ✖️     |                                                  | 
 | Event.stopPropagation()                             | ✖️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.target                                        | ✔️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.timeStamp                                     | ✔️     |                                                  | 
-|                                                     |        |                                                  | 
 | Event.type                                          | ✔️     |                                                  | 
 | EventTarget.addEventListener()                      | ✔️     |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
 | EventTarget.dispatchEvent()                         | ✖️     |                                                  | 
-|                                                     |        |                                                  | 
 | EventTarget.removeEventListener()                   | ✔️     |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
-|                                                     |        |                                                  | 
 | GlobalEventHandlers.onabort                         | ✖️     |                                                  | 
 | GlobalEventHandlers.onanimationcancel               | ✖️     |                                                  | 
 | GlobalEventHandlers.onanimationend                  | ✖️     |                                                  | 
@@ -1009,4 +977,3 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Window.visualViewport                               | ✖️     |                                                  | 
 | Window.window                                       | ✖️     |                                                  | 
 | Worker                                              | N/A    | Doesn't apply since this is on the Worker thread | 
-
