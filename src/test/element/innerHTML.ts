@@ -83,7 +83,7 @@ test('set an element node', t => {
   if (child) {
     t.is(child.nodeType, NodeType.ELEMENT_NODE);
   } else {
-    t.is(true, false);
+    t.fail();
   }
 });
 
@@ -96,7 +96,7 @@ test('set a text node', t => {
   if (child) {
     t.is(child.nodeType, NodeType.TEXT_NODE);
   } else {
-    t.is(true, false);
+    t.fail();
   }
 });
 
@@ -109,7 +109,7 @@ test('set comment node', t => {
   if (child) {
     t.is(child.nodeType, NodeType.COMMENT_NODE);
   } else {
-    t.is(true, false);
+    t.fail();
   }
 });
 
@@ -122,7 +122,7 @@ test('set nested elements', t => {
   if (child) {
     t.is(child.childNodes.length, 1);
   } else {
-    t.is(true, false);
+    t.fail();
   }
 });
 
@@ -131,5 +131,3 @@ test('set non-nested elements', t => {
   node.innerHTML = '<div></div><div></div>';
   t.is(node.childNodes.length, 2);
 });
-
-// test for script and style Tags
