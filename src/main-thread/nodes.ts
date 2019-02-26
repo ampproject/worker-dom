@@ -64,6 +64,8 @@ export class NodeContext {
       node = document.createTextNode(this.strings.get(skeleton[TransferrableKeys.textContent] as number));
     } else if (skeleton[TransferrableKeys.nodeType] === NodeType.DOCUMENT_FRAGMENT_NODE) {
       node = document.createDocumentFragment();
+    } else if (skeleton[TransferrableKeys.nodeType] === NodeType.COMMENT_NODE) {
+      node = document.createComment(this.strings.get(skeleton[TransferrableKeys.textContent] as number));
     } else {
       const namespace =
         skeleton[TransferrableKeys.namespaceURI] !== undefined ? this.strings.get(skeleton[TransferrableKeys.namespaceURI] as number) : undefined;
