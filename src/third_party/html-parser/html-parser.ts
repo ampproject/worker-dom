@@ -126,9 +126,13 @@ export function parse(data: string, rootElement: Element) {
           currentParent = arr_back(stack);
         }
       }
-      currentParent = currentParent.appendChild(
-        new Element(NodeType.ELEMENT_NODE, match[2], currentParent.namespaceURI, currentParent.ownerDocument),
-      );
+      const childToAppend = new Element(NodeType.ELEMENT_NODE, match[2], currentParent.namespaceURI, currentParent.ownerDocument);
+
+      for (const key in attrs) {
+        childToAppend.setAttribute(key, attrs[key]);
+      }
+
+      currentParent = currentParent.appendChild(childToAppend);
 
       stack.push(currentParent);
       if (kBlockTextElements[match[2]]) {
