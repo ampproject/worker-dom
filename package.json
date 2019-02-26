@@ -36,16 +36,28 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
+<<<<<<< HEAD
     "dompurify": "1.0.10"
+=======
+    "dompurify": "1.0.8"
+>>>>>>> Only keep necessary configs and remove example used for testing.
   },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.8.5",
     "@babel/cli": "7.2.3",
+<<<<<<< HEAD
     "@babel/core": "7.3.4",
     "@babel/plugin-proposal-class-properties": "7.3.4",
     "@babel/plugin-proposal-object-rest-spread": "7.3.4",
     "@babel/preset-env": "7.3.4",
     "acorn": "6.1.1",
+=======
+    "@babel/core": "7.2.2",
+    "@babel/plugin-proposal-class-properties": "7.3.0",
+    "@babel/plugin-proposal-object-rest-spread": "7.3.2",
+    "@babel/preset-env": "7.3.1",
+    "acorn": "6.1.0",
+>>>>>>> Only keep necessary configs and remove example used for testing.
     "acorn-walk": "6.1.1",
     "ava": "1.2.1",
     "babel-plugin-minify-replace": "0.5.0",

@@ -35,12 +35,6 @@ const ESModules = [
     },
     plugins: [
       resolve(),
-      commonjs({
-        /*include: 'node_modules/**',*/
-        namedExports: {
-          'node_modules/he/he.js': ['decode']
-        }
-      }),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: false,
@@ -54,7 +48,6 @@ const ESModules = [
       MINIFY_BUNDLE_VALUE ? terser() : null,
     ].filter(Boolean),
   },
-  /*
   {
     input: 'output/worker-thread/index.js',
     output: {
@@ -65,12 +58,6 @@ const ESModules = [
     },
     plugins: [
       resolve(),
-      commonjs({
-        include: 'node_modules/**',
-        namedExports: {
-          'node_modules/he/he.js': ['decode']
-        }
-      }),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: false,
@@ -78,7 +65,6 @@ const ESModules = [
       }),
     ].filter(Boolean),
   },
-  */
   {
     input: 'output/worker-thread/index.safe.js',
     output: {
@@ -89,12 +75,6 @@ const ESModules = [
     },
     plugins: [
       resolve(),
-      commonjs({
-        include: 'node_modules/**',
-        namedExports: {
-          'node_modules/he/he.js': ['decode']
-        }
-      }),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: false,
@@ -118,12 +98,6 @@ const ESModules = [
     },
     plugins: [
       resolve(),
-      commonjs({
-        include: 'node_modules/**',
-        namedExports: {
-          'node_modules/he/he.js': ['decode']
-        }
-      }),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: false,
@@ -144,12 +118,6 @@ const IIFEModules = [
     },
     plugins: [
       resolve(),
-      commonjs({
-        include: 'node_modules/**',
-        namedExports: {
-          'node_modules/he/he.js': ['decode']
-        }
-      }),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: true,
@@ -173,12 +141,6 @@ const IIFEModules = [
     },
     plugins: [
       resolve(),
-      commonjs({
-        include: 'node_modules/**',
-        namedExports: {
-          'node_modules/he/he.js': ['decode']
-        }
-      }),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: true,
@@ -196,12 +158,6 @@ const IIFEModules = [
     },
     plugins: [
       resolve(),
-      commonjs({
-        include: 'node_modules/**',
-        namedExports: {
-          'node_modules/he/he.js': ['decode']
-        }
-      }),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: true,
@@ -225,12 +181,6 @@ const IIFEModules = [
     },
     plugins: [
       resolve(),
-      commonjs({
-        include: 'node_modules/**',
-        namedExports: {
-          'node_modules/he/he.js': ['decode']
-        }
-      }),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: true,
