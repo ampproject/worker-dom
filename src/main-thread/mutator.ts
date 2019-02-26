@@ -119,7 +119,7 @@ export function prepareMutate(passedWorker: Worker, passedSanitizer?: Sanitizer)
  * @param stringValues Additional string values to use in decoding messages.
  * @param mutations Changes to apply in both graph shape and content of Elements.
  */
-export function mutate(nodes: Array<TransferrableNode>, stringValues: Array<string>, mutations: TransferrableMutationRecords): void {
+export function mutate(nodes: Array<TransferrableNode>, stringValues: Array<string>, mutations: ArrayBuffer): void {
   //mutations: TransferrableMutationRecord[]): void {
   // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
   // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
@@ -128,7 +128,8 @@ export function mutate(nodes: Array<TransferrableNode>, stringValues: Array<stri
   // this.lastGestureTime = lastGestureTime;
   stringValues.forEach(storeString);
   nodes.forEach(node => createNode(node, sanitizer));
-  MUTATION_QUEUE = MUTATION_QUEUE.concat(mutations);
+  console.log('mutate please', mutations);
+  // MUTATION_QUEUE = MUTATION_QUEUE.concat(mutations);
   if (!PENDING_MUTATIONS) {
     PENDING_MUTATIONS = true;
     requestAnimationFrame(syncFlush);

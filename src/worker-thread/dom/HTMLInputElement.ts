@@ -21,6 +21,8 @@ import { MutationRecordType } from '../MutationRecord';
 import { reflectProperties } from './enhanceElement';
 import { registerSubclass } from './Element';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
+import { store as storeString } from '../strings';
 
 export class HTMLInputElement extends HTMLElement {
   // Per spec, some attributes like 'value' and 'checked' change behavior based on dirty flags.
@@ -45,12 +47,15 @@ export class HTMLInputElement extends HTMLElement {
     // Don't early-out if value doesn't appear to have changed.
     // The worker may have a stale value since 'input' events aren't being forwarded.
     this[TransferrableKeys.value] = String(value);
-    mutate({
-      type: MutationRecordType.PROPERTIES,
-      target: this,
-      propertyName: 'value',
-      value,
-    });
+    mutate(
+      {
+        type: MutationRecordType.PROPERTIES,
+        target: this,
+        propertyName: 'value',
+        value,
+      },
+      new Uint16Array([TransferrableMutationType.PROPERTIES, this[TransferrableKeys.index], storeString('value'), storeString(value)]),
+    );
   }
 
   get valueAsDate(): Date | null {
@@ -93,13 +98,16 @@ export class HTMLInputElement extends HTMLElement {
       return;
     }
     this[TransferrableKeys.checked] = !!value;
-    mutate({
-      type: MutationRecordType.PROPERTIES,
-      target: this,
-      propertyName: 'checked',
-      // TODO(choumx, #122): Proper support for non-string property mutations.
-      value: String(value),
-    });
+    mutate(
+      {
+        type: MutationRecordType.PROPERTIES,
+        target: this,
+        propertyName: 'checked',
+        // TODO(choumx, #122): Proper support for non-string property mutations.
+        value: String(value),
+      },
+      new Uint16Array([TransferrableMutationType.PROPERTIES, this[TransferrableKeys.index], storeString('checked'), storeString(String(value))]),
+    );
   }
 
   /**

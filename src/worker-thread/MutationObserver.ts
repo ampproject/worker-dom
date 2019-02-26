@@ -41,14 +41,11 @@ const pushMutation = (observer: MutationObserver, record: MutationRecord): void 
  * These records are then pushed into MutationObserver instances that match the MutationRecord.target
  * @param record MutationRecord to push into MutationObservers.
  */
-export function mutate(record: MutationRecord): void {
-  observers.forEach(observer => {
-    if (!observer.options.flatten) {
-      // TODO: Restore? || record.type === MutationRecordType.COMMAND
-      pushMutation(observer, record);
-      return;
-    }
+export function mutate(record: MutationRecord, buffer: Uint16Array): void {
+  record.target.ownerDocument.postMessageMethod(buffer, [buffer]);
+  console.log('mutate called with buffer', buffer);
 
+  observers.forEach(observer => {
     let target: Node | null = record.target;
     let matched = match(observer.target, target);
     if (!matched) {
@@ -71,10 +68,6 @@ interface MutationObserverInit {
   // characterDataOldValue?: boolean;
   // childList?: boolean;  // Default false
   // subtree?: boolean;    // Default false
-
-  // Except for this one (not specced) that will force all mutations to be observed
-  // Without flattening the record to the node requested to be observed.
-  flatten?: boolean;
 }
 
 export class MutationObserver {
@@ -95,7 +88,7 @@ export class MutationObserver {
   public observe(target: Node, options?: MutationObserverInit): void {
     this.disconnect();
     this.target = target;
-    this.options = Object.assign({ flatten: false }, options);
+    this.options = options || {};
 
     observers.push(this);
   }

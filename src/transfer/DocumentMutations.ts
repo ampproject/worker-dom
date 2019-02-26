@@ -14,103 +14,135 @@
  * limitations under the License.
  */
 
-import { Node } from '../worker-thread/dom/Node';
+// import { Node } from '../worker-thread/dom/Node';
 import { Document } from '../worker-thread/dom/Document';
 import { MutationRecord } from '../worker-thread/MutationRecord';
-import { TransferrableMutationRecords } from './TransferrableRecord';
-import { TransferrableNode } from './TransferrableNodes';
-import { MessageType, MutationFromWorker } from './Messages';
-import { TransferrableKeys } from './TransferrableKeys';
-import { consume as consumeNodes } from '../worker-thread/nodes';
-import { store as storeString, consume as consumeStrings } from '../worker-thread/strings';
-import { phase, set as setPhase, Phases } from '../transfer/phase';
-import { NumericBoolean } from '../utils';
+// import { TransferrableMutationRecords } from './TransferrableRecord';
+// import { TransferrableNode } from './TransferrableNodes';
+// import { MessageType, MutationFromWorker } from './Messages';
+// import { TransferrableKeys } from './TransferrableKeys';
+// import { consume as consumeNodes } from '../worker-thread/nodes';
+// import { store as storeString, consume as consumeStrings } from '../worker-thread/strings';
+import { set as setPhase, Phases } from '../transfer/phase'; // phase,
+// import { NumericBoolean } from '../utils';
+// import { BYTES_PER_ELEMENT } from './TypedArrayHelpers';
+// import { TransferrableEventSubscriptionChange } from './TransferrableEvent';
 
 let observing = false;
 
-const serializeNodes = (nodes: Array<Node>): Array<number> => nodes.map(node => node[TransferrableKeys.transferredFormat][0]);
-
-const numericBooleanHelper = (condition?: any | null) => (condition ? NumericBoolean.TRUE : NumericBoolean.FALSE);
-const transferrableNodeHelper = (node?: Node | null) => (node ? node[TransferrableKeys.index] : 0);
-const transferrableStringHelper = (value?: string | null): number => (value ? storeString(value) : 0);
+// const stringHelper = (value?: string | null): number => (value ? storeString(value) : 0);
 /**
  *
  * @param mutations
  */
-function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
-  const nodes: Array<TransferrableNode> = consumeNodes().map(node => node[TransferrableKeys.creationFormat]);
-  const type = phase === Phases.Mutating ? MessageType.MUTATE : MessageType.HYDRATE;
-  // let transferrableMutations: TransferrableMutationRecords = [];
-  const buffer: ArrayBuffer = new ArrayBuffer(256);
-  const view: DataView = new DataView(buffer);
-  let position: number = 0;
+// function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
+//   const nodes: Array<TransferrableNode> = consumeNodes().map(node => node[TransferrableKeys.creationFormat]);
+//   const serializeNodes = (nodes: Array<Node>): void => nodes.forEach(node => view.setUint16((byteOffset += BYTES_PER_ELEMENT.UINT16), node[TransferrableKeys.index]));
+//   const type = phase === Phases.Mutating ? MessageType.MUTATE : MessageType.HYDRATE;
+//   // let transferrableMutations: TransferrableMutationRecords = [];
+//   const buffer: ArrayBuffer = new ArrayBuffer(256);
+//   const view: DataView = new DataView(buffer);
+//   let byteOffset: number = 0;
 
-  /* Structure 
-  [
-    UInt8,  // MutationRecordType
-    UInt32, // MutationRecordTarget (Identifier)
-    UInt8,  // AddedNodeCount
-    UInt8,  // RemovedNodeCount
-    UInt8,  // AddedEventCount
-    UInt8,  // RemovedEventCount
-    UInt32, // PreviousSibling (Identifier, 0 = not used)
-    UInt32, // NextSibling (Identifier, 0 = not used)
-    UInt32, // AttributeName (Identifier, 0 = not used)
-    UInt32, // AttributeNamespace (Identifier, 0 = not used)
-    UInt32, // PropertyName (Identifier, 0 = not used)
-    UInt32, // NewValue (Identifer, 0 = not used)
-    UInt32, // OldValue (Identifer, 0 = not used)
-    ...Array<UInt32>.length(AddedNodeCount) // AddedNode Identifiers
-    ...Array<UInt32>.length(RemovedNodeCount) // RemovedNode Identifers
-    ...(Array<number, )
-  ]
-  // Structure [MutationRecordType]
-  /*
+//   /* Structure
+//   [
+//     UInt8,  // MutationRecordType
+//     UInt16, // MutationRecordTarget (Identifier)
+//     UInt8,  // AddedNodeCount
+//     UInt8,  // RemovedNodeCount
+//     UInt8,  // AddedEventCount
+//     UInt8,  // RemovedEventCount
+//     UInt16, // PreviousSibling (Identifier, 0 = not used)
+//     UInt16, // NextSibling (Identifier, 0 = not used)
+//     UInt16, // AttributeName (Identifier, 0 = not used)
+//     UInt16, // AttributeNamespace (Identifier, 0 = not used)
+//     UInt16, // PropertyName (Identifier, 0 = not used)
+//     UInt16, // NewValue (Identifer, 0 = not used)
+//     UInt16, // OldValue (Identifer, 0 = not used)
 
-  // Following value 17 is a spread of values, unrepresentable in TypeScript.
-  // ...AddedNodes,
-  // ...RemovedNodes,
-  // ...AddedEvents,
-  // ...RemovedEvents,
+//     // AddedNode Identifiers
+//     ...Array<UInt16>.length(AddedNodeCount)
 
-  */
+//     // RemovedNode Identifers
+//     ...Array<UInt16>.length(RemovedNodeCount)
 
-  console.log('serialize mutations', mutations);
-  mutations.forEach(mutation => {
-    view.setInt.push(
-      mutation.type,
-      mutation.target[TransferrableKeys.index],
-      (mutation.addedNodes || []).length,
-      (mutation.removedNodes || []).length,
-      (mutation.addedEvents || []).length,
-      (mutation.removedEvents || []).length,
-      numericBooleanHelper(mutation.previousSibling),
-      transferrableNodeHelper(mutation.previousSibling),
-      numericBooleanHelper(mutation.nextSibling),
-      transferrableNodeHelper(mutation.nextSibling),
+//     // AddedEvents
+//     ...(Array<UInt16, UInt16, UInt16>).length(AddedEventCount)
 
-      numericBooleanHelper(mutation.attributeName),
-      transferrableStringHelper(mutation.attributeName),
-      numericBooleanHelper(mutation.attributeNamespace),
-      transferrableStringHelper(mutation.attributeNamespace),
-      numericBooleanHelper(mutation.propertyName),
-      transferrableStringHelper(mutation.propertyName),
-      transferrableStringHelper(mutation.value),
-      transferrableStringHelper(mutation.oldValue),
+//     // RemovedEvents
+//     ...(Array<UInt16, UInt16, UInt16>).length(AddedEventCount)
+//   ]
+//   */
 
-      ...serializeNodes(mutation.addedNodes || []),
-      ...serializeNodes(mutation.removedNodes || []),
-      ...[].concat.apply([], mutation.addedEvents),
-      ...[].concat.apply([], mutation.removedEvents),
-    );
-  });
-  return {
-    [TransferrableKeys.type]: type,
-    [TransferrableKeys.strings]: consumeStrings(),
-    [TransferrableKeys.nodes]: nodes,
-    [TransferrableKeys.mutations]: transferrableMutations,
-  };
-}
+//   console.log('serialize mutations', mutations);
+
+//   const serializeEventSubscriptions = (addedEvents: Array<TransferrableEventSubscriptionChange>, removedEvents: Array<TransferrableEventSubscriptionChange>): void => {
+//     addedEvents.concat(removedEvents).forEach(event => {
+//       view.setUint16((byteOffset += BYTES_PER_ELEMENT.UINT16), event[0]);
+//       view.setUint16((byteOffset += BYTES_PER_ELEMENT.UINT16), event[1]);
+//       view.setUint16((byteOffset += BYTES_PER_ELEMENT.UINT16), event[2]);
+//     });
+//   };
+//   mutations.forEach(mutation => {
+//     const addedNodes = mutation.addedNodes || [];
+//     const removedNodes = mutation.removedNodes || [];
+//     const addedEvents = mutation.addedEvents || [];
+//     const removedEvents = mutation.removedEvents || [];
+
+//     view.setUint8(byteOffset, mutation.type);
+//     view.setUint16((byteOffset += BYTES_PER_ELEMENT.UINT8), mutation.target[TransferrableKeys.index]);
+//     view.setUint8((byteOffset += BYTES_PER_ELEMENT.UINT16), addedNodes.length);
+//     view.setUint8((byteOffset += BYTES_PER_ELEMENT.UINT8), removedNodes.length);
+//     view.setUint8((byteOffset += BYTES_PER_ELEMENT.UINT8), addedEvents.length);
+//     view.setUint8((byteOffset += BYTES_PER_ELEMENT.UINT8), removedEvents.length);
+//     view.setUint16((byteOffset += BYTES_PER_ELEMENT.UINT8), mutation.previousSibling ? mutation.previousSibling[0] : 0);
+//     view.setUint16((byteOffset += BYTES_PER_ELEMENT.UINT16), mutation.nextSibling ? mutation.nextSibling[0] : 0);
+//     view.setUint16((byteOffset += BYTES_PER_ELEMENT.UINT16), stringHelper(mutation.attributeName));
+//     view.setUint16((byteOffset += BYTES_PER_ELEMENT.UINT16), stringHelper(mutation.attributeNamespace));
+//     view.setUint16((byteOffset += BYTES_PER_ELEMENT.UINT16), stringHelper(mutation.propertyName));
+//     view.setUint16((byteOffset += BYTES_PER_ELEMENT.UINT16), stringHelper(mutation.value));
+//     view.setUint16((byteOffset += BYTES_PER_ELEMENT.UINT16), stringHelper(mutation.oldValue));
+//     serializeNodes(addedNodes);
+//     serializeNodes(removedNodes);
+//     serializeEventSubscriptions(addedEvents, removedEvents);
+
+//     // addedNodes.forEach(addedNode => view.setUint16((byteOffset += SizeInBytes.UINT16), addedNode[TransferrableKeys.index]));
+//     // removedNodes.forEach(removedNode => view.setUint16((byteOffset += SizeInBytes.UINT16), removedNode[TransferrableKeys.index]));
+
+//     // view.setInt.push(
+//     //   mutation.type,
+//     //   mutation.target[TransferrableKeys.index],
+//     //   (mutation.addedNodes || []).length,
+//     //   (mutation.removedNodes || []).length,
+//     //   (mutation.addedEvents || []).length,
+//     //   (mutation.removedEvents || []).length,
+//     //   numericBooleanHelper(mutation.previousSibling),
+//     //   transferrableNodeHelper(mutation.previousSibling),
+//     //   numericBooleanHelper(mutation.nextSibling),
+//     //   transferrableNodeHelper(mutation.nextSibling),
+
+//     //   numericBooleanHelper(mutation.attributeName),
+//     //   transferrableStringHelper(mutation.attributeName),
+//     //   numericBooleanHelper(mutation.attributeNamespace),
+//     //   transferrableStringHelper(mutation.attributeNamespace),
+//     //   numericBooleanHelper(mutation.propertyName),
+//     //   transferrableStringHelper(mutation.propertyName),
+//     //   transferrableStringHelper(mutation.value),
+//     //   transferrableStringHelper(mutation.oldValue),
+
+//     //   ...serializeNodes(mutation.addedNodes || []),
+//     //   ...serializeNodes(mutation.removedNodes || []),
+//     //   ...[].concat.apply([], mutation.addedEvents),
+//     //   ...[].concat.apply([], mutation.removedEvents),
+//     // );
+//   });
+//   return {
+//     [TransferrableKeys.type]: type,
+//     [TransferrableKeys.strings]: consumeStrings(),
+//     [TransferrableKeys.nodes]: nodes,
+//     [TransferrableKeys.mutations]: buffer,
+//   };
+// }
 
 /**
  *
@@ -119,7 +151,8 @@ function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
  */
 function handleMutations(incoming: Array<MutationRecord>, postMessage?: Function): void {
   if (postMessage) {
-    postMessage(serializeMutations(incoming));
+    // const transferrableMutations = serializeMutations(incoming);
+    // postMessage(transferrableMutations, [transferrableMutations[TransferrableKeys.mutations]]);
     // Only first set of mutations are sent in a "HYDRATE" message type.
     // Afterwards, we enter "MUTATING" phase and subsequent mutations are sent in "MUTATE" message type.
     setPhase(Phases.Mutating);

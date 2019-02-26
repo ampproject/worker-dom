@@ -19,6 +19,8 @@ import { NamespaceURI } from './Node';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
+import { store as storeString } from '../strings';
 
 export class DOMTokenList {
   private [TransferrableKeys.tokens]: Array<string> = [];
@@ -188,12 +190,21 @@ export class DOMTokenList {
    */
   private mutated(oldValue: string, value: string): void {
     this[TransferrableKeys.storeAttribute](this[TransferrableKeys.target].namespaceURI, this[TransferrableKeys.attributeName], value);
-    mutate({
-      type: MutationRecordType.ATTRIBUTES,
-      target: this[TransferrableKeys.target],
-      attributeName: this[TransferrableKeys.attributeName],
-      value,
-      oldValue,
-    });
+    mutate(
+      {
+        type: MutationRecordType.ATTRIBUTES,
+        target: this[TransferrableKeys.target],
+        attributeName: this[TransferrableKeys.attributeName],
+        value,
+        oldValue,
+      },
+      new Uint16Array([
+        TransferrableMutationType.ATTRIBUTES,
+        this[TransferrableKeys.target][TransferrableKeys.index],
+        storeString(this[TransferrableKeys.attributeName]),
+        0, // Attribute Namespace is the default value.
+        storeString(value),
+      ]),
+    );
   }
 }

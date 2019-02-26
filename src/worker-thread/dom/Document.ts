@@ -73,6 +73,7 @@ export class Document extends Element {
   };
   public documentElement: Document;
   public body: Element;
+  public postMessageMethod: Function;
 
   constructor() {
     super(NodeType.DOCUMENT_NODE, '#document', HTML_NAMESPACE, null);
@@ -128,7 +129,9 @@ export class Document extends Element {
  */
 export function createDocument(postMessageMethod?: Function): Document {
   const doc = new Document();
-  doc.postMessageMethod = postMessageMethod;
+  if (postMessageMethod !== undefined) {
+    doc.postMessageMethod = postMessageMethod;
+  }
   doc.isConnected = true;
   doc.appendChild((doc.body = doc.createElement('body')));
 

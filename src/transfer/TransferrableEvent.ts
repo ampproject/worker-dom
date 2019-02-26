@@ -38,7 +38,20 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.keyCode]?: number;
 }
 
-export type TransferrableEventSubscriptionChange = [number, number, number];
+type TransferrableEventSubscriptionType = number;
+type TransferrableEventSubscriptionTarget = number;
+type TransferrableEventSubscriptionIdentifer = number;
+export type TransferrableEventSubscriptionChange = [
+  TransferrableEventSubscriptionType,
+  TransferrableEventSubscriptionTarget,
+  TransferrableEventSubscriptionIdentifer
+];
+
+/*
+new Uint16Array([
+  MutationRecordType.EVENT_SUBSCRIPTION, this[TransferrableKeys.index], 1, 0, storedType, this[TransferrableKeys.index], index
+])
+*/
 
 /**
  * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.

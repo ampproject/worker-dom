@@ -20,6 +20,8 @@ import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { TransferredNode, TransferrableNode, NodeType } from '../../transfer/TransferrableNodes';
+import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
+// import { TransferrableEventSubscription } from '../../transfer/replacement/TransferrableEvent';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { store as storeString } from '../strings';
 
@@ -200,12 +202,35 @@ export abstract class Node {
       child.parentNode = this;
       propagate(child, 'isConnected', this.isConnected);
       propagate(child, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
-      mutate({
-        addedNodes: [child],
-        nextSibling: referenceNode,
-        type: MutationRecordType.CHILD_LIST,
-        target: this,
-      });
+      mutate(
+        {
+          addedNodes: [child],
+          nextSibling: referenceNode,
+          type: MutationRecordType.CHILD_LIST,
+          target: this,
+        },
+        new Uint16Array([
+          TransferrableMutationType.CHILD_LIST,
+          this[TransferrableKeys.index],
+          referenceNode[TransferrableKeys.index],
+          0,
+          1,
+          child[TransferrableKeys.index],
+          0,
+        ]),
+      );
+
+      /*
+      [
+        TransferrableMutationType.CHILD_LIST,
+        Target.index,
+        NextSibling.index,
+        PreviousSibling.index,
+        AppendedNodeCount,
+        ... AppendedNode.index,
+        RemovedNodeCount,
+      ]
+      */
 
       return child;
     }
@@ -229,12 +254,37 @@ export abstract class Node {
       propagate(child, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
       this.childNodes.push(child);
 
-      mutate({
-        addedNodes: [child],
-        previousSibling: this.childNodes[this.childNodes.length - 2],
-        type: MutationRecordType.CHILD_LIST,
-        target: this,
-      });
+      const previousSibling = this.childNodes[this.childNodes.length - 2];
+      mutate(
+        {
+          addedNodes: [child],
+          previousSibling,
+          type: MutationRecordType.CHILD_LIST,
+          target: this,
+        },
+        new Uint16Array([
+          TransferrableMutationType.CHILD_LIST,
+          this[TransferrableKeys.index],
+          0,
+          previousSibling ? previousSibling[TransferrableKeys.index] : 0,
+          1,
+          child[TransferrableKeys.index],
+          0,
+        ]),
+      );
+
+      /*
+      [
+        TransferrableMutationType.CHILD_LIST,
+        Target.index,
+        NextSibling.index,
+        PreviousSibling.index,
+        AppendedNodeCount,
+        ... AppendedNode.index,
+        RemovedNodeCount,
+        ... RemovedNode.index,
+      ]
+      */
     }
     return child;
   }
@@ -254,11 +304,27 @@ export abstract class Node {
       propagate(child, 'isConnected', false);
       propagate(child, TransferrableKeys.scopingRoot, child);
       this.childNodes.splice(index, 1);
-      mutate({
-        removedNodes: [child],
-        type: MutationRecordType.CHILD_LIST,
-        target: this,
-      });
+      mutate(
+        {
+          removedNodes: [child],
+          type: MutationRecordType.CHILD_LIST,
+          target: this,
+        },
+        new Uint16Array([TransferrableMutationType.CHILD_LIST, this[TransferrableKeys.index], 0, 0, 0, 1, child[TransferrableKeys.index]]),
+      );
+
+      /*
+      [
+        TransferrableMutationType.CHILD_LIST,
+        Target.index,
+        NextSibling.index,
+        PreviousSibling.index,
+        AppendedNodeCount,
+        ... AppendedNode.index,
+        RemovedNodeCount,
+        ... RemovedNode.index,
+      ]
+      */
 
       return child;
     }
@@ -284,13 +350,38 @@ export abstract class Node {
         propagate(newChild, 'isConnected', this.isConnected);
         propagate(newChild, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
 
-        mutate({
-          addedNodes: [newChild],
-          removedNodes: [oldChild],
-          type: MutationRecordType.CHILD_LIST,
-          nextSibling: this.childNodes[index + 1],
-          target: this,
-        });
+        mutate(
+          {
+            addedNodes: [newChild],
+            removedNodes: [oldChild],
+            type: MutationRecordType.CHILD_LIST,
+            nextSibling: this.childNodes[index + 1],
+            target: this,
+          },
+          new Uint16Array([
+            TransferrableMutationType.CHILD_LIST,
+            this[TransferrableKeys.index],
+            this.childNodes[index + 1][TransferrableKeys.index],
+            0,
+            1,
+            newChild[TransferrableKeys.index],
+            1,
+            oldChild[TransferrableKeys.index],
+          ]),
+        );
+
+        /*
+        [
+          TransferrableMutationType.CHILD_LIST,
+          Target.index,
+          NextSibling.index,
+          PreviousSibling.index,
+          AppendedNodeCount,
+          ... AppendedNode.index,
+          RemovedNodeCount,
+          ... RemovedNode.index,
+        ]
+        */
       }
     }
 
@@ -312,19 +403,26 @@ export abstract class Node {
    * @param handler Function called when event is dispatched.
    */
   public addEventListener(type: string, handler: EventHandler): void {
-    const handlers: EventHandler[] = this[TransferrableKeys.handlers][toLower(type)];
+    const lowerType = toLower(type);
+    const storedType = storeString(lowerType);
+    const handlers: EventHandler[] = this[TransferrableKeys.handlers][lowerType];
     let index: number = 0;
     if (handlers) {
       index = handlers.push(handler);
     } else {
-      this[TransferrableKeys.handlers][toLower(type)] = [handler];
+      this[TransferrableKeys.handlers][lowerType] = [handler];
     }
 
-    mutate({
-      target: this,
-      type: MutationRecordType.EVENT_SUBSCRIPTION,
-      addedEvents: [[storeString(type), this[TransferrableKeys.index], index]],
-    });
+    const trasferableAddEventListner = new Uint16Array([
+      TransferrableMutationType.EVENT_SUBSCRIPTION,
+      this[TransferrableKeys.index],
+      1,
+      0,
+      storedType,
+      this[TransferrableKeys.index],
+      index,
+    ]);
+    this.ownerDocument.postMessageMethod(trasferableAddEventListner, [trasferableAddEventListner]);
   }
 
   /**
@@ -334,16 +432,22 @@ export abstract class Node {
    * @param handler Function to stop calling when event is dispatched.
    */
   public removeEventListener(type: string, handler: EventHandler): void {
-    const handlers = this[TransferrableKeys.handlers][toLower(type)];
+    const lowerType = toLower(type);
+    const handlers = this[TransferrableKeys.handlers][lowerType];
     const index = !!handlers ? handlers.indexOf(handler) : -1;
 
     if (index >= 0) {
       handlers.splice(index, 1);
-      mutate({
-        target: this,
-        type: MutationRecordType.EVENT_SUBSCRIPTION,
-        removedEvents: [[storeString(type), this[TransferrableKeys.index], index]],
-      });
+      const transferableRemoveEventListener = new Uint16Array([
+        TransferrableMutationType.EVENT_SUBSCRIPTION,
+        this[TransferrableKeys.index],
+        0,
+        1,
+        storeString(lowerType),
+        this[TransferrableKeys.index],
+        index,
+      ]);
+      this.ownerDocument.postMessageMethod(transferableRemoveEventListener, [transferableRemoveEventListener]);
     }
   }
 

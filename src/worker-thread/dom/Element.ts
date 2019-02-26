@@ -31,6 +31,7 @@ import { store as storeString } from '../strings';
 import { toLower } from '../../utils';
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
+import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
 
 export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
 export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
@@ -255,14 +256,23 @@ export class Element extends ParentNode {
     }
 
     const oldValue = this[TransferrableKeys.storeAttribute](namespaceURI, name, value);
-    mutate({
-      type: MutationRecordType.ATTRIBUTES,
-      target: this,
-      attributeName: name,
-      attributeNamespace: namespaceURI,
-      value,
-      oldValue,
-    });
+    mutate(
+      {
+        type: MutationRecordType.ATTRIBUTES,
+        target: this,
+        attributeName: name,
+        attributeNamespace: namespaceURI,
+        value,
+        oldValue,
+      },
+      new Uint16Array([
+        TransferrableMutationType.ATTRIBUTES,
+        this[TransferrableKeys.index],
+        storeString(name),
+        storeString(namespaceURI),
+        storeString(value),
+      ]),
+    );
   }
 
   public [TransferrableKeys.storeAttribute](namespaceURI: NamespaceURI, name: string, value: string): string {
@@ -314,13 +324,22 @@ export class Element extends ParentNode {
       const oldValue = this.attributes[index].value;
       this.attributes.splice(index, 1);
 
-      mutate({
-        type: MutationRecordType.ATTRIBUTES,
-        target: this,
-        attributeName: name,
-        attributeNamespace: namespaceURI,
-        oldValue,
-      });
+      mutate(
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          target: this,
+          attributeName: name,
+          attributeNamespace: namespaceURI,
+          oldValue,
+        },
+        new Uint16Array([
+          TransferrableMutationType.ATTRIBUTES,
+          this[TransferrableKeys.index],
+          storeString(name),
+          storeString(namespaceURI),
+          0, // 0 means no value
+        ]),
+      );
     }
   }
 
@@ -419,13 +438,19 @@ export class Element extends ParentNode {
             });
           }
         });
+
+        // WIP FIX THIS –– It's not a mutation, it's a read of value but must be done in correct order.
+
         // Requesting a boundingClientRect can be depdendent on mutations that have not yet
         // applied in the main thread. As a result, ensure proper order of DOM mutation and reads
         // by sending the request for a boundingClientRect as a mutation.
-        mutate({
-          type: MutationRecordType.GET_BOUNDING_CLIENT_RECT,
-          target: this,
-        });
+        mutate(
+          {
+            type: MutationRecordType.GET_BOUNDING_CLIENT_RECT,
+            target: this,
+          },
+          new Uint16Array([TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]]),
+        ); // TODO: This is unclear, fix it.
 
         setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.
       }

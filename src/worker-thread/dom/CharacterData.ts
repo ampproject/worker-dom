@@ -19,6 +19,8 @@ import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
+import { store as storeString } from '../strings';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 export abstract class CharacterData extends Node {
@@ -52,12 +54,15 @@ export abstract class CharacterData extends Node {
     const oldValue = this.data;
     this[TransferrableKeys.data] = value;
 
-    mutate({
-      target: this,
-      type: MutationRecordType.CHARACTER_DATA,
-      value,
-      oldValue,
-    });
+    mutate(
+      {
+        target: this,
+        type: MutationRecordType.CHARACTER_DATA,
+        value,
+        oldValue,
+      },
+      new Uint16Array([TransferrableMutationType.CHARACTER_DATA, this[TransferrableKeys.index], storeString(value)]),
+    );
   }
 
   /**
