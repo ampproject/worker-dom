@@ -14,137 +14,166 @@
  * limitations under the License.
  */
 
-import { TransferrableMutationRecords } from '../transfer/TransferrableRecord';
 // import { TransferrableKeys } from '../transfer/TransferrableKeys';
 // import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { TransferrableNode } from '../transfer/TransferrableNodes';
-import { createNode } from './nodes';
-import { store as storeString } from './strings'; // , get as getString
-// import { process as processEventSubscription } from './commands/event-subscription';
-// import { process as processBoundingClientRect } from './commands/bounding-client-rect';
+import { NodeContext } from './nodes';
+import { Strings } from './strings';
+import { WorkerContext } from './worker';
+// import { EventSubscriptionProcessor } from './commands/event-subscription';
+// import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
 
-let MUTATION_QUEUE: TransferrableMutationRecords = [];
-let PENDING_MUTATIONS: boolean = false;
-// let worker: Worker;
-let sanitizer: Sanitizer | undefined;
+export class MutatorProcessor {
+  private strings: Strings;
+  private nodeContext: NodeContext;
+  private mutationQueue: Array<ArrayBuffer>;
+  private pendingMutations: boolean;
+  private sanitizer: Sanitizer | undefined;
+  // private mutators: {
+  //   [key: number]: (mutation: ArrayBuffer, target: Node) => void;
+  // };
 
-/**
- *
- * @param passedWorker
- * @param passedSanitizer Sanitizer to apply to content if needed.
- */
-export function prepareMutate(passedWorker: Worker, passedSanitizer?: Sanitizer): void {
-  // worker = passedWorker;
-  sanitizer = passedSanitizer;
-}
+  /**
+   * @param strings
+   * @param nodeContext
+   * @param workerContext
+   * @param passedSanitizer Sanitizer to apply to content if needed.
+   */
+  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, passedSanitizer?: Sanitizer) {
+    this.strings = strings;
+    this.nodeContext = nodeContext;
+    this.sanitizer = passedSanitizer;
+    this.mutationQueue = [];
+    this.pendingMutations = false;
 
-// const mutators: {
-//   [key: number]: (mutation: TransferrableMutationRecord, target: Node) => void;
-// } = {
-//   [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, target: HTMLElement) {
-//     // (mutation[TransferrableKeys.removedNodes] || []).forEach(node => getNode(node[TransferrableKeys.index]).remove());
+    // const eventSubscriptionProcessor = new EventSubscriptionProcessor(strings, nodeContext, workerContext);
+    // const boundingClientRectProcessor = new BoundingClientRectProcessor(nodeContext, workerContext);
 
-//     // const addedNodes = mutation[TransferrableKeys.addedNodes];
-//     // const nextSibling = mutation[TransferrableKeys.nextSibling];
-//     // if (addedNodes) {
-//     //   addedNodes.forEach(node => {
-//     //     let newChild = null;
-//     //     newChild = getNode(node[TransferrableKeys.index]);
-
-//     //     if (!newChild) {
-//     //       // Transferred nodes that are not stored were previously removed by the sanitizer.
-//     //       if (node[TransferrableKeys.transferred]) {
-//     //         return;
-//     //       } else {
-//     //         newChild = createNode(node as TransferrableNode, sanitizer);
-//     //       }
-//     //     }
-//     //     if (newChild) {
-//     //       target.insertBefore(newChild, (nextSibling && getNode(nextSibling[TransferrableKeys.index])) || null);
-//     //     } else {
-//     //       // TODO(choumx): Inform worker that sanitizer removed newChild.
-//     //     }
-//     //   });
-//     // }
-//   },
-//   [MutationRecordType.ATTRIBUTES](mutation: TransferrableMutationRecord, target: HTMLElement | SVGElement) {
-//     // const attributeName =
-//     //   mutation[TransferrableKeys.attributeName] !== undefined ? getString(mutation[TransferrableKeys.attributeName] as number) : null;
-//     // const value = mutation[TransferrableKeys.value] !== undefined ? getString(mutation[TransferrableKeys.value] as number) : null;
-//     // if (attributeName != null) {
-//     //   if (value == null) {
-//     //     target.removeAttribute(attributeName);
-//     //   } else {
-//     //     if (!sanitizer || sanitizer.validAttribute(target.nodeName, attributeName, value)) {
-//     //       target.setAttribute(attributeName, value);
-//     //     } else {
-//     //       // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
-//     //     }
-//     //   }
-//     // }
-//   },
-//   [MutationRecordType.CHARACTER_DATA](mutation: TransferrableMutationRecord, target: CharacterData) {
-//     // const value = mutation[TransferrableKeys.value];
-//     // if (value) {
-//     //   // Sanitization not necessary for textContent.
-//     //   target.textContent = getString(value);
-//     // }
-//   },
-//   [MutationRecordType.PROPERTIES](mutation: TransferrableMutationRecord, target: RenderableElement) {
-//     // const propertyName =
-//     //   mutation[TransferrableKeys.propertyName] !== undefined ? getString(mutation[TransferrableKeys.propertyName] as number) : null;
-//     // const value = mutation[TransferrableKeys.value] !== undefined ? getString(mutation[TransferrableKeys.value] as number) : null;
-//     // if (propertyName && value != null) {
-//     //   const stringValue = String(value);
-//     //   if (!sanitizer || sanitizer.validProperty(target.nodeName, propertyName, stringValue)) {
-//     //     // TODO(choumx, #122): Proper support for non-string property mutations.
-//     //     const isBooleanProperty = propertyName == 'checked';
-//     //     target[propertyName] = isBooleanProperty ? value === 'true' : value;
-//     //   } else {
-//     //     // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
-//     //   }
-//     // }
-//   },
-//   [MutationRecordType.EVENT_SUBSCRIPTION](mutation: TransferrableMutationRecord) {
-//     processEventSubscription(worker, mutation);
-//   },
-//   [MutationRecordType.GET_BOUNDING_CLIENT_RECT](mutation: TransferrableMutationRecord) {
-//     processBoundingClientRect(worker, mutation);
-//   },
-// };
-
-/**
- * Process MutationRecords from worker thread applying changes to the existing DOM.
- * @param nodes New nodes to add in the main thread with the incoming mutations.
- * @param stringValues Additional string values to use in decoding messages.
- * @param mutations Changes to apply in both graph shape and content of Elements.
- */
-export function mutate(nodes: Array<TransferrableNode>, stringValues: Array<string>, mutations: ArrayBuffer): void {
-  //mutations: TransferrableMutationRecord[]): void {
-  // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
-  // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
-  //   return;
-  // }
-  // this.lastGestureTime = lastGestureTime;
-  stringValues.forEach(storeString);
-  nodes.forEach(node => createNode(node, sanitizer));
-  console.log('mutate please', mutations);
-  // MUTATION_QUEUE = MUTATION_QUEUE.concat(mutations);
-  if (!PENDING_MUTATIONS) {
-    PENDING_MUTATIONS = true;
-    requestAnimationFrame(syncFlush);
+    // this.mutators = {
+    //   [MutationRecordType.CHILD_LIST]: this.mutateChildList.bind(this),
+    //   [MutationRecordType.ATTRIBUTES]: this.mutateAttributes.bind(this),
+    //   [MutationRecordType.CHARACTER_DATA]: this.mutateCharacterData.bind(this),
+    //   [MutationRecordType.PROPERTIES]: this.mutateProperties.bind(this),
+    //   [MutationRecordType.EVENT_SUBSCRIPTION]: eventSubscriptionProcessor.process.bind(eventSubscriptionProcessor),
+    //   [MutationRecordType.GET_BOUNDING_CLIENT_RECT]: boundingClientRectProcessor.process.bind(boundingClientRectProcessor),
+    // };
   }
-}
 
-/**
- * Apply all stored mutations syncronously. This method works well, but can cause jank if there are too many
- * mutations to apply in a single frame.
- *
- * Investigations in using asyncFlush to resolve are worth considering.
- */
-function syncFlush(): void {
-  console.log('syncFlush', MUTATION_QUEUE);
-  // MUTATION_QUEUE.forEach(mutation => mutators[mutation[TransferrableKeys.type]](mutation, getNode(mutation[TransferrableKeys.target])));
-  MUTATION_QUEUE = [];
-  PENDING_MUTATIONS = false;
+  /**
+   * Process MutationRecords from worker thread applying changes to the existing DOM.
+   * @param nodes New nodes to add in the main thread with the incoming mutations.
+   * @param stringValues Additional string values to use in decoding messages.
+   * @param mutations Changes to apply in both graph shape and content of Elements.
+   */
+  mutate(nodes: Array<TransferrableNode>, stringValues: Array<string>, mutations: ArrayBuffer): void {
+    //mutations: TransferrableMutationRecord[]): void {
+    // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
+    // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
+    //   return;
+    // }
+    // this.lastGestureTime = lastGestureTime;
+    this.strings.storeValues(stringValues);
+    nodes.forEach(node => this.nodeContext.createNode(node, this.sanitizer));
+    this.mutationQueue = this.mutationQueue.concat(mutations);
+    if (!this.pendingMutations) {
+      this.pendingMutations = true;
+      requestAnimationFrame(this.syncFlush.bind(this));
+    }
+  }
+
+  /**
+   * Apply all stored mutations syncronously. This method works well, but can cause jank if there are too many
+   * mutations to apply in a single frame.
+   *
+   * Investigations in using asyncFlush to resolve are worth considering.
+   */
+  private syncFlush(): void {
+    // this.mutationQueue.forEach(mutation => {
+    //   const nodeId = mutation[TransferrableKeys.target];
+    //   const node = this.nodeContext.getNode(nodeId);
+    //   if (!node) {
+    //     console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
+    //     return;
+    //   }
+    //   this.mutators[mutation[TransferrableKeys.type]](mutation, node);
+    // });
+    // this.mutationQueue = [];
+    this.pendingMutations = false;
+  }
+
+  // private mutateChildList(mutation: ArrayBuffer, target: HTMLElement) {
+  //   // (mutation[TransferrableKeys.removedNodes] || []).forEach(nodeReference => {
+  //   //   const nodeId = nodeReference[TransferrableKeys.index];
+  //   //   const node = this.nodeContext.getNode(nodeId);
+  //   //   if (!node) {
+  //   //     console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
+  //   //     return;
+  //   //   }
+  //   //   node.remove();
+  //   // });
+
+  //   // const addedNodes = mutation[TransferrableKeys.addedNodes];
+  //   // const nextSibling = mutation[TransferrableKeys.nextSibling];
+  //   // if (addedNodes) {
+  //   //   addedNodes.forEach(node => {
+  //   //     let newChild = null;
+  //   //     newChild = this.nodeContext.getNode(node[TransferrableKeys.index]);
+
+  //   //     if (!newChild) {
+  //   //       // Transferred nodes that are not stored were previously removed by the sanitizer.
+  //   //       if (node[TransferrableKeys.transferred]) {
+  //   //         return;
+  //   //       } else {
+  //   //         newChild = this.nodeContext.createNode(node as TransferrableNode, this.sanitizer);
+  //   //       }
+  //   //     }
+  //   //     if (newChild) {
+  //   //       target.insertBefore(newChild, (nextSibling && this.nodeContext.getNode(nextSibling[TransferrableKeys.index])) || null);
+  //   //     } else {
+  //   //       // TODO(choumx): Inform worker that sanitizer removed newChild.
+  //   //     }
+  //   //   });
+  //   // }
+  // }
+
+  // private mutateAttributes(mutation: ArrayBuffer, target: HTMLElement | SVGElement) {
+  //   // const attributeName =
+  //   //   mutation[TransferrableKeys.attributeName] !== undefined ? this.strings.get(mutation[TransferrableKeys.attributeName] as number) : null;
+  //   // const value = mutation[TransferrableKeys.value] !== undefined ? this.strings.get(mutation[TransferrableKeys.value] as number) : null;
+  //   // if (attributeName != null) {
+  //   //   if (value == null) {
+  //   //     target.removeAttribute(attributeName);
+  //   //   } else {
+  //   //     if (!this.sanitizer || this.sanitizer.validAttribute(target.nodeName, attributeName, value)) {
+  //   //       target.setAttribute(attributeName, value);
+  //   //     } else {
+  //   //       // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
+  //   //     }
+  //   //   }
+  //   // }
+  // }
+
+  // private mutateCharacterData(mutation: ArrayBuffer, target: CharacterData) {
+  //   // const value = mutation[TransferrableKeys.value];
+  //   // if (value) {
+  //   //   // Sanitization not necessary for textContent.
+  //   //   target.textContent = this.strings.get(value);
+  //   // }
+  // }
+
+  // private mutateProperties(mutation: ArrayBuffer, target: RenderableElement) {
+  //   // const propertyName =
+  //   //   mutation[TransferrableKeys.propertyName] !== undefined ? this.strings.get(mutation[TransferrableKeys.propertyName] as number) : null;
+  //   // const value = mutation[TransferrableKeys.value] !== undefined ? this.strings.get(mutation[TransferrableKeys.value] as number) : null;
+  //   // if (propertyName && value != null) {
+  //   //   const stringValue = String(value);
+  //   //   if (!this.sanitizer || this.sanitizer.validProperty(target.nodeName, propertyName, stringValue)) {
+  //   //     // TODO(choumx, #122): Proper support for non-string property mutations.
+  //   //     const isBooleanProperty = propertyName == 'checked';
+  //   //     target[propertyName] = isBooleanProperty ? value === 'true' : value;
+  //   //   } else {
+  //   //     // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
+  //   //   }
+  //   // }
+  // }
 }

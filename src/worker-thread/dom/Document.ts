@@ -73,13 +73,12 @@ export class Document extends Element {
   };
   public documentElement: Document;
   public body: Element;
-  public postMessageMethod: Function;
 
   constructor() {
     super(NodeType.DOCUMENT_NODE, '#document', HTML_NAMESPACE, null);
     this.documentElement = this;
     this.observe = (): void => {
-      observeMutations(this, this.postMessageMethod);
+      observeMutations(this, this.postMessage);
       propagateEvents();
       propagateSyncValues();
     };
@@ -125,13 +124,9 @@ export class Document extends Element {
 
 /**
  *
- * @param postMessageMethod
  */
-export function createDocument(postMessageMethod?: Function): Document {
+export function createDocument(): Document {
   const doc = new Document();
-  if (postMessageMethod !== undefined) {
-    doc.postMessageMethod = postMessageMethod;
-  }
   doc.isConnected = true;
   doc.appendChild((doc.body = doc.createElement('body')));
 

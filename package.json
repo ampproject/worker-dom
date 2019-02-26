@@ -36,15 +36,15 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "dompurify": "1.0.8"
+    "dompurify": "1.0.10"
   },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.8.5",
     "@babel/cli": "7.2.3",
-    "@babel/core": "7.2.2",
-    "@babel/plugin-proposal-class-properties": "7.3.0",
-    "@babel/plugin-proposal-object-rest-spread": "7.3.2",
-    "@babel/preset-env": "7.3.1",
+    "@babel/core": "7.3.4",
+    "@babel/plugin-proposal-class-properties": "7.3.4",
+    "@babel/plugin-proposal-object-rest-spread": "7.3.4",
+    "@babel/preset-env": "7.3.4",
     "acorn": "6.1.0",
     "acorn-walk": "6.1.1",
     "ava": "1.2.1",
@@ -53,18 +53,18 @@
     "bundlesize": "0.17.1",
     "cross-env": "5.2.0",
     "cross-var": "1.1.0",
-    "esm": "3.2.4",
+    "esm": "3.2.7",
     "husky": "1.3.1",
-    "lint-staged": "8.1.3",
+    "lint-staged": "8.1.4",
     "magic-string": "0.25.2",
     "np": "4.0.2",
     "npm-run-all": "4.1.5",
     "polka": "0.5.1",
     "prettier": "1.16.4",
     "rimraf": "2.6.3",
-    "rollup": "1.1.2",
+    "rollup": "1.2.2",
     "rollup-plugin-babel": "4.3.2",
-    "rollup-plugin-node-resolve": "4.0.0",
+    "rollup-plugin-node-resolve": "4.0.1",
     "rollup-plugin-terser": "4.0.4",
     "serve-static": "1.13.2",
     "tslint": "5.12.1",
@@ -96,7 +96,7 @@
     {
       "path": "./dist/index.mjs",
       "compression": "brotli",
-      "maxSize": "2 kB"
+      "maxSize": "2.8 kB"
     },
     {
       "path": "./dist/index.safe.mjs",

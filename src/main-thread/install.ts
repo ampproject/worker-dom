@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { createWorker } from './worker';
+import { DebuggingContext } from './debugging';
 import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
-import { prepare as prepareNodes } from './nodes';
-import { prepareMutate, mutate } from './mutator';
-import { set as setPhase, Phases } from '../transfer/phase';
+import { MutatorProcessor } from './mutator';
+import { NodeContext } from './nodes';
+import { Strings } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { WorkerCallbacks } from './callbacks';
+import { WorkerContext } from './worker';
+import { set as setPhase, Phases } from '../transfer/phase';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
@@ -30,6 +32,7 @@ const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
  * @param workerDOMURL
  * @param callbacks
  * @param sanitizer
+ * @param debug
  */
 export function fetchAndInstall(
   baseElement: HTMLElement,
@@ -37,6 +40,7 @@ export function fetchAndInstall(
   workerDOMURL: string,
   callbacks?: WorkerCallbacks,
   sanitizer?: Sanitizer,
+  debug?: boolean,
 ): void {
   const fetchPromise = Promise.all([
     // TODO(KB): Fetch Polyfill for IE11.
@@ -44,7 +48,7 @@ export function fetchAndInstall(
     fetch(authorScriptURL).then(response => response.text()),
     Promise.resolve(authorScriptURL),
   ]);
-  install(fetchPromise, baseElement, callbacks, sanitizer);
+  install(fetchPromise, baseElement, callbacks, sanitizer, debug);
 }
 
 /**
@@ -52,19 +56,27 @@ export function fetchAndInstall(
  * @param baseElement
  * @param callbacks
  * @param sanitizer
+ * @param debug
  */
 export function install(
   fetchPromise: Promise<[string, string, string]>,
   baseElement: HTMLElement,
   callbacks?: WorkerCallbacks,
   sanitizer?: Sanitizer,
+  debug?: boolean,
 ): void {
-  prepareNodes(baseElement);
+  const strings = new Strings();
+  const nodeContext = new NodeContext(strings, baseElement);
+  if (debug) {
+    const debuggingContext = new DebuggingContext(strings, nodeContext);
+    callbacks = wrapCallbacks(debuggingContext, callbacks);
+  }
   fetchPromise.then(([workerDOMScript, authorScript, authorScriptURL]) => {
     if (workerDOMScript && authorScript && authorScriptURL) {
-      const worker = createWorker(baseElement, workerDOMScript, authorScript, authorScriptURL, callbacks);
+      const workerContext = new WorkerContext(baseElement, workerDOMScript, authorScript, authorScriptURL, callbacks);
+      const worker = workerContext.getWorker();
       setPhase(Phases.Hydrating);
-      prepareMutate(worker, sanitizer);
+      const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, sanitizer);
       worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
         const type = data[TransferrableKeys.type];
@@ -73,7 +85,7 @@ export function install(
         }
         // TODO(KB): Hydration has special rules limiting the types of allowed mutations.
         // Re-introduce Hydration and add a specialized handler.
-        mutate(
+        mutatorContext.mutate(
           (data as MutationFromWorker)[TransferrableKeys.nodes],
           (data as MutationFromWorker)[TransferrableKeys.strings],
           (data as MutationFromWorker)[TransferrableKeys.mutations],
@@ -91,4 +103,34 @@ export function install(
     }
     return null;
   });
+}
+
+// TODO(dvoytenko): reverse the dependency direction so that we can remove
+// debugging.ts from other entry points.
+function wrapCallbacks(debuggingContext: DebuggingContext, callbacks?: WorkerCallbacks): WorkerCallbacks {
+  return {
+    onCreateWorker(initialDOM) {
+      // if (callbacks && callbacks.onCreateWorker) {
+      //   const readable = debuggingContext.readableHydrateableNodeFromElement(initialDOM);
+      //   callbacks.onCreateWorker(readable as any);
+      // }
+    },
+    onHydration() {
+      // if (callbacks && callbacks.onHydration) {
+      //   callbacks.onHydration();
+      // }
+    },
+    onSendMessage(message) {
+      // if (callbacks && callbacks.onSendMessage) {
+      //   const readable = debuggingContext.readableMessageToWorker(message);
+      //   callbacks.onSendMessage(readable as any);
+      // }
+    },
+    onReceiveMessage(message) {
+      // if (callbacks && callbacks.onReceiveMessage) {
+      //   const readable = debuggingContext.readableMessageFromWorker(message);
+      //   callbacks.onReceiveMessage(readable as any);
+      // }
+    },
+  };
 }

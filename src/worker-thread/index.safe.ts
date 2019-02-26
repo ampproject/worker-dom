@@ -126,7 +126,7 @@ const WHITELISTED_GLOBALS = [
   'unescape',
 ];
 
-const doc = createDocument((self as DedicatedWorkerGlobalScope).postMessage);
+const doc = createDocument();
 export const workerDOM: WorkerDOMGlobalScope = {
   document: doc,
   addEventListener: doc.addEventListener.bind(doc),

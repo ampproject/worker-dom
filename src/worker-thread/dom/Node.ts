@@ -413,7 +413,7 @@ export abstract class Node {
       this[TransferrableKeys.handlers][lowerType] = [handler];
     }
 
-    const trasferableAddEventListner = new Uint16Array([
+    const transferable = new Uint16Array([
       TransferrableMutationType.EVENT_SUBSCRIPTION,
       this[TransferrableKeys.index],
       1,
@@ -422,7 +422,7 @@ export abstract class Node {
       this[TransferrableKeys.index],
       index,
     ]);
-    this.ownerDocument.postMessageMethod(trasferableAddEventListner, [trasferableAddEventListner]);
+    ((postMessage as unknown) as (message: any, transfer?: Transferable[]) => void)({ buffer: transferable.buffer }, [transferable.buffer]);
   }
 
   /**
@@ -438,7 +438,7 @@ export abstract class Node {
 
     if (index >= 0) {
       handlers.splice(index, 1);
-      const transferableRemoveEventListener = new Uint16Array([
+      const transferable = new Uint16Array([
         TransferrableMutationType.EVENT_SUBSCRIPTION,
         this[TransferrableKeys.index],
         0,
@@ -447,7 +447,7 @@ export abstract class Node {
         this[TransferrableKeys.index],
         index,
       ]);
-      this.ownerDocument.postMessageMethod(transferableRemoveEventListener, [transferableRemoveEventListener]);
+      ((postMessage as unknown) as (message: any, transfer?: Transferable[]) => void)({ buffer: transferable.buffer }, [transferable.buffer]);
     }
   }
 

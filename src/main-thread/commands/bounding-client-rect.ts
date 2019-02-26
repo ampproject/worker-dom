@@ -16,23 +16,52 @@
 
 import { TransferrableMutationRecord } from '../../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { getNode } from '../nodes';
-import { messageToWorker } from '../worker';
 import { MessageType } from '../../transfer/Messages';
+import { NodeContext } from '../nodes';
+import { NumericBoolean } from '../../utils';
+import { WorkerContext } from '../worker';
 
-/**
- * Process commands transfered from worker thread to main thread.
- * @param nodesInstance nodes instance to execute commands against.
- * @param worker whom to dispatch events toward.
- * @param mutation mutation record containing commands to execute.
- */
-export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
-  const target = getNode(mutation[TransferrableKeys.target]);
+export class BoundingClientRectProcessor {
+  private nodeContext: NodeContext;
+  private workerContext: WorkerContext;
 
-  const boundingRect = target.getBoundingClientRect();
-  messageToWorker(worker, {
-    [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
-    [TransferrableKeys.target]: [target._index_],
-    [TransferrableKeys.data]: [boundingRect.top, boundingRect.right, boundingRect.bottom, boundingRect.left, boundingRect.width, boundingRect.height],
-  });
+  /**
+   * @param nodeContext
+   * @param workerContext whom to dispatch events toward.
+   */
+  constructor(nodeContext: NodeContext, workerContext: WorkerContext) {
+    this.nodeContext = nodeContext;
+    this.workerContext = workerContext;
+  }
+
+  /**
+   * Process commands transfered from worker thread to main thread.
+   * @param mutation mutation record containing commands to execute.
+   */
+  process(mutation: TransferrableMutationRecord): void {
+    const nodeId = mutation[TransferrableKeys.target];
+    const target = this.nodeContext.getNode(nodeId);
+
+    if (!target) {
+      console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
+      return;
+    }
+
+    // const boundingRect = target.getBoundingClientRect();
+    // this.workerContext.messageToWorker({
+    //   [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
+    //   [TransferrableKeys.target]: {
+    //     [TransferrableKeys.index]: target._index_,
+    //     [TransferrableKeys.transferred]: NumericBoolean.TRUE,
+    //   },
+    //   [TransferrableKeys.data]: [
+    //     boundingRect.top,
+    //     boundingRect.right,
+    //     boundingRect.bottom,
+    //     boundingRect.left,
+    //     boundingRect.width,
+    //     boundingRect.height,
+    //   ],
+    // });
+  }
 }

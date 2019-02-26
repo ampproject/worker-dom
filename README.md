@@ -73,6 +73,10 @@ npm run demo
 
 This script will build the current version of WorkerDOM and start up a local [webserver](http://localhost:3001).
 
+## Which JavaScript APIs can I use?
+
+Currently, most DOM elements and their properties are supported. DOM query APIs like `querySelector` have partial support. Browser APIs like History are not implemented yet. Please see the API support matrix [here](https://github.com/ampproject/worker-dom/web_compat.md).
+
 ## Local Development
 
 Local development of WorkerDOM assumes the following:

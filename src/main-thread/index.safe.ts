@@ -17,49 +17,18 @@
 import { DOMPurifySanitizer } from './DOMPurifySanitizer';
 import { WorkerCallbacks } from './callbacks';
 import { fetchAndInstall, install } from './install';
-// import { readableHydrateableNodeFromElement, readableMessageFromWorker, readableMessageToWorker } from './debugging';
 
 /** Users can import this and configure the sanitizer with custom DOMPurify hooks, etc. */
 export const sanitizer = new DOMPurifySanitizer();
-
-/** Users can import this and set callback functions to add logging on worker messages, etc. */
-export const callbacks: WorkerCallbacks = {};
-
-// Wrapper around `callbacks` to ensure that debugging.ts isn't bundled into other entry points.
-const wrappedCallbacks: WorkerCallbacks = {
-  onCreateWorker: initialDOM => {
-    // if (callbacks.onCreateWorker) {
-    //   const readable = readableHydrateableNodeFromElement(initialDOM);
-    //   callbacks.onCreateWorker(readable as any);
-    // }
-  },
-  onHydration: () => {
-    // if (callbacks.onHydration) {
-    //   callbacks.onHydration();
-    // }
-  },
-  onSendMessage: message => {
-    // if (callbacks.onSendMessage) {
-    //   const readable = readableMessageToWorker(message);
-    //   callbacks.onSendMessage(readable as any);
-    // }
-  },
-  onReceiveMessage: message => {
-    // if (callbacks.onReceiveMessage) {
-    //   const readable = readableMessageFromWorker(message);
-    //   callbacks.onReceiveMessage(readable as any);
-    // }
-  },
-};
 
 /**
  * @param baseElement
  * @param workerDOMUrl
  */
-export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
+export function upgradeElement(baseElement: Element, workerDOMUrl: string, callbacks?: WorkerCallbacks, debug?: boolean): void {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
-    fetchAndInstall(baseElement as HTMLElement, authorURL, workerDOMUrl, wrappedCallbacks, sanitizer);
+    fetchAndInstall(baseElement as HTMLElement, authorURL, workerDOMUrl, callbacks, sanitizer, debug);
   }
 }
 
@@ -68,6 +37,6 @@ export function upgradeElement(baseElement: Element, workerDOMUrl: string): void
  * @param baseElement
  * @param fetchPromise Promise that resolves with a tuple containing the worker script, author script, and author script URL.
  */
-export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string, string]>): void {
-  install(fetchPromise, baseElement as HTMLElement, wrappedCallbacks, sanitizer);
+export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string, string]>, callbacks?: WorkerCallbacks, debug?: boolean): void {
+  install(fetchPromise, baseElement as HTMLElement, callbacks, sanitizer, debug);
 }
