@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "obj-str": "1.0.3",
-    "react": "16.8.2",
-    "react-dom": "16.8.2"
+    "react": "16.8.3",
+    "react-dom": "16.8.3"
   },
   "devDependencies": {
-    "@babel/core": "7.3.3",
-    "@babel/preset-env": "7.3.1",
+    "@babel/core": "7.3.4",
+    "@babel/preset-env": "7.3.4",
     "@babel/plugin-transform-react-jsx": "7.3.0",
     "babel-loader": "8.0.5",
     "css-loader": "2.1.0",
