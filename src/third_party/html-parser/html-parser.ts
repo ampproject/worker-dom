@@ -21,7 +21,7 @@ function arr_back<T>(arr: T[]) {
 }
 
 // https://html.spec.whatwg.org/multipage/custom-elements.html#valid-custom-element-name
-const kMarkupPattern = /<!--[^]*?(?=-->)-->|<(\/?)([a-z][-.0-9_a-z]*)\s*([^>]*?)(\/?)>/gi;
+const kMarkupPattern = /<!--[^]*?-->|<(\/?)([a-z][-.0-9_a-z]*)([^>]*?)(\/?)>/gi;
 const kAttributePattern = /(^|\s)(id|class)\s*=\s*("([^"]+)"|'([^']+)'|(\S+))/gi;
 const kSelfClosingElements: Elements = {
   area: true,
