@@ -86,13 +86,9 @@ test('set an element node', t => {
   node.innerHTML = '<div></div>';
   t.is(node.childNodes.length, 1);
 
-  const child = node.firstChild;
-  if (child) {
-    t.is(child.nodeType, NodeType.ELEMENT_NODE);
-    t.is(child.nodeName, 'DIV');
-  } else {
-    t.fail();
-  }
+  const child = node.firstChild!;
+  t.is(child.nodeType, NodeType.ELEMENT_NODE);
+  t.is(child.nodeName, 'DIV');
 });
 
 test('set a text node', t => {
@@ -101,13 +97,9 @@ test('set a text node', t => {
   node.innerHTML = testString;
   t.is(node.childNodes.length, 1);
 
-  const child = node.firstChild;
-  if (child) {
-    t.is(child.nodeType, NodeType.TEXT_NODE);
-    t.is(child.textContent, testString);
-  } else {
-    t.fail();
-  }
+  const child = node.firstChild!;
+  t.is(child.nodeType, NodeType.TEXT_NODE);
+  t.is(child.textContent, testString);
 });
 
 test('set comment node', t => {
@@ -116,13 +108,9 @@ test('set comment node', t => {
   node.innerHTML = '<!--' + testString + '-->';
   t.is(node.childNodes.length, 1);
 
-  const child = node.firstChild;
-  if (child) {
-    t.is(child.nodeType, NodeType.COMMENT_NODE);
-    t.is(child.textContent, testString);
-  } else {
-    t.fail();
-  }
+  const child = node.firstChild!;
+  t.is(child.nodeType, NodeType.COMMENT_NODE);
+  t.is(child.textContent, testString);
 });
 
 test('set nested elements', t => {
@@ -130,12 +118,8 @@ test('set nested elements', t => {
   node.innerHTML = '<div><div></div></div>';
   t.is(node.childNodes.length, 1);
 
-  const child = node.firstChild;
-  if (child) {
-    t.is(child.childNodes.length, 1);
-  } else {
-    t.fail();
-  }
+  const child = node.firstChild!;
+  t.is(child.childNodes.length, 1);
 });
 
 test('set non-nested elements', t => {
