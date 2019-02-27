@@ -108,12 +108,12 @@ export function parse(data: string, rootElement: Element) {
       }
 
       if (!match[4] && kElementsClosedByOpening[currentParent.tagName]) {
-        if (kElementsClosedByOpening[currentParent.tagName][match[2]]) {
+        if (kElementsClosedByOpening[currentParent.tagName][match[2].toLowerCase()]) {
           stack.pop();
           currentParent = arr_back(stack);
         }
       }
-      const childToAppend = new Element(NodeType.ELEMENT_NODE, match[2], currentParent.namespaceURI, ownerDocument);
+      const childToAppend = new Element(currentParent.nodeType, match[2], currentParent.namespaceURI, ownerDocument);
 
       for (const key in attrs) {
         childToAppend.setAttribute(key, attrs[key]);
