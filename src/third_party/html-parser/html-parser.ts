@@ -164,23 +164,22 @@ export function parse(data: string, rootElement: Element) {
     throw new Error('Attempting to parse invalid tag.');
   }
 
-  const response = root as Response;
-  response.valid = valid;
+  const response = { node: root as Response, valid: valid };
 
-  response.childNodes.forEach(node => {
+  response.node.childNodes.forEach(node => {
     if (node instanceof Element) {
       node.parentNode = null;
     }
   });
 
   // remove the added <div>
-  if (response && response.firstChild) {
-    response.firstChild.childNodes.forEach(node => {
+  if (response.node && response.node.firstChild) {
+    response.node.firstChild.childNodes.forEach(node => {
       if (node instanceof Node) {
         node.parentNode = null;
       }
     });
-    return response.firstChild;
+    return response.node.firstChild;
   }
 
   throw new Error('Attempting to parse invalid HTML.');
