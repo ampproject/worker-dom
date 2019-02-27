@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
 import { babelPlugin, removeTestingDocument } from './rollup.plugins.js';
@@ -34,7 +32,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      resolve(),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: false,
@@ -57,7 +54,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      resolve(),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: false,
@@ -74,7 +70,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      resolve(),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: false,
@@ -97,7 +92,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      resolve(),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: false,
@@ -117,7 +111,6 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      resolve(),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: true,
@@ -140,7 +133,6 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      resolve(),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: true,
@@ -157,7 +149,6 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      resolve(),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: true,
@@ -180,7 +171,6 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      resolve(),
       removeTestingDocument(),
       babelPlugin({
         transpileToES5: true,
@@ -218,4 +208,4 @@ const debugModules = DEBUG_BUNDLE_VALUE
     ]
   : [];
 
-export default [...ESModules, /*...IIFEModules, ...debugModules*/];
+export default [...ESModules, ...IIFEModules, ...debugModules];
