@@ -74,6 +74,13 @@ test('set nothing', t => {
   t.is(node.hasChildNodes(), false);
 });
 
+test('set replaces children', t => {
+  const { node, child } = t.context;
+  node.appendChild(child);
+  node.innerHTML = '';
+  t.is(node.hasChildNodes(), false);
+});
+
 test('set an element node', t => {
   const { node } = t.context;
   node.innerHTML = '<div></div>';
@@ -82,6 +89,7 @@ test('set an element node', t => {
   const child = node.firstChild;
   if (child) {
     t.is(child.nodeType, NodeType.ELEMENT_NODE);
+    t.is(child.nodeName, 'DIV');
   } else {
     t.fail();
   }
@@ -89,12 +97,14 @@ test('set an element node', t => {
 
 test('set a text node', t => {
   const { node } = t.context;
-  node.innerHTML = 'Hello World!';
+  const testString = 'Hello, World!';
+  node.innerHTML = testString;
   t.is(node.childNodes.length, 1);
 
   const child = node.firstChild;
   if (child) {
     t.is(child.nodeType, NodeType.TEXT_NODE);
+    t.is(child.textContent, testString);
   } else {
     t.fail();
   }
@@ -102,12 +112,14 @@ test('set a text node', t => {
 
 test('set comment node', t => {
   const { node } = t.context;
-  node.innerHTML = '<!--this is a comment-->';
+  const testString = 'this is a comment';
+  node.innerHTML = '<!--' + testString + '-->';
   t.is(node.childNodes.length, 1);
 
   const child = node.firstChild;
   if (child) {
     t.is(child.nodeType, NodeType.COMMENT_NODE);
+    t.is(child.textContent, testString);
   } else {
     t.fail();
   }
