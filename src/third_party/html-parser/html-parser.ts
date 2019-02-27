@@ -4,24 +4,15 @@ import { Node } from '../../worker-thread/dom/Node';
 import { NodeType } from '../../transfer/TransferrableNodes';
 import { Text } from '../../worker-thread/dom/Text';
 
-export interface Elements {
+interface Elements {
   [key: string]: boolean;
 }
 
-export interface ElementMapping {
+interface ElementMapping {
   [key: string]: Elements;
 }
 
-export interface KeyAttributes {
-  id?: string;
-  class?: string;
-}
-
-export interface Attributes {
-  [key: string]: string;
-}
-
-export interface RawAttributes {
+interface Attributes {
   [key: string]: string;
 }
 
