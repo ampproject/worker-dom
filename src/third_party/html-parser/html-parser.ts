@@ -72,32 +72,28 @@ const kBlockTextElements: Elements = {
  * @return {Element}      root element
  */
 export function parse(data: string, rootElement: Element) {
+  const ownerDocument = rootElement.ownerDocument;
   // this can be stubbed
-  const root = new Element(rootElement.nodeType, rootElement.nodeName, rootElement.namespaceURI, rootElement.ownerDocument);
+  const root = new Element(rootElement.nodeType, rootElement.nodeName, rootElement.namespaceURI, ownerDocument);
 
   let currentParent = root as Node;
   const stack = [root as Node];
-  let lastTextPos = -1;
+  let lastTextPos = 0;
   let match: RegExpExecArray | null;
-
-  // this will ensure detection of all text nodes.
-  data = '<div>' + data + '</div>';
 
   while ((match = kMarkupPattern.exec(data))) {
     if (lastTextPos > -1) {
-      if (lastTextPos + match[0].length < kMarkupPattern.lastIndex) {
+      if (lastTextPos < match.index) {
         // if has content
-        const text = data.substring(lastTextPos, kMarkupPattern.lastIndex - match[0].length);
-        currentParent.appendChild(new Text(text, rootElement.ownerDocument));
+        const text = data.slice(lastTextPos, match.index);
+        currentParent.appendChild(new Text(text, ownerDocument));
       }
     }
     lastTextPos = kMarkupPattern.lastIndex;
     if (match[0][1] == '!') {
       // this is a comment
-      if (match[0].length > 7 /* 7 is the minimum: <!----> */) {
-        const text = match[0].substring(4, match[0].length - 3);
-        currentParent.appendChild(new Comment(text, rootElement.ownerDocument));
-      }
+      const text = match[0].slice(4, -3);
+      currentParent.appendChild(new Comment(text, ownerDocument));
       continue;
     }
 
@@ -117,7 +113,7 @@ export function parse(data: string, rootElement: Element) {
           currentParent = arr_back(stack);
         }
       }
-      const childToAppend = new Element(NodeType.ELEMENT_NODE, match[2], currentParent.namespaceURI, currentParent.ownerDocument);
+      const childToAppend = new Element(NodeType.ELEMENT_NODE, match[2], currentParent.namespaceURI, ownerDocument);
 
       for (const key in attrs) {
         childToAppend.setAttribute(key, attrs[key]);
