@@ -21,6 +21,7 @@ import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
 import { store as storeString } from '../strings';
+import { Document } from './Document';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 export abstract class CharacterData extends Node {
@@ -55,6 +56,7 @@ export abstract class CharacterData extends Node {
     this[TransferrableKeys.data] = value;
 
     mutate(
+      this.ownerDocument as Document,
       {
         target: this,
         type: MutationRecordType.CHARACTER_DATA,

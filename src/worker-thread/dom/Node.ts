@@ -19,11 +19,13 @@ import { Event, EventHandler } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferredNode, TransferrableNode, NodeType } from '../../transfer/TransferrableNodes';
+import { TransferredNode, NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
 // import { TransferrableEventSubscription } from '../../transfer/replacement/TransferrableEvent';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { store as storeString } from '../strings';
+import { Document } from './Document';
+import { transfer } from '../MutationTransfer';
 
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 export type NamespaceURI = string;
@@ -57,7 +59,7 @@ export abstract class Node {
   public isConnected: boolean = false;
   public [TransferrableKeys.index]: number;
   public [TransferrableKeys.transferredFormat]: TransferredNode;
-  public [TransferrableKeys.creationFormat]: TransferrableNode;
+  public [TransferrableKeys.creationFormat]: Array<number>;
   public abstract cloneNode(deep: boolean): Node;
   private [TransferrableKeys.handlers]: {
     [index: string]: EventHandler[];
@@ -203,6 +205,7 @@ export abstract class Node {
       propagate(child, 'isConnected', this.isConnected);
       propagate(child, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
       mutate(
+        this.ownerDocument as Document,
         {
           addedNodes: [child],
           nextSibling: referenceNode,
@@ -256,6 +259,7 @@ export abstract class Node {
 
       const previousSibling = this.childNodes[this.childNodes.length - 2];
       mutate(
+        this.ownerDocument as Document,
         {
           addedNodes: [child],
           previousSibling,
@@ -305,6 +309,7 @@ export abstract class Node {
       propagate(child, TransferrableKeys.scopingRoot, child);
       this.childNodes.splice(index, 1);
       mutate(
+        this.ownerDocument as Document,
         {
           removedNodes: [child],
           type: MutationRecordType.CHILD_LIST,
@@ -351,6 +356,7 @@ export abstract class Node {
         propagate(newChild, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
 
         mutate(
+          this.ownerDocument as Document,
           {
             addedNodes: [newChild],
             removedNodes: [oldChild],
@@ -413,16 +419,18 @@ export abstract class Node {
       this[TransferrableKeys.handlers][lowerType] = [handler];
     }
 
-    const transferable = new Uint16Array([
-      TransferrableMutationType.EVENT_SUBSCRIPTION,
-      this[TransferrableKeys.index],
-      1,
-      0,
-      storedType,
-      this[TransferrableKeys.index],
-      index,
-    ]);
-    ((postMessage as unknown) as (message: any, transfer?: Transferable[]) => void)({ buffer: transferable.buffer }, [transferable.buffer]);
+    transfer(
+      (this.ownerDocument as Document).postMessage,
+      new Uint16Array([
+        TransferrableMutationType.EVENT_SUBSCRIPTION,
+        this[TransferrableKeys.index],
+        1,
+        0,
+        storedType,
+        this[TransferrableKeys.index],
+        index,
+      ]).buffer,
+    );
   }
 
   /**
@@ -438,16 +446,18 @@ export abstract class Node {
 
     if (index >= 0) {
       handlers.splice(index, 1);
-      const transferable = new Uint16Array([
-        TransferrableMutationType.EVENT_SUBSCRIPTION,
-        this[TransferrableKeys.index],
-        0,
-        1,
-        storeString(lowerType),
-        this[TransferrableKeys.index],
-        index,
-      ]);
-      ((postMessage as unknown) as (message: any, transfer?: Transferable[]) => void)({ buffer: transferable.buffer }, [transferable.buffer]);
+      transfer(
+        (this.ownerDocument as Document).postMessage,
+        new Uint16Array([
+          TransferrableMutationType.EVENT_SUBSCRIPTION,
+          this[TransferrableKeys.index],
+          0,
+          1,
+          storeString(lowerType),
+          this[TransferrableKeys.index],
+          index,
+        ]).buffer,
+      );
     }
   }
 

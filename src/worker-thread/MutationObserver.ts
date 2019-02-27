@@ -17,6 +17,8 @@
 import { Node } from './dom/Node';
 import { MutationRecord } from './MutationRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { Document } from './dom/Document';
+import { transfer } from './MutationTransfer';
 
 const observers: MutationObserver[] = [];
 let pendingMutations = false;
@@ -41,9 +43,9 @@ const pushMutation = (observer: MutationObserver, record: MutationRecord): void 
  * These records are then pushed into MutationObserver instances that match the MutationRecord.target
  * @param record MutationRecord to push into MutationObservers.
  */
-export function mutate(record: MutationRecord, transferable: Uint16Array): void {
+export function mutate(document: Document, record: MutationRecord, transferable: Uint16Array): void {
   console.log('mutate called with buffer', transferable);
-  ((postMessage as unknown) as (message: any, transfer?: Transferable[]) => void)({ buffer: transferable.buffer }, [transferable.buffer]);
+  transfer(document.postMessage, transferable.buffer);
 
   observers.forEach(observer => {
     let target: Node | null = record.target;

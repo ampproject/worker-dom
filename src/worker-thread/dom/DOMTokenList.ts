@@ -21,6 +21,7 @@ import { MutationRecordType } from '../MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
 import { store as storeString } from '../strings';
+import { Document } from './Document';
 
 export class DOMTokenList {
   private [TransferrableKeys.tokens]: Array<string> = [];
@@ -191,6 +192,7 @@ export class DOMTokenList {
   private mutated(oldValue: string, value: string): void {
     this[TransferrableKeys.storeAttribute](this[TransferrableKeys.target].namespaceURI, this[TransferrableKeys.attributeName], value);
     mutate(
+      this[TransferrableKeys.target].ownerDocument as Document,
       {
         type: MutationRecordType.ATTRIBUTES,
         target: this[TransferrableKeys.target],

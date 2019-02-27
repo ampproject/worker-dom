@@ -22,6 +22,7 @@ import { toLower } from '../../utils';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
 import { store as storeString } from '../strings';
+import { Document } from '../dom/Document';
 
 interface StyleProperties {
   [key: string]: string | null;
@@ -175,6 +176,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
   private mutated(value: string): void {
     const oldValue = this[TransferrableKeys.storeAttribute](this[TransferrableKeys.target].namespaceURI, 'style', value);
     mutate(
+      this[TransferrableKeys.target].ownerDocument as Document,
       {
         type: MutationRecordType.ATTRIBUTES,
         target: this[TransferrableKeys.target],

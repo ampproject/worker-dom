@@ -76,9 +76,14 @@ export function install(
       const workerContext = new WorkerContext(baseElement, workerDOMScript, authorScript, authorScriptURL, callbacks);
       const worker = workerContext.getWorker();
       setPhase(Phases.Hydrating);
+
+      console.log('set phase to hydration', worker);
       const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, sanitizer);
       worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
+
+        console.log('worker.onmessage', message);
+
         const type = data[TransferrableKeys.type];
         if (!ALLOWABLE_MESSAGE_TYPES.includes(type)) {
           return;

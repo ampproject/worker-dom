@@ -32,6 +32,7 @@ import { toLower } from '../../utils';
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
 import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
+import { Document } from './Document';
 
 export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
 export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
@@ -257,6 +258,7 @@ export class Element extends ParentNode {
 
     const oldValue = this[TransferrableKeys.storeAttribute](namespaceURI, name, value);
     mutate(
+      this.ownerDocument as Document,
       {
         type: MutationRecordType.ATTRIBUTES,
         target: this,
@@ -325,6 +327,7 @@ export class Element extends ParentNode {
       this.attributes.splice(index, 1);
 
       mutate(
+        this.ownerDocument as Document,
         {
           type: MutationRecordType.ATTRIBUTES,
           target: this,
@@ -445,6 +448,7 @@ export class Element extends ParentNode {
         // applied in the main thread. As a result, ensure proper order of DOM mutation and reads
         // by sending the request for a boundingClientRect as a mutation.
         mutate(
+          this.ownerDocument as Document,
           {
             type: MutationRecordType.GET_BOUNDING_CLIENT_RECT,
             target: this,

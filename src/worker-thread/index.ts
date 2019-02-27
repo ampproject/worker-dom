@@ -47,7 +47,7 @@ import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { appendKeys } from './css/CSSStyleDeclaration';
 import { consumeInitialDOM } from './initialize';
 
-const doc = createDocument();
+const doc = createDocument(postMessage.bind(self));
 export const workerDOM: WorkerDOMGlobalScope = {
   document: doc,
   addEventListener: doc.addEventListener.bind(doc),

@@ -53,7 +53,6 @@ import { Text } from './Text';
 import { Comment } from './Comment';
 import { MutationObserver } from '../MutationObserver';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
-import { observe as observeMutations } from '../../transfer/DocumentMutations';
 import { propagate as propagateEvents } from '../../transfer/TransferrableEvent';
 import { propagate as propagateSyncValues } from '../../transfer/TransferrableSyncValue';
 import { toLower } from '../../utils';
@@ -73,12 +72,14 @@ export class Document extends Element {
   };
   public documentElement: Document;
   public body: Element;
+  public postMessage: (message: any, transfer?: Transferable[]) => void;
 
   constructor() {
     super(NodeType.DOCUMENT_NODE, '#document', HTML_NAMESPACE, null);
     this.documentElement = this;
+    this.postMessage = () => void 0;
     this.observe = (): void => {
-      observeMutations(this, this.postMessage);
+      // Sync Document Changes.
       propagateEvents();
       propagateSyncValues();
     };
@@ -125,8 +126,9 @@ export class Document extends Element {
 /**
  *
  */
-export function createDocument(): Document {
+export function createDocument(postMessage?: (message: any, transfer?: Transferable[]) => void): Document {
   const doc = new Document();
+  doc.postMessage = postMessage || (() => void 0);
   doc.isConnected = true;
   doc.appendChild((doc.body = doc.createElement('body')));
 
