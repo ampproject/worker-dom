@@ -128,7 +128,7 @@ export function parse(data: string, rootElement: Element) {
         let index = data.indexOf(closeMarkup, kMarkupPattern.lastIndex);
         if (index == -1) {
           lastTextPos = kMarkupPattern.lastIndex = data.length + 1;
-          throw new Error('');
+          throw new Error('Close markup not found.');
         } else {
           lastTextPos = kMarkupPattern.lastIndex = index + closeMarkup.length;
           match[1] = 'true';
