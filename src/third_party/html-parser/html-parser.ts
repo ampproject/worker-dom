@@ -1,7 +1,6 @@
 import { Comment } from '../../worker-thread/dom/Comment';
 import { Element } from '../../worker-thread/dom/Element';
 import { Node } from '../../worker-thread/dom/Node';
-import { NodeType } from '../../transfer/TransferrableNodes';
 import { Text } from '../../worker-thread/dom/Text';
 
 interface Elements {
@@ -80,6 +79,7 @@ export function parse(data: string, rootElement: Element) {
   const stack = [root as Node];
   let lastTextPos = 0;
   let match: RegExpExecArray | null;
+  data = '<div>' + data + '</div>';
 
   while ((match = kMarkupPattern.exec(data))) {
     if (lastTextPos > -1) {
@@ -128,6 +128,7 @@ export function parse(data: string, rootElement: Element) {
         let index = data.indexOf(closeMarkup, kMarkupPattern.lastIndex);
         if (index == -1) {
           lastTextPos = kMarkupPattern.lastIndex = data.length + 1;
+          throw new Error('');
         } else {
           lastTextPos = kMarkupPattern.lastIndex = index + closeMarkup.length;
           match[1] = 'true';
@@ -157,7 +158,7 @@ export function parse(data: string, rootElement: Element) {
     }
   }
   type Response = (Element | Text) & { valid: boolean };
-  const valid = !!(stack.length === 1);
+  const valid = stack.length === 1;
 
   if (!valid) {
     throw new Error('Attempting to parse invalid tag.');
@@ -165,29 +166,7 @@ export function parse(data: string, rootElement: Element) {
 
   const response = root as Response;
   response.valid = valid;
-  while (stack.length > 1) {
-    // Handle each error elements.
-    const last = stack.pop();
-    const oneBefore = arr_back(stack);
-    if (last && last.parentNode && (last.parentNode as Element).parentNode) {
-      if (last.parentNode === oneBefore && last.tagName === oneBefore.tagName) {
-        // Pair error case <h3> <h3> handle : Fixes to <h3> </h3>
-        oneBefore.removeChild(last);
-        last.childNodes.forEach(child => {
-          (oneBefore.parentNode as Element).appendChild(child);
-        });
-        stack.pop();
-      } else {
-        // Single error  <div> <h3> </div> handle: Just removes <h3>
-        oneBefore.removeChild(last);
-        last.childNodes.forEach(child => {
-          oneBefore.appendChild(child);
-        });
-      }
-    } else {
-      // If it's final element just skip.
-    }
-  }
+
   response.childNodes.forEach(node => {
     if (node instanceof Element) {
       node.parentNode = null;
