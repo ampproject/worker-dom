@@ -32,6 +32,7 @@ import { toLower } from '../../utils';
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
 import { parse } from '../../third_party/html-parser/html-parser';
+import { propagate } from './Node';
 
 export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
 export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
@@ -179,8 +180,17 @@ export class Element extends ParentNode {
 
     // remove previous children
     this.childNodes.forEach(n => {
-      this.removeChild(n);
+      propagate(n, 'isConnected', false);
+      propagate(n, TransferrableKeys.scopingRoot, n);
     });
+
+    mutate({
+      removedNodes: this.childNodes,
+      type: MutationRecordType.CHILD_LIST,
+      target: this,
+    });
+
+    this.childNodes = [];
 
     // add new children
     root.childNodes.forEach(n => {
