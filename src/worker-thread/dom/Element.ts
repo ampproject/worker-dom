@@ -176,6 +176,13 @@ export class Element extends ParentNode {
    */
   set innerHTML(html: string) {
     const root = parse(html, this);
+
+    // remove previous children
+    this.childNodes.forEach(n => {
+      this.removeChild(n);
+    });
+
+    // add new children
     root.childNodes.forEach(n => {
       this.appendChild(n);
     });
