@@ -176,7 +176,13 @@ export class Element extends ParentNode {
    * @param html The raw html string to parse.
    */
   set innerHTML(html: string) {
-    const root = parse(html, this);
+    const parsedResponse = parse(html, this);
+
+    if (!parsedResponse.valid) {
+      throw new Error('Attempting to set invalid HTML content.');
+    }
+
+    const root = parsedResponse.node;
 
     // remove previous children
     this.childNodes.forEach(n => {

@@ -159,29 +159,24 @@ export function parse(data: string, rootElement: Element) {
       }
     }
   }
-  type Response = (Element | Text) & { valid: boolean };
+
   const valid = stack.length === 1;
 
-  if (!valid) {
-    throw new Error('Attempting to parse invalid tag.');
-  }
-
-  const response = { node: root as Response, valid: valid };
-
-  response.node.childNodes.forEach(node => {
+  root.childNodes.forEach(node => {
     if (node instanceof Element) {
       node.parentNode = null;
     }
   });
 
   // remove the added <div>
-  if (response.node && response.node.firstChild) {
-    response.node.firstChild.childNodes.forEach(node => {
+  if (root.firstChild) {
+    root.firstChild.childNodes.forEach(node => {
       if (node instanceof Node) {
         node.parentNode = null;
       }
     });
-    return response.node.firstChild;
+    const response = { node: root.firstChild, valid: valid };
+    return response;
   }
 
   throw new Error('Attempting to parse invalid HTML.');
