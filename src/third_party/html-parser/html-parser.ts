@@ -104,10 +104,6 @@ export function parse(data: string, rootElement: Element) {
 
     if (!match[1]) {
       // not </ tags
-      let attrs: Attributes = {};
-      for (let attMatch; (attMatch = kAttributePattern.exec(match[3])); ) {
-        attrs[attMatch[2]] = attMatch[4] || attMatch[5] || attMatch[6];
-      }
 
       if (!match[4] && kElementsClosedByOpening[currentParent.tagName]) {
         if (kElementsClosedByOpening[currentParent.tagName][match[2].toLowerCase()]) {
@@ -117,8 +113,10 @@ export function parse(data: string, rootElement: Element) {
       }
       const childToAppend = new Element(currentParent.nodeType, match[2], currentParent.namespaceURI, ownerDocument);
 
-      for (const key in attrs) {
-        childToAppend.setAttribute(key, attrs[key]);
+      let attrs: Attributes = {};
+      for (let attMatch; (attMatch = kAttributePattern.exec(match[3])); ) {
+        attrs[attMatch[2]] = attMatch[4] || attMatch[5] || attMatch[6];
+        childToAppend.setAttribute(attMatch[2], attrs[attMatch[2]]);
       }
 
       currentParent = currentParent.appendChild(childToAppend);
