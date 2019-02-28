@@ -22,7 +22,7 @@ function arr_back<T>(arr: T[]) {
 // https://html.spec.whatwg.org/multipage/custom-elements.html#valid-custom-element-name
 const kMarkupPattern = /<!--[^]*?-->|<(\/?)([a-z][-.0-9_a-z]*)([^>]*?)(\/?)>/gi;
 // https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
-const kAttributePattern = /(^|\s)([^\s|"|'|>|\/|=]+)\s*=\s*("([^"]+)"|'([^']+)'|(\S+))/gi;
+const kAttributePattern = /(^|\s)([^\s"'>\/=]+)\s*=\s*("([^"]+)"|'([^']+)'|(\S+))/gi;
 
 const kSelfClosingElements: Elements = {
   area: true,
