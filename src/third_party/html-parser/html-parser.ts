@@ -160,6 +160,10 @@ export function parse(data: string, rootElement: Element) {
 
   const valid = stack.length === 1;
 
+  if (!valid) {
+    throw new Error('Attempting to parse invalid HTML content.');
+  }
+
   root.childNodes.forEach(node => {
     if (node instanceof Element) {
       node.parentNode = null;
