@@ -16,9 +16,6 @@
 
 import { TransferredNode } from './TransferrableNodes';
 import { TransferrableKeys } from './TransferrableKeys';
-import { MessageType, EventToWorker } from './Messages';
-import { get } from '../worker-thread/nodes';
-import { Event } from '../worker-thread/Event';
 
 export interface TransferrableEvent {
   readonly [TransferrableKeys.index]: number;
@@ -42,42 +39,4 @@ export interface TransferrableEventSubscriptionChange {
   readonly [TransferrableKeys.type]: number;
   readonly [TransferrableKeys.index]: number;
   readonly [TransferrableKeys.index]: number;
-}
-
-/**
- * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.
- * Propagate adds an event listener to the worker global scope and uses the WorkerDOM Node.dispatchEvent
- * method to dispatch the transfered event in the worker thread.
- */
-export function propagate(): void {
-  if (typeof addEventListener !== 'function') {
-    return;
-  }
-  addEventListener('message', ({ data }: { data: EventToWorker }) => {
-    if (data[TransferrableKeys.type] !== MessageType.EVENT) {
-      return;
-    }
-
-    const event = data[TransferrableKeys.event] as TransferrableEvent;
-    const node = get(event[TransferrableKeys.index]);
-    if (node !== null) {
-      const target = event[TransferrableKeys.target];
-      node.dispatchEvent(
-        Object.assign(
-          new Event(event[TransferrableKeys.type], { bubbles: event[TransferrableKeys.bubbles], cancelable: event[TransferrableKeys.cancelable] }),
-          {
-            cancelBubble: event[TransferrableKeys.cancelBubble],
-            defaultPrevented: event[TransferrableKeys.defaultPrevented],
-            eventPhase: event[TransferrableKeys.eventPhase],
-            isTrusted: event[TransferrableKeys.isTrusted],
-            returnValue: event[TransferrableKeys.returnValue],
-            target: get(target ? target[TransferrableKeys.index] : null),
-            timeStamp: event[TransferrableKeys.timeStamp],
-            scoped: event[TransferrableKeys.scoped],
-            keyCode: event[TransferrableKeys.keyCode],
-          },
-        ),
-      );
-    }
-  });
 }

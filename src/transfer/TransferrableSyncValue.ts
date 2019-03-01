@@ -14,34 +14,9 @@
  * limitations under the License.
  */
 
-import { MessageToWorker, MessageType, ValueSyncToWorker } from './Messages';
-import { get } from '../worker-thread/nodes';
 import { TransferrableKeys } from './TransferrableKeys';
 
 export interface TransferrableSyncValue {
   readonly [TransferrableKeys.index]: number;
   readonly [TransferrableKeys.value]: string | number;
-}
-
-/**
- * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.
- * Propagate adds an event listener to the worker global scope and uses the WorkerDOM Node.dispatchEvent
- * method to dispatch the transfered event in the worker thread.
- */
-export function propagate(): void {
-  if (typeof addEventListener !== 'function') {
-    return;
-  }
-  addEventListener('message', ({ data }: { data: MessageToWorker }) => {
-    if (data[TransferrableKeys.type] !== MessageType.SYNC) {
-      return;
-    }
-
-    const sync = (data as ValueSyncToWorker)[TransferrableKeys.sync];
-    const node = get(sync[TransferrableKeys.index]);
-    if (node) {
-      // Modify the private backing ivar of `value` property to avoid mutation/sync cycle.
-      node[TransferrableKeys.value] = sync[TransferrableKeys.value];
-    }
-  });
 }
