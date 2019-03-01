@@ -35,19 +35,18 @@ const kSelfClosingElements: Elements = {
   link: true,
   meta: true,
 };
-
 const kElementsClosedByOpening: ElementMapping = {
-  LI: { LI: true },
-  P: { P: true, DIV: true },
-  B: { DIV: true },
-  TD: { TD: true, TH: true },
-  TH: { TD: true, TH: true },
-  H1: { H1: true },
-  H2: { H2: true },
-  H3: { H3: true },
-  H4: { H4: true },
-  H5: { H5: true },
-  H6: { H6: true },
+  li: { LI: true },
+  p: { P: true, DIV: true },
+  b: { DIV: true },
+  td: { TD: true, TH: true },
+  th: { TD: true, TH: true },
+  h1: { H1: true },
+  h2: { H2: true },
+  h3: { H3: true },
+  h4: { H4: true },
+  h5: { H5: true },
+  h6: { H6: true },
 };
 const kElementsClosedByClosing: ElementMapping = {
   li: { ul: true, ol: true },
@@ -176,8 +175,7 @@ export function parse(data: string, rootElement: Element) {
         node.parentNode = null;
       }
     });
-    const response = { node: root.firstChild, valid: valid };
-    return response;
+    return root.firstChild;
   }
 
   throw new Error('Attempting to parse invalid HTML.');
