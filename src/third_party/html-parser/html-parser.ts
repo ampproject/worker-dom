@@ -11,10 +11,6 @@ interface ElementMapping {
   [key: string]: Elements;
 }
 
-interface Attributes {
-  [key: string]: string;
-}
-
 function arr_back<T>(arr: T[]) {
   return arr[arr.length - 1];
 }
@@ -112,10 +108,9 @@ export function parse(data: string, rootElement: Element) {
       }
       const childToAppend = new Element(currentParent.nodeType, match[2], currentParent.namespaceURI, ownerDocument);
 
-      let attrs: Attributes = {};
       for (let attMatch; (attMatch = kAttributePattern.exec(match[3])); ) {
-        attrs[attMatch[2]] = attMatch[4] || attMatch[5] || attMatch[6];
-        childToAppend.setAttribute(attMatch[2], attrs[attMatch[2]]);
+        // Set attributes
+        childToAppend.setAttribute(attMatch[2], attMatch[4] || attMatch[5] || attMatch[6]);
       }
 
       currentParent = currentParent.appendChild(childToAppend);
