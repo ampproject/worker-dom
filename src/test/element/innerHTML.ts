@@ -127,3 +127,12 @@ test('set non-nested elements', t => {
   node.innerHTML = '<div></div><div></div>';
   t.is(node.childNodes.length, 2);
 });
+
+test('set element with attributes', t => {
+  const { node } = t.context;
+  node.innerHTML = '<div hi="hello"></div>';
+  const child = node.firstChild!;
+  t.is(child.attributes.length, 1);
+  t.is(child.attributes[0].name, "hi");
+  t.is(child.attributes[0].value, "hello");
+});
