@@ -16,7 +16,7 @@ function arr_back<T>(arr: T[]) {
 }
 
 // https://html.spec.whatwg.org/multipage/custom-elements.html#valid-custom-element-name
-const kMarkupPattern = /<!--[^]*?-->|<(\/?)([a-z][-.0-9_a-z]*)([^>]*?)(\/?)>/gi;
+const kMarkupPattern = /<!--([^]*)-->|<(\/?)([a-z][-.0-9_a-z]*)([^>]*?)(\/?)>/gi;
 // https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
 const kAttributePattern = /(^|\s)([^\s"'>\/=]+)\s*=\s*("([^"]+)"|'([^']+)'|(\S+))/gi;
 
@@ -79,6 +79,7 @@ export function parse(data: string, rootElement: Element) {
   data = '<div>' + data + '</div>';
 
   while ((match = kMarkupPattern.exec(data))) {
+    console.log(match);
     if (lastTextPos > -1) {
       if (lastTextPos < match.index) {
         // if has content
@@ -89,26 +90,25 @@ export function parse(data: string, rootElement: Element) {
     lastTextPos = kMarkupPattern.lastIndex;
     if (match[0][1] == '!') {
       // this is a comment
-      const text = match[0].slice(4, -3);
-      currentParent.appendChild(new Comment(text, ownerDocument));
+      currentParent.appendChild(new Comment(match[1], ownerDocument));
       continue;
     }
 
     // we only want tags in upper case
-    match[2] = match[2].toUpperCase();
+    match[3] = match[3].toUpperCase();
 
-    if (!match[1]) {
+    if (!match[2]) {
       // not </ tags
 
-      if (!match[4] && kElementsClosedByOpening[currentParent.tagName]) {
-        if (kElementsClosedByOpening[currentParent.tagName][match[2]]) {
+      if (!match[5] && kElementsClosedByOpening[currentParent.tagName]) {
+        if (kElementsClosedByOpening[currentParent.tagName][match[3]]) {
           stack.pop();
           currentParent = arr_back(stack);
         }
       }
-      const childToAppend = new Element(currentParent.nodeType, match[2], currentParent.namespaceURI, ownerDocument);
+      const childToAppend = new Element(currentParent.nodeType, match[3], currentParent.namespaceURI, ownerDocument);
 
-      for (let attMatch; (attMatch = kAttributePattern.exec(match[3])); ) {
+      for (let attMatch; (attMatch = kAttributePattern.exec(match[4])); ) {
         // Set attributes
         childToAppend.setAttribute(attMatch[2], attMatch[4] || attMatch[5] || attMatch[6]);
       }
@@ -116,29 +116,29 @@ export function parse(data: string, rootElement: Element) {
       currentParent = currentParent.appendChild(childToAppend);
 
       stack.push(currentParent);
-      if (kBlockTextElements[match[2]]) {
+      if (kBlockTextElements[match[3]]) {
         // a little test to find next </script> or </style> ...
-        let closeMarkup = '</' + match[2].toLowerCase() + '>';
+        let closeMarkup = '</' + match[3].toLowerCase() + '>';
         let index = data.indexOf(closeMarkup, kMarkupPattern.lastIndex);
         if (index == -1) {
           throw new Error('Close markup not found.');
         } else {
           lastTextPos = kMarkupPattern.lastIndex = index + closeMarkup.length;
-          match[1] = 'true';
+          match[2] = 'true';
         }
       }
     }
-    if (match[1] || match[4] || kSelfClosingElements[match[2]]) {
+    if (match[2] || match[5] || kSelfClosingElements[match[3]]) {
       // </ or /> or <br> etc.
       while (true) {
-        if (currentParent.nodeName == match[2]) {
+        if (currentParent.nodeName == match[3]) {
           stack.pop();
           currentParent = arr_back(stack);
           break;
         } else {
           // Trying to close current tag, and move on
           if (kElementsClosedByClosing[currentParent.tagName]) {
-            if (kElementsClosedByClosing[currentParent.tagName][match[2]]) {
+            if (kElementsClosedByClosing[currentParent.tagName][match[3]]) {
               stack.pop();
               currentParent = arr_back(stack);
               continue;
