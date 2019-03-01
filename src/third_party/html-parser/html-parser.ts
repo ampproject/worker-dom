@@ -54,10 +54,10 @@ const kElementsClosedByClosing: ElementMapping = {
   th: { tr: true, table: true },
 };
 const kBlockTextElements: Elements = {
-  script: true,
-  noscript: true,
-  style: true,
-  pre: true,
+  SCRIPT: true,
+  NOSCRIPT: true,
+  STYLE: true,
+  PRE: true,
 };
 
 /**
@@ -118,7 +118,7 @@ export function parse(data: string, rootElement: Element) {
       stack.push(currentParent);
       if (kBlockTextElements[match[2]]) {
         // a little test to find next </script> or </style> ...
-        let closeMarkup = '</' + match[2] + '>';
+        let closeMarkup = '</' + match[2].toLowerCase() + '>';
         let index = data.indexOf(closeMarkup, kMarkupPattern.lastIndex);
         if (index == -1) {
           throw new Error('Close markup not found.');
