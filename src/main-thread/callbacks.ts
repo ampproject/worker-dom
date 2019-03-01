@@ -15,6 +15,9 @@
  */
 
 import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
+import { TransferrablePhase } from '../transfer/TransferrablePhase';
+
+export type MutationPumpFunction = (callback: Function, phase: TransferrablePhase) => void;
 
 export interface WorkerCallbacks {
   // Called when worker consumes the page's initial DOM state.
@@ -25,4 +28,6 @@ export interface WorkerCallbacks {
   onSendMessage?: (message: MessageToWorker) => void;
   // Called after a message is received from the worker.
   onReceiveMessage?: (message: MessageFromWorker) => void;
+  // Called to schedule mutation phase.
+  onMutationPump?: MutationPumpFunction;
 }
