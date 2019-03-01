@@ -22,7 +22,7 @@ import { RenderableElement } from './worker-thread';
 import { Document } from './dom/Document';
 import { HTMLElement } from './dom/HTMLElement';
 import { SVGElement } from './dom/SVGElement';
-import { set as setPhase, Phases } from '../transfer/phase';
+import { set as setPhase, Phases } from './phase';
 
 export function consumeInitialDOM(document: Document, strings: Array<string>, hydrateableNode: HydrateableNode): void {
   strings.forEach(storeString);
