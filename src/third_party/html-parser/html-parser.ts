@@ -80,12 +80,10 @@ export function parse(data: string, rootElement: Element) {
 
   while ((match = kMarkupPattern.exec(data))) {
     console.log(match);
-    if (lastTextPos > -1) {
-      if (lastTextPos < match.index) {
-        // if has content
-        const text = data.slice(lastTextPos, match.index);
-        currentParent.appendChild(new Text(text, ownerDocument));
-      }
+    if (lastTextPos < match.index) {
+      // if has content
+      const text = data.slice(lastTextPos, match.index);
+      currentParent.appendChild(new Text(text, ownerDocument));
     }
     lastTextPos = kMarkupPattern.lastIndex;
     if (match[0][1] == '!') {
