@@ -79,7 +79,6 @@ export function parse(data: string, rootElement: Element) {
   data = '<div>' + data + '</div>';
 
   while ((match = kMarkupPattern.exec(data))) {
-    console.log(match);
     if (lastTextPos < match.index) {
       // if has content
       const text = data.slice(lastTextPos, match.index);
@@ -121,6 +120,8 @@ export function parse(data: string, rootElement: Element) {
         if (index == -1) {
           throw new Error('Close markup not found.');
         } else {
+          const text = data.slice(lastTextPos, index);
+          currentParent.appendChild(new Text(text, ownerDocument));
           lastTextPos = kMarkupPattern.lastIndex = index + closeMarkup.length;
           match[2] = 'true';
         }
