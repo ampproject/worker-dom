@@ -22,7 +22,7 @@ import { DOMTokenList } from './DOMTokenList';
 export class HTMLLinkElement extends HTMLElement {
   public relList: DOMTokenList = new DOMTokenList(HTMLLinkElement, this, 'rel', 'relList', 'rel');
 }
-registerSubclass('link', HTMLLinkElement);
+registerSubclass('LINK', HTMLLinkElement);
 
 // Reflected Properties
 // HTMLLinkElement.as => string, reflected attribute

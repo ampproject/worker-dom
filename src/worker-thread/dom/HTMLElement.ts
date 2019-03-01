@@ -26,7 +26,7 @@ export class HTMLElement extends Element {
    * @return nearest parent form element.
    */
   get form(): Element | null {
-    return matchNearestParent(this, tagNameConditionPredicate(['form']));
+    return matchNearestParent(this, tagNameConditionPredicate(['FORM']));
   }
 }
 

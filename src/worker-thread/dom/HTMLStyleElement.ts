@@ -19,7 +19,7 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLStyleElement extends HTMLElement {}
-registerSubclass('style', HTMLStyleElement);
+registerSubclass('STYLE', HTMLStyleElement);
 
 // Reflected Properties
 // HTMLStyleElement.media => string, reflected attribute
