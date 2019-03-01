@@ -53,9 +53,9 @@ import { Text } from './Text';
 import { Comment } from './Comment';
 import { MutationObserver } from '../MutationObserver';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
-import { observe as observeMutations } from '../../transfer/DocumentMutations';
-import { propagate as propagateEvents } from '../../transfer/TransferrableEvent';
-import { propagate as propagateSyncValues } from '../../transfer/TransferrableSyncValue';
+import { observe as observeMutations } from '../DocumentMutations';
+import { propagate as propagateEvents } from '../EventPropagation';
+import { propagate as propagateSyncValues } from '../SyncValuePropagation';
 import { toUpper } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
 
