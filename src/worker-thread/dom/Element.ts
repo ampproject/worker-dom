@@ -202,7 +202,7 @@ export class Element extends ParentNode {
    * @param name attribute name
    * @param value attribute value
    */
-  public setAttribute(name: string, value: string): void {
+  public setAttribute(name: string, value: Object | null | undefined): void {
     this.setAttributeNS(HTML_NAMESPACE, name, value);
   }
 
@@ -254,26 +254,27 @@ export class Element extends ParentNode {
    * @param name attribute name
    * @param value attribute value
    */
-  public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
+  public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: Object | null | undefined): void {
+    const valueAsString = String(value);
     if (this[TransferrableKeys.propertyBackedAttributes][name] !== undefined) {
       if (!this.attributes.find(matchAttrPredicate(namespaceURI, name))) {
         this.attributes.push({
           namespaceURI,
           name,
-          value,
+          value: valueAsString,
         });
       }
-      this[TransferrableKeys.propertyBackedAttributes][name][1](value);
+      this[TransferrableKeys.propertyBackedAttributes][name][1](valueAsString);
       return;
     }
 
-    const oldValue = this[TransferrableKeys.storeAttribute](namespaceURI, name, value);
+    const oldValue = this[TransferrableKeys.storeAttribute](namespaceURI, name, valueAsString);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this,
       attributeName: name,
       attributeNamespace: namespaceURI,
-      value,
+      value: valueAsString,
       oldValue,
     });
   }
