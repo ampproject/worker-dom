@@ -37,17 +37,17 @@ const kSelfClosingElements: Elements = {
 };
 
 const kElementsClosedByOpening: ElementMapping = {
-  li: { li: true },
-  p: { p: true, div: true },
-  b: { div: true },
-  td: { td: true, th: true },
-  th: { td: true, th: true },
-  h1: { h1: true },
-  h2: { h2: true },
-  h3: { h3: true },
-  h4: { h4: true },
-  h5: { h5: true },
-  h6: { h6: true },
+  LI: { LI: true },
+  P: { P: true, DIV: true },
+  B: { DIV: true },
+  TD: { TD: true, TH: true },
+  TH: { TD: true, TH: true },
+  H1: { H1: true },
+  H2: { H2: true },
+  H3: { H3: true },
+  H4: { H4: true },
+  H5: { H5: true },
+  H6: { H6: true },
 };
 const kElementsClosedByClosing: ElementMapping = {
   li: { ul: true, ol: true },
@@ -106,7 +106,7 @@ export function parse(data: string, rootElement: Element) {
       // not </ tags
 
       if (!match[4] && kElementsClosedByOpening[currentParent.tagName]) {
-        if (kElementsClosedByOpening[currentParent.tagName][match[2].toLowerCase()]) {
+        if (kElementsClosedByOpening[currentParent.tagName][match[2]]) {
           stack.pop();
           currentParent = arr_back(stack);
         }
