@@ -218,8 +218,8 @@ export abstract class Node {
           referenceNode[TransferrableKeys.index],
           0,
           1,
-          child[TransferrableKeys.index],
           0,
+          child[TransferrableKeys.index],
         ]),
       );
 
@@ -230,8 +230,9 @@ export abstract class Node {
         NextSibling.index,
         PreviousSibling.index,
         AppendedNodeCount,
-        ... AppendedNode.index,
         RemovedNodeCount,
+        ... AppendedNode.index,
+        ... RemovedNode.index,
       ]
       */
 
@@ -272,8 +273,8 @@ export abstract class Node {
           0,
           previousSibling ? previousSibling[TransferrableKeys.index] : 0,
           1,
-          child[TransferrableKeys.index],
           0,
+          child[TransferrableKeys.index],
         ]),
       );
 
@@ -284,8 +285,8 @@ export abstract class Node {
         NextSibling.index,
         PreviousSibling.index,
         AppendedNodeCount,
-        ... AppendedNode.index,
         RemovedNodeCount,
+        ... AppendedNode.index,
         ... RemovedNode.index,
       ]
       */
@@ -421,15 +422,7 @@ export abstract class Node {
 
     transfer(
       (this.ownerDocument as Document).postMessage,
-      new Uint16Array([
-        TransferrableMutationType.EVENT_SUBSCRIPTION,
-        this[TransferrableKeys.index],
-        1,
-        0,
-        storedType,
-        this[TransferrableKeys.index],
-        index,
-      ]).buffer,
+      new Uint16Array([TransferrableMutationType.EVENT_SUBSCRIPTION, this[TransferrableKeys.index], 1, 0, storedType, index]).buffer,
     );
   }
 
@@ -448,15 +441,7 @@ export abstract class Node {
       handlers.splice(index, 1);
       transfer(
         (this.ownerDocument as Document).postMessage,
-        new Uint16Array([
-          TransferrableMutationType.EVENT_SUBSCRIPTION,
-          this[TransferrableKeys.index],
-          0,
-          1,
-          storeString(lowerType),
-          this[TransferrableKeys.index],
-          index,
-        ]).buffer,
+        new Uint16Array([TransferrableMutationType.EVENT_SUBSCRIPTION, this[TransferrableKeys.index], 0, 1, storeString(lowerType), index]).buffer,
       );
     }
   }

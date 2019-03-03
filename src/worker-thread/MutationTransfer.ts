@@ -16,22 +16,22 @@
 
 import { consume as consumeNodes } from './nodes';
 import { consume as consumeStrings } from './strings';
+import { MessageType } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { Node } from './dom/Node';
 import { phase, Phases } from '../transfer/phase';
 
 export function transfer(postMessage: (message: any, transfer?: Transferable[]) => void, mutation: ArrayBuffer): void {
-  console.log('transfer called', phase, [Phases.Initializing, Phases.Hydrating, Phases.Mutating]);
   if (phase !== Phases.Initializing) {
-    console.log('allow transfer');
     const nodes = new Uint16Array(consumeNodes().reduce((acc: Array<number>, node: Node) => acc.concat(node[TransferrableKeys.creationFormat]), []))
       .buffer;
 
     postMessage(
       {
-        nodes,
-        strings: consumeStrings(),
-        mutation,
+        [TransferrableKeys.type]: MessageType.MUTATE,
+        [TransferrableKeys.nodes]: nodes,
+        [TransferrableKeys.strings]: consumeStrings(),
+        [TransferrableKeys.mutations]: mutation,
       },
       [nodes, mutation],
     );

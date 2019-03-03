@@ -17,7 +17,7 @@
 import { TransferrableEvent } from './TransferrableEvent';
 import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
-import { TransferrableNode, HydrateableNode, TransferredNode } from './TransferrableNodes';
+import { HydrateableNode, TransferredNode } from './TransferrableNodes';
 import { TransferrableBoundingClientRect } from './TransferrableCommands';
 
 export const enum MessageType {
@@ -35,7 +35,7 @@ export const enum MessageType {
 export interface MutationFromWorker {
   readonly [TransferrableKeys.type]: MessageType;
   readonly [TransferrableKeys.strings]: Array<string>;
-  readonly [TransferrableKeys.nodes]: Array<TransferrableNode>;
+  readonly [TransferrableKeys.nodes]: ArrayBuffer;
   readonly [TransferrableKeys.mutations]: ArrayBuffer;
 }
 export type MessageFromWorker = {

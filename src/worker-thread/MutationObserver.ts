@@ -44,7 +44,6 @@ const pushMutation = (observer: MutationObserver, record: MutationRecord): void 
  * @param record MutationRecord to push into MutationObservers.
  */
 export function mutate(document: Document, record: MutationRecord, transferable: Uint16Array): void {
-  console.log('mutate called with buffer', transferable);
   transfer(document.postMessage, transferable.buffer);
 
   observers.forEach(observer => {

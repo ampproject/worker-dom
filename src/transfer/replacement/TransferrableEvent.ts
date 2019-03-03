@@ -34,3 +34,24 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.scoped]?: boolean;
   readonly [TransferrableKeys.keyCode]?: number;
 }
+
+export const enum EventSubscriptionLocations {
+  ADD_EVENT_COUNT = 2,
+  REMOVE_EVENT_COUNT = 3,
+  EVENTS = 4,
+}
+
+export const EVENT_SUBSCRIPTION_LENGTH = 2;
+
+/**
+ * Event Subscription Transfer
+ *
+ * [
+ *   TransferrableMutationType.EVENT_SUBSCRIPTION,
+ *   Target.index,
+ *   AddEventListener.count,
+ *   RemoveEventListener.count,
+ *   ...AddEvent<[ EventRegistration.type, EventRegistration.index ]>
+ *   ...RemoveEvent<[ EventRegistration.type, EventRegistration.index ]>
+ * ]
+ */

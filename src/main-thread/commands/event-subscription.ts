@@ -15,23 +15,19 @@
  */
 
 import { MessageType } from '../../transfer/Messages';
-import { NumericBoolean } from '../../utils';
-import { NodeContext } from '../nodes';
 import { Strings } from '../strings';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationRecord } from '../../transfer/TransferrableRecord';
+import { EventSubscriptionLocations, EVENT_SUBSCRIPTION_LENGTH } from '../../transfer/replacement/TransferrableEvent';
 import { WorkerContext } from '../worker';
 
 export class EventSubscriptionProcessor {
   private strings: Strings;
-  private nodeContext: NodeContext;
   private workerContext: WorkerContext;
   // TODO(choumx): Support SYNC events for properties other than 'value', e.g. 'checked'.
   private knownListeners: Array<(event: Event) => any>;
 
-  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext) {
+  constructor(strings: Strings, workerContext: WorkerContext) {
     this.strings = strings;
-    this.nodeContext = nodeContext;
     this.workerContext = workerContext;
     this.knownListeners = [];
   }
@@ -40,22 +36,38 @@ export class EventSubscriptionProcessor {
    * Process event subscription changes transfered from worker thread to main thread.
    * @param mutation mutation record containing commands to execute.
    */
-  process(mutation: TransferrableMutationRecord): void {
-    const nodeId = mutation[TransferrableKeys.target];
-    const target = this.nodeContext.getNode(nodeId);
-
+  public process = (mutation: Uint16Array, target: RenderableElement): void => {
+    /*
+     *   TransferrableMutationType.EVENT_SUBSCRIPTION,
+     *   Target.index,
+     *   AddEventListener.count,
+     *   RemoveEventListener.count,
+     *   ...AddEvent<[ EventRegistration.type, EventRegistration.index ]>
+     *   ...RemoveEvent<[ EventRegistration.type, EventRegistration.index ]>
+     */
     if (!target) {
-      console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
+      console.error(`getNode() yields null – ${target}`);
       return;
     }
 
-    // (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub =>
-    //   this.processListenerChange(target, false, this.strings.get(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
-    // );
-    // (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub =>
-    //   this.processListenerChange(target, true, this.strings.get(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]),
-    // );
-  }
+    if (mutation[EventSubscriptionLocations.REMOVE_EVENT_COUNT] > 0) {
+      const removeEvents = mutation.slice(
+        EventSubscriptionLocations.EVENTS + mutation[EventSubscriptionLocations.ADD_EVENT_COUNT] * EVENT_SUBSCRIPTION_LENGTH,
+      );
+      for (let iterator = 0; iterator < removeEvents.length; iterator += EVENT_SUBSCRIPTION_LENGTH) {
+        this.processListenerChange(target, false, this.strings.get(removeEvents[iterator]), removeEvents[iterator + 1]);
+      }
+    }
+    if (mutation[EventSubscriptionLocations.ADD_EVENT_COUNT] > 0) {
+      const addEvents = mutation.slice(
+        EventSubscriptionLocations.EVENTS,
+        EventSubscriptionLocations.EVENTS + mutation[EventSubscriptionLocations.ADD_EVENT_COUNT] * EVENT_SUBSCRIPTION_LENGTH,
+      );
+      for (let iterator = 0; iterator < addEvents.length; iterator += EVENT_SUBSCRIPTION_LENGTH) {
+        this.processListenerChange(target, true, this.strings.get(addEvents[iterator]), addEvents[iterator + 1]);
+      }
+    }
+  };
 
   /**
    * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,
@@ -131,28 +143,24 @@ const eventHandler = (workerContext: WorkerContext, index: number) => (event: Ev
   if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
     fireValueChange(workerContext, event.currentTarget as RenderableElement);
   }
-  // workerContext.messageToWorker({
-  //   [TransferrableKeys.type]: MessageType.EVENT,
-  //   [TransferrableKeys.event]: {
-  //     [TransferrableKeys.index]: index,
-  //     [TransferrableKeys.bubbles]: event.bubbles,
-  //     [TransferrableKeys.cancelable]: event.cancelable,
-  //     [TransferrableKeys.cancelBubble]: event.cancelBubble,
-  //     [TransferrableKeys.currentTarget]: {
-  //       [TransferrableKeys.index]: (event.currentTarget as RenderableElement)._index_,
-  //       [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-  //     },
-  //     [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
-  //     [TransferrableKeys.eventPhase]: event.eventPhase,
-  //     [TransferrableKeys.isTrusted]: event.isTrusted,
-  //     [TransferrableKeys.returnValue]: event.returnValue,
-  //     [TransferrableKeys.target]: {
-  //       [TransferrableKeys.index]: (event.target as RenderableElement)._index_,
-  //       [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-  //     },
-  //     [TransferrableKeys.timeStamp]: event.timeStamp,
-  //     [TransferrableKeys.type]: event.type,
-  //     [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
-  //   },
-  // });
+
+  (event.currentTarget as RenderableElement)._index_;
+  workerContext.messageToWorker({
+    [TransferrableKeys.type]: MessageType.EVENT,
+    [TransferrableKeys.event]: {
+      [TransferrableKeys.index]: index,
+      [TransferrableKeys.bubbles]: event.bubbles,
+      [TransferrableKeys.cancelable]: event.cancelable,
+      [TransferrableKeys.cancelBubble]: event.cancelBubble,
+      [TransferrableKeys.currentTarget]: [(event.currentTarget as RenderableElement)._index_],
+      [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
+      [TransferrableKeys.eventPhase]: event.eventPhase,
+      [TransferrableKeys.isTrusted]: event.isTrusted,
+      [TransferrableKeys.returnValue]: event.returnValue,
+      [TransferrableKeys.target]: [(event.target as RenderableElement)._index_],
+      [TransferrableKeys.timeStamp]: event.timeStamp,
+      [TransferrableKeys.type]: event.type,
+      [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
+    },
+  });
 };

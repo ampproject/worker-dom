@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { TransferrableNode, NodeType } from '../transfer/TransferrableNodes';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { NodeType } from '../transfer/TransferrableNodes';
 import { Strings } from './strings';
 
 export class NodeContext {
@@ -34,8 +33,7 @@ export class NodeContext {
     this.count = 2;
     this.strings = strings;
 
-    // The nodes map is populated with two default values pointing to
-    // baseElement.
+    // The nodes map is populated with two default values pointing to baseElement.
     // These are [document, document.body] from the worker.
     this.nodes = new Map([[1, baseElement], [2, baseElement]]);
     this.baseElement = baseElement as HTMLElement;
@@ -47,47 +45,45 @@ export class NodeContext {
     baseElement.childNodes.forEach(n => this.storeNodes(n));
   }
 
-  getBaseElement(): HTMLElement {
+  public getBaseElement(): HTMLElement {
     return this.baseElement;
   }
 
-  /**
-   * Create a real DOM Node from a skeleton Object (`{ nodeType, nodeName, attributes, children, data }`)
-   * @example <caption>Text node</caption>
-   *   nodeContext.createNode({ nodeType:3, data:'foo' })
-   * @example <caption>Element node</caption>
-   *   nodeContext.createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
-   */
-  createNode(skeleton: TransferrableNode, sanitizer?: Sanitizer): Node | null {
-    let node: Node;
-    if (skeleton[TransferrableKeys.nodeType] === NodeType.TEXT_NODE) {
-      node = document.createTextNode(this.strings.get(skeleton[TransferrableKeys.textContent] as number));
-    } else if (skeleton[TransferrableKeys.nodeType] === NodeType.DOCUMENT_FRAGMENT_NODE) {
-      node = document.createDocumentFragment();
-    } else {
-      const namespace =
-        skeleton[TransferrableKeys.namespaceURI] !== undefined ? this.strings.get(skeleton[TransferrableKeys.namespaceURI] as number) : undefined;
-      const nodeName = this.strings.get(skeleton[TransferrableKeys.nodeName]);
-      node = namespace ? document.createElementNS(namespace, nodeName) : document.createElement(nodeName);
+  public createNodes(buffer: ArrayBuffer, sanitizer?: Sanitizer): void {
+    const nodeBuffer = new Uint16Array(buffer); // Uint16Array<TransferrableNode>
+    const nodeBufferLength = nodeBuffer.length;
 
-      // TODO(KB): Restore Properties
-      // skeleton.properties.forEach(property => {
-      //   node[`${property.name}`] = property.value;
-      // });
-      // ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(childNode => {
-      //   if (childNode[TransferrableKeys.transferred] === NumericBoolean.FALSE) {
-      //     node.appendChild(this.createNode(childNode as TransferrableNode));
-      //   }
-      // });
+    for (let iterator = 0; iterator < nodeBufferLength; iterator += 7) {
+      let node: Node;
+      if (nodeBuffer[iterator + 1] === NodeType.TEXT_NODE) {
+        node = document.createTextNode(this.strings.get(nodeBuffer[iterator + 4]));
+      } else if (nodeBuffer[iterator + 1] === NodeType.DOCUMENT_FRAGMENT_NODE) {
+        node = document.createDocumentFragment();
+      } else {
+        const nodeName = this.strings.get(nodeBuffer[iterator + 2]);
+        node =
+          nodeBuffer[iterator + 5] !== 0
+            ? document.createElementNS(this.strings.get(nodeBuffer[iterator + 6]), nodeName)
+            : document.createElement(nodeName);
 
-      // If `node` is removed by the sanitizer, don't store it and return null.
-      if (sanitizer && !sanitizer.sanitize(node)) {
-        return null;
+        // TODO(KB): Restore Properties
+        // skeleton.properties.forEach(property => {
+        //   node[`${property.name}`] = property.value;
+        // });
+        // ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(childNode => {
+        //   if (childNode[TransferrableKeys.transferred] === NumericBoolean.FALSE) {
+        //     node.appendChild(this.createNode(childNode as TransferrableNode));
+        //   }
+        // });
+
+        // If `node` is removed by the sanitizer, don't store it and return null.
+        if (sanitizer && !sanitizer.sanitize(node)) {
+          continue;
+        }
       }
-    }
 
-    this.storeNode(node, skeleton[0]);
-    return node;
+      this.storeNode(node, nodeBuffer[0]);
+    }
   }
 
   /**
@@ -95,7 +91,7 @@ export class NodeContext {
    * @param id
    * @return RenderableElement | null
    */
-  getNode(id: number): RenderableElement | null {
+  public getNode(id: number): RenderableElement | null {
     const node = this.nodes.get(id);
 
     if (node && node.nodeName === 'BODY') {
@@ -111,10 +107,10 @@ export class NodeContext {
    * Store the requested node and all of its children.
    * @param node node to store.
    */
-  private storeNodes(node: Node): void {
+  private storeNodes = (node: Node): void => {
     this.storeNode(node, ++this.count);
     node.childNodes.forEach(n => this.storeNodes(n));
-  }
+  };
 
   /**
    * Establish link between DOM `node` and worker-generated identifier `id`.

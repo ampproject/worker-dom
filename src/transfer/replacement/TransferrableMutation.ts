@@ -22,3 +22,47 @@ export const enum TransferrableMutationType {
   EVENT_SUBSCRIPTION = 4,
   GET_BOUNDING_CLIENT_RECT = 5,
 }
+
+/**
+ * Child List Mutations
+ * [
+ *   TransferrableMutationType.CHILD_LIST,
+ *   Target.index,
+ *   NextSibling.index,
+ *   PreviousSibling.index,
+ *   AppendedNodeCount,
+ *   RemovedNodeCount,
+ *   ... AppendedNode.index,
+ *   ... RemovedNode.index,
+ * ]
+ */
+
+/**
+ * Attribute Mutations
+ * [
+ *   TransferrableMutationType.ATTRIBUTES,
+ *   Target.index,
+ *   Attr.name,
+ *   Attr.namespace   // 0 the default value.
+ *   Attr.value
+ * ]
+ */
+
+/**
+ * Character Data Mutations
+ * [
+ *   TransferrableMutationType.CHARACTER_DATA,
+ *   Target.index,
+ *   CharacterData.value
+ * ]
+ */
+
+/**
+ * Properties Mutations
+ * [
+ *   TransferrableMutationType.PROPERTIES,
+ *   Target.index,
+ *   Property.name,
+ *   Property.value
+ * ]
+ */

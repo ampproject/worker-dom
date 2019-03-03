@@ -77,7 +77,6 @@ export class Document extends Element {
   constructor() {
     super(NodeType.DOCUMENT_NODE, '#document', HTML_NAMESPACE, null);
     this.documentElement = this;
-    this.postMessage = () => void 0;
     this.observe = (): void => {
       // Sync Document Changes.
       propagateEvents();
