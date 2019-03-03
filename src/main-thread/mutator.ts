@@ -20,7 +20,7 @@
 import { NodeContext } from './nodes';
 import { Strings } from './strings';
 import { WorkerContext } from './worker';
-import { TransferrableMutationType } from '../transfer/replacement/TransferrableMutation';
+import { TransferrableMutationType, ChildListMutationIndex } from '../transfer/replacement/TransferrableMutation';
 import { EventSubscriptionProcessor } from './commands/event-subscription';
 import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
 
@@ -67,7 +67,6 @@ export class MutatorProcessor {
    * @param mutations Changes to apply in both graph shape and content of Elements.
    */
   mutate(nodes: ArrayBuffer, stringValues: Array<string>, mutations: ArrayBuffer): void {
-    //mutations: TransferrableMutationRecord[]): void {
     // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
     // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
     //   return;
@@ -92,10 +91,14 @@ export class MutatorProcessor {
   private syncFlush = (): void => {
     this.mutationQueue.forEach(mutationBuffer => {
       const mutationArray = new Uint16Array(mutationBuffer);
+      console.info('apply mutation', mutationArray);
       const target = this.nodeContext.getNode(mutationArray[1]);
       if (!target) {
         console.error(`getNode() yields null – ${target}`);
         return;
+      }
+      if (mutationArray[0] === TransferrableMutationType.GET_BOUNDING_CLIENT_RECT) {
+        console.log('boundingClientRect');
       }
       this.mutators[mutationArray[0]](mutationArray, target);
     });
@@ -116,11 +119,8 @@ export class MutatorProcessor {
      *   ... RemovedNode.index,
      * ]
      */
-    const addCount = mutation[4];
-    const removeCount = mutation[5];
-
-    if (removeCount > 0) {
-      mutation.slice(5 + addCount).forEach(removeId => {
+    if (mutation[ChildListMutationIndex.RemovedNodeCount] > 0) {
+      mutation.slice(ChildListMutationIndex.Nodes + mutation[ChildListMutationIndex.AppendedNodeCount]).forEach(removeId => {
         const node = this.nodeContext.getNode(removeId);
         if (!node) {
           console.error(`getNode() yields null – ${removeId}`);
@@ -129,16 +129,17 @@ export class MutatorProcessor {
         node.remove();
       });
     }
-    if (addCount > 0) {
-      const nextSiblingId = mutation[2];
-      mutation.slice(5, 5 + addCount).forEach(addId => {
-        const newNode = this.nodeContext.getNode(addId);
-        if (newNode) {
-          // TODO: Handle this case ---
-          // Transferred nodes that are not stored were previously removed by the sanitizer.
-          target.insertBefore(newNode, (nextSiblingId && this.nodeContext.getNode(nextSiblingId)) || null);
-        }
-      });
+    if (mutation[ChildListMutationIndex.AppendedNodeCount] > 0) {
+      mutation
+        .slice(ChildListMutationIndex.Nodes, ChildListMutationIndex.Nodes + mutation[ChildListMutationIndex.AppendedNodeCount])
+        .forEach(addId => {
+          const newNode = this.nodeContext.getNode(addId);
+          if (newNode) {
+            // TODO: Handle this case ---
+            // Transferred nodes that are not stored were previously removed by the sanitizer.
+            target.insertBefore(newNode, (mutation[2] && this.nodeContext.getNode(mutation[2])) || null);
+          }
+        });
     }
   }
 

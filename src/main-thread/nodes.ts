@@ -53,6 +53,7 @@ export class NodeContext {
     const nodeBuffer = new Uint16Array(buffer); // Uint16Array<TransferrableNode>
     const nodeBufferLength = nodeBuffer.length;
 
+    console.log('create nodes');
     for (let iterator = 0; iterator < nodeBufferLength; iterator += 7) {
       let node: Node;
       if (nodeBuffer[iterator + 1] === NodeType.TEXT_NODE) {

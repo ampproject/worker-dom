@@ -23,6 +23,14 @@ export const enum TransferrableMutationType {
   GET_BOUNDING_CLIENT_RECT = 5,
 }
 
+export const enum ChildListMutationIndex {
+  Target = 1,
+  NextSibling = 2,
+  PreviousSibling = 3,
+  AppendedNodeCount = 4,
+  RemovedNodeCount = 5,
+  Nodes = 6,
+}
 /**
  * Child List Mutations
  * [
