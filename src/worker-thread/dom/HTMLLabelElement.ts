@@ -30,10 +30,10 @@ export class HTMLLabelElement extends HTMLElement {
     if (htmlFor !== null) {
       return this.ownerDocument && (this.ownerDocument as Document).getElementById(htmlFor);
     }
-    return matchChildElement(this as Element, tagNameConditionPredicate(['INPUT']));
+    return matchChildElement(this as Element, tagNameConditionPredicate(['input']));
   }
 }
-registerSubclass('LABEL', HTMLLabelElement);
+registerSubclass('label', HTMLLabelElement);
 
 // Reflected Properties
 // HTMLLabelElement.htmlFor => string, reflected attribute 'for'

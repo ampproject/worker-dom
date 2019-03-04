@@ -23,7 +23,7 @@ export class HTMLIFrameElement extends HTMLElement {
   // HTMLIFrameElement.sandbox, DOMTokenList, reflected attribute
   public sandbox: DOMTokenList = new DOMTokenList(HTMLIFrameElement, this, 'sandbox', null, null);
 }
-registerSubclass('IFRAME', HTMLIFrameElement);
+registerSubclass('iframe', HTMLIFrameElement);
 
 // Reflected properties
 // HTMLIFrameElement.allow => string, reflected attribute

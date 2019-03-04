@@ -47,7 +47,7 @@ test.beforeEach(t => {
 test('Element should serialize to a TransferrableNode', t => {
   const serializedDiv = t.context.div.hydrate();
   t.is(serializedDiv[TransferrableKeys.nodeType], NodeType.ELEMENT_NODE);
-  t.is(serializedDiv[TransferrableKeys.nodeName], get('DIV') as number);
+  t.is(serializedDiv[TransferrableKeys.nodeName], get('div') as number);
 
   t.not(serializedDiv[TransferrableKeys.childNodes], undefined);
   t.is((serializedDiv[TransferrableKeys.childNodes] as Array<HydrateableNode>).length, 1);

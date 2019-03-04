@@ -28,7 +28,7 @@ export class HTMLFormElement extends HTMLElement {
     return (this.elements as Array<Element>).length;
   }
 }
-registerSubclass('FORM', HTMLFormElement);
+registerSubclass('form', HTMLFormElement);
 HTMLFormControlsCollectionMixin(HTMLFormElement);
 
 // Reflected properties
@@ -61,7 +61,7 @@ reflectProperties(
 /*
 Unimplemented, TBD:
 
-Named inputs are added to their owner form instance as properties, and can overwrite native properties
+Named inputs are added to their owner form instance as properties, and can overwrite native properties 
 if they share the same name (eg a form with an input named action will have its action property return
 that input instead of the form's action HTML attribute).
 */
