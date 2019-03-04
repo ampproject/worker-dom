@@ -36,7 +36,7 @@ export function babelPlugin({transpileToES5, allowConsole = false, allowPostMess
         '@babel/env',
         {
           targets,
-          loose: false,
+          loose: transpileToES5 ? false : true,
           modules: false,
         },
       ],
