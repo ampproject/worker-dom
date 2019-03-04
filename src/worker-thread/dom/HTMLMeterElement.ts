@@ -20,7 +20,7 @@ import { reflectProperties } from './enhanceElement';
 import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
 
 export class HTMLMeterElement extends HTMLElement {}
-registerSubclass('METER', HTMLMeterElement);
+registerSubclass('meter', HTMLMeterElement);
 HTMLInputLabelsMixin(HTMLMeterElement);
 
 // Reflected Properties

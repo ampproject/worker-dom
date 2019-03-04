@@ -26,10 +26,10 @@ export class HTMLMapElement extends HTMLElement {
    * @return area elements associated to this map.
    */
   get areas(): Array<Element> {
-    return matchChildrenElements(this as Element, element => element.tagName === 'AREA');
+    return matchChildrenElements(this as Element, element => element.tagName === 'area');
   }
 }
-registerSubclass('MAP', HTMLMapElement);
+registerSubclass('map', HTMLMapElement);
 
 // Reflected Properties
 // HTMLMapElement.name => string, reflected attribute

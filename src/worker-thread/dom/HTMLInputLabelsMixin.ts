@@ -31,7 +31,7 @@ export const HTMLInputLabelsMixin = (defineOn: typeof Element): void => {
     get(): Array<Element> {
       return matchChildrenElements(
         ((this as Element).ownerDocument as Element) || this,
-        element => element.tagName === 'LABEL' && element.for && element.for === (this as Element).id,
+        element => element.tagName === 'label' && element.for && element.for === (this as Element).id,
       );
     },
   });

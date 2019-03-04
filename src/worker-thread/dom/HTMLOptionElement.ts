@@ -107,7 +107,7 @@ export class HTMLOptionElement extends HTMLElement {
     this.setAttribute('value', value);
   }
 }
-registerSubclass('OPTION', HTMLOptionElement);
+registerSubclass('option', HTMLOptionElement);
 
 // Reflected Properties
 // HTMLOptionElement.defaultSelected => boolean, reflected attribute

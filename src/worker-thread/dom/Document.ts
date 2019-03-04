@@ -56,7 +56,7 @@ import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { observe as observeMutations } from '../DocumentMutations';
 import { propagate as propagateEvents } from '../EventPropagation';
 import { propagate as propagateSyncValues } from '../SyncValuePropagation';
-import { toUpper } from '../../utils';
+import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
 
 export class Document extends Element {
@@ -99,8 +99,7 @@ export class Document extends Element {
     return this.createElementNS(HTML_NAMESPACE, tagName);
   }
   public createElementNS(namespaceURI: NamespaceURI, tagName: string): Element {
-    const upperTagName = toUpper(tagName);
-    return new (NODE_NAME_MAPPING[upperTagName] || HTMLElement)(NodeType.ELEMENT_NODE, upperTagName, namespaceURI, this);
+    return new (NODE_NAME_MAPPING[toLower(tagName)] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI, this);
   }
 
   public createTextNode(text: string): Text {
@@ -109,6 +108,7 @@ export class Document extends Element {
   public createComment(text: string): Comment {
     return new Comment(text, this);
   }
+
   public createDocumentFragment(): DocumentFragment {
     return new DocumentFragment(this);
   }

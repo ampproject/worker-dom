@@ -19,7 +19,7 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLImageElement extends HTMLElement {}
-registerSubclass('IMG', HTMLImageElement);
+registerSubclass('img', HTMLImageElement);
 
 // Reflected Properties
 // HTMLImageElement.alt => string, reflected attribute
