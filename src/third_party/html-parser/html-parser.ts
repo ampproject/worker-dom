@@ -69,7 +69,6 @@ const kBlockTextElements: Elements = {
  */
 export function parse(data: string, rootElement: Element) {
   const ownerDocument = rootElement.ownerDocument;
-  // this can be stubbed
   const root = new Element(rootElement.nodeType, rootElement.nodeName, rootElement.namespaceURI, ownerDocument);
 
   let currentParent = root as Node;
@@ -98,31 +97,35 @@ export function parse(data: string, rootElement: Element) {
       continue;
     }
 
-    // we only want tags in upper case
-    tagName = tagName.toUpperCase();
+    const normalizedTagName = tagName.toUpperCase();
 
     if (!beginningSlash) {
       // not </ tags
 
-      if (!endSlash && kElementsClosedByOpening[currentParent.tagName]) {
-        if (kElementsClosedByOpening[currentParent.tagName][tagName]) {
+      if (!endSlash && kElementsClosedByOpening[currentParent.normalizedTagName]) {
+        if (kElementsClosedByOpening[currentParent.normalizedTagName][normalizedTagName]) {
           stack.pop();
           currentParent = arr_back(stack);
         }
       }
-      const childToAppend = new Element(currentParent.nodeType, tagName, currentParent.namespaceURI, ownerDocument);
+      const childToAppend = new Element(
+        currentParent.nodeType, 
+        tagName,
+        currentParent.namespaceURI, 
+        ownerDocument);
 
       for (let attMatch; (attMatch = kAttributePattern.exec(matchAttributes)); ) {
-        // Set attributes
-        childToAppend.setAttribute(attMatch[2], attMatch[4] || attMatch[5] || attMatch[6]);
+        const attrName = attMatch[2];
+        const attrValue = attMatch[4] || attMatch[5] || attMatch[6];
+        childToAppend.setAttribute(attrName, attrValue);
       }
 
       currentParent = currentParent.appendChild(childToAppend);
 
       stack.push(currentParent);
-      if (kBlockTextElements[tagName]) {
+      if (kBlockTextElements[normalizedTagName]) {
         // a little test to find next </script> or </style> ...
-        let closeMarkup = '</' + tagName.toLowerCase() + '>';
+        let closeMarkup = '</' + normalizedTagName.toLowerCase() + '>';
         let index = data.indexOf(closeMarkup, kMarkupPattern.lastIndex);
         if (index == -1) {
           throw new Error('Close markup not found.');
@@ -134,21 +137,21 @@ export function parse(data: string, rootElement: Element) {
         }
       }
     }
-    if (beginningSlash || endSlash || kSelfClosingElements[tagName]) {
+    if (beginningSlash || endSlash || kSelfClosingElements[normalizedTagName]) {
       // </ or /> or <br> etc.
       while (true) {
         if (stack.length <= 1) {
           break;
         }
 
-        if (currentParent.nodeName.toUpperCase() == tagName) {
+        if (currentParent.nodeName.toUpperCase() == normalizedTagName) {
           stack.pop();
           currentParent = arr_back(stack);
           break;
         } else {
           // Trying to close current tag, and move on
-          if (kElementsClosedByClosing[currentParent.tagName]) {
-            if (kElementsClosedByClosing[currentParent.tagName][tagName]) {
+          if (kElementsClosedByClosing[currentParent.normalizedTagName]) {
+            if (kElementsClosedByClosing[currentParent.normalizedTagName][normalizedTagName]) {
               stack.pop();
               currentParent = arr_back(stack);
               continue;

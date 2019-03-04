@@ -88,7 +88,7 @@ test('set an element node', t => {
 
   const child = node.firstChild!;
   t.is(child.nodeType, NodeType.ELEMENT_NODE);
-  t.is(child.nodeName, 'DIV');
+  t.is(child.nodeName, 'div');
 });
 
 test('set a text node', t => {
@@ -142,11 +142,18 @@ test('set self closing tags', t => {
   node.innerHTML = '<br>';
   const child = node.firstChild!;
   t.is(child.nodeType, NodeType.ELEMENT_NODE);
-  t.is(child.nodeName, 'BR');
+  t.is(child.nodeName, 'br');
 });
 
 test('set invalid html throws', t => {
   const { node } = t.context;
   // Use an unclosed tag.
   t.throws(() => node.innerHTML = '<div>');
+});
+
+test('set keeps tagName\'s case', t =>{
+  const { node } = t.context;
+  node.innerHTML = '<feImage></feImage>';
+  const child = node.firstChild!;
+  t.is(child.nodeName, 'feImage');
 });
