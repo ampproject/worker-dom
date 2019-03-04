@@ -21,15 +21,15 @@ const kMarkupPattern = /<!--([^]*)-->|<(\/?)([a-z][-.0-9_a-z]*)([^>]*?)(\/?)>/gi
 const kAttributePattern = /(^|\s)([^\s"'>\/=]+)\s*=\s*("([^"]+)"|'([^']+)'|(\S+))/gi;
 
 const kSelfClosingElements: Elements = {
-  area: true,
-  base: true,
-  br: true,
-  col: true,
-  hr: true,
-  img: true,
-  input: true,
-  link: true,
-  meta: true,
+  AREA: true,
+  BASE: true,
+  BR: true,
+  COL: true,
+  HR: true,
+  IMG: true,
+  INPUT: true,
+  LINK: true,
+  META: true,
 };
 const kElementsClosedByOpening: ElementMapping = {
   li: { LI: true },
@@ -137,7 +137,7 @@ export function parse(data: string, rootElement: Element) {
     if (beginningSlash || endSlash || kSelfClosingElements[tagName]) {
       // </ or /> or <br> etc.
       while (true) {
-        if (currentParent.nodeName == tagName) {
+        if (currentParent.nodeName == tagName && stack.length > 1) {
           stack.pop();
           currentParent = arr_back(stack);
           break;
