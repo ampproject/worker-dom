@@ -136,3 +136,17 @@ test('set element with attributes', t => {
   t.is(child.attributes[0].name, "hi");
   t.is(child.attributes[0].value, "hello");
 });
+
+test('set self closing tags', t => {
+  const { node } = t.context;
+  node.innerHTML = '<br>';
+  const child = node.firstChild!;
+  t.is(child.nodeType, NodeType.ELEMENT_NODE);
+  t.is(child.nodeName, 'BR');
+});
+
+test('set invalid html throws', t => {
+  const { node } = t.context;
+  // Use an unclosed tag.
+  t.throws(() => node.innerHTML = '<div>');
+});
