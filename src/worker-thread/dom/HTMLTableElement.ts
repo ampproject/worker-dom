@@ -25,7 +25,7 @@ import { toUpper } from '../../utils';
 const removeElement = (element: Element | null): any => element && element.remove();
 
 const insertBeforeElementsWithTagName = (parent: Element, element: Element, tagNames: Array<NodeName>): void => {
-  console.assert(!tagNames.some(t => t !== toUpper(t)), 'tagNames must be all uppercase.');
+  console.assert(tagNames.every(t => t === toUpper(t)), 'tagNames must be all uppercase.');
   const insertBeforeElement = matchChildElement(parent, (element: Element): boolean => !tagNames.includes(element.tagName));
   if (insertBeforeElement) {
     parent.insertBefore(element, insertBeforeElement);
