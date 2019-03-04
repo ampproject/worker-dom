@@ -21,7 +21,7 @@ import { HTMLTableElement } from './HTMLTableElement';
 import { Document } from './Document';
 import { HTMLTableCellElement } from './HTMLTableCellElement';
 
-const TABLE_SECTION_TAGNAMES = 'table tbody thead tfoot'.split(' ');
+const TABLE_SECTION_TAGNAMES = 'TABLE TBODY THEAD TFOOT'.split(' ');
 
 const indexInAncestor = (element: HTMLTableRowElement, isValidAncestor: ConditionPredicate): number => {
   const parent: Element | null = matchNearestParent(element, isValidAncestor);
@@ -35,7 +35,7 @@ export class HTMLTableRowElement extends HTMLElement {
    * @return td and th elements that are children of this row.
    */
   get cells(): Array<HTMLTableCellElement> {
-    return matchChildrenElements(this, tagNameConditionPredicate(['td', 'th'])) as Array<HTMLTableCellElement>;
+    return matchChildrenElements(this, tagNameConditionPredicate(['TD', 'TH'])) as Array<HTMLTableCellElement>;
   }
 
   /**
@@ -43,7 +43,7 @@ export class HTMLTableRowElement extends HTMLElement {
    * @return position of the row within a table, if not nested within in a table the value is -1.
    */
   get rowIndex(): number {
-    return indexInAncestor(this, tagNameConditionPredicate(['table']));
+    return indexInAncestor(this, tagNameConditionPredicate(['TABLE']));
   }
 
   /**
@@ -80,4 +80,4 @@ export class HTMLTableRowElement extends HTMLElement {
     return td;
   }
 }
-registerSubclass('tr', HTMLTableRowElement);
+registerSubclass('TR', HTMLTableRowElement);

@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2019 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { createDocument } from '../../worker-thread/dom/Document';
+import anyTest, { TestInterface } from 'ava';
+import { Document, createDocument } from '../../worker-thread/dom/Document';
 
-test('returns the name of the Node', t => {
+const test = anyTest as TestInterface<{
+  document: Document;
+}>;
+
+test.beforeEach(t => {
   const document = createDocument();
-  const node = document.createTextNode('');
-  const nodeTwo = document.createElement('div');
+  t.context = { document };
+});
 
-  t.is(document.nodeName, '#document', 'document node returns a valid document node name');
-  t.is(node.nodeName, '#text', 'text node returns a valid text node name');
-  t.is(nodeTwo.nodeName, 'DIV', 'standard element node returns a valid node name');
+test('tagName/nodeName should be uppercase', t => {
+  const { document } = t.context;
+
+  const div = document.createElement('div');
+  t.is(div.nodeName, 'DIV');
+  t.is(div.tagName, 'DIV');
 });

@@ -22,8 +22,8 @@ import { matchChildrenElements, matchChildElement, tagNameConditionPredicate } f
 import { HTMLOptionElement } from './HTMLOptionElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
-const isOptionPredicate = tagNameConditionPredicate(['option']);
-const isSelectedOptionPredicate = (element: Element): boolean => element.tagName === 'option' && (element as HTMLOptionElement).selected;
+const isOptionPredicate = tagNameConditionPredicate(['OPTION']);
+const isSelectedOptionPredicate = (element: Element): boolean => element.tagName === 'OPTION' && (element as HTMLOptionElement).selected;
 
 const enum SizeDefaults {
   SINGLE = 1,
@@ -123,7 +123,7 @@ export class HTMLSelectElement extends HTMLElement {
     return firstSelectedChild ? (firstSelectedChild as HTMLOptionElement).value : '';
   }
 }
-registerSubclass('select', HTMLSelectElement);
+registerSubclass('SELECT', HTMLSelectElement);
 HTMLInputLabelsMixin(HTMLSelectElement);
 
 // Reflected Properties

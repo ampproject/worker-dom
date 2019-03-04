@@ -28,12 +28,13 @@ import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
-import { toLower } from '../../utils';
+import { toLower, toUpper } from '../../utils';
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
 
 export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
 export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
+  console.assert(nodeName === toUpper(nodeName), 'Registered nodeName must be uppercase.');
   NODE_NAME_MAPPING[nodeName] = subclass;
 }
 
@@ -202,7 +203,7 @@ export class Element extends ParentNode {
    * @param name attribute name
    * @param value attribute value
    */
-  public setAttribute(name: string, value: string): void {
+  public setAttribute(name: string, value: unknown): void {
     this.setAttributeNS(HTML_NAMESPACE, name, value);
   }
 
@@ -254,26 +255,27 @@ export class Element extends ParentNode {
    * @param name attribute name
    * @param value attribute value
    */
-  public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
+  public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: unknown): void {
+    const valueAsString = String(value);
     if (this[TransferrableKeys.propertyBackedAttributes][name] !== undefined) {
       if (!this.attributes.find(matchAttrPredicate(namespaceURI, name))) {
         this.attributes.push({
           namespaceURI,
           name,
-          value,
+          value: valueAsString,
         });
       }
-      this[TransferrableKeys.propertyBackedAttributes][name][1](value);
+      this[TransferrableKeys.propertyBackedAttributes][name][1](valueAsString);
       return;
     }
 
-    const oldValue = this[TransferrableKeys.storeAttribute](namespaceURI, name, value);
+    const oldValue = this[TransferrableKeys.storeAttribute](namespaceURI, name, valueAsString);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this,
       attributeName: name,
       attributeNamespace: namespaceURI,
-      value,
+      value: valueAsString,
       oldValue,
     });
   }

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { Node } from '../worker-thread/dom/Node';
-import { Document } from '../worker-thread/dom/Document';
-import { MutationRecord } from '../worker-thread/MutationRecord';
-import { TransferrableMutationRecord } from './TransferrableRecord';
-import { TransferrableNode, TransferredNode } from './TransferrableNodes';
-import { MessageType, MutationFromWorker } from './Messages';
-import { TransferrableKeys } from './TransferrableKeys';
-import { consume as consumeNodes } from '../worker-thread/nodes';
-import { store as storeString, consume as consumeStrings } from '../worker-thread/strings';
-import { phase, set as setPhase, Phases } from '../transfer/phase';
+import { Node } from './dom/Node';
+import { Document } from './dom/Document';
+import { MutationRecord } from './MutationRecord';
+import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
+import { TransferrableNode, TransferredNode } from '../transfer/TransferrableNodes';
+import { MessageType, MutationFromWorker } from '../transfer/Messages';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { consume as consumeNodes } from './nodes';
+import { store as storeString, consume as consumeStrings } from './strings';
+import { phase, set as setPhase, Phases } from './phase';
 
 let observing = false;
 

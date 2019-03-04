@@ -17,7 +17,7 @@
 import { Element } from './Element';
 import { matchChildrenElements, tagNameConditionPredicate } from './matchElements';
 
-const MATCHING_CHILD_ELEMENT_TAGNAMES = 'button fieldset input object output select textarea'.split(' ');
+const MATCHING_CHILD_ELEMENT_TAGNAMES = 'BUTTON FIELDSET INPUT OBJECT OUTPUT SELECT TEXTAREA'.split(' ');
 
 /**
  * The HTMLFormControlsCollection interface represents a collection of HTML form control elements.

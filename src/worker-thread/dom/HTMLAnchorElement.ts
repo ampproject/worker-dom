@@ -49,7 +49,7 @@ export class HTMLAnchorElement extends HTMLElement {
     this.textContent = text;
   }
 }
-registerSubclass('a', HTMLAnchorElement);
+registerSubclass('A', HTMLAnchorElement);
 
 // Reflected properties, strings.
 // HTMLAnchorElement.href => string, reflected attribute
@@ -66,14 +66,14 @@ reflectProperties([{ href: [''] }, { hreflang: [''] }, { media: [''] }, { target
 // Unimplemented URL parse of href attribute due to IE11 compatibility and low usage.
 // Note: Implementation doable using a private url property
 /*
-  class { 
+  class {
     private url: URL | null = null;
 
     constructor(...) {
       // Element.getAttribute('href') => Element.href.
       Object.assign(this[TransferrableKeys.propertyBackedAttributes], {
         href: this.href,
-      }); 
+      });
     }
 
     get href(): string {

@@ -22,7 +22,6 @@ import { Strings } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { WorkerCallbacks } from './callbacks';
 import { WorkerContext } from './worker';
-import { set as setPhase, Phases } from '../transfer/phase';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
@@ -75,7 +74,6 @@ export function install(
     if (workerDOMScript && authorScript && authorScriptURL) {
       const workerContext = new WorkerContext(baseElement, workerDOMScript, authorScript, authorScriptURL, callbacks);
       const worker = workerContext.getWorker();
-      setPhase(Phases.Hydrating);
       const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, sanitizer);
       worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
