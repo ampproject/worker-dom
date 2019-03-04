@@ -202,7 +202,7 @@ export class Element extends ParentNode {
    * @param name attribute name
    * @param value attribute value
    */
-  public setAttribute(name: string, value: Object | null | undefined): void {
+  public setAttribute(name: string, value: unknown): void {
     this.setAttributeNS(HTML_NAMESPACE, name, value);
   }
 
@@ -254,7 +254,7 @@ export class Element extends ParentNode {
    * @param name attribute name
    * @param value attribute value
    */
-  public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: Object | null | undefined): void {
+  public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: unknown): void {
     const valueAsString = String(value);
     if (this[TransferrableKeys.propertyBackedAttributes][name] !== undefined) {
       if (!this.attributes.find(matchAttrPredicate(namespaceURI, name))) {
