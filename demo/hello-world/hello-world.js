@@ -21,6 +21,6 @@ btn.addEventListener('click', async () => {
   h1.textContent = 'Hello World!'
   document.body.appendChild(h1);
 
-  // const boundingClientRect = await h1.getBoundingClientRectAsync();
-  // h1.textContent = h1.textContent + JSON.stringify(boundingClientRect);
+  const boundingClientRect = await h1.getBoundingClientRectAsync();
+  h1.textContent = h1.textContent + JSON.stringify(boundingClientRect);
 });

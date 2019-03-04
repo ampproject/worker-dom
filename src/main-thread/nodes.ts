@@ -53,7 +53,7 @@ export class NodeContext {
     const nodeBuffer = new Uint16Array(buffer); // Uint16Array<TransferrableNode>
     const nodeBufferLength = nodeBuffer.length;
 
-    console.log('create nodes');
+    // console.log('create nodes', nodeBufferLength/7);
     for (let iterator = 0; iterator < nodeBufferLength; iterator += 7) {
       let node: Node;
       if (nodeBuffer[iterator + 1] === NodeType.TEXT_NODE) {
@@ -83,7 +83,7 @@ export class NodeContext {
         }
       }
 
-      this.storeNode(node, nodeBuffer[0]);
+      this.storeNode(node, nodeBuffer[iterator]);
     }
   }
 
@@ -123,6 +123,7 @@ export class NodeContext {
    * @param id
    */
   private storeNode(node: Node, id: number): void {
+    // console.log('store node', id);
     (node as Node)._index_ = id;
     this.nodes.set(id, node as Node);
   }

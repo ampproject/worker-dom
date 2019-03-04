@@ -72,7 +72,7 @@ export class MutatorProcessor {
     //   return;
     // }
     // this.lastGestureTime = lastGestureTime;
-    console.log('mutate', nodes, stringValues, mutations);
+    // console.log('mutate', nodes, stringValues, mutations);
     this.strings.storeValues(stringValues);
     this.nodeContext.createNodes(nodes, this.sanitizer);
     this.mutationQueue = this.mutationQueue.concat(mutations);
@@ -91,14 +91,10 @@ export class MutatorProcessor {
   private syncFlush = (): void => {
     this.mutationQueue.forEach(mutationBuffer => {
       const mutationArray = new Uint16Array(mutationBuffer);
-      console.info('apply mutation', mutationArray);
       const target = this.nodeContext.getNode(mutationArray[1]);
       if (!target) {
         console.error(`getNode() yields null – ${target}`);
         return;
-      }
-      if (mutationArray[0] === TransferrableMutationType.GET_BOUNDING_CLIENT_RECT) {
-        console.log('boundingClientRect');
       }
       this.mutators[mutationArray[0]](mutationArray, target);
     });
