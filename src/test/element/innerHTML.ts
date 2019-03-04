@@ -18,7 +18,7 @@ import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
 import { Comment } from '../../worker-thread/dom/Comment';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType, SVG_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
@@ -151,9 +151,27 @@ test('set invalid html throws', t => {
   t.throws(() => node.innerHTML = '<div>');
 });
 
-test('set keeps tagName\'s case', t =>{
+test('set keeps tagName\'s case', t => {
   const { node } = t.context;
-  node.innerHTML = '<feImage></feImage>';
-  const child = node.firstChild!;
+  node.innerHTML = '<svg><feImage></feImage></svg>';
+  const svgWrapper = node.firstChild!;
+  const child = svgWrapper.firstChild!;
   t.is(child.nodeName, 'feImage');
+});
+
+test.skip('set has svg tags live in SVG namespace', t => {
+  t.pass();
+  const { node } = t.context;
+  node.innerHTML = '<svg></svg>';
+  const child = node.firstChild!;
+  t.is(child.namespaceURI, SVG_NAMESPACE);
+});
+
+test.skip('set normalizes html namespace tag names', t => {
+  t.pass();
+  const { node } = t.context;
+  node.innerHTML = '<Div></Div>';
+  const child = node.firstChild!;
+  t.is(child.localName, 'div');
+  t.is(child.nodeName, 'DIV');
 });
