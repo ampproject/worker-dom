@@ -28,12 +28,12 @@ export class HTMLTableCellElement extends HTMLElement {
    * @return position of the cell within the parent tr, if not nested in a tr the value is -1.
    */
   get cellIndex(): number {
-    const parent = matchNearestParent(this, tagNameConditionPredicate(['tr']));
-    return parent !== null ? matchChildrenElements(parent, tagNameConditionPredicate(['th', 'td'])).indexOf(this) : -1;
+    const parent = matchNearestParent(this, tagNameConditionPredicate(['TR']));
+    return parent !== null ? matchChildrenElements(parent, tagNameConditionPredicate(['TH', 'TD'])).indexOf(this) : -1;
   }
 }
-registerSubclass('th', HTMLTableCellElement);
-registerSubclass('td', HTMLTableCellElement);
+registerSubclass('TH', HTMLTableCellElement);
+registerSubclass('TD', HTMLTableCellElement);
 
 // Reflected Properties
 // HTMLTableCellElement.abbr => string, reflected attribute

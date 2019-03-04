@@ -19,8 +19,8 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLQuoteElement extends HTMLElement {}
-registerSubclass('blockquote', HTMLQuoteElement);
-registerSubclass('q', HTMLQuoteElement);
+registerSubclass('BLOCKQUOTE', HTMLQuoteElement);
+registerSubclass('Q', HTMLQuoteElement);
 
 // Reflected Properties
 // HTMLModElement.cite => string, reflected attribute

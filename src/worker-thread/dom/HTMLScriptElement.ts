@@ -36,7 +36,7 @@ export class HTMLScriptElement extends HTMLElement {
     this.textContent = text;
   }
 }
-registerSubclass('script', HTMLScriptElement);
+registerSubclass('SCRIPT', HTMLScriptElement);
 
 // Reflected Properties
 // HTMLScriptElement.type => string, reflected attribute

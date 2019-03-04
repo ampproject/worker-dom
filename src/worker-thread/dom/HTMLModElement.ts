@@ -19,8 +19,8 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLModElement extends HTMLElement {}
-registerSubclass('del', HTMLModElement);
-registerSubclass('ins', HTMLModElement);
+registerSubclass('DEL', HTMLModElement);
+registerSubclass('INS', HTMLModElement);
 
 // Reflected Properties
 // HTMLModElement.cite => string, reflected attribute

@@ -20,9 +20,12 @@ import { matchChildElement, matchChildrenElements, tagNameConditionPredicate } f
 import { NodeName } from './Node';
 import { HTMLTableSectionElement } from './HTMLTableSectionElement';
 import { HTMLTableRowElement } from './HTMLTableRowElement';
+import { toUpper } from '../../utils';
 
 const removeElement = (element: Element | null): any => element && element.remove();
+
 const insertBeforeElementsWithTagName = (parent: Element, element: Element, tagNames: Array<NodeName>): void => {
+  console.assert(tagNames.every(t => t === toUpper(t)), 'tagNames must be all uppercase.');
   const insertBeforeElement = matchChildElement(parent, (element: Element): boolean => !tagNames.includes(element.tagName));
   if (insertBeforeElement) {
     parent.insertBefore(element, insertBeforeElement);
@@ -37,7 +40,7 @@ export class HTMLTableElement extends HTMLElement {
    * @return first matching caption Element or null if none exists.
    */
   get caption(): Element | null {
-    return matchChildElement(this, tagNameConditionPredicate(['caption']));
+    return matchChildElement(this, tagNameConditionPredicate(['CAPTION']));
   }
 
   /**
@@ -45,7 +48,7 @@ export class HTMLTableElement extends HTMLElement {
    * @param element new caption element to replace the existing, or become the first element child.
    */
   set caption(newElement: Element | null) {
-    if (newElement && newElement.tagName === 'caption') {
+    if (newElement && newElement.tagName === 'CAPTION') {
       // If a correct object is given,
       // it is inserted in the tree as the first child of this element and the first <caption>
       // that is a child of this element is removed from the tree, if any.
@@ -60,7 +63,7 @@ export class HTMLTableElement extends HTMLElement {
    * @return first matching thead Element or null if none exists.
    */
   get tHead(): HTMLTableSectionElement | null {
-    return matchChildElement(this, tagNameConditionPredicate(['thead'])) as HTMLTableSectionElement | null;
+    return matchChildElement(this, tagNameConditionPredicate(['THEAD'])) as HTMLTableSectionElement | null;
   }
 
   /**
@@ -68,14 +71,14 @@ export class HTMLTableElement extends HTMLElement {
    * @param newElement new thead element to insert in this table.
    */
   set tHead(newElement: HTMLTableSectionElement | null) {
-    if (newElement && newElement.tagName === 'thead') {
+    if (newElement && newElement.tagName === 'THEAD') {
       // If a correct object is given,
       // it is inserted in the tree immediately before the first element that is
       // neither a <caption>, nor a <colgroup>, or as the last child if there is no such element.
       // Additionally, the first <thead> that is a child of this element is removed from the tree, if any.
 
       removeElement(this.tHead);
-      insertBeforeElementsWithTagName(this, newElement, ['caption', 'colgroup']);
+      insertBeforeElementsWithTagName(this, newElement, ['CAPTION', 'COLGROUP']);
     }
   }
 
@@ -84,7 +87,7 @@ export class HTMLTableElement extends HTMLElement {
    * @return first matching thead Element or null if none exists.
    */
   get tFoot(): HTMLTableSectionElement | null {
-    return matchChildElement(this, tagNameConditionPredicate(['tfoot'])) as HTMLTableSectionElement | null;
+    return matchChildElement(this, tagNameConditionPredicate(['TFOOT'])) as HTMLTableSectionElement | null;
   }
 
   /**
@@ -92,14 +95,14 @@ export class HTMLTableElement extends HTMLElement {
    * @param newElement new tfoot element to insert in this table.
    */
   set tFoot(newElement: HTMLTableSectionElement | null) {
-    if (newElement && newElement.tagName === 'tfoot') {
+    if (newElement && newElement.tagName === 'TFOOT') {
       // If a correct object is given,
       // it is inserted in the tree immediately before the first element that is neither a <caption>,
       // a <colgroup>, nor a <thead>, or as the last child if there is no such element, and the first <tfoot> that is a child of
       // this element is removed from the tree, if any.
 
       removeElement(this.tFoot);
-      insertBeforeElementsWithTagName(this, newElement, ['caption', 'colgroup', 'thead']);
+      insertBeforeElementsWithTagName(this, newElement, ['CAPTION', 'COLGROUP', 'THEAD']);
     }
   }
 
@@ -108,7 +111,7 @@ export class HTMLTableElement extends HTMLElement {
    * @return array of 'tr' tagname elements
    */
   get rows(): Array<HTMLTableRowElement> {
-    return matchChildrenElements(this, tagNameConditionPredicate(['tr'])) as Array<HTMLTableRowElement>;
+    return matchChildrenElements(this, tagNameConditionPredicate(['TR'])) as Array<HTMLTableRowElement>;
   }
 
   /**
@@ -116,10 +119,10 @@ export class HTMLTableElement extends HTMLElement {
    * @return array of 'tbody' tagname elements
    */
   get tBodies(): Array<HTMLTableSectionElement> {
-    return matchChildrenElements(this, tagNameConditionPredicate(['tbody'])) as Array<HTMLTableSectionElement>;
+    return matchChildrenElements(this, tagNameConditionPredicate(['TBODY'])) as Array<HTMLTableSectionElement>;
   }
 }
-registerSubclass('table', HTMLTableElement);
+registerSubclass('TABLE', HTMLTableElement);
 
 // Unimplemented Properties
 // HTMLTableElement.sortable => boolean
