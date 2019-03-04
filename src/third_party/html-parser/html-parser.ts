@@ -137,7 +137,11 @@ export function parse(data: string, rootElement: Element) {
     if (beginningSlash || endSlash || kSelfClosingElements[tagName]) {
       // </ or /> or <br> etc.
       while (true) {
-        if (currentParent.nodeName == tagName && stack.length > 1) {
+        if (stack.length <= 1) {
+          break;
+        }
+
+        if (currentParent.nodeName.toUpperCase() == tagName) {
           stack.pop();
           currentParent = arr_back(stack);
           break;
