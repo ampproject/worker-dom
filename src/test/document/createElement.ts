@@ -17,7 +17,6 @@
 import anyTest, { TestInterface } from 'ava';
 import { Document, createDocument } from '../../worker-thread/dom/Document';
 import { SVGElement } from '../../worker-thread/dom/SVGElement';
-import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -59,7 +58,7 @@ test('createElementNS() should not modify its input', t => {
   el = document.createElementNS('http://www.w3.org/2000/svg', 'SvG');
   t.is(el.nodeName, 'SVG');
   t.is(el.localName, 'SvG');
-  t.true(el instanceof HTMLElement);
+  t.false(el instanceof SVGElement);
 
   el = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   t.is(el.nodeName, 'svg');
