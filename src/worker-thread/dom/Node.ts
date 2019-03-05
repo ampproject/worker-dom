@@ -106,6 +106,13 @@ export abstract class Node {
    * @return text from all childNodes.
    */
   get textContent(): string {
+    return this.getTextContent();
+  }
+
+  /**
+   * Use `this.getTextContent()` instead of `super.textContent` to avoid incorrect or expensive ES5 transpilation.
+   */
+  protected getTextContent(): string {
     let textContent = '';
     const childNodes = this.childNodes;
 

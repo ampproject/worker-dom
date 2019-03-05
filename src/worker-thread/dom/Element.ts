@@ -185,7 +185,7 @@ export class Element extends ParentNode {
    * @return text from all childNodes.
    */
   get textContent(): string {
-    return super.textContent;
+    return this.getTextContent();
   }
 
   /**
