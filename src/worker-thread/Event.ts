@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @fileoverview
+ * WorkerDOM's `Event` class. `CustomEvent` is available natively in web worker.
+ */
+
 import { Node } from './dom/Node';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
@@ -55,5 +60,11 @@ export class Event {
   }
   public preventDefault(): void {
     this.defaultPrevented = true;
+  }
+  /** Event.initEvent() is deprecated but supported here for legacy usage.  */
+  public initEvent(type: string, bubbles: boolean, cancelable: boolean) {
+    this.type = type;
+    this.bubbles = bubbles;
+    this.cancelable = cancelable;
   }
 }
