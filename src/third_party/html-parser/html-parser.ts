@@ -91,7 +91,7 @@ export function parse(data: string, rootElement: Element) {
       currentParent.appendChild(new Text(text, ownerDocument));
     }
     lastTextPos = kMarkupPattern.lastIndex;
-    if (match[0][1] == '!') {
+    if (commentContents !== undefined) {
       // this is a comment
       currentParent.appendChild(new Comment(commentContents, ownerDocument));
       continue;
