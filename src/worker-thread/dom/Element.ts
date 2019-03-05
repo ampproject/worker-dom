@@ -31,9 +31,10 @@ import { store as storeString } from '../strings';
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
 
-export const LOCAL_NAME_TO_CLASS: { [key: string]: typeof Element } = {};
-export function registerSubclass(localName: string, subclass: typeof Element): void {
-  LOCAL_NAME_TO_CLASS[localName] = subclass;
+export const NS_NAME_TO_CLASS: { [key: string]: typeof Element } = {};
+export function registerSubclass(localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): void {
+  const key = `${namespace}:${localName}`;
+  NS_NAME_TO_CLASS[key] = subclass;
 }
 
 interface ClientRect {

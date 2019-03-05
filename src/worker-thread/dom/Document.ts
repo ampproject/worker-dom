@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Element, LOCAL_NAME_TO_CLASS } from './Element';
+import { Element, NS_NAME_TO_CLASS } from './Element';
 import { HTMLElement } from './HTMLElement';
 import './HTMLAnchorElement';
 import './HTMLButtonElement';
@@ -100,11 +100,10 @@ export class Document extends Element {
   }
 
   public createElement(name: string): Element {
-    // TODO: Unit test for this.
     return this.createElementNS(HTML_NAMESPACE, toLower(name));
   }
   public createElementNS(namespaceURI: NamespaceURI, localName: string): Element {
-    const constructor = LOCAL_NAME_TO_CLASS[localName] || HTMLElement;
+    const constructor = NS_NAME_TO_CLASS[`${namespaceURI}:${localName}`] || HTMLElement;
     return new constructor(NodeType.ELEMENT_NODE, localName, namespaceURI, this);
   }
 

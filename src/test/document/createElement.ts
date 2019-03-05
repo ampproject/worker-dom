@@ -16,6 +16,8 @@
 
 import anyTest, { TestInterface } from 'ava';
 import { Document, createDocument } from '../../worker-thread/dom/Document';
+import { SVGElement } from '../../worker-thread/dom/SVGElement';
+import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -29,31 +31,38 @@ test.beforeEach(t => {
 test('createElement() should lowercase its input', t => {
   const { document } = t.context;
 
-  let div = document.createElement('div');
-  t.is(div.nodeName, 'DIV');
-  t.is(div.localName, 'div');
+  let el = document.createElement('div');
+  t.is(el.nodeName, 'DIV');
+  t.is(el.localName, 'div');
 
-  div = document.createElement('DIV');
-  t.is(div.nodeName, 'DIV');
-  t.is(div.localName, 'div');
+  el = document.createElement('DIV');
+  t.is(el.nodeName, 'DIV');
+  t.is(el.localName, 'div');
 
-  div = document.createElement('feImage');
-  t.is(div.nodeName, 'FEIMAGE');
-  t.is(div.localName, 'feimage');
+  el = document.createElement('SvG');
+  t.is(el.nodeName, 'SVG');
+  t.is(el.localName, 'svg');
+  t.false(el instanceof SVGElement);
 });
 
 test('createElementNS() should not modify its input', t => {
   const { document } = t.context;
 
-  let div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
-  t.is(div.nodeName, 'DIV');
-  t.is(div.localName, 'div');
+  let el = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+  t.is(el.nodeName, 'DIV');
+  t.is(el.localName, 'div');
 
-  div = document.createElementNS('http://www.w3.org/1999/xhtml', 'DIV');
-  t.is(div.nodeName, 'DIV');
-  t.is(div.localName, 'DIV');
+  el = document.createElementNS('http://www.w3.org/1999/xhtml', 'DIV');
+  t.is(el.nodeName, 'DIV');
+  t.is(el.localName, 'DIV');
 
-  div = document.createElementNS('http://www.w3.org/2000/svg', 'feImage');
-  t.is(div.nodeName, 'feImage');
-  t.is(div.localName, 'feImage');
+  el = document.createElementNS('http://www.w3.org/2000/svg', 'SvG');
+  t.is(el.nodeName, 'SVG');
+  t.is(el.localName, 'SvG');
+  t.true(el instanceof HTMLElement);
+
+  el = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  t.is(el.nodeName, 'svg');
+  t.is(el.localName, 'svg');
+  t.true(el instanceof SVGElement);
 });
