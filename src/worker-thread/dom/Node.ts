@@ -292,6 +292,7 @@ export abstract class Node {
         propagate(oldChild, 'isConnected', false);
         propagate(oldChild, TransferrableKeys.scopingRoot, oldChild);
         this.childNodes.splice(index, 1, newChild);
+        newChild.parentNode = this;
         propagate(newChild, 'isConnected', this.isConnected);
         propagate(newChild, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
 
