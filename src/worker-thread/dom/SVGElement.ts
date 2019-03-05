@@ -24,4 +24,4 @@ export class SVGElement extends Element {
     this.localName = nodeName;
   }
 }
-registerSubclass('svg', SVGElement);
+registerSubclass('SVG', SVGElement);

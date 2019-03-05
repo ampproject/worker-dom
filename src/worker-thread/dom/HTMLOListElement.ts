@@ -19,7 +19,7 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLOListElement extends HTMLElement {}
-registerSubclass('ol', HTMLOListElement);
+registerSubclass('OL', HTMLOListElement);
 
 // Reflected Properties
 // HTMLModElement.reversed => boolean, reflected attribute

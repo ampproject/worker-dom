@@ -15,15 +15,18 @@
  */
 
 import { Element } from './Element';
-import { toLower } from '../../utils';
+import { toLower, toUpper } from '../../utils';
 import { NodeType } from '../../transfer/TransferrableNodes';
 import { Node } from './Node';
 
 export type ConditionPredicate = (element: Element) => boolean;
 // To future authors: It would be great if we could enforce that elements are not modified by a ConditionPredicate.
 
-export const tagNameConditionPredicate = (tagNames: Array<string>): ConditionPredicate => (element: Element): boolean =>
-  tagNames.includes(element.tagName);
+export const tagNameConditionPredicate = (tagNames: Array<string>): ConditionPredicate => (element: Element): boolean => {
+  console.assert(tagNames.every(t => t === toUpper(t)), 'tagNames must be all uppercase.');
+  return tagNames.includes(element.tagName);
+};
+
 export const elementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
 export const matchChildrenElements = (node: Node, conditionPredicate: ConditionPredicate): Element[] => {
