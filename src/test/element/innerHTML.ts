@@ -160,7 +160,6 @@ test('set keeps tagName\'s case', t => {
 });
 
 test.skip('set has svg tags live in SVG namespace', t => {
-  t.pass();
   const { node } = t.context;
   node.innerHTML = '<svg></svg>';
   const child = node.firstChild!;
@@ -168,7 +167,6 @@ test.skip('set has svg tags live in SVG namespace', t => {
 });
 
 test.skip('set normalizes html namespace tag names', t => {
-  t.pass();
   const { node } = t.context;
   node.innerHTML = '<Div></Div>';
   const child = node.firstChild!;

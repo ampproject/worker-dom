@@ -81,7 +81,7 @@ export function parse(data: string, rootElement: Element) {
 
     const commentContents = match[1]; // <!--contents-->
     let beginningSlash = match[2]; // ... </ ...
-    let tagName = match[3];
+    const tagName = match[3];
     const matchAttributes = match[4];
     const endSlash = match[5]; // ... /> ...
 
@@ -125,8 +125,8 @@ export function parse(data: string, rootElement: Element) {
       stack.push(currentParent);
       if (kBlockTextElements[normalizedTagName]) {
         // a little test to find next </script> or </style> ...
-        let closeMarkup = '</' + normalizedTagName.toLowerCase() + '>';
-        let index = data.indexOf(closeMarkup, kMarkupPattern.lastIndex);
+        const closeMarkup = '</' + normalizedTagName.toLowerCase() + '>';
+        const index = data.indexOf(closeMarkup, kMarkupPattern.lastIndex);
         if (index == -1) {
           throw new Error('Close markup not found.');
         } else {
