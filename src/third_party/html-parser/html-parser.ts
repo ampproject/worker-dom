@@ -45,13 +45,13 @@ const kElementsClosedByOpening: ElementMapping = {
   h6: { H6: true },
 };
 const kElementsClosedByClosing: ElementMapping = {
-  li: { ul: true, ol: true },
-  a: { div: true },
-  b: { div: true },
-  i: { div: true },
-  p: { div: true },
-  td: { tr: true, table: true },
-  th: { tr: true, table: true },
+  li: { UL: true, OL: true },
+  a: { DIV: true },
+  b: { DIV: true },
+  i: { DIV: true },
+  p: { DIV: true },
+  td: { TR: true, TABLE: true },
+  th: { TR: true, TABLE: true },
 };
 const kBlockTextElements: Elements = {
   SCRIPT: true,
@@ -102,8 +102,8 @@ export function parse(data: string, rootElement: Element) {
     if (!beginningSlash) {
       // not </ tags
 
-      if (!endSlash && kElementsClosedByOpening[currentParent.normalizedTagName]) {
-        if (kElementsClosedByOpening[currentParent.normalizedTagName][normalizedTagName]) {
+      if (!endSlash && kElementsClosedByOpening[currentParent.tagName]) {
+        if (kElementsClosedByOpening[currentParent.tagName][normalizedTagName]) {
           stack.pop();
           currentParent = arr_back(stack);
         }
@@ -150,8 +150,8 @@ export function parse(data: string, rootElement: Element) {
           break;
         } else {
           // Trying to close current tag, and move on
-          if (kElementsClosedByClosing[currentParent.normalizedTagName]) {
-            if (kElementsClosedByClosing[currentParent.normalizedTagName][normalizedTagName]) {
+          if (kElementsClosedByClosing[currentParent.tagName]) {
+            if (kElementsClosedByClosing[currentParent.tagName][normalizedTagName]) {
               stack.pop();
               currentParent = arr_back(stack);
               continue;

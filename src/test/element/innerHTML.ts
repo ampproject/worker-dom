@@ -159,6 +159,20 @@ test('set keeps tagName\'s case', t => {
   t.is(child.nodeName, 'feImage');
 });
 
+test('set closes tags by opening others', t => {
+  const { node } = t.context;
+  node.innerHTML = '<b><div></div>';
+  // <b> tag should be closed to create a second child
+  t.is(node.childNodes.length, 2);
+});
+
+test('set closes tags by closing others', t => {
+  const { node } = t.context;
+  node.innerHTML = '<div><a></div>';
+  const child = node.firstChild!; // div node
+  t.true(child.hasChildNodes());
+});
+
 test.skip('set has svg tags live in SVG namespace', t => {
   const { node } = t.context;
   node.innerHTML = '<svg></svg>';
