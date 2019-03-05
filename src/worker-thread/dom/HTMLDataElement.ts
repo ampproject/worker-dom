@@ -19,7 +19,7 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLDataElement extends HTMLElement {}
-registerSubclass('DATA', HTMLDataElement);
+registerSubclass('data', HTMLDataElement);
 
 // Reflected properties, strings.
 // HTMLEmbedElement.value => string, reflected attribute

@@ -19,7 +19,7 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLButtonElement extends HTMLElement {}
-registerSubclass('BUTTON', HTMLButtonElement);
+registerSubclass('button', HTMLButtonElement);
 
 // Reflected properties, strings.
 // HTMLButtonElement.formAction => string, reflected attribute

@@ -122,7 +122,7 @@ export class HTMLTableElement extends HTMLElement {
     return matchChildrenElements(this, tagNameConditionPredicate(['TBODY'])) as Array<HTMLTableSectionElement>;
   }
 }
-registerSubclass('TABLE', HTMLTableElement);
+registerSubclass('table', HTMLTableElement);
 
 // Unimplemented Properties
 // HTMLTableElement.sortable => boolean

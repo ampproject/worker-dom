@@ -33,7 +33,7 @@ export class HTMLLabelElement extends HTMLElement {
     return matchChildElement(this as Element, tagNameConditionPredicate(['INPUT']));
   }
 }
-registerSubclass('LABEL', HTMLLabelElement);
+registerSubclass('label', HTMLLabelElement);
 
 // Reflected Properties
 // HTMLLabelElement.htmlFor => string, reflected attribute 'for'

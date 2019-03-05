@@ -29,7 +29,7 @@ export class HTMLMapElement extends HTMLElement {
     return matchChildrenElements(this as Element, element => element.tagName === 'AREA');
   }
 }
-registerSubclass('MAP', HTMLMapElement);
+registerSubclass('map', HTMLMapElement);
 
 // Reflected Properties
 // HTMLMapElement.name => string, reflected attribute

@@ -19,7 +19,7 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLEmbedElement extends HTMLElement {}
-registerSubclass('EMBED', HTMLEmbedElement);
+registerSubclass('embed', HTMLEmbedElement);
 
 // Reflected properties, strings.
 // HTMLEmbedElement.height => string, reflected attribute

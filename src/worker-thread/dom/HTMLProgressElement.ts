@@ -37,7 +37,7 @@ export class HTMLProgressElement extends HTMLElement {
     // TODO(KB) This is a property mutation needing tracked.
   }
 }
-registerSubclass('PROGRESS', HTMLProgressElement);
+registerSubclass('progress', HTMLProgressElement);
 HTMLInputLabelsMixin(HTMLProgressElement);
 
 // Reflected Properties

@@ -123,7 +123,7 @@ export class HTMLSelectElement extends HTMLElement {
     return firstSelectedChild ? (firstSelectedChild as HTMLOptionElement).value : '';
   }
 }
-registerSubclass('SELECT', HTMLSelectElement);
+registerSubclass('select', HTMLSelectElement);
 HTMLInputLabelsMixin(HTMLSelectElement);
 
 // Reflected Properties

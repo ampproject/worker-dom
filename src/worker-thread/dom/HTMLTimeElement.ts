@@ -20,7 +20,7 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLTimeElement extends HTMLElement {}
-registerSubclass('TIME', HTMLTimeElement);
+registerSubclass('time', HTMLTimeElement);
 
 // Reflected Properties
 // HTMLTimeElement.dateTime => string, reflected attribute

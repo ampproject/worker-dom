@@ -80,4 +80,4 @@ export class HTMLTableRowElement extends HTMLElement {
     return td;
   }
 }
-registerSubclass('TR', HTMLTableRowElement);
+registerSubclass('tr', HTMLTableRowElement);

@@ -127,7 +127,7 @@ export class HTMLInputElement extends HTMLElement {
     return new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
   }
 }
-registerSubclass('INPUT', HTMLInputElement);
+registerSubclass('input', HTMLInputElement);
 HTMLInputLabelsMixin(HTMLInputElement);
 
 // Reflected Properties

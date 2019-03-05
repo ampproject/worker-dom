@@ -25,4 +25,4 @@ export class SVGElement extends Element {
     this.nodeName = localName;
   }
 }
-registerSubclass('SVG', SVGElement);
+registerSubclass('svg', SVGElement);

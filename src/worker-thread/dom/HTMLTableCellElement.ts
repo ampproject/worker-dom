@@ -32,8 +32,8 @@ export class HTMLTableCellElement extends HTMLElement {
     return parent !== null ? matchChildrenElements(parent, tagNameConditionPredicate(['TH', 'TD'])).indexOf(this) : -1;
   }
 }
-registerSubclass('TH', HTMLTableCellElement);
-registerSubclass('TD', HTMLTableCellElement);
+registerSubclass('th', HTMLTableCellElement);
+registerSubclass('td', HTMLTableCellElement);
 
 // Reflected Properties
 // HTMLTableCellElement.abbr => string, reflected attribute
