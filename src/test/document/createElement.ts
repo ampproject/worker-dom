@@ -26,10 +26,34 @@ test.beforeEach(t => {
   t.context = { document };
 });
 
-test('tagName/nodeName should be uppercase', t => {
+test('createElement() should lowercase its input', t => {
   const { document } = t.context;
 
-  const div = document.createElement('div');
+  let div = document.createElement('div');
   t.is(div.nodeName, 'DIV');
-  t.is(div.tagName, 'DIV');
+  t.is(div.localName, 'div');
+
+  div = document.createElement('DIV');
+  t.is(div.nodeName, 'DIV');
+  t.is(div.localName, 'div');
+
+  div = document.createElement('feImage');
+  t.is(div.nodeName, 'FEIMAGE');
+  t.is(div.localName, 'feimage');
+});
+
+test('createElementNS() should not modify its input', t => {
+  const { document } = t.context;
+
+  let div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+  t.is(div.nodeName, 'DIV');
+  t.is(div.localName, 'div');
+
+  div = document.createElementNS('http://www.w3.org/1999/xhtml', 'DIV');
+  t.is(div.nodeName, 'DIV');
+  t.is(div.localName, 'DIV');
+
+  div = document.createElementNS('http://www.w3.org/2000/svg', 'feImage');
+  t.is(div.nodeName, 'feImage');
+  t.is(div.localName, 'feImage');
 });
