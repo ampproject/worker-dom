@@ -42,7 +42,7 @@ export interface HydrateableNode extends TransferrableNode {
 
 export interface TransferrableNode extends TransferredNode {
   readonly [TransferrableKeys.nodeType]: NodeType;
-  readonly [TransferrableKeys.nodeName]: number;
+  readonly [TransferrableKeys.localOrNodeName]: number;
 
   // Optional keys that are defined at construction of a `Text` or `Element`.
   // This makes the keys observed.

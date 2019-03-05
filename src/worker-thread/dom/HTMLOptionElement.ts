@@ -24,8 +24,8 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 export class HTMLOptionElement extends HTMLElement {
   private [TransferrableKeys.selected]: boolean = false;
 
-  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node) {
-    super(nodeType, nodeName, namespaceURI, ownerDocument);
+  constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node) {
+    super(nodeType, localName, namespaceURI, ownerDocument);
 
     this[TransferrableKeys.propertyBackedAttributes].selected = [
       (): string => String(this[TransferrableKeys.selected]),

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Element, NODE_NAME_MAPPING } from './Element';
+import { Element, LOCAL_NAME_TO_CLASS } from './Element';
 import { HTMLElement } from './HTMLElement';
 import './HTMLAnchorElement';
 import './HTMLButtonElement';
@@ -56,8 +56,10 @@ import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { observe as observeMutations } from '../DocumentMutations';
 import { propagate as propagateEvents } from '../EventPropagation';
 import { propagate as propagateSyncValues } from '../SyncValuePropagation';
-import { toUpper } from '../../utils';
+import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
+
+const DOCUMENT_NAME = '#document';
 
 export class Document extends Element {
   public defaultView: {
@@ -75,7 +77,9 @@ export class Document extends Element {
   public body: Element;
 
   constructor() {
-    super(NodeType.DOCUMENT_NODE, '#document', HTML_NAMESPACE, null);
+    super(NodeType.DOCUMENT_NODE, DOCUMENT_NAME, HTML_NAMESPACE, null);
+    // Element uppercases its nodeName, but Document doesn't.
+    this.nodeName = DOCUMENT_NAME;
     this.documentElement = this;
     this.observe = (): void => {
       observeMutations(this, this.postMessageMethod);
@@ -95,12 +99,13 @@ export class Document extends Element {
     };
   }
 
-  public createElement(tagName: string): Element {
-    return this.createElementNS(HTML_NAMESPACE, tagName);
+  public createElement(name: string): Element {
+    // TODO: Unit test for this.
+    return this.createElementNS(HTML_NAMESPACE, toLower(name));
   }
-  public createElementNS(namespaceURI: NamespaceURI, tagName: string): Element {
-    const upperTagName = toUpper(tagName);
-    return new (NODE_NAME_MAPPING[upperTagName] || HTMLElement)(NodeType.ELEMENT_NODE, upperTagName, namespaceURI, this);
+  public createElementNS(namespaceURI: NamespaceURI, localName: string): Element {
+    const constructor = LOCAL_NAME_TO_CLASS[localName] || HTMLElement;
+    return new constructor(NodeType.ELEMENT_NODE, localName, namespaceURI, this);
   }
 
   public createTextNode(text: string): Text {
