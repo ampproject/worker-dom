@@ -76,6 +76,7 @@ export function parse(data: string, rootElement: Element) {
   let lastTextPos = 0;
   let match: RegExpExecArray | null;
   data = '<div>' + data + '</div>';
+  const tagsClosed = [] as string[];
 
   while ((match = kMarkupPattern.exec(data))) {
 
@@ -101,11 +102,9 @@ export function parse(data: string, rootElement: Element) {
 
     if (!beginningSlash) {
       // not </ tags
-
       if (!endSlash && kElementsClosedByOpening[currentParent.tagName]) {
         if (kElementsClosedByOpening[currentParent.tagName][normalizedTagName]) {
-          stack.pop();
-          currentParent = arr_back(stack);
+          tagsClosed.push(currentParent.tagName);
         }
       }
       const childToAppend = new Element(
@@ -158,6 +157,14 @@ export function parse(data: string, rootElement: Element) {
           break;
         }
       }
+    }
+  }
+
+  for (const node of stack) {
+    if (tagsClosed.includes(node.nodeName)) {
+      stack.pop();
+      tagsClosed.pop();
+      currentParent = arr_back(stack);
     }
   }
 
