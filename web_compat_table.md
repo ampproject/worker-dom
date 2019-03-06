@@ -139,8 +139,8 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | document.write()                                    | ✖️     |                                                  | 
 | document.writeln()                                  | ✖️     |                                                  | 
 | DocumentFragment.getElementById()                   | ✔️     |                                                  | 
-| DocumentFragment.querySelector()                    | ✔️     | Partial support                                  | 
-| DocumentFragment.querySelectorAll()                 | ✔️     | Partial support                                  | 
+| DocumentFragment.querySelector()                    | ✔️     | Partial support<sup>[1](#myfootnote1)</sup>      | 
+| DocumentFragment.querySelectorAll()                 | ✔️     | Partial support<sup>[1](#myfootnote1)</sup>      | 
 | DocumentOrShadowRoot.activeElement                  | ✖️     |                                                  | 
 | DocumentOrShadowRoot.caretPositionFromPoint()       | ✖️     |                                                  | 
 | DocumentOrShadowRoot.elementFromPoint()             | ✖️     |                                                  | 
@@ -219,8 +219,8 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Element.openOrClosedShadowRoot                      | ✖️     |                                                  | 
 | Element.outerHTML                                   | ✔️     |                                                  | 
 | Element.prefix                                      | ✖️     |                                                  | 
-| Element.querySelector()                             | ✔️     | Partial support                                  | 
-| Element.querySelectorAll()                          | ✔️     | Partial support                                  | 
+| Element.querySelector()                             | ✔️     | Partial support<sup>[1](#myfootnote1)</sup>      | 
+| Element.querySelectorAll()                          | ✔️     | Partial support<sup>[1](#myfootnote1)</sup>      | 
 | Element.releasePointerCapture()                     | ✖️     |                                                  | 
 | Element.removeAttribute()                           | ✔️     |                                                  | 
 | Element.removeAttributeNode()                       | ✖️     |                                                  | 
@@ -771,8 +771,8 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | ParentNode.firstElementChild                        | ✔️     |                                                  | 
 | ParentNode.lastElementChild                         | ✔️     |                                                  | 
 | ParentNode.prepend()                                | ✖️     |                                                  | 
-| ParentNode.querySelector()                          | ✔️     | Partial support                                  | 
-| ParentNode.querySelectorAll()                       | ✔️     | Partial support                                  | 
+| ParentNode.querySelector()                          | ✔️     | Partial support<sup>[1](#myfootnote1)</sup>      | 
+| ParentNode.querySelectorAll()                       | ✔️     | Partial support<sup>[1](#myfootnote1)</sup>      | 
 | Range.cloneContents()                               | ✖️     |                                                  | 
 | Range.cloneRange()                                  | ✖️     |                                                  | 
 | Range.collapse()                                    | ✖️     |                                                  | 
@@ -977,3 +977,5 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Window.visualViewport                               | ✖️     |                                                  | 
 | Window.window                                       | ✖️     |                                                  | 
 | Worker                                              | N/A    | Doesn't apply since this is on the Worker thread | 
+
+<a name="myfootnote1">[1]</a>: querySelector(All) currently supports simple selectors i.e. ID selectors, Class selectors, Element selectors and Attribute selectors.
