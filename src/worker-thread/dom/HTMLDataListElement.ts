@@ -25,7 +25,7 @@ export class HTMLDataListElement extends HTMLElement {
    * @return Element "options" objects that are direct children.
    */
   get options(): Array<Element> {
-    return this.childNodes.filter((node: Node): boolean => node.nodeName === 'option') as Element[];
+    return this.childNodes.filter((node: Node): boolean => node.nodeName === 'OPTION') as Element[];
   }
 }
 registerSubclass('datalist', HTMLDataListElement);
