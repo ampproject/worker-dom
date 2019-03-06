@@ -161,11 +161,11 @@ export function parse(data: string, rootElement: Element) {
   }
 
   for (const node of stack) {
-    if (tagsClosed.includes(node.nodeName)) {
+    if (tagsClosed[tagsClosed.length - 1] == node.nodeName) {
       stack.pop();
       tagsClosed.pop();
       currentParent = arr_back(stack);
-    }
+    } else break;
   }
 
   const valid = stack.length === 1;
