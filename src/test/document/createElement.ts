@@ -54,7 +54,7 @@ test('createElement() should use HTML namespace', t => {
   t.is(el.namespaceURI, 'http://www.w3.org/1999/xhtml');
 });
 
-test('createElementNS(x) should not lowercase x', t => {
+test('createElementNS(ns, x) should not lowercase x', t => {
   const { document } = t.context;
 
   let el = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
