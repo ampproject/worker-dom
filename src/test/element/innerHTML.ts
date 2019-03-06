@@ -173,6 +173,14 @@ test('set closes tags by closing others', t => {
   t.true(child.hasChildNodes());
 });
 
+test('set takes all block text element content as text', t => {
+  const { node } = t.context;
+  node.innerHTML = '<style><div></div></style>';
+  const child = node.firstChild!; // style node
+  const childContent = child.firstChild!;
+  t.is(childContent.nodeType, NodeType.TEXT_NODE);
+});
+
 test.skip('set has svg tags live in SVG namespace', t => {
   const { node } = t.context;
   node.innerHTML = '<svg></svg>';

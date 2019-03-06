@@ -130,10 +130,7 @@ export function parse(data: string, rootElement: Element) {
         if (index == -1) {
           throw new Error('Close markup not found.');
         } else {
-          const text = data.slice(lastTextPos, index);
-          currentParent.appendChild(new Text(text, ownerDocument));
-          lastTextPos = kMarkupPattern.lastIndex = index + closeMarkup.length;
-          beginningSlash = 'true';
+          kMarkupPattern.lastIndex = index;
         }
       }
     }
