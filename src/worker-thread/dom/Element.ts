@@ -20,7 +20,7 @@ import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { NumericBoolean } from '../../utils';
+import { NumericBoolean, toLower, toUpper } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
@@ -28,15 +28,15 @@ import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
-import { toLower } from '../../utils';
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
 import { parse } from '../../third_party/html-parser/html-parser';
 import { propagate } from './Node';
 
-export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
-export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
-  NODE_NAME_MAPPING[nodeName] = subclass;
+export const NS_NAME_TO_CLASS: { [key: string]: typeof Element } = {};
+export function registerSubclass(localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): void {
+  const key = `${namespace}:${localName}`;
+  NS_NAME_TO_CLASS[key] = subclass;
 }
 
 interface ClientRect {
@@ -58,15 +58,15 @@ export class Element extends ParentNode {
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
 
-  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null) {
-    super(nodeType, nodeName, ownerDocument);
+  constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null) {
+    super(nodeType, toUpper(localName), ownerDocument);
     this.namespaceURI = namespaceURI || HTML_NAMESPACE;
-    this.localName = toLower(nodeName);
+    this.localName = localName;
     this[TransferrableKeys.creationFormat] = {
       [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: this.nodeType,
-      [TransferrableKeys.nodeName]: storeString(this.nodeName),
+      [TransferrableKeys.localOrNodeName]: storeString(this.localName),
       [TransferrableKeys.namespaceURI]: this.namespaceURI === null ? undefined : storeString(this.namespaceURI),
     };
   }

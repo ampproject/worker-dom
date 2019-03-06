@@ -29,7 +29,7 @@ export class Comment extends CharacterData {
       [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: NodeType.COMMENT_NODE,
-      [TransferrableKeys.nodeName]: storeString(this.nodeName),
+      [TransferrableKeys.localOrNodeName]: storeString(this.nodeName),
       [TransferrableKeys.textContent]: storeString(this.data),
     };
   }

@@ -173,7 +173,7 @@ export class DebuggingContext {
 function readableHydrateableNode(node: HydrateableNode): Object {
   const out: any = {
     nodeType: node[TransferrableKeys.nodeType],
-    nodeName: node[TransferrableKeys.nodeName],
+    name: node[TransferrableKeys.localOrNodeName],
   };
   const attributes = node[TransferrableKeys.attributes];
   if (attributes) {

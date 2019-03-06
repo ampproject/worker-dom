@@ -29,7 +29,7 @@ export class DocumentFragment extends ParentNode {
       [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: NodeType.DOCUMENT_FRAGMENT_NODE,
-      [TransferrableKeys.nodeName]: storeString(this.nodeName),
+      [TransferrableKeys.localOrNodeName]: storeString(this.nodeName),
     };
   }
 
