@@ -29,7 +29,7 @@ export class Text extends CharacterData {
       [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: NodeType.TEXT_NODE,
-      [TransferrableKeys.nodeName]: storeString('#text'),
+      [TransferrableKeys.localOrNodeName]: storeString('#text'),
       [TransferrableKeys.textContent]: storeString(this.data),
     };
   }

@@ -67,8 +67,8 @@ export class NodeContext {
     } else {
       const namespace =
         skeleton[TransferrableKeys.namespaceURI] !== undefined ? this.strings.get(skeleton[TransferrableKeys.namespaceURI] as number) : undefined;
-      const nodeName = this.strings.get(skeleton[TransferrableKeys.nodeName]);
-      node = namespace ? document.createElementNS(namespace, nodeName) : document.createElement(nodeName);
+      const localName = this.strings.get(skeleton[TransferrableKeys.localOrNodeName]);
+      node = namespace ? document.createElementNS(namespace, localName) : document.createElement(localName);
 
       // TODO(KB): Restore Properties
       // skeleton.properties.forEach(property => {

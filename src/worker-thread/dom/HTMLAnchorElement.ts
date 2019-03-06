@@ -66,14 +66,14 @@ reflectProperties([{ href: [''] }, { hreflang: [''] }, { media: [''] }, { target
 // Unimplemented URL parse of href attribute due to IE11 compatibility and low usage.
 // Note: Implementation doable using a private url property
 /*
-  class { 
+  class {
     private url: URL | null = null;
 
     constructor(...) {
       // Element.getAttribute('href') => Element.href.
       Object.assign(this[TransferrableKeys.propertyBackedAttributes], {
         href: this.href,
-      }); 
+      });
     }
 
     get href(): string {
