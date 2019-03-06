@@ -163,8 +163,14 @@ test('set closes tags by opening others', t => {
 test('set closes tags by closing others', t => {
   const { node } = t.context;
   node.innerHTML = '<div><a></div>';
-  const child = node.firstChild!; // div node
-  t.true(child.hasChildNodes());
+  let child = node.firstChild!;
+  t.is(child.nodeName, 'DIV');
+  t.is(child.firstChild!.nodeName, 'A');
+
+  node.innerHTML = '<a><div></div>';
+  child = node.firstChild!;
+  t.is(child.nodeName, 'A');
+  t.is(child.firstChild!.nodeName, 'DIV');
 });
 
 test('set takes all block text element content as text', t => {
