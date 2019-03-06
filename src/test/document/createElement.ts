@@ -27,7 +27,7 @@ test.beforeEach(t => {
   t.context = { document };
 });
 
-test('createElement() should lowercase its input', t => {
+test('createElement(x) should lowercase x', t => {
   const { document } = t.context;
 
   let el = document.createElement('div');
@@ -44,7 +44,17 @@ test('createElement() should lowercase its input', t => {
   t.false(el instanceof SVGElement);
 });
 
-test('createElementNS() should not modify its input', t => {
+test('createElement() should use HTML namespace', t => {
+  const { document } = t.context;
+
+  let el = document.createElement('div');
+  t.is(el.namespaceURI, 'http://www.w3.org/1999/xhtml');
+
+  el = document.createElement('svg');
+  t.is(el.namespaceURI, 'http://www.w3.org/1999/xhtml');
+});
+
+test('createElementNS(x) should not lowercase x', t => {
   const { document } = t.context;
 
   let el = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
