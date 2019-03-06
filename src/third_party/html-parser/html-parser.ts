@@ -110,7 +110,7 @@ export function parse(data: string, rootElement: Element) {
       }
       const childToAppend = new Element(
         currentParent.nodeType, 
-        tagName,
+        tagName.toLowerCase(), // TODO only do this for HTML namespace elements
         currentParent.namespaceURI, 
         ownerDocument);
 

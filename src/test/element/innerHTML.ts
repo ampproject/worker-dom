@@ -151,14 +151,6 @@ test('set invalid html throws', t => {
   t.throws(() => node.innerHTML = '<div>');
 });
 
-test.skip('set keeps tagName\'s case', t => {
-  const { node } = t.context;
-  node.innerHTML = '<svg><feImage></feImage></svg>';
-  const svgWrapper = node.firstChild!;
-  const child = svgWrapper.firstChild!;
-  t.is(child.nodeName, 'feImage');
-});
-
 test('set closes tags by opening others', t => {
   const { node } = t.context;
   node.innerHTML = '<b><div></div>';
@@ -181,6 +173,14 @@ test('set takes all block text element content as text', t => {
   t.is(childContent.nodeType, NodeType.TEXT_NODE);
 });
 
+test('set normalizes html namespace tag names', t => {
+  const { node } = t.context;
+  node.innerHTML = '<Div></Div>';
+  const child = node.firstChild!;
+  t.is(child.localName, 'div');
+  t.is(child.nodeName, 'DIV');
+});
+
 test.skip('set has svg tags live in SVG namespace', t => {
   const { node } = t.context;
   node.innerHTML = '<svg></svg>';
@@ -188,10 +188,10 @@ test.skip('set has svg tags live in SVG namespace', t => {
   t.is(child.namespaceURI, SVG_NAMESPACE);
 });
 
-test.skip('set normalizes html namespace tag names', t => {
+test.skip('set keeps tagName\'s case', t => {
   const { node } = t.context;
-  node.innerHTML = '<Div></Div>';
-  const child = node.firstChild!;
-  t.is(child.localName, 'div');
-  t.is(child.nodeName, 'DIV');
+  node.innerHTML = '<svg><feImage></feImage></svg>';
+  const svgWrapper = node.firstChild!;
+  const child = svgWrapper.firstChild!;
+  t.is(child.nodeName, 'feImage');
 });
