@@ -17,13 +17,14 @@
 import { Node } from './dom/Node';
 import { Document } from './dom/Document';
 import { MutationRecord } from './MutationRecord';
+import { Phase } from '../transfer/phase';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableNode, TransferredNode } from '../transfer/TransferrableNodes';
 import { MessageType, MutationFromWorker } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { consume as consumeNodes } from './nodes';
 import { store as storeString, consume as consumeStrings } from './strings';
-import { phase, set as setPhase, Phases } from './phase';
+import { phase, set as setPhase } from './phase';
 
 let observing = false;
 
@@ -36,7 +37,7 @@ const serializeNodes = (nodes: Array<Node>): Array<TransferredNode> => nodes.map
 function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
   const nodes: Array<TransferrableNode> = consumeNodes().map(node => node[TransferrableKeys.creationFormat]);
   const transferrableMutations: TransferrableMutationRecord[] = [];
-  const type = phase === Phases.Mutating ? MessageType.MUTATE : MessageType.HYDRATE;
+  const type = phase === Phase.Mutating ? MessageType.MUTATE : MessageType.HYDRATE;
 
   mutations.forEach(mutation => {
     let transferable: TransferrableMutationRecord = {
@@ -75,7 +76,7 @@ function handleMutations(incoming: Array<MutationRecord>, postMessage?: Function
     postMessage(serializeMutations(incoming));
     // Only first set of mutations are sent in a "HYDRATE" message type.
     // Afterwards, we enter "MUTATING" phase and subsequent mutations are sent in "MUTATE" message type.
-    setPhase(Phases.Mutating);
+    setPhase(Phase.Mutating);
   }
 }
 

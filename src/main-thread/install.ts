@@ -18,9 +18,9 @@ import { DebuggingContext } from './debugging';
 import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
 import { MutatorProcessor } from './mutator';
 import { NodeContext } from './nodes';
+import { Phase } from '../transfer/phase';
 import { Strings } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { TransferrablePhase } from '../transfer/TransferrablePhase';
 import { WorkerCallbacks } from './callbacks';
 import { WorkerContext } from './worker';
 
@@ -82,7 +82,7 @@ export function install(
         if (!ALLOWABLE_MESSAGE_TYPES.includes(type)) {
           return;
         }
-        const phase = type == MessageType.HYDRATE ? TransferrablePhase.Hydrating : TransferrablePhase.Mutating;
+        const phase = type == MessageType.HYDRATE ? Phase.Hydrating : Phase.Mutating;
         mutatorContext.mutate(
           phase,
           (data as MutationFromWorker)[TransferrableKeys.nodes],
@@ -91,7 +91,7 @@ export function install(
         );
         // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
         if (callbacks) {
-          if (phase === TransferrablePhase.Hydrating && callbacks.onHydration) {
+          if (phase === Phase.Hydrating && callbacks.onHydration) {
             callbacks.onHydration();
           }
           if (callbacks.onReceiveMessage) {

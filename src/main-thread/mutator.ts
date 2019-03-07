@@ -16,8 +16,8 @@
 
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { TransferrablePhase } from '../transfer/TransferrablePhase';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
+import { Phase } from '../transfer/phase';
 import { TransferrableNode } from '../transfer/TransferrableNodes';
 import { NodeContext } from './nodes';
 import { Strings } from './strings';
@@ -83,12 +83,7 @@ export class MutatorProcessor {
    * @param stringValues Additional string values to use in decoding messages.
    * @param mutations Changes to apply in both graph shape and content of Elements.
    */
-  mutate(
-    phase: TransferrablePhase,
-    nodes: Array<TransferrableNode>,
-    stringValues: Array<string>,
-    mutations: Array<TransferrableMutationRecord>,
-  ): void {
+  mutate(phase: Phase, nodes: Array<TransferrableNode>, stringValues: Array<string>, mutations: Array<TransferrableMutationRecord>): void {
     this.stringQueue = this.stringQueue.concat(stringValues);
     this.nodeQueue = this.nodeQueue.concat(nodes);
     this.mutationQueue = this.mutationQueue.concat(mutations);
