@@ -75,7 +75,7 @@ This script will build the current version of WorkerDOM and start up a local [we
 
 ## Which JavaScript APIs can I use?
 
-Currently, most DOM elements and their properties are supported. DOM query APIs like `querySelector` have partial support. Browser APIs like History are not implemented yet. Please see the API support matrix [here](https://github.com/ampproject/worker-dom/web_compat.md).
+Currently, most DOM elements and their properties are supported. DOM query APIs like `querySelector` have partial support. Browser APIs like History are not implemented yet. Please see the API support matrix [here](web_compat_table.md).
 
 ## Local Development
 
