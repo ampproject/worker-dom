@@ -151,15 +151,6 @@ test('set invalid html throws', t => {
   t.throws(() => node.innerHTML = '<div>');
 });
 
-test('set closes tags by opening others', t => {
-  const { node } = t.context;
-  node.innerHTML = '<b><div></div>';
-  t.is(node.childNodes.length, 1);
-  const child = node.firstChild!;
-  t.is(child.nodeName, 'B');
-  t.is(node.childNodes.length, 1);
-});
-
 test('set closes tags by closing others', t => {
   const { node } = t.context;
   node.innerHTML = '<div><a></div>';
