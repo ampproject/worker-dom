@@ -412,7 +412,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | HTMLElement.hidden                                  | ✔️     |                                                  | 
 | HTMLElement.index                                   | ✔️     |                                                  | 
 | HTMLElement.inert                                   | ✖️     |                                                  | 
-| HTMLElement.innerText                               | ✔️     |                                                  | 
+| HTMLElement.innerText                               | ✖️     |                                                  | 
 | HTMLElement.isContentEditable                       | ✖️     |                                                  | 
 | HTMLElement.itemId                                  | ✖️     |                                                  | 
 | HTMLElement.itemProp                                | ✖️     |                                                  | 
