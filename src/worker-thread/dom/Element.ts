@@ -50,6 +50,28 @@ interface ClientRect {
   height: number;
 }
 
+/**
+ * There are six kinds of elements, each having different start/close tag semantics.
+ * @see https://html.spec.whatwg.org/multipage/syntax.html#elements-2
+ */
+enum ElementKind {
+  NORMAL,
+  VOID,
+  // The following element kinds have no special handling in worker-dom yet
+  // and are lumped into the NORMAL kind.
+  /*
+  FOREIGN,
+  TEMPLATE,
+  RAW_TEXT,
+  ESCAPABLE_RAW,
+  */
+}
+
+/**
+ * @see https://html.spec.whatwg.org/multipage/syntax.html#void-elements
+ */
+const VOID_ELEMENTS: string[] = ['AREA', 'BASE', 'BR', 'COL', 'EMBED', 'HR', 'IMG', 'INPUT', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'];
+
 export class Element extends ParentNode {
   public localName: NodeName;
   public attributes: Attr[] = [];
@@ -58,10 +80,17 @@ export class Element extends ParentNode {
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
 
+  /**
+   * Element "kind" dictates certain behaviors e.g. start/end tag semantics.
+   * @see https://html.spec.whatwg.org/multipage/syntax.html#elements-2
+   */
+  private kind: ElementKind;
+
   constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null) {
     super(nodeType, toUpper(localName), ownerDocument);
     this.namespaceURI = namespaceURI || HTML_NAMESPACE;
     this.localName = localName;
+    this.kind = VOID_ELEMENTS.includes(this.tagName) ? ElementKind.VOID : ElementKind.NORMAL;
     this[TransferrableKeys.creationFormat] = {
       [TransferrableKeys.index]: this[TransferrableKeys.index],
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
@@ -144,7 +173,18 @@ export class Element extends ParentNode {
    */
   get outerHTML(): string {
     const tag = this.localName || this.tagName;
-    return `<${[tag, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${tag}>`;
+
+    const start = `<${[tag, attrsToString(this.attributes)].join(' ').trim()}>`;
+    const contents = this.innerHTML;
+
+    if (!contents) {
+      if (this.kind === ElementKind.VOID) {
+        // Void elements e.g. <input> only have a start tag (unless children are added programmatically).
+        // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
+        return start;
+      }
+    }
+    return start + contents + `</${tag}>`;
   }
 
   /**
