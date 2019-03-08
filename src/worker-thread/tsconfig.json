@@ -18,6 +18,7 @@
   },
   "include": [
     "*.ts",
-    "**/*.ts"
+    "**/*.ts",
+    "../../third_party/html-parser/*.ts",
   ]
 }

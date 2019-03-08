@@ -30,6 +30,8 @@ import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/Transf
 import { store as storeString } from '../strings';
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
+import { parse } from '../../third_party/html-parser/html-parser';
+import { propagate } from './Node';
 
 export const NS_NAME_TO_CLASS: { [key: string]: typeof Element } = {};
 export function registerSubclass(localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): void {
@@ -167,6 +169,33 @@ export class Element extends ParentNode {
         .join('');
     }
     return '';
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
+   * @param html The raw html string to parse.
+   */
+  set innerHTML(html: string) {
+    const root = parse(html, this);
+
+    // remove previous children
+    this.childNodes.forEach(n => {
+      propagate(n, 'isConnected', false);
+      propagate(n, TransferrableKeys.scopingRoot, n);
+    });
+
+    mutate({
+      removedNodes: this.childNodes,
+      type: MutationRecordType.CHILD_LIST,
+      target: this,
+    });
+
+    this.childNodes = [];
+
+    // add new children
+    root.childNodes.forEach(n => {
+      this.appendChild(n);
+    });
   }
 
   /**
