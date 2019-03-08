@@ -285,15 +285,13 @@ export abstract class Node {
    * @see https://dom.spec.whatwg.org/#concept-node-replace
    */
   public replaceChild(newChild: Node, oldChild: Node): Node {
-    if (newChild === oldChild) {
-      return oldChild;
-    }
-    if (oldChild.parentNode !== this) {
+    if (
+      newChild === oldChild ||
       // In DOM, this throws DOMException: "The node to be replaced is not a child of this node."
-      return oldChild;
-    }
-    if (newChild.contains(this)) {
+      oldChild.parentNode !== this ||
       // In DOM, this throws DOMException: "The new child element contains the parent."
+      newChild.contains(this)
+    ) {
       return oldChild;
     }
     // If newChild already exists in the DOM, it is first removed.

@@ -80,7 +80,7 @@ test('replacing a child with another when there are multiple children', t => {
   t.deepEqual(parent.childNodes, [x, z]);
 });
 
-test('replacing a child with another child', t => {
+test('replacing a child with next sibling', t => {
   const { parent, x, y } = t.context;
 
   parent.appendChild(x);
@@ -94,6 +94,22 @@ test('replacing a child with another child', t => {
   t.is(x.parentNode, null);
   t.is(y.parentNode, parent);
   t.deepEqual(parent.childNodes, [y]);
+});
+
+test('replacing a child with previous sibling', t => {
+  const { parent, x, y } = t.context;
+
+  parent.appendChild(x);
+  parent.appendChild(y);
+  t.is(x.parentNode, parent);
+  t.is(y.parentNode, parent);
+
+  const replaced = parent.replaceChild(x, y);
+
+  t.is(replaced, y);
+  t.is(x.parentNode, parent);
+  t.is(y.parentNode, null);
+  t.deepEqual(parent.childNodes, [x]);
 });
 
 test('replacing a child with an ancestor', t => {
