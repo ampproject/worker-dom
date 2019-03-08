@@ -295,6 +295,8 @@ export abstract class Node {
       return oldChild;
     }
     // If newChild already exists in the DOM, it is first removed.
+    // TODO: Consider using a mutation-free API here to avoid two mutations
+    // per replaceChild() call.
     newChild.remove();
 
     oldChild.parentNode = null;
