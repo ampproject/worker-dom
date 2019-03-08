@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
-declare module 'browser-env' {
-  export default function browserEnv(globals: Array<string>): void;
+declare module 'jsdom' {
+  export class JSDOM {
+    public readonly window: Window;
+    constructor(html: string);
+  }
 }

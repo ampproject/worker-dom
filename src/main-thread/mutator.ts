@@ -44,18 +44,12 @@ export class MutatorProcessor {
    * @param strings
    * @param nodeContext
    * @param workerContext
-   * @param passedSanitizer Sanitizer to apply to content if needed.
+   * @param sanitizer Sanitizer to apply to content if needed.
    */
-  constructor(
-    strings: Strings,
-    nodeContext: NodeContext,
-    workerContext: WorkerContext,
-    mutationPump?: MutationPumpFunction,
-    passedSanitizer?: Sanitizer,
-  ) {
+  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, mutationPump?: MutationPumpFunction, sanitizer?: Sanitizer) {
     this.strings = strings;
     this.nodeContext = nodeContext;
-    this.sanitizer = passedSanitizer;
+    this.sanitizer = sanitizer;
     this.mutationPump = mutationPump || requestAnimationFrame.bind(null);
     this.boundSyncFlush = this.syncFlush.bind(this);
     this.stringQueue = [];

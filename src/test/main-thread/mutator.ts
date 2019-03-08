@@ -15,7 +15,7 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import browserEnv from 'browser-env';
+import { JSDOM } from 'jsdom';
 import { MutatorProcessor } from '../../main-thread/mutator';
 import { MutationRecordType } from '../../worker-thread/MutationRecord';
 import { NodeContext } from '../../main-thread/nodes';
@@ -24,9 +24,8 @@ import { Strings } from '../../main-thread/strings';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { WorkerContext } from '../../main-thread/worker';
 
-browserEnv(['window', 'document']);
-
 const test = anyTest as TestInterface<{
+  document: Document;
   baseElement: Element;
   strings: Strings;
   nodeContext: NodeContext;
@@ -46,6 +45,8 @@ test.beforeEach(t => {
     value: requestAnimationFrame,
   });
 
+  const jsdom = new JSDOM('<!DOCTYPE html>');
+  const { document } = jsdom.window;
   const baseElement = document.createElement('div');
   document.body.appendChild(baseElement);
 
@@ -58,6 +59,7 @@ test.beforeEach(t => {
   } as unknown) as WorkerContext;
 
   t.context = {
+    document,
     baseElement,
     strings,
     nodeContext,
@@ -68,7 +70,7 @@ test.beforeEach(t => {
 });
 
 test.afterEach(t => {
-  const { baseElement } = t.context;
+  const { document, baseElement } = t.context;
   document.body.removeChild(baseElement);
   Object.defineProperty(global, 'requestAnimationFrame', {
     configurable: true,
@@ -199,4 +201,29 @@ test.serial('batch mutations with custom pump', t => {
   t.is(tasks.length, 2);
   tasks[1].flush();
   t.is(baseElement.getAttribute('data-two'), 'data-two');
+});
+
+test.serial('split strings from mutations', t => {
+  const { baseElement, strings, nodeContext, workerContext, rafTasks } = t.context;
+  const mutator = new MutatorProcessor(strings, nodeContext, workerContext);
+
+  mutator.mutate(Phase.Mutating, [], ['hidden'], []);
+  mutator.mutate(
+    Phase.Mutating,
+    [],
+    [],
+    [
+      {
+        [TransferrableKeys.type]: MutationRecordType.ATTRIBUTES,
+        [TransferrableKeys.target]: 2, // Base node.
+        [TransferrableKeys.attributeName]: 0,
+        [TransferrableKeys.value]: 0,
+      },
+    ],
+  );
+
+  t.is(baseElement.getAttribute('hidden'), null);
+  t.is(rafTasks.length, 1);
+  rafTasks[0]();
+  t.is(baseElement.getAttribute('hidden'), 'hidden');
 });
