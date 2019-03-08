@@ -130,7 +130,7 @@ test('replacing a child with an ancestor', t => {
   t.deepEqual(parent.childNodes, [child]);
   t.deepEqual(child.childNodes, [grandchild]);
 
-  // Replacing with child should be a no-op.
+  // Replacing with ancestor should be a no-op.
   replaced = child.replaceChild(parent, grandchild);
   t.is(replaced, grandchild);
   t.is(child.parentNode, parent);
