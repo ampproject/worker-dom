@@ -18,6 +18,7 @@ import { DebuggingContext } from './debugging';
 import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
 import { MutatorProcessor } from './mutator';
 import { NodeContext } from './nodes';
+import { Phase } from '../transfer/phase';
 import { Strings } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { WorkerCallbacks } from './callbacks';
@@ -74,23 +75,23 @@ export function install(
     if (workerDOMScript && authorScript && authorScriptURL) {
       const workerContext = new WorkerContext(baseElement, workerDOMScript, authorScript, authorScriptURL, callbacks);
       const worker = workerContext.getWorker();
-      const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, sanitizer);
+      const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, callbacks && callbacks.onMutationPump, sanitizer);
       worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
         const type = data[TransferrableKeys.type];
         if (!ALLOWABLE_MESSAGE_TYPES.includes(type)) {
           return;
         }
-        // TODO(KB): Hydration has special rules limiting the types of allowed mutations.
-        // Re-introduce Hydration and add a specialized handler.
+        const phase = type == MessageType.HYDRATE ? Phase.Hydrating : Phase.Mutating;
         mutatorContext.mutate(
+          phase,
           (data as MutationFromWorker)[TransferrableKeys.nodes],
           (data as MutationFromWorker)[TransferrableKeys.strings],
           (data as MutationFromWorker)[TransferrableKeys.mutations],
         );
         // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
         if (callbacks) {
-          if (type === MessageType.HYDRATE && callbacks.onHydration) {
+          if (phase === Phase.Hydrating && callbacks.onHydration) {
             callbacks.onHydration();
           }
           if (callbacks.onReceiveMessage) {
@@ -130,5 +131,7 @@ function wrapCallbacks(debuggingContext: DebuggingContext, callbacks?: WorkerCal
         callbacks.onReceiveMessage(readable as any);
       }
     },
+    // Passthrough callbacks:
+    onMutationPump: callbacks && callbacks.onMutationPump,
   };
 }

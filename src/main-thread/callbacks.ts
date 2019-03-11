@@ -15,6 +15,14 @@
  */
 
 import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
+import { Phase } from '../transfer/phase';
+
+/**
+ * The callback for `onMutationPump`. If specified, this callback will be called
+ * for the new set of mutations pending. The callback can either immediately
+ * call `flush()`, or it can reject mutations, or it can batch them further.
+ */
+export type MutationPumpFunction = (flush: Function, phase: Phase) => void;
 
 export interface WorkerCallbacks {
   // Called when worker consumes the page's initial DOM state.
@@ -25,4 +33,6 @@ export interface WorkerCallbacks {
   onSendMessage?: (message: MessageToWorker) => void;
   // Called after a message is received from the worker.
   onReceiveMessage?: (message: MessageFromWorker) => void;
+  // Called to schedule mutation phase. See `MutationPumpFunction`.
+  onMutationPump?: MutationPumpFunction;
 }

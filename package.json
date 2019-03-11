@@ -17,6 +17,7 @@
     "tsc:test:worker": "tsc -p config/tsconfig.test.worker-thread.json",
     "tsc:test:main": "tsc -p config/tsconfig.test.main-thread.json",
     "tsc:test:tests": "tsc -p config/tsconfig.test.json",
+    "tsc:test:tests-main": "tsc -p config/tsconfig.tests.main-thread.json",
     "tsc:build:worker": "tsc -p config/tsconfig.build.worker-thread.json",
     "tsc:build:main": "tsc -p config/tsconfig.build.main-thread.json",
     "clean": "rimraf output dist",
@@ -55,6 +56,7 @@
     "cross-var": "1.1.0",
     "esm": "3.2.14",
     "husky": "1.3.1",
+    "jsdom": "^13.2.0",
     "lint-staged": "8.1.5",
     "magic-string": "0.25.2",
     "np": "4.0.2",
@@ -96,7 +98,7 @@
     {
       "path": "./dist/index.mjs",
       "compression": "brotli",
-      "maxSize": "2.8 kB"
+      "maxSize": "2.82 kB"
     },
     {
       "path": "./dist/index.safe.mjs",

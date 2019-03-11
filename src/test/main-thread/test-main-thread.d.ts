@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2019 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import { Phase } from '../transfer/phase';
-
-export let phase: Phase = Phase.Initializing;
-export const set = (newPhase: Phase) => (phase = newPhase);
+declare module 'jsdom' {
+  export class JSDOM {
+    public readonly window: Window;
+    constructor(html: string);
+  }
+}
