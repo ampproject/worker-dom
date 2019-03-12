@@ -40,6 +40,13 @@ export class Env {
       configurable: true,
       value: BlobImpl,
     });
+    if (!(global as any)['URL']) {
+      const URL = function() {};
+      Object.defineProperty(global, 'URL', {
+        configurable: true,
+        value: URL,
+      });
+    }
     Object.defineProperty((global as any)['URL'], 'createObjectURL', {
       configurable: true,
       value: function(obj: any) {
