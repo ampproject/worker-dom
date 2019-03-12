@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2019 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-import { WorkerDom } from './worker-dom';
-import { fetchAndInstall } from './install';
+export class WorkerDom {
+  private worker: Worker;
 
-export function upgradeElement(baseElement: Element, workerDOMUrl: string): Promise<WorkerDom | null> {
-  const authorURL = baseElement.getAttribute('src');
-  if (authorURL) {
-    return fetchAndInstall(baseElement as HTMLElement, authorURL, workerDOMUrl);
+  /**
+   */
+  constructor(worker: Worker) {
+    this.worker = worker;
   }
-  return Promise.resolve(null);
+
+  /**
+   * Terminates the worker-dom completely.
+   */
+  terminate() {
+    this.worker.terminate();
+  }
 }

@@ -16,6 +16,7 @@
 
 import { DOMPurifySanitizer } from './DOMPurifySanitizer';
 import { WorkerCallbacks } from './callbacks';
+import { WorkerDom } from './worker-dom';
 import { fetchAndInstall, install } from './install';
 
 /** Users can import this and configure the sanitizer with custom DOMPurify hooks, etc. */
@@ -25,11 +26,12 @@ export const sanitizer = new DOMPurifySanitizer();
  * @param baseElement
  * @param workerDOMUrl
  */
-export function upgradeElement(baseElement: Element, workerDOMUrl: string, callbacks?: WorkerCallbacks, debug?: boolean): void {
+export function upgradeElement(baseElement: Element, workerDOMUrl: string, callbacks?: WorkerCallbacks, debug?: boolean): Promise<WorkerDom | null> {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
-    fetchAndInstall(baseElement as HTMLElement, authorURL, workerDOMUrl, callbacks, sanitizer, debug);
+    return fetchAndInstall(baseElement as HTMLElement, authorURL, workerDOMUrl, callbacks, sanitizer, debug);
   }
+  return Promise.resolve(null);
 }
 
 /**
@@ -37,6 +39,13 @@ export function upgradeElement(baseElement: Element, workerDOMUrl: string, callb
  * @param baseElement
  * @param fetchPromise Promise that resolves with a tuple containing the worker script, author script, and author script URL.
  */
-export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string, string]>, callbacks?: WorkerCallbacks, debug?: boolean): void {
-  install(fetchPromise, baseElement as HTMLElement, callbacks, sanitizer, debug);
+export function upgrade(
+  baseElement: Element,
+  fetchPromise: Promise<[string, string, string]>,
+  callbacks?: WorkerCallbacks,
+  debug?: boolean,
+): Promise<WorkerDom | null> {
+  return install(fetchPromise, baseElement as HTMLElement, callbacks, sanitizer, debug);
 }
+
+export { WorkerDom };
