@@ -46,6 +46,7 @@ import { createDocument } from './dom/Document';
 import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { appendKeys } from './css/CSSStyleDeclaration';
 import { consumeInitialDOM } from './initialize';
+import { LongTask } from './long-task';
 
 const WHITELISTED_GLOBALS = [
   'Array',
@@ -127,6 +128,7 @@ const WHITELISTED_GLOBALS = [
 ];
 
 const doc = createDocument((self as DedicatedWorkerGlobalScope).postMessage);
+const longTask = new LongTask(doc);
 export const workerDOM: WorkerDOMGlobalScope = {
   document: doc,
   navigator: (self as WorkerGlobalScope).navigator,
@@ -137,6 +139,7 @@ export const workerDOM: WorkerDOMGlobalScope = {
   url: '/',
   appendKeys,
   consumeInitialDOM,
+  longTask: longTask.execute.bind(longTask),
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLDataElement,

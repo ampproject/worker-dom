@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
+import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
+import { EventSubscriptionProcessor } from './commands/event-subscription';
+import { LongTaskProcessor } from './commands/long-task';
+import { MutationPumpFunction, WorkerCallbacks } from './callbacks';
+import { MutationRecordType } from '../worker-thread/MutationRecord';
+import { NodeContext } from './nodes';
+import { Phase } from '../transfer/phase';
+import { Strings } from './strings';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { MutationRecordType } from '../worker-thread/MutationRecord';
-import { Phase } from '../transfer/phase';
 import { TransferrableNode } from '../transfer/TransferrableNodes';
-import { NodeContext } from './nodes';
-import { Strings } from './strings';
 import { WorkerContext } from './worker';
-import { EventSubscriptionProcessor } from './commands/event-subscription';
-import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
-import { MutationPumpFunction } from './callbacks';
 
 export class MutatorProcessor {
   private strings: Strings;
@@ -46,11 +47,11 @@ export class MutatorProcessor {
    * @param workerContext
    * @param sanitizer Sanitizer to apply to content if needed.
    */
-  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, mutationPump?: MutationPumpFunction, sanitizer?: Sanitizer) {
+  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, callbacks?: WorkerCallbacks, sanitizer?: Sanitizer) {
     this.strings = strings;
     this.nodeContext = nodeContext;
     this.sanitizer = sanitizer;
-    this.mutationPump = mutationPump || requestAnimationFrame.bind(null);
+    this.mutationPump = (callbacks && callbacks.onMutationPump) || requestAnimationFrame.bind(null);
     this.boundSyncFlush = this.syncFlush.bind(this);
     this.stringQueue = [];
     this.nodeQueue = [];
@@ -59,6 +60,7 @@ export class MutatorProcessor {
 
     const eventSubscriptionProcessor = new EventSubscriptionProcessor(strings, nodeContext, workerContext);
     const boundingClientRectProcessor = new BoundingClientRectProcessor(nodeContext, workerContext);
+    const longTaskProcessor = new LongTaskProcessor(callbacks);
 
     this.mutators = {
       [MutationRecordType.CHILD_LIST]: this.mutateChildList.bind(this),
@@ -67,6 +69,8 @@ export class MutatorProcessor {
       [MutationRecordType.PROPERTIES]: this.mutateProperties.bind(this),
       [MutationRecordType.EVENT_SUBSCRIPTION]: eventSubscriptionProcessor.process.bind(eventSubscriptionProcessor),
       [MutationRecordType.GET_BOUNDING_CLIENT_RECT]: boundingClientRectProcessor.process.bind(boundingClientRectProcessor),
+      [MutationRecordType.LONG_TASK_START]: longTaskProcessor.processStart.bind(longTaskProcessor),
+      [MutationRecordType.LONG_TASK_END]: longTaskProcessor.processEnd.bind(longTaskProcessor),
     };
   }
 

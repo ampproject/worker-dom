@@ -59,6 +59,7 @@ export class WorkerContext {
         var Document = defaultView.Document;
         var Event = defaultView.Event;
         var MutationObserver = defaultView.MutationObserver;
+        var longTask = this.longTask;
 
         function addEventListener(type, handler) {
           return document.addEventListener(type, handler);

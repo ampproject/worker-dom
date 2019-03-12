@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Hello World</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/demo.css" rel="stylesheet">
+  <script src="/dist/index.mjs" type="module"></script>
+  <script src="/dist/index.js" nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="/dist/index.js" defer></script> -->
+  <style>
+    #status-element {
+      margin-top: 16px;
+      border: 1px dashed lightgray;
+      font-size: smaller;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div src="long-task-demo.js" id="upgrade-me">
+    <div class="root">
+      <button>Run long task</button>
+    </div>
+  </div>
+  <div id="status-element">
+  </div>
+  <script type="module">
+    import {upgradeElement} from '/dist/index.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.mjs', {
+      onLongTask: (promise, opt_message) => {
+        const statusElement = document.getElementById('status-element');
+        statusElement.textContent = opt_message || 'Long task is running...';
+        promise.then(() => {
+          statusElement.textContent = '';
+        });
+      },
+    });
+  </script>
+  <script nomodule async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.js');
+    }, false);
+  </script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), './dist/worker.js');
+    }, false);
+  </script> -->
+</body>
+</html>

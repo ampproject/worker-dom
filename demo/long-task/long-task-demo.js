@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2019 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import { WorkerCallbacks } from './callbacks';
-import { WorkerDom } from './worker-dom';
-import { fetchAndInstall } from './install';
+const btn = document.getElementsByTagName('button')[0];
 
-export function upgradeElement(baseElement: Element, workerDOMUrl: string, callbacks?: WorkerCallbacks): Promise<WorkerDom | null> {
-  const authorURL = baseElement.getAttribute('src');
-  if (authorURL) {
-    return fetchAndInstall(baseElement as HTMLElement, authorURL, workerDOMUrl, callbacks);
-  }
-  return Promise.resolve(null);
-}
+btn.addEventListener('click', async () => {
+  longTask(
+      new Promise(resolve => setTimeout(resolve, 5000))
+          .then(() => {
+            const h1 = document.createElement('h1');
+            h1.textContent = 'Hello World!'
+            document.body.appendChild(h1);
+          }),
+      'long task running...');
+});

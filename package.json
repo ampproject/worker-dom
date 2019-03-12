@@ -93,17 +93,17 @@
     {
       "path": "./dist/worker.safe.mjs",
       "compression": "brotli",
-      "maxSize": "8.5 kB"
+      "maxSize": "8.55 kB"
     },
     {
       "path": "./dist/index.mjs",
       "compression": "brotli",
-      "maxSize": "2.84 kB"
+      "maxSize": "3.0 kB"
     },
     {
       "path": "./dist/index.safe.mjs",
       "compression": "brotli",
-      "maxSize": "8.1 kB"
+      "maxSize": "8.2 kB"
     }
   ],
   "esm": {

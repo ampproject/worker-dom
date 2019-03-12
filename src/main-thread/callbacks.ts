@@ -24,6 +24,10 @@ import { Phase } from '../transfer/phase';
  */
 export type MutationPumpFunction = (flush: Function, phase: Phase) => void;
 
+/**
+ */
+export type LongTaskFunction = (promise: Promise<any>) => void;
+
 export interface WorkerCallbacks {
   // Called when worker consumes the page's initial DOM state.
   onCreateWorker?: (initialDOM: RenderableElement) => void;
@@ -35,4 +39,6 @@ export interface WorkerCallbacks {
   onReceiveMessage?: (message: MessageFromWorker) => void;
   // Called to schedule mutation phase. See `MutationPumpFunction`.
   onMutationPump?: MutationPumpFunction;
+  // Called to schedule long task. See `LongTaskFunction`.
+  onLongTask?: LongTaskFunction;
 }

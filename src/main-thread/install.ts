@@ -76,7 +76,7 @@ export function install(
     if (workerDOMScript && authorScript && authorScriptURL) {
       const workerContext = new WorkerContext(baseElement, workerDOMScript, authorScript, authorScriptURL, callbacks);
       const worker = workerContext.getWorker();
-      const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, callbacks && callbacks.onMutationPump, sanitizer);
+      const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, callbacks, sanitizer);
       worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
         const type = data[TransferrableKeys.type];
@@ -135,5 +135,6 @@ function wrapCallbacks(debuggingContext: DebuggingContext, callbacks?: WorkerCal
     },
     // Passthrough callbacks:
     onMutationPump: callbacks && callbacks.onMutationPump,
+    onLongTask: callbacks && callbacks.onLongTask,
   };
 }

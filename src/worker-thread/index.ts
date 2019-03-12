@@ -46,10 +46,12 @@ import { createDocument } from './dom/Document';
 import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { appendKeys } from './css/CSSStyleDeclaration';
 import { consumeInitialDOM } from './initialize';
+import { LongTask } from './long-task';
 
 declare var __ALLOW_POST_MESSAGE__: boolean;
 
 const doc = createDocument(__ALLOW_POST_MESSAGE__ ? (self as DedicatedWorkerGlobalScope).postMessage : undefined);
+const longTask = new LongTask(doc);
 export const workerDOM: WorkerDOMGlobalScope = {
   document: doc,
   navigator: (self as WorkerGlobalScope).navigator,
@@ -60,6 +62,7 @@ export const workerDOM: WorkerDOMGlobalScope = {
   url: '/',
   appendKeys,
   consumeInitialDOM,
+  longTask: longTask.execute.bind(longTask),
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLDataElement,

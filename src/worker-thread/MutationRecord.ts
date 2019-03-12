@@ -63,4 +63,6 @@ export const enum MutationRecordType {
   PROPERTIES = 3,
   EVENT_SUBSCRIPTION = 4,
   GET_BOUNDING_CLIENT_RECT = 5,
+  LONG_TASK_START = 6,
+  LONG_TASK_END = 7,
 }
