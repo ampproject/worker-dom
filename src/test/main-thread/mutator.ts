@@ -15,7 +15,7 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { JSDOM } from 'jsdom';
+import { Env } from './helpers/env';
 import { MutatorProcessor } from '../../main-thread/mutator';
 import { MutationRecordType } from '../../worker-thread/MutationRecord';
 import { NodeContext } from '../../main-thread/nodes';
@@ -25,28 +25,17 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { WorkerContext } from '../../main-thread/worker';
 
 const test = anyTest as TestInterface<{
-  document: Document;
+  env: Env;
   baseElement: Element;
   strings: Strings;
   nodeContext: NodeContext;
   workerContext: WorkerContext;
-  rafTasks: Array<Function>;
-  value: string;
 }>;
 
 test.beforeEach(t => {
-  const rafTasks: Array<Function> = [];
-  const requestAnimationFrame = (callback: Function) => {
-    rafTasks.push(callback);
-    return 1;
-  };
-  Object.defineProperty(global, 'requestAnimationFrame', {
-    configurable: true,
-    value: requestAnimationFrame,
-  });
+  const env = new Env();
 
-  const jsdom = new JSDOM('<!DOCTYPE html>');
-  const { document } = jsdom.window;
+  const { document } = env;
   const baseElement = document.createElement('div');
   document.body.appendChild(baseElement);
 
@@ -59,27 +48,22 @@ test.beforeEach(t => {
   } as unknown) as WorkerContext;
 
   t.context = {
-    document,
+    env,
     baseElement,
     strings,
     nodeContext,
     workerContext,
-    rafTasks,
-    value: 'qqqq1',
   };
 });
 
 test.afterEach(t => {
-  const { document, baseElement } = t.context;
-  document.body.removeChild(baseElement);
-  Object.defineProperty(global, 'requestAnimationFrame', {
-    configurable: true,
-    value: null,
-  });
+  const { env } = t.context;
+  env.dispose();
 });
 
 test.serial('batch mutations', t => {
-  const { baseElement, strings, nodeContext, workerContext, rafTasks } = t.context;
+  const { env, baseElement, strings, nodeContext, workerContext } = t.context;
+  const { rafTasks } = env;
   const mutator = new MutatorProcessor(strings, nodeContext, workerContext);
 
   mutator.mutate(
@@ -137,7 +121,8 @@ test.serial('batch mutations', t => {
 });
 
 test.serial('batch mutations with custom pump', t => {
-  const { baseElement, strings, nodeContext, workerContext, rafTasks } = t.context;
+  const { env, baseElement, strings, nodeContext, workerContext } = t.context;
+  const { rafTasks } = env;
 
   const tasks: Array<{ phase: Phase; flush: Function }> = [];
   const mutationPump = (flush: Function, phase: Phase) => {
@@ -204,7 +189,8 @@ test.serial('batch mutations with custom pump', t => {
 });
 
 test.serial('split strings from mutations', t => {
-  const { baseElement, strings, nodeContext, workerContext, rafTasks } = t.context;
+  const { env, baseElement, strings, nodeContext, workerContext } = t.context;
+  const { rafTasks } = env;
   const mutator = new MutatorProcessor(strings, nodeContext, workerContext);
 
   mutator.mutate(Phase.Mutating, [], ['hidden'], []);

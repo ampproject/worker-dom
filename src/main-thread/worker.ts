@@ -39,7 +39,7 @@ export class WorkerContext {
     // TODO(KB): Minify this output during build process.
     const keys: Array<string> = [];
     const { skeleton, strings } = createHydrateableRootNode(baseElement);
-    for (const key in document.body.style) {
+    for (const key in baseElement.style) {
       keys.push(key);
     }
     const code = `

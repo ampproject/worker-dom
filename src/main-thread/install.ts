@@ -23,6 +23,7 @@ import { Strings } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { WorkerCallbacks } from './callbacks';
 import { WorkerContext } from './worker';
+import { WorkerDom } from './worker-dom';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
@@ -41,14 +42,14 @@ export function fetchAndInstall(
   callbacks?: WorkerCallbacks,
   sanitizer?: Sanitizer,
   debug?: boolean,
-): void {
+): Promise<WorkerDom | null> {
   const fetchPromise = Promise.all([
     // TODO(KB): Fetch Polyfill for IE11.
     fetch(workerDOMURL).then(response => response.text()),
     fetch(authorScriptURL).then(response => response.text()),
     Promise.resolve(authorScriptURL),
   ]);
-  install(fetchPromise, baseElement, callbacks, sanitizer, debug);
+  return install(fetchPromise, baseElement, callbacks, sanitizer, debug);
 }
 
 /**
@@ -64,14 +65,14 @@ export function install(
   callbacks?: WorkerCallbacks,
   sanitizer?: Sanitizer,
   debug?: boolean,
-): void {
+): Promise<WorkerDom | null> {
   const strings = new Strings();
   const nodeContext = new NodeContext(strings, baseElement);
   if (debug) {
     const debuggingContext = new DebuggingContext(strings, nodeContext);
     callbacks = wrapCallbacks(debuggingContext, callbacks);
   }
-  fetchPromise.then(([workerDOMScript, authorScript, authorScriptURL]) => {
+  return fetchPromise.then(([workerDOMScript, authorScript, authorScriptURL]) => {
     if (workerDOMScript && authorScript && authorScriptURL) {
       const workerContext = new WorkerContext(baseElement, workerDOMScript, authorScript, authorScriptURL, callbacks);
       const worker = workerContext.getWorker();
@@ -99,6 +100,7 @@ export function install(
           }
         }
       };
+      return new WorkerDom(worker);
     }
     return null;
   });
