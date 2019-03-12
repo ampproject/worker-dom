@@ -115,15 +115,21 @@ test.serial.cb('replaceChild mutation, remove sibling node', t => {
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver(
     (mutations: MutationRecord[]): void => {
-      t.deepEqual(mutations, [
-        {
-          type: MutationRecordType.CHILD_LIST,
-          target: document.body,
-          removedNodes: [p],
-          addedNodes: [div],
-          nextSibling: undefined,
-        },
-      ]);
+      t.is(mutations.length, 2);
+
+      // Mutation for removeChild(div).
+      const one = mutations[0];
+      t.is(one.type, MutationRecordType.CHILD_LIST);
+      t.is(one.target, document.body);
+      t.deepEqual(one.removedNodes, [div]);
+
+      // Mutation for replaceChild(div, p).
+      const two = mutations[1];
+      t.is(two.type, MutationRecordType.CHILD_LIST);
+      t.is(two.target, document.body);
+      t.deepEqual(two.removedNodes, [p]); // [div]
+      t.deepEqual(two.addedNodes, [div]); // []
+      t.is(two.nextSibling, undefined);
       observer.disconnect();
       t.end();
     },
