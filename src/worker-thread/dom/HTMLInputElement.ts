@@ -47,10 +47,12 @@ export class HTMLInputElement extends HTMLElement {
     // Don't early-out if value doesn't appear to have changed.
     // The worker may have a stale value since 'input' events aren't being forwarded.
     this[TransferrableKeys.value] = String(value);
-    transfer(
-      (this.ownerDocument as Document).postMessage,
-      new Uint16Array([TransferrableMutationType.PROPERTIES, this[TransferrableKeys.index], storeString('value'), storeString(value)]).buffer,
-    );
+    transfer((this.ownerDocument as Document).postMessage, [
+      TransferrableMutationType.PROPERTIES,
+      this[TransferrableKeys.index],
+      storeString('value'),
+      storeString(value),
+    ]);
   }
 
   get valueAsDate(): Date | null {
@@ -93,11 +95,12 @@ export class HTMLInputElement extends HTMLElement {
       return;
     }
     this[TransferrableKeys.checked] = !!value;
-    transfer(
-      (this.ownerDocument as Document).postMessage,
-      new Uint16Array([TransferrableMutationType.PROPERTIES, this[TransferrableKeys.index], storeString('checked'), storeString(String(value))])
-        .buffer,
-    );
+    transfer((this.ownerDocument as Document).postMessage, [
+      TransferrableMutationType.PROPERTIES,
+      this[TransferrableKeys.index],
+      storeString('checked'),
+      storeString(String(value)),
+    ]);
   }
 
   /**

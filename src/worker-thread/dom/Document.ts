@@ -57,6 +57,7 @@ import { propagate as propagateEvents } from '../../transfer/TransferrableEvent'
 import { propagate as propagateSyncValues } from '../../transfer/TransferrableSyncValue';
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
+import { PostMessage } from '../worker-thread';
 
 export class Document extends Element {
   public defaultView: {
@@ -72,7 +73,7 @@ export class Document extends Element {
   };
   public documentElement: Document;
   public body: Element;
-  public postMessage: (message: any, transfer?: Transferable[]) => void;
+  public postMessage: PostMessage;
 
   constructor() {
     super(NodeType.DOCUMENT_NODE, '#document', HTML_NAMESPACE, null);
@@ -125,7 +126,7 @@ export class Document extends Element {
 /**
  *
  */
-export function createDocument(postMessage?: (message: any, transfer?: Transferable[]) => void): Document {
+export function createDocument(postMessage?: PostMessage): Document {
   const doc = new Document();
   doc.postMessage = postMessage || (() => void 0);
   doc.isConnected = true;

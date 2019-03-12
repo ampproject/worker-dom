@@ -212,7 +212,7 @@ export abstract class Node {
           type: MutationRecordType.CHILD_LIST,
           target: this,
         },
-        new Uint16Array([
+        [
           TransferrableMutationType.CHILD_LIST,
           this[TransferrableKeys.index],
           referenceNode[TransferrableKeys.index],
@@ -220,7 +220,7 @@ export abstract class Node {
           1,
           0,
           child[TransferrableKeys.index],
-        ]),
+        ],
       );
 
       /*
@@ -267,7 +267,7 @@ export abstract class Node {
           type: MutationRecordType.CHILD_LIST,
           target: this,
         },
-        new Uint16Array([
+        [
           TransferrableMutationType.CHILD_LIST,
           this[TransferrableKeys.index],
           0,
@@ -275,7 +275,7 @@ export abstract class Node {
           1,
           0,
           child[TransferrableKeys.index],
-        ]),
+        ],
       );
 
       /*
@@ -316,7 +316,7 @@ export abstract class Node {
           type: MutationRecordType.CHILD_LIST,
           target: this,
         },
-        new Uint16Array([TransferrableMutationType.CHILD_LIST, this[TransferrableKeys.index], 0, 0, 0, 1, child[TransferrableKeys.index]]),
+        [TransferrableMutationType.CHILD_LIST, this[TransferrableKeys.index], 0, 0, 0, 1, child[TransferrableKeys.index]],
       );
 
       /*
@@ -365,7 +365,7 @@ export abstract class Node {
             nextSibling: this.childNodes[index + 1],
             target: this,
           },
-          new Uint16Array([
+          [
             TransferrableMutationType.CHILD_LIST,
             this[TransferrableKeys.index],
             this.childNodes[index + 1][TransferrableKeys.index],
@@ -374,7 +374,7 @@ export abstract class Node {
             newChild[TransferrableKeys.index],
             1,
             oldChild[TransferrableKeys.index],
-          ]),
+          ],
         );
 
         /*
@@ -420,10 +420,14 @@ export abstract class Node {
       this[TransferrableKeys.handlers][lowerType] = [handler];
     }
 
-    transfer(
-      (this.ownerDocument as Document).postMessage,
-      new Uint16Array([TransferrableMutationType.EVENT_SUBSCRIPTION, this[TransferrableKeys.index], 1, 0, storedType, index]).buffer,
-    );
+    transfer((this.ownerDocument as Document).postMessage, [
+      TransferrableMutationType.EVENT_SUBSCRIPTION,
+      this[TransferrableKeys.index],
+      0,
+      1,
+      storedType,
+      index,
+    ]);
   }
 
   /**
@@ -439,10 +443,14 @@ export abstract class Node {
 
     if (index >= 0) {
       handlers.splice(index, 1);
-      transfer(
-        (this.ownerDocument as Document).postMessage,
-        new Uint16Array([TransferrableMutationType.EVENT_SUBSCRIPTION, this[TransferrableKeys.index], 0, 1, storeString(lowerType), index]).buffer,
-      );
+      transfer((this.ownerDocument as Document).postMessage, [
+        TransferrableMutationType.EVENT_SUBSCRIPTION,
+        this[TransferrableKeys.index],
+        1,
+        0,
+        storeString(lowerType),
+        index,
+      ]);
     }
   }
 

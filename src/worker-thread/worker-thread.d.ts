@@ -20,3 +20,4 @@ import { Text } from './dom/Text';
 import { Comment } from './dom/Comment';
 
 type RenderableElement = HTMLElement | SVGElement | Text | Comment;
+type PostMessage = (message: any, transfer?: Transferable[]) => void;

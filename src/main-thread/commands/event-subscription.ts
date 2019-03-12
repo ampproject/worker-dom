@@ -17,7 +17,7 @@
 import { MessageType } from '../../transfer/Messages';
 import { Strings } from '../strings';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { EventSubscriptionLocations, EVENT_SUBSCRIPTION_LENGTH } from '../../transfer/replacement/TransferrableEvent';
+import { EVENT_SUBSCRIPTION_LENGTH, EventSubscriptionMutationIndex } from '../../transfer/replacement/TransferrableEvent';
 import { WorkerContext } from '../worker';
 
 export class EventSubscriptionProcessor {
@@ -36,37 +36,30 @@ export class EventSubscriptionProcessor {
    * Process event subscription changes transfered from worker thread to main thread.
    * @param mutation mutation record containing commands to execute.
    */
-  public process = (mutation: Uint16Array, target: RenderableElement): void => {
+  public process = (mutations: Uint16Array, startPosition: number, target: RenderableElement): number => {
     /*
      *   TransferrableMutationType.EVENT_SUBSCRIPTION,
      *   Target.index,
-     *   AddEventListener.count,
      *   RemoveEventListener.count,
-     *   ...AddEvent<[ EventRegistration.type, EventRegistration.index ]>
-     *   ...RemoveEvent<[ EventRegistration.type, EventRegistration.index ]>
+     *   AddEventListener.count,
+     *   ...RemoveEvent<[ EventRegistration.type, EventRegistration.index ]>,
+     *   ...AddEvent<[ EventRegistration.type, EventRegistration.index ]>,
      */
-    if (!target) {
+    const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
+    const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
+    const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;
+    const endPosition =
+      startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
+
+    if (target) {
+      for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
+        this.processListenerChange(target, iterator <= addEventListenersPosition, this.strings.get(mutations[iterator]), mutations[iterator + 1]);
+      }
+    } else {
       console.error(`getNode() yields null – ${target}`);
-      return;
     }
 
-    if (mutation[EventSubscriptionLocations.REMOVE_EVENT_COUNT] > 0) {
-      const removeEvents = mutation.slice(
-        EventSubscriptionLocations.EVENTS + mutation[EventSubscriptionLocations.ADD_EVENT_COUNT] * EVENT_SUBSCRIPTION_LENGTH,
-      );
-      for (let iterator = 0; iterator < removeEvents.length; iterator += EVENT_SUBSCRIPTION_LENGTH) {
-        this.processListenerChange(target, false, this.strings.get(removeEvents[iterator]), removeEvents[iterator + 1]);
-      }
-    }
-    if (mutation[EventSubscriptionLocations.ADD_EVENT_COUNT] > 0) {
-      const addEvents = mutation.slice(
-        EventSubscriptionLocations.EVENTS,
-        EventSubscriptionLocations.EVENTS + mutation[EventSubscriptionLocations.ADD_EVENT_COUNT] * EVENT_SUBSCRIPTION_LENGTH,
-      );
-      for (let iterator = 0; iterator < addEvents.length; iterator += EVENT_SUBSCRIPTION_LENGTH) {
-        this.processListenerChange(target, true, this.strings.get(addEvents[iterator]), addEvents[iterator + 1]);
-      }
-    }
+    return endPosition;
   };
 
   /**

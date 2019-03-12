@@ -33,24 +33,25 @@ export class BoundingClientRectProcessor {
    * Process commands transfered from worker thread to main thread.
    * @param mutation mutation record containing commands to execute.
    */
-  public process = (mutation: Uint16Array, target: RenderableElement): void => {
-    if (!target) {
+  public process = (mutations: Uint16Array, startPosition: number, target: RenderableElement): number => {
+    if (target) {
+      const boundingRect = target.getBoundingClientRect();
+      this.workerContext.messageToWorker({
+        [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
+        [TransferrableKeys.target]: [target._index_],
+        [TransferrableKeys.data]: [
+          boundingRect.top,
+          boundingRect.right,
+          boundingRect.bottom,
+          boundingRect.left,
+          boundingRect.width,
+          boundingRect.height,
+        ],
+      });
+    } else {
       console.error(`getNode() yields null – ${target}`);
-      return;
     }
 
-    const boundingRect = target.getBoundingClientRect();
-    this.workerContext.messageToWorker({
-      [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
-      [TransferrableKeys.target]: [target._index_],
-      [TransferrableKeys.data]: [
-        boundingRect.top,
-        boundingRect.right,
-        boundingRect.bottom,
-        boundingRect.left,
-        boundingRect.width,
-        boundingRect.height,
-      ],
-    });
+    return startPosition + 2;
   };
 }

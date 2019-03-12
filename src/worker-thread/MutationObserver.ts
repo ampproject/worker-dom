@@ -43,8 +43,8 @@ const pushMutation = (observer: MutationObserver, record: MutationRecord): void 
  * These records are then pushed into MutationObserver instances that match the MutationRecord.target
  * @param record MutationRecord to push into MutationObservers.
  */
-export function mutate(document: Document, record: MutationRecord, transferable: Uint16Array): void {
-  transfer(document.postMessage, transferable.buffer);
+export function mutate(document: Document, record: MutationRecord, transferable: Array<number>): void {
+  transfer(document.postMessage, transferable);
 
   observers.forEach(observer => {
     let target: Node | null = record.target;

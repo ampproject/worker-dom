@@ -30,6 +30,7 @@ export const enum ChildListMutationIndex {
   AppendedNodeCount = 4,
   RemovedNodeCount = 5,
   Nodes = 6,
+  LastStaticNode = 5,
 }
 /**
  * Child List Mutations
@@ -45,6 +46,13 @@ export const enum ChildListMutationIndex {
  * ]
  */
 
+export const enum AttributeMutationIndex {
+  Target = 1,
+  Name = 2,
+  Namespace = 3,
+  Value = 4,
+  LastStaticNode = 4,
+}
 /**
  * Attribute Mutations
  * [
@@ -56,6 +64,11 @@ export const enum ChildListMutationIndex {
  * ]
  */
 
+export const enum CharacterDataMutationIndex {
+  Target = 1,
+  Value = 2,
+  LastStaticNode = 2,
+}
 /**
  * Character Data Mutations
  * [
@@ -65,6 +78,12 @@ export const enum ChildListMutationIndex {
  * ]
  */
 
+export const enum PropertyMutationIndex {
+  Target = 1,
+  Name = 2,
+  Value = 3,
+  LastStaticNode = 3,
+}
 /**
  * Properties Mutations
  * [

@@ -47,12 +47,6 @@ export type TransferrableEventSubscriptionChange = [
   TransferrableEventSubscriptionIdentifer
 ];
 
-/*
-new Uint16Array([
-  MutationRecordType.EVENT_SUBSCRIPTION, this[TransferrableKeys.index], 1, 0, storedType, this[TransferrableKeys.index], index
-])
-*/
-
 /**
  * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.
  * Propagate adds an event listener to the worker global scope and uses the WorkerDOM Node.dispatchEvent

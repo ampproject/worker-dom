@@ -20,20 +20,36 @@ import { MessageType } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { Node } from './dom/Node';
 import { phase, Phases } from '../transfer/phase';
+import { PostMessage } from './worker-thread';
 
-export function transfer(postMessage: (message: any, transfer?: Transferable[]) => void, mutation: ArrayBuffer): void {
+let pending = false;
+let pendingMutations: Array<number> = [];
+
+export function transfer(postMessage: PostMessage, mutation: Array<number>): void {
   if (phase !== Phases.Initializing) {
-    const nodes = new Uint16Array(consumeNodes().reduce((acc: Array<number>, node: Node) => acc.concat(node[TransferrableKeys.creationFormat]), []))
-      .buffer;
+    pending = true;
+    pendingMutations = pendingMutations.concat(mutation);
 
-    postMessage(
-      {
-        [TransferrableKeys.type]: MessageType.MUTATE,
-        [TransferrableKeys.nodes]: nodes,
-        [TransferrableKeys.strings]: consumeStrings(),
-        [TransferrableKeys.mutations]: mutation,
-      },
-      [nodes, mutation],
-    );
+    Promise.resolve().then(_ => {
+      if (pending) {
+        const nodes = new Uint16Array(
+          consumeNodes().reduce((acc: Array<number>, node: Node) => acc.concat(node[TransferrableKeys.creationFormat]), []),
+        ).buffer;
+        const mutations = new Uint16Array(pendingMutations).buffer;
+
+        postMessage(
+          {
+            [TransferrableKeys.type]: MessageType.MUTATE,
+            [TransferrableKeys.nodes]: nodes,
+            [TransferrableKeys.strings]: consumeStrings(),
+            [TransferrableKeys.mutations]: mutations,
+          },
+          [nodes, mutations],
+        );
+
+        pendingMutations = [];
+        pending = false;
+      }
+    });
   }
 }

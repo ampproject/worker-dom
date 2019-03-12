@@ -267,13 +267,7 @@ export class Element extends ParentNode {
         value,
         oldValue,
       },
-      new Uint16Array([
-        TransferrableMutationType.ATTRIBUTES,
-        this[TransferrableKeys.index],
-        storeString(name),
-        storeString(namespaceURI),
-        storeString(value),
-      ]),
+      [TransferrableMutationType.ATTRIBUTES, this[TransferrableKeys.index], storeString(name), storeString(namespaceURI), storeString(value)],
     );
   }
 
@@ -335,13 +329,13 @@ export class Element extends ParentNode {
           attributeNamespace: namespaceURI,
           oldValue,
         },
-        new Uint16Array([
+        [
           TransferrableMutationType.ATTRIBUTES,
           this[TransferrableKeys.index],
           storeString(name),
           storeString(namespaceURI),
           0, // 0 means no value
-        ]),
+        ],
       );
     }
   }
@@ -453,7 +447,7 @@ export class Element extends ParentNode {
             type: MutationRecordType.GET_BOUNDING_CLIENT_RECT,
             target: this,
           },
-          new Uint16Array([TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]]),
+          [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]],
         ); // TODO: This is unclear, fix it.
 
         setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.

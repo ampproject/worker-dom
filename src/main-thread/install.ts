@@ -77,12 +77,12 @@ export function install(
       const worker = workerContext.getWorker();
       setPhase(Phases.Hydrating);
 
-      console.log('set phase to hydration', worker);
+      // console.log('set phase to hydration', worker);
       const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, sanitizer);
       worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
 
-        console.log('worker.onmessage', message);
+        // console.log('worker.onmessage', new Uint16Array(data[TransferrableKeys.mutations]));
 
         const type = data[TransferrableKeys.type];
         if (!ALLOWABLE_MESSAGE_TYPES.includes(type)) {
@@ -93,7 +93,8 @@ export function install(
         mutatorContext.mutate(
           (data as MutationFromWorker)[TransferrableKeys.nodes],
           (data as MutationFromWorker)[TransferrableKeys.strings],
-          (data as MutationFromWorker)[TransferrableKeys.mutations],
+          new Uint16Array(data[TransferrableKeys.mutations]),
+          // (data as MutationFromWorker)[TransferrableKeys.mutations],
         );
         // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
         if (callbacks) {

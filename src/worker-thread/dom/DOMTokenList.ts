@@ -200,13 +200,13 @@ export class DOMTokenList {
         value,
         oldValue,
       },
-      new Uint16Array([
+      [
         TransferrableMutationType.ATTRIBUTES,
         this[TransferrableKeys.target][TransferrableKeys.index],
         storeString(this[TransferrableKeys.attributeName]),
         0, // Attribute Namespace is the default value.
         storeString(value),
-      ]),
+      ],
     );
   }
 }

@@ -20,18 +20,24 @@
 import { NodeContext } from './nodes';
 import { Strings } from './strings';
 import { WorkerContext } from './worker';
-import { TransferrableMutationType, ChildListMutationIndex } from '../transfer/replacement/TransferrableMutation';
+import {
+  TransferrableMutationType,
+  ChildListMutationIndex,
+  AttributeMutationIndex,
+  CharacterDataMutationIndex,
+  PropertyMutationIndex,
+} from '../transfer/replacement/TransferrableMutation';
 import { EventSubscriptionProcessor } from './commands/event-subscription';
 import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
 
 export class MutatorProcessor {
   private strings: Strings;
   private nodeContext: NodeContext;
-  private mutationQueue: Array<ArrayBuffer>;
+  private mutationQueue: Array<Uint16Array>;
   private pendingMutations: boolean;
   private sanitizer: Sanitizer | undefined;
   private mutators: {
-    [key: number]: (mutation: Uint16Array, target: Node) => void;
+    [key: number]: (mutations: Uint16Array, startPosition: number, target: Node) => number;
   };
 
   /**
@@ -66,7 +72,7 @@ export class MutatorProcessor {
    * @param stringValues Additional string values to use in decoding messages.
    * @param mutations Changes to apply in both graph shape and content of Elements.
    */
-  mutate(nodes: ArrayBuffer, stringValues: Array<string>, mutations: ArrayBuffer): void {
+  mutate(nodes: ArrayBuffer, stringValues: Array<string>, mutations: Uint16Array): void {
     // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
     // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
     //   return;
@@ -89,20 +95,24 @@ export class MutatorProcessor {
    * Investigations in using asyncFlush to resolve are worth considering.
    */
   private syncFlush = (): void => {
-    this.mutationQueue.forEach(mutationBuffer => {
-      const mutationArray = new Uint16Array(mutationBuffer);
-      const target = this.nodeContext.getNode(mutationArray[1]);
-      if (!target) {
-        console.error(`getNode() yields null – ${target}`);
-        return;
+    this.mutationQueue.forEach(mutationArray => {
+      let operationStart: number = 0;
+      let length: number = mutationArray.length;
+
+      while (operationStart < length) {
+        const target = this.nodeContext.getNode(mutationArray[operationStart + 1]);
+        if (!target) {
+          console.error(`getNode() yields null – ${target}`);
+          return;
+        }
+        operationStart = this.mutators[mutationArray[operationStart]](mutationArray, operationStart, target);
       }
-      this.mutators[mutationArray[0]](mutationArray, target);
     });
     this.mutationQueue = [];
     this.pendingMutations = false;
   };
 
-  private mutateChildList(mutation: Uint16Array, target: HTMLElement) {
+  private mutateChildList(mutations: Uint16Array, startPosition: number, target: HTMLElement): number {
     /**
      * [
      *   TransferrableMutationType.CHILD_LIST,
@@ -115,31 +125,38 @@ export class MutatorProcessor {
      *   ... RemovedNode.index,
      * ]
      */
-    if (mutation[ChildListMutationIndex.RemovedNodeCount] > 0) {
-      mutation.slice(ChildListMutationIndex.Nodes + mutation[ChildListMutationIndex.AppendedNodeCount]).forEach(removeId => {
-        const node = this.nodeContext.getNode(removeId);
-        if (!node) {
-          console.error(`getNode() yields null – ${removeId}`);
-          return;
-        }
-        node.remove();
-      });
-    }
-    if (mutation[ChildListMutationIndex.AppendedNodeCount] > 0) {
-      mutation
-        .slice(ChildListMutationIndex.Nodes, ChildListMutationIndex.Nodes + mutation[ChildListMutationIndex.AppendedNodeCount])
-        .forEach(addId => {
-          const newNode = this.nodeContext.getNode(addId);
-          if (newNode) {
-            // TODO: Handle this case ---
-            // Transferred nodes that are not stored were previously removed by the sanitizer.
-            target.insertBefore(newNode, (mutation[2] && this.nodeContext.getNode(mutation[2])) || null);
+    const appendNodeCount = mutations[startPosition + ChildListMutationIndex.AppendedNodeCount];
+    const removeNodeCount = mutations[startPosition + ChildListMutationIndex.RemovedNodeCount];
+    if (removeNodeCount > 0) {
+      mutations
+        .slice(
+          startPosition + ChildListMutationIndex.Nodes + appendNodeCount,
+          startPosition + ChildListMutationIndex.Nodes + appendNodeCount + removeNodeCount,
+        )
+        .forEach(removeId => {
+          const node = this.nodeContext.getNode(removeId);
+          if (!node) {
+            console.error(`getNode() yields null – ${removeId}`);
+            return;
           }
+          node.remove();
         });
     }
+    if (appendNodeCount > 0) {
+      mutations.slice(startPosition + ChildListMutationIndex.Nodes, startPosition + ChildListMutationIndex.Nodes + appendNodeCount).forEach(addId => {
+        const nextSibling = mutations[startPosition + ChildListMutationIndex.NextSibling];
+        const newNode = this.nodeContext.getNode(addId);
+        if (newNode) {
+          // TODO: Handle this case ---
+          // Transferred nodes that are not stored were previously removed by the sanitizer.
+          target.insertBefore(newNode, (nextSibling && this.nodeContext.getNode(nextSibling)) || null);
+        }
+      });
+    }
+    return startPosition + ChildListMutationIndex.LastStaticNode + appendNodeCount + removeNodeCount + 1;
   }
 
-  private mutateAttributes(mutation: Uint16Array, target: HTMLElement | SVGElement) {
+  private mutateAttributes(mutations: Uint16Array, startPosition: number, target: HTMLElement | SVGElement): number {
     /*
      * [
      *   TransferrableMutationType.ATTRIBUTES,
@@ -149,8 +166,12 @@ export class MutatorProcessor {
      *   Attr.value
      * ]
      */
-    const attributeName = (mutation[2] !== 0 && this.strings.get(mutation[2])) || null;
-    const value = (mutation[4] !== 0 && this.strings.get(mutation[4])) || null;
+    const attributeName =
+      (mutations[startPosition + AttributeMutationIndex.Name] !== 0 && this.strings.get(mutations[startPosition + AttributeMutationIndex.Name])) ||
+      null;
+    const value =
+      (mutations[startPosition + AttributeMutationIndex.Value] !== 0 && this.strings.get(mutations[startPosition + AttributeMutationIndex.Value])) ||
+      null;
     if (attributeName != null) {
       if (value == null) {
         target.removeAttribute(attributeName);
@@ -162,9 +183,10 @@ export class MutatorProcessor {
         }
       }
     }
+    return startPosition + AttributeMutationIndex.LastStaticNode + 1;
   }
 
-  private mutateCharacterData(mutation: Uint16Array, target: CharacterData) {
+  private mutateCharacterData(mutations: Uint16Array, startPosition: number, target: CharacterData): number {
     /*
      * [
      *   TransferrableMutationType.CHARACTER_DATA,
@@ -172,14 +194,15 @@ export class MutatorProcessor {
      *   CharacterData.value
      * ]
      */
-    const value = mutation[2];
+    const value = mutations[startPosition + CharacterDataMutationIndex.Value];
     if (value) {
       // Sanitization not necessary for textContent.
       target.textContent = this.strings.get(value);
     }
+    return startPosition + CharacterDataMutationIndex.LastStaticNode + 1;
   }
 
-  private mutateProperties(mutation: Uint16Array, target: RenderableElement) {
+  private mutateProperties(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
     /*
      * [
      *   TransferrableMutationType.PROPERTIES,
@@ -188,8 +211,12 @@ export class MutatorProcessor {
      *   Property.value
      * ]
      */
-    const name = (mutation[2] !== 0 && this.strings.get(mutation[2])) || null;
-    const value = (mutation[3] !== 0 && this.strings.get(mutation[3])) || null;
+    const name =
+      (mutations[startPosition + PropertyMutationIndex.Name] !== 0 && this.strings.get(mutations[startPosition + PropertyMutationIndex.Name])) ||
+      null;
+    const value =
+      (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && this.strings.get(mutations[startPosition + PropertyMutationIndex.Value])) ||
+      null;
     if (name && value != null) {
       const stringValue = String(value);
       if (!this.sanitizer || this.sanitizer.validProperty(target.nodeName, name, stringValue)) {
@@ -200,5 +227,6 @@ export class MutatorProcessor {
         // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
       }
     }
+    return startPosition + PropertyMutationIndex.LastStaticNode + 1;
   }
 }

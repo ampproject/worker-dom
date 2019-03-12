@@ -63,7 +63,7 @@ export abstract class CharacterData extends Node {
         value,
         oldValue,
       },
-      new Uint16Array([TransferrableMutationType.CHARACTER_DATA, this[TransferrableKeys.index], storeString(value)]),
+      [TransferrableMutationType.CHARACTER_DATA, this[TransferrableKeys.index], storeString(value)],
     );
   }
 
