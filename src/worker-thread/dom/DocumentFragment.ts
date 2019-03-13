@@ -15,7 +15,7 @@
  */
 
 import { ParentNode } from './ParentNode';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType } from '../../transfer/replacement/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { NumericBoolean } from '../../utils';
 import { store as storeString } from '../strings';

@@ -16,7 +16,7 @@
 
 // import { TransferrableKeys } from '../transfer/TransferrableKeys';
 // import { MutationRecordType } from '../worker-thread/MutationRecord';
-// import { TransferrableNode } from '../transfer/TransferrableNodes';
+// import { TransferrableNode } from '../transfer/replacement/TransferrableNodes';
 import { NodeContext } from './nodes';
 import { Strings } from './strings';
 import { WorkerContext } from './worker';

@@ -17,7 +17,7 @@
 import { TransferrableEvent } from './TransferrableEvent';
 import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
-import { HydrateableNode, TransferredNode } from './TransferrableNodes';
+import { HydrateableNode, TransferredNode } from './replacement/TransferrableNodes';
 import { TransferrableBoundingClientRect } from './TransferrableCommands';
 
 export const enum MessageType {

@@ -16,7 +16,7 @@
 
 import { Element } from './Element';
 import { toLower } from '../../utils';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType } from '../../transfer/replacement/TransferrableNodes';
 import { Node } from './Node';
 
 export type ConditionPredicate = (element: Element) => boolean;

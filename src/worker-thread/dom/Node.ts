@@ -19,7 +19,7 @@ import { Event, EventHandler } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferredNode, NodeType } from '../../transfer/TransferrableNodes';
+import { TransferredNode, NodeType } from '../../transfer/replacement/TransferrableNodes';
 import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
 // import { TransferrableEventSubscription } from '../../transfer/replacement/TransferrableEvent';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';

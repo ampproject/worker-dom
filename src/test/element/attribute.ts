@@ -17,7 +17,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Attr } from '../../worker-thread/dom/Attr';
-import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { HTML_NAMESPACE } from '../../transfer/replacement/TransferrableNodes';
 import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TransferredNode } from '../TransferrableNodes';
+import { TransferredNode } from '../replacement/TransferrableNodes';
 import { TransferrableKeys } from '../TransferrableKeys';
 
 export interface TransferrableEvent {

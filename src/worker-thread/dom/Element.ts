@@ -26,7 +26,7 @@ import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/replacement/TransferrableNodes';
 import { store as storeString } from '../strings';
 import { toLower } from '../../utils';
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';

@@ -17,7 +17,7 @@
 import { CharacterData } from './CharacterData';
 import { NumericBoolean } from '../../utils';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType } from '../../transfer/replacement/TransferrableNodes';
 import { store as storeString } from '../strings';
 import { Node } from './Node';
 

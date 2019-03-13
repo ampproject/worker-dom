@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NodeType } from '../transfer/TransferrableNodes';
+import { NodeType, TransferrableNodeIndex } from '../transfer/replacement/TransferrableNodes';
 import { Strings } from './strings';
 
 export class NodeContext {
@@ -50,21 +50,20 @@ export class NodeContext {
   }
 
   public createNodes(buffer: ArrayBuffer, sanitizer?: Sanitizer): void {
-    const nodeBuffer = new Uint16Array(buffer); // Uint16Array<TransferrableNode>
+    const nodeBuffer = new Uint16Array(buffer);
     const nodeBufferLength = nodeBuffer.length;
 
-    // console.log('create nodes', nodeBufferLength/7);
-    for (let iterator = 0; iterator < nodeBufferLength; iterator += 7) {
+    for (let iterator = 0; iterator < nodeBufferLength; iterator += TransferrableNodeIndex.LastStaticNode + 1) {
       let node: Node;
-      if (nodeBuffer[iterator + 1] === NodeType.TEXT_NODE) {
-        node = document.createTextNode(this.strings.get(nodeBuffer[iterator + 4]));
-      } else if (nodeBuffer[iterator + 1] === NodeType.DOCUMENT_FRAGMENT_NODE) {
+      if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.TEXT_NODE) {
+        node = document.createTextNode(this.strings.get(nodeBuffer[iterator + TransferrableNodeIndex.TextContent]));
+      } else if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.DOCUMENT_FRAGMENT_NODE) {
         node = document.createDocumentFragment();
       } else {
-        const nodeName = this.strings.get(nodeBuffer[iterator + 2]);
+        const nodeName = this.strings.get(nodeBuffer[iterator + TransferrableNodeIndex.NodeName]);
         node =
-          nodeBuffer[iterator + 5] !== 0
-            ? document.createElementNS(this.strings.get(nodeBuffer[iterator + 6]), nodeName)
+          nodeBuffer[iterator + TransferrableNodeIndex.ContainsNamespace] !== 0
+            ? document.createElementNS(this.strings.get(nodeBuffer[iterator + TransferrableNodeIndex.Namespace]), nodeName)
             : document.createElement(nodeName);
 
         // TODO(KB): Restore Properties

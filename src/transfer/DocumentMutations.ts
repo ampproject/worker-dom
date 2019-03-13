@@ -18,7 +18,7 @@
 import { Document } from '../worker-thread/dom/Document';
 import { MutationRecord } from '../worker-thread/MutationRecord';
 // import { TransferrableMutationRecords } from './TransferrableRecord';
-// import { TransferrableNode } from './TransferrableNodes';
+// import { TransferrableNode } from './replacement/TransferrableNodes';
 // import { MessageType, MutationFromWorker } from './Messages';
 // import { TransferrableKeys } from './TransferrableKeys';
 // import { consume as consumeNodes } from '../worker-thread/nodes';

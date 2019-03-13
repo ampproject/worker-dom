@@ -44,7 +44,7 @@ import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { Document } from './dom/Document';
 import { EventHandler } from './Event';
-import { HydrateableNode } from '../transfer/TransferrableNodes';
+import { HydrateableNode } from '../transfer/replacement/TransferrableNodes';
 
 export interface WorkerDOMGlobalScope {
   document: Document;

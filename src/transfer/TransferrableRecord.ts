@@ -15,7 +15,7 @@
  */
 
 import { MutationRecordType } from '../worker-thread/MutationRecord';
-import { TransferredNode } from './TransferrableNodes';
+import { TransferredNode } from './replacement/TransferrableNodes';
 import { NumericBoolean } from '../utils';
 
 // The TransferrableMutationRecord interface is modification and extension of

@@ -17,7 +17,7 @@
 import { Node, NodeName } from './Node';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeType } from '../../transfer/replacement/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
 import { store as storeString } from '../strings';
