@@ -42,7 +42,7 @@ export class NodeContext {
     baseElement._index_ = 2;
     // Lastly, it's important while initializing the document that we store
     // the default nodes present in the server rendered document.
-    baseElement.childNodes.forEach(n => this.storeNodes(n));
+    baseElement.childNodes.forEach(this.storeNodes);
   }
 
   public getBaseElement(): HTMLElement {
