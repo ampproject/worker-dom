@@ -28,7 +28,6 @@ export function consumeInitialDOM(document: Document, strings: Array<string>, hy
   strings.forEach(storeString);
   (hydrateableNode[TransferrableKeys.childNodes] || []).forEach(child => document.body.appendChild(create(document, strings, child)));
   setPhase(Phases.Hydrating);
-  // console.log('initial DOM consumed', document);
 }
 
 function create(document: Document, strings: Array<string>, skeleton: HydrateableNode): RenderableElement {
