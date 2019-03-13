@@ -18,7 +18,7 @@ import { NodeType, TransferrableNodeIndex } from '../transfer/replacement/Transf
 import { Strings } from './strings';
 
 export class NodeContext {
-  private baseElement: HTMLElement;
+  public baseElement: HTMLElement;
   private strings: Strings;
   private count: number;
   private nodes: Map<number, Node>;
@@ -43,10 +43,6 @@ export class NodeContext {
     // Lastly, it's important while initializing the document that we store
     // the default nodes present in the server rendered document.
     baseElement.childNodes.forEach(this.storeNodes);
-  }
-
-  public getBaseElement(): HTMLElement {
-    return this.baseElement;
   }
 
   public createNodes(buffer: ArrayBuffer, sanitizer?: Sanitizer): void {
