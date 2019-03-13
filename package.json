@@ -98,12 +98,12 @@
     {
       "path": "./dist/index.mjs",
       "compression": "brotli",
-      "maxSize": "3.0 kB"
+      "maxSize": "3.05 kB"
     },
     {
       "path": "./dist/index.safe.mjs",
       "compression": "brotli",
-      "maxSize": "8.2 kB"
+      "maxSize": "8.25 kB"
     }
   ],
   "esm": {

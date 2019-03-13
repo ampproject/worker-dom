@@ -60,6 +60,13 @@ export class WorkerContext {
         var Event = defaultView.Event;
         var MutationObserver = defaultView.MutationObserver;
         var longTask = this.longTask;
+        longTask.wrap = function(callback, opt_message) {
+          return function() {
+            longTask(
+                Promise.resolve(callback.apply(null, arguments)),
+                opt_message);
+          };
+        };
 
         function addEventListener(type, handler) {
           return document.addEventListener(type, handler);

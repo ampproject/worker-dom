@@ -16,13 +16,12 @@
 
 const btn = document.getElementsByTagName('button')[0];
 
-btn.addEventListener('click', async () => {
-  longTask(
-      new Promise(resolve => setTimeout(resolve, 5000))
-          .then(() => {
-            const h1 = document.createElement('h1');
-            h1.textContent = 'Hello World!'
-            document.body.appendChild(h1);
-          }),
-      'long task running...');
-});
+btn.addEventListener('click', longTask.wrap(e => {
+  console.log('event: ', e);
+  return new Promise(resolve => setTimeout(resolve, 5000))
+      .then(() => {
+        const h1 = document.createElement('h1');
+        h1.textContent = 'Hello World!'
+        document.body.appendChild(h1);
+      });
+}, 'long task running...'));
