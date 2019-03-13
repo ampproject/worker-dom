@@ -41,7 +41,4 @@ export const enum MutationRecordType {
   ATTRIBUTES = 0,
   CHARACTER_DATA = 1,
   CHILD_LIST = 2,
-  PROPERTIES = 3,
-  EVENT_SUBSCRIPTION = 4,
-  GET_BOUNDING_CLIENT_RECT = 5,
 }

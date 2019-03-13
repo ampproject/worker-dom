@@ -113,18 +113,6 @@ export class MutatorProcessor {
   };
 
   private mutateChildList(mutations: Uint16Array, startPosition: number, target: HTMLElement): number {
-    /**
-     * [
-     *   TransferrableMutationType.CHILD_LIST,
-     *   Target.index,
-     *   NextSibling.index,
-     *   PreviousSibling.index,
-     *   AppendedNodeCount,
-     *   RemovedNodeCount,
-     *   ... AppendedNode.index,
-     *   ... RemovedNode.index,
-     * ]
-     */
     const appendNodeCount = mutations[startPosition + ChildListMutationIndex.AppendedNodeCount];
     const removeNodeCount = mutations[startPosition + ChildListMutationIndex.RemovedNodeCount];
     if (removeNodeCount > 0) {
@@ -157,15 +145,6 @@ export class MutatorProcessor {
   }
 
   private mutateAttributes(mutations: Uint16Array, startPosition: number, target: HTMLElement | SVGElement): number {
-    /*
-     * [
-     *   TransferrableMutationType.ATTRIBUTES,
-     *   Target.index,
-     *   Attr.name,
-     *   Attr.namespace,   // 0 the default value.
-     *   Attr.value
-     * ]
-     */
     const attributeName =
       (mutations[startPosition + AttributeMutationIndex.Name] !== 0 && this.strings.get(mutations[startPosition + AttributeMutationIndex.Name])) ||
       null;
@@ -187,13 +166,6 @@ export class MutatorProcessor {
   }
 
   private mutateCharacterData(mutations: Uint16Array, startPosition: number, target: CharacterData): number {
-    /*
-     * [
-     *   TransferrableMutationType.CHARACTER_DATA,
-     *   Target.index,
-     *   CharacterData.value
-     * ]
-     */
     const value = mutations[startPosition + CharacterDataMutationIndex.Value];
     if (value) {
       // Sanitization not necessary for textContent.
@@ -203,14 +175,6 @@ export class MutatorProcessor {
   }
 
   private mutateProperties(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-    /*
-     * [
-     *   TransferrableMutationType.PROPERTIES,
-     *   Target.index,
-     *   Property.name,
-     *   Property.value
-     * ]
-     */
     const name =
       (mutations[startPosition + PropertyMutationIndex.Name] !== 0 && this.strings.get(mutations[startPosition + PropertyMutationIndex.Name])) ||
       null;

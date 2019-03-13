@@ -74,17 +74,14 @@ export function install(
   fetchPromise.then(([workerDOMScript, authorScript, authorScriptURL]) => {
     if (workerDOMScript && authorScript && authorScriptURL) {
       const workerContext = new WorkerContext(baseElement, workerDOMScript, authorScript, authorScriptURL, callbacks);
-      const worker = workerContext.getWorker();
       setPhase(Phases.Hydrating);
 
       // console.log('set phase to hydration', worker);
       const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, sanitizer);
-      worker.onmessage = (message: MessageFromWorker) => {
+      workerContext.worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
-
-        // console.log('worker.onmessage', new Uint16Array(data[TransferrableKeys.mutations]));
-
         const type = data[TransferrableKeys.type];
+
         if (!ALLOWABLE_MESSAGE_TYPES.includes(type)) {
           return;
         }
@@ -94,7 +91,6 @@ export function install(
           (data as MutationFromWorker)[TransferrableKeys.nodes],
           (data as MutationFromWorker)[TransferrableKeys.strings],
           new Uint16Array(data[TransferrableKeys.mutations]),
-          // (data as MutationFromWorker)[TransferrableKeys.mutations],
         );
         // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
         if (callbacks) {

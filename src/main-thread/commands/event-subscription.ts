@@ -37,14 +37,6 @@ export class EventSubscriptionProcessor {
    * @param mutation mutation record containing commands to execute.
    */
   public process = (mutations: Uint16Array, startPosition: number, target: RenderableElement): number => {
-    /*
-     *   TransferrableMutationType.EVENT_SUBSCRIPTION,
-     *   Target.index,
-     *   RemoveEventListener.count,
-     *   AddEventListener.count,
-     *   ...RemoveEvent<[ EventRegistration.type, EventRegistration.index ]>,
-     *   ...AddEvent<[ EventRegistration.type, EventRegistration.index ]>,
-     */
     const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
     const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
     const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;

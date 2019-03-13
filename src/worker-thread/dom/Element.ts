@@ -33,6 +33,7 @@ import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
 import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
 import { Document } from './Document';
+import { transfer } from '../MutationTransfer';
 
 export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
 export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
@@ -436,20 +437,7 @@ export class Element extends ParentNode {
           }
         });
 
-        // WIP FIX THIS –– It's not a mutation, it's a read of value but must be done in correct order.
-
-        // Requesting a boundingClientRect can be depdendent on mutations that have not yet
-        // applied in the main thread. As a result, ensure proper order of DOM mutation and reads
-        // by sending the request for a boundingClientRect as a mutation.
-        mutate(
-          this.ownerDocument as Document,
-          {
-            type: MutationRecordType.GET_BOUNDING_CLIENT_RECT,
-            target: this,
-          },
-          [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]],
-        ); // TODO: This is unclear, fix it.
-
+        transfer((this.ownerDocument as Document).postMessage, [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]]);
         setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.
       }
     });

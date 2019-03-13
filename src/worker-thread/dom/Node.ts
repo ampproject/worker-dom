@@ -277,19 +277,6 @@ export abstract class Node {
           child[TransferrableKeys.index],
         ],
       );
-
-      /*
-      [
-        TransferrableMutationType.CHILD_LIST,
-        Target.index,
-        NextSibling.index,
-        PreviousSibling.index,
-        AppendedNodeCount,
-        RemovedNodeCount,
-        ... AppendedNode.index,
-        ... RemovedNode.index,
-      ]
-      */
     }
     return child;
   }
@@ -318,19 +305,6 @@ export abstract class Node {
         },
         [TransferrableMutationType.CHILD_LIST, this[TransferrableKeys.index], 0, 0, 0, 1, child[TransferrableKeys.index]],
       );
-
-      /*
-      [
-        TransferrableMutationType.CHILD_LIST,
-        Target.index,
-        NextSibling.index,
-        PreviousSibling.index,
-        AppendedNodeCount,
-        ... AppendedNode.index,
-        RemovedNodeCount,
-        ... RemovedNode.index,
-      ]
-      */
 
       return child;
     }
@@ -368,7 +342,7 @@ export abstract class Node {
           [
             TransferrableMutationType.CHILD_LIST,
             this[TransferrableKeys.index],
-            this.childNodes[index + 1][TransferrableKeys.index],
+            this.childNodes[index + 1] ? this.childNodes[index + 1][TransferrableKeys.index] : 0,
             0,
             1,
             newChild[TransferrableKeys.index],
@@ -376,19 +350,6 @@ export abstract class Node {
             oldChild[TransferrableKeys.index],
           ],
         );
-
-        /*
-        [
-          TransferrableMutationType.CHILD_LIST,
-          Target.index,
-          NextSibling.index,
-          PreviousSibling.index,
-          AppendedNodeCount,
-          ... AppendedNode.index,
-          RemovedNodeCount,
-          ... RemovedNode.index,
-        ]
-        */
       }
     }
 

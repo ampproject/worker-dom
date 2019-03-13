@@ -19,7 +19,7 @@ import { WorkerCallbacks } from './callbacks';
 import { createHydrateableRootNode } from './serialize';
 
 export class WorkerContext {
-  private worker: Worker;
+  public worker: Worker;
 
   /**
    * Stored callbacks for the most recently created worker.
@@ -76,10 +76,6 @@ export class WorkerContext {
     if (callbacks && callbacks.onCreateWorker) {
       callbacks.onCreateWorker(baseElement);
     }
-  }
-
-  getWorker(): Worker {
-    return this.worker;
   }
 
   /**

@@ -48,15 +48,12 @@ export function mutate(document: Document, record: MutationRecord, transferable:
 
   observers.forEach(observer => {
     let target: Node | null = record.target;
-    let matched = match(observer.target, target);
-    if (!matched) {
-      do {
-        if ((matched = match(observer.target, target))) {
-          pushMutation(observer, record);
-          break;
-        }
-      } while ((target = target.parentNode));
-    }
+    do {
+      if (match(observer.target, target)) {
+        pushMutation(observer, record);
+        break;
+      }
+    } while ((target = target.parentNode));
   });
 }
 
