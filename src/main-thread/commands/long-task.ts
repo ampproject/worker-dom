@@ -36,7 +36,7 @@ export class LongTaskProcessor {
    * Process commands transfered from worker thread to main thread.
    * @param mutation mutation record containing commands to execute.
    */
-  processStart(mutation?: TransferrableMutationRecord): void {
+  processStart = (mutation?: TransferrableMutationRecord): void => {
     if (!this.onLongTask) {
       return;
     }
@@ -48,13 +48,13 @@ export class LongTaskProcessor {
         }),
       );
     }
-  }
+  };
 
   /**
    * Process commands transfered from worker thread to main thread.
    * @param mutation mutation record containing commands to execute.
    */
-  processEnd(mutation?: TransferrableMutationRecord): void {
+  processEnd = (mutation?: TransferrableMutationRecord): void => {
     if (!this.onLongTask) {
       return;
     }
@@ -64,5 +64,5 @@ export class LongTaskProcessor {
       this.currentResolver = null;
       this.index = 0;
     }
-  }
+  };
 }

@@ -30,9 +30,7 @@ polka()
   .get('/slow/*', (req, res) => {
     const reqPath = req.path.substring('/slow/'.length);
     const file = fs.readFileSync(path.resolve(__dirname, reqPath));
-    setTimeout(() => {
-      res.end(file);
-    }, 6000);
+    setTimeout(() => res.end(file), 6000);
   })
   .listen(PORT, _ => {
     console.log(`> Running on http://localhost:${PORT}`);

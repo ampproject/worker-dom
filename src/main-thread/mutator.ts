@@ -69,8 +69,8 @@ export class MutatorProcessor {
       [MutationRecordType.PROPERTIES]: this.mutateProperties.bind(this),
       [MutationRecordType.EVENT_SUBSCRIPTION]: eventSubscriptionProcessor.process.bind(eventSubscriptionProcessor),
       [MutationRecordType.GET_BOUNDING_CLIENT_RECT]: boundingClientRectProcessor.process.bind(boundingClientRectProcessor),
-      [MutationRecordType.LONG_TASK_START]: longTaskProcessor.processStart.bind(longTaskProcessor),
-      [MutationRecordType.LONG_TASK_END]: longTaskProcessor.processEnd.bind(longTaskProcessor),
+      [MutationRecordType.LONG_TASK_START]: longTaskProcessor.processStart,
+      [MutationRecordType.LONG_TASK_END]: longTaskProcessor.processEnd,
     };
   }
 
