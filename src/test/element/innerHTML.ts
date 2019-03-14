@@ -20,6 +20,7 @@ import { Text } from '../../worker-thread/dom/Text';
 import { Comment } from '../../worker-thread/dom/Comment';
 import { NodeType, SVG_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { createDocument } from '../../worker-thread/dom/Document';
+import { HTMLInputElement } from '../../worker-thread/dom/HTMLInputElement';
 
 const test = anyTest as TestInterface<{
   node: Element;
@@ -178,6 +179,13 @@ test('set normalizes html namespace tag names', t => {
   const child = node.firstChild!;
   t.is(child.localName, 'div');
   t.is(child.nodeName, 'DIV');
+});
+
+test('set creates correct types of HTML elements', t => {
+  const { node } = t.context;
+  node.innerHTML = '<input>';
+  const child = node.firstChild!;
+  t.true(child instanceof HTMLInputElement);
 });
 
 test.skip('set has svg tags live in SVG namespace', t => {
