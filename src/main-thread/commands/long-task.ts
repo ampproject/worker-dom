@@ -20,38 +20,49 @@ import { TransferrableMutationRecord } from '../../transfer/TransferrableRecord'
 export class LongTaskProcessor {
   private onLongTask: LongTaskFunction | null;
   private currentResolver: Function | null;
+  private index: number;
 
   constructor(callbacks?: WorkerCallbacks) {
     this.onLongTask = (callbacks && callbacks.onLongTask) || null;
     this.currentResolver = null;
+    this.index = 0;
+  }
+
+  isInLongTask(): boolean {
+    return !!this.currentResolver;
   }
 
   /**
    * Process commands transfered from worker thread to main thread.
    * @param mutation mutation record containing commands to execute.
    */
-  processStart(mutation: TransferrableMutationRecord): void {
+  processStart(mutation?: TransferrableMutationRecord): void {
     if (!this.onLongTask) {
       return;
     }
-    if (this.currentResolver) {
-      this.currentResolver();
-      this.currentResolver = null;
+    this.index++;
+    if (!this.currentResolver) {
+      this.onLongTask(
+        new Promise(resolve => {
+          this.currentResolver = resolve;
+        }),
+      );
     }
-    const promise = new Promise(resolve => {
-      this.currentResolver = resolve;
-    });
-    this.onLongTask(promise);
   }
 
   /**
    * Process commands transfered from worker thread to main thread.
    * @param mutation mutation record containing commands to execute.
    */
-  processEnd(mutation: TransferrableMutationRecord): void {
-    if (this.currentResolver) {
+  processEnd(mutation?: TransferrableMutationRecord): void {
+    if (!this.onLongTask) {
+      return;
+    }
+    this.index--;
+    if (this.currentResolver && this.index <= 0) {
       this.currentResolver();
       this.currentResolver = null;
+      this.index = 0;
     }
   }
 }

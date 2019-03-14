@@ -128,7 +128,6 @@ const WHITELISTED_GLOBALS = [
 ];
 
 const doc = createDocument((self as DedicatedWorkerGlobalScope).postMessage);
-const longTask = new LongTask(doc);
 export const workerDOM: WorkerDOMGlobalScope = {
   document: doc,
   navigator: (self as WorkerGlobalScope).navigator,
@@ -139,7 +138,6 @@ export const workerDOM: WorkerDOMGlobalScope = {
   url: '/',
   appendKeys,
   consumeInitialDOM,
-  longTask: longTask.execute.bind(longTask),
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLDataElement,
@@ -171,11 +169,32 @@ export const workerDOM: WorkerDOMGlobalScope = {
 };
 
 /**
+ * Instruments relevant calls to work via LongTask API.
+ * @param global
+ */
+function updateLongTask(global: WorkerGlobalScope) {
+  const longTask = new LongTask(doc);
+  const originalFetch = global['fetch'];
+  if (originalFetch) {
+    try {
+      Object.defineProperty(global, 'fetch', {
+        enumerable: true,
+        writable: true,
+        configurable: true,
+        value: longTask.wrap(originalFetch.bind(global)),
+      });
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+}
+
+/**
  * Walks up a global's prototype chain and dereferences non-whitelisted properties
  * until EventTarget is reached.
  * @param global
  */
-function dereferenceGlobals(global: WorkerGlobalScope) {
+function updateGlobals(global: WorkerGlobalScope) {
   function deleteUnsafe(object: any, property: string) {
     if (WHITELISTED_GLOBALS.indexOf(property) >= 0) {
       return;
@@ -194,6 +213,8 @@ function dereferenceGlobals(global: WorkerGlobalScope) {
     Object.getOwnPropertyNames(current).forEach(prop => deleteUnsafe(current, prop));
     current = Object.getPrototypeOf(current);
   }
+
+  updateLongTask(global);
 }
 
-dereferenceGlobals(self);
+updateGlobals(self);

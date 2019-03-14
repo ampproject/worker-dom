@@ -28,8 +28,8 @@
   <div id="status-element">
   </div>
   <script type="module">
-    import {upgradeElement} from '/dist/index.mjs';
-    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.mjs', {
+    import {upgradeElement} from '/dist/index.safe.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.safe.mjs', {
       onLongTask: (promise, opt_message) => {
         const statusElement = document.getElementById('status-element');
         statusElement.textContent = opt_message || 'Long task is running...';

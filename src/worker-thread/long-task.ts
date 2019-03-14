@@ -41,4 +41,11 @@ export class LongTask {
       },
     );
   }
+
+  wrap(func: Function): Function {
+    const longTask = this;
+    return function() {
+      return longTask.execute(Promise.resolve(func.apply(null, arguments)));
+    };
+  }
 }

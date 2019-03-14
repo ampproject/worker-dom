@@ -56,7 +56,6 @@ export interface WorkerDOMGlobalScope {
   url: string;
   appendKeys: (keys: Array<string>) => void;
   consumeInitialDOM: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode) => void;
-  longTask: (promise: Promise<any>, message?: string) => Promise<any>;
   HTMLAnchorElement: typeof HTMLAnchorElement;
   HTMLButtonElement: typeof HTMLButtonElement;
   HTMLDataElement: typeof HTMLDataElement;

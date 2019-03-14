@@ -16,13 +16,12 @@
 
 const btn = document.getElementsByTagName('button')[0];
 
-btn.addEventListener('click', async () => {
-  longTask(
-      new Promise(resolve => setTimeout(resolve, 5000))
-          .then(() => {
-            const h1 = document.createElement('h1');
-            h1.textContent = 'Hello World!'
-            document.body.appendChild(h1);
-          }),
-      'long task running...');
+btn.addEventListener('click', () => {
+  fetch('http://localhost:3001/slow/long-task/data.json')
+      .then(response => response.json())
+      .then(json => {
+        const h1 = document.createElement('h1');
+        h1.textContent = 'Hello ' + json.year + ' World!'
+        document.body.appendChild(h1);
+      });
 });
