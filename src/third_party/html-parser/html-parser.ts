@@ -189,10 +189,8 @@ export function parse(data: string, rootElement: Element) {
 
   // remove the added <div>
   if (root.firstChild) {
-    root.firstChild.childNodes.forEach((node: any) => {
-      if (node instanceof Node) {
-        node.parentNode = null;
-      }
+    root.firstChild.childNodes.forEach((node: Node) => {
+      node.parentNode = null;
     });
     return root.firstChild;
   }
