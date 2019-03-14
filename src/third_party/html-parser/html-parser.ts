@@ -1,7 +1,5 @@
-import { Comment } from '../../worker-thread/dom/Comment';
 import { Element } from '../../worker-thread/dom/Element';
 import { Node } from '../../worker-thread/dom/Node';
-import { Text } from '../../worker-thread/dom/Text';
 
 interface Elements {
   [key: string]: boolean;
@@ -80,7 +78,8 @@ const kBlockTextElements: Elements = {
  */
 export function parse(data: string, rootElement: Element) {
   const ownerDocument = rootElement.ownerDocument;
-  const root = new Element(rootElement.nodeType, rootElement.nodeName, rootElement.namespaceURI, ownerDocument);
+  const root = 
+  ownerDocument.createElementNS(rootElement.namespaceURI, rootElement.localName);
 
   let currentParent = root as Node;
   const stack = [root as Node];
@@ -100,12 +99,12 @@ export function parse(data: string, rootElement: Element) {
     if (lastTextPos < match.index) {
       // if has content
       const text = data.slice(lastTextPos, match.index);
-      currentParent.appendChild(new Text(text, ownerDocument));
+      currentParent.appendChild(ownerDocument.createTextNode(text));
     }
     lastTextPos = kMarkupPattern.lastIndex;
     if (commentContents !== undefined) {
       // this is a comment
-      currentParent.appendChild(new Comment(commentContents, ownerDocument));
+      currentParent.appendChild(ownerDocument.createComment(commentContents));
       continue;
     }
 
@@ -118,11 +117,8 @@ export function parse(data: string, rootElement: Element) {
           tagsClosed.push(currentParent.tagName);
         }
       }
-      const childToAppend = new Element(
-        currentParent.nodeType, 
-        tagName.toLowerCase(), // TODO only do this for HTML namespace elements
-        currentParent.namespaceURI, 
-        ownerDocument);
+      const childToAppend = 
+      ownerDocument.createElementNS(currentParent.namespaceURI, tagName.toLowerCase());
 
       for (let attMatch; (attMatch = kAttributePattern.exec(matchAttributes)); ) {
         const attrName = attMatch[2];
@@ -185,7 +181,7 @@ export function parse(data: string, rootElement: Element) {
     throw new Error('Attempting to parse invalid HTML content.');
   }
 
-  root.childNodes.forEach(node => {
+  root.childNodes.forEach((node: Node) => {
     if (node instanceof Element) {
       node.parentNode = null;
     }
@@ -193,7 +189,7 @@ export function parse(data: string, rootElement: Element) {
 
   // remove the added <div>
   if (root.firstChild) {
-    root.firstChild.childNodes.forEach(node => {
+    root.firstChild.childNodes.forEach((node: any) => {
       if (node instanceof Node) {
         node.parentNode = null;
       }
