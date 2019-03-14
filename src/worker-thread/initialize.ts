@@ -15,14 +15,14 @@
  */
 
 import { HydrateableNode, NodeType } from '../transfer/replacement/TransferrableNodes';
+import { set as setPhase, Phases } from '../transfer/replacement/phase';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { store as storeString } from './strings';
 import { store as storeNode } from './nodes';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { RenderableElement } from './worker-thread';
 import { Document } from './dom/Document';
 import { HTMLElement } from './dom/HTMLElement';
 import { SVGElement } from './dom/SVGElement';
-import { set as setPhase, Phases } from '../transfer/phase';
 
 export function consumeInitialDOM(document: Document, strings: Array<string>, hydrateableNode: HydrateableNode): void {
   strings.forEach(storeString);

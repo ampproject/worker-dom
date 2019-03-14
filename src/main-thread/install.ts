@@ -22,7 +22,7 @@ import { Strings } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { WorkerCallbacks } from './callbacks';
 import { WorkerContext } from './worker';
-import { set as setPhase, Phases } from '../transfer/phase';
+import { set as setPhase, Phases } from '../transfer/replacement/phase';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 

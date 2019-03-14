@@ -19,9 +19,10 @@ import { consume as consumeStrings } from './strings';
 import { MessageType } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { Node } from './dom/Node';
-import { phase, Phases } from '../transfer/phase';
+import { phase, Phases, set as setPhase } from '../transfer/replacement/phase';
 import { PostMessage } from './worker-thread';
 
+let allowTransfer = false;
 let pending = false;
 let pendingMutations: Array<number> = [];
 
@@ -30,26 +31,33 @@ export function transfer(postMessage: PostMessage, mutation: Array<number>): voi
     pending = true;
     pendingMutations = pendingMutations.concat(mutation);
 
-    Promise.resolve().then(_ => {
-      if (pending) {
-        const nodes = new Uint16Array(
-          consumeNodes().reduce((acc: Array<number>, node: Node) => acc.concat(node[TransferrableKeys.creationFormat]), []),
-        ).buffer;
-        const mutations = new Uint16Array(pendingMutations).buffer;
+    if (allowTransfer) {
+      Promise.resolve().then(_ => {
+        if (pending) {
+          const nodes = new Uint16Array(
+            consumeNodes().reduce((acc: Array<number>, node: Node) => acc.concat(node[TransferrableKeys.creationFormat]), []),
+          ).buffer;
+          const mutations = new Uint16Array(pendingMutations).buffer;
 
-        postMessage(
-          {
-            [TransferrableKeys.type]: MessageType.MUTATE,
-            [TransferrableKeys.nodes]: nodes,
-            [TransferrableKeys.strings]: consumeStrings(),
-            [TransferrableKeys.mutations]: mutations,
-          },
-          [nodes, mutations],
-        );
+          postMessage(
+            {
+              [TransferrableKeys.type]: MessageType.MUTATE,
+              [TransferrableKeys.nodes]: nodes,
+              [TransferrableKeys.strings]: consumeStrings(),
+              [TransferrableKeys.mutations]: mutations,
+            },
+            [nodes, mutations],
+          );
 
-        pendingMutations = [];
-        pending = false;
-      }
-    });
+          pendingMutations = [];
+          pending = false;
+        }
+      });
+    }
   }
+}
+
+export function observe(): void {
+  allowTransfer = true;
+  setPhase(Phases.Mutating);
 }

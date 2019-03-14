@@ -58,6 +58,7 @@ import { propagate as propagateSyncValues } from '../../transfer/TransferrableSy
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
 import { PostMessage } from '../worker-thread';
+import { observe } from '../MutationTransfer';
 
 export class Document extends Element {
   public defaultView: {
@@ -80,6 +81,7 @@ export class Document extends Element {
     this.documentElement = this;
     this.observe = (): void => {
       // Sync Document Changes.
+      observe();
       propagateEvents();
       propagateSyncValues();
     };
