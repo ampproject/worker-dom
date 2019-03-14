@@ -69,7 +69,7 @@ export class Element extends ParentNode {
       storeString(this.nodeName),
       NumericBoolean.FALSE,
       0,
-      this.namespaceURI === null ? NumericBoolean.TRUE : NumericBoolean.FALSE,
+      this.namespaceURI === null ? NumericBoolean.FALSE : NumericBoolean.TRUE,
       this.namespaceURI === null ? 0 : storeString(this.namespaceURI),
     ];
   }
