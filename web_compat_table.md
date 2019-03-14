@@ -196,7 +196,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Element.getAttributeNode()                          | ✖️     |                                                  | 
 | Element.getAttributeNodeNS()                        | ✖️     |                                                  | 
 | Element.getAttributeNS()                            | ✔️     |                                                  | 
-| Element.getBoundingClientRect()                     | ✖️     |                                                  | 
+| Element.getBoundingClientRect()                     | ✔️     |                                                  | 
 | Element.getClientRects()                            | ✖️     |                                                  | 
 | Element.getElementsByClassName()                    | ✔️     |                                                  | 
 | Element.getElementsByTagName()                      | ✔️     |                                                  | 
@@ -206,7 +206,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Element.hasAttributes()                             | ✔️     |                                                  | 
 | Element.hasPointerCapture()                         | ✖️     |                                                  | 
 | Element.id                                          | ✔️     |                                                  | 
-| Element.innerHTML                                   | ✖️     |                                                  | 
+| Element.innerHTML                                   | ✔️     |                                                  | 
 | Element.insertAdjacentElement()                     | ✖️     |                                                  | 
 | Element.insertAdjacentHTML()                        | ✖️     |                                                  | 
 | Element.insertAdjacentText()                        | ✖️     |                                                  | 
