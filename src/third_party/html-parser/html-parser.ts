@@ -180,19 +180,15 @@ export function parse(data: string, rootElement: Element) {
   if (!valid) {
     throw new Error('Attempting to parse invalid HTML content.');
   }
+  
+  const child = root.firstChild;
 
-  root.childNodes.forEach((node: Node) => {
-    if (node instanceof Element) {
-      node.parentNode = null;
-    }
-  });
-
-  // remove the added <div>
-  if (root.firstChild) {
-    root.firstChild.childNodes.forEach((node: Node) => {
-      node.parentNode = null;
+  if (child) {
+    child.parentNode = null;
+    child.childNodes.forEach((node: Node) => {
+      node.parentNode = null;    
     });
-    return root.firstChild;
+    return child;
   }
 
   throw new Error('Attempting to parse invalid HTML.');
