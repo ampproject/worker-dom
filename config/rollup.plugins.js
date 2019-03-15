@@ -99,7 +99,7 @@ export function removeTestingDocument() {
 }
 
 /**
- * RollupPlugin that removes the testing document singleton from output source.
+ * RollupPlugin that removes the debugging printers from CommandExecutors.
  */
 export function removeDebugCommandExecutors() {
   let context;
