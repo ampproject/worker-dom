@@ -53,7 +53,7 @@ function createHydrateableNode(element: RenderableElement, minimizeString: (valu
 export function createHydrateableRootNode(element: RenderableElement): { skeleton: HydrateableNode; strings: Array<string> } {
   const strings: Array<string> = [];
   const stringMap: Map<string, number> = new Map();
-  const minimizeString = (value: string): number => {
+  const storeString = (value: string): number => {
     if (stringMap.has(value)) {
       // Safe to cast since we verified the mapping contains the value.
       return stringMap.get(value) as number;
@@ -63,7 +63,7 @@ export function createHydrateableRootNode(element: RenderableElement): { skeleto
     strings.push(value);
     return count;
   };
-  const skeleton = createHydrateableNode(element, minimizeString);
+  const skeleton = createHydrateableNode(element, storeString);
   return { skeleton, strings };
 }
 

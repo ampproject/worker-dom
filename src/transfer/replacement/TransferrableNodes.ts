@@ -50,6 +50,10 @@ export interface TransferredNode {
   readonly [0]: number;
 }
 
+export const enum TransferredNodeIndex {
+  Index = 0,
+}
+
 type TransferrableNodeName = number;
 type TransferrableTextContent = number;
 type TransferrableNamespaceURI = number;

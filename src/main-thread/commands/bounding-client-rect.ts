@@ -17,12 +17,13 @@
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { MessageType } from '../../transfer/Messages';
 import { WorkerContext } from '../worker';
+import { CommandExecutor } from './interface';
+import { BoundClientRectMutationIndex } from '../../transfer/replacement/TransferrableBoundClientRect';
 
-export class BoundingClientRectProcessor {
+export class BoundingClientRectProcessor implements CommandExecutor {
   private workerContext: WorkerContext;
 
   /**
-   * @param nodeContext
    * @param workerContext whom to dispatch events toward.
    */
   constructor(workerContext: WorkerContext) {
@@ -33,7 +34,7 @@ export class BoundingClientRectProcessor {
    * Process commands transfered from worker thread to main thread.
    * @param mutation mutation record containing commands to execute.
    */
-  public process = (mutations: Uint16Array, startPosition: number, target: RenderableElement): number => {
+  public execute = (mutations: Uint16Array, startPosition: number, target: RenderableElement): number => {
     if (target) {
       const boundingRect = target.getBoundingClientRect();
       this.workerContext.messageToWorker({
@@ -52,6 +53,11 @@ export class BoundingClientRectProcessor {
       console.error(`getNode() yields null – ${target}`);
     }
 
-    return startPosition + 2;
+    return startPosition + BoundClientRectMutationIndex.LastStaticNode + 1;
   };
+
+  public print = (mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object => ({
+    type: 'GET_BOUNDING_CLIENT_RECT',
+    target,
+  });
 }

@@ -23,6 +23,15 @@ export const enum TransferrableMutationType {
   GET_BOUNDING_CLIENT_RECT = 5,
 }
 
+export const ReadableMutationType = {
+  0: 'ATTRIBUTES',
+  1: 'CHARACTER_DATA',
+  2: 'CHILD_LIST',
+  3: 'PROPERTIES',
+  4: 'EVENT_SUBSCRIPTION',
+  5: 'GET_BOUNDING_CLIENT_RECT',
+};
+
 export const enum ChildListMutationIndex {
   Target = 1,
   NextSibling = 2,

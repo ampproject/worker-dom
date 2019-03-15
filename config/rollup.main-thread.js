@@ -17,7 +17,8 @@
 import resolve from 'rollup-plugin-node-resolve';
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
-import {babelPlugin} from './rollup.plugins.js';
+import replace from 'rollup-plugin-replace';
+import {babelPlugin, removeDebugCommandExecutors} from './rollup.plugins.js';
 import {MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE} from './rollup.utils.js';
 
 const ESModules = [
@@ -29,6 +30,10 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      removeDebugCommandExecutors(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -45,6 +50,10 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      removeDebugCommandExecutors(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -60,6 +69,10 @@ const ESModules = [
     },
     plugins: [
       resolve(),
+      removeDebugCommandExecutors(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -77,6 +90,10 @@ const ESModules = [
     },
     plugins: [
       resolve(),
+      removeDebugCommandExecutors(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -95,6 +112,10 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
+      removeDebugCommandExecutors(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -112,6 +133,10 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
+      removeDebugCommandExecutors(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -128,6 +153,10 @@ const IIFEModules = [
     },
     plugins: [
       resolve(),
+      removeDebugCommandExecutors(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -146,6 +175,10 @@ const IIFEModules = [
     },
     plugins: [
       resolve(),
+      removeDebugCommandExecutors(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -164,6 +197,9 @@ const debugModules = DEBUG_BUNDLE_VALUE ? [
       sourcemap: true,
     },
     plugins: [
+      replace({
+        DEBUG_ENABLED: true,
+      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: true,

@@ -19,71 +19,7 @@ import { Strings } from '../strings';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { EVENT_SUBSCRIPTION_LENGTH, EventSubscriptionMutationIndex } from '../../transfer/replacement/TransferrableEvent';
 import { WorkerContext } from '../worker';
-
-export class EventSubscriptionProcessor {
-  private strings: Strings;
-  private workerContext: WorkerContext;
-  // TODO(choumx): Support SYNC events for properties other than 'value', e.g. 'checked'.
-  private knownListeners: Array<(event: Event) => any>;
-
-  constructor(strings: Strings, workerContext: WorkerContext) {
-    this.strings = strings;
-    this.workerContext = workerContext;
-    this.knownListeners = [];
-  }
-
-  /**
-   * Process event subscription changes transfered from worker thread to main thread.
-   * @param mutation mutation record containing commands to execute.
-   */
-  public process = (mutations: Uint16Array, startPosition: number, target: RenderableElement): number => {
-    const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
-    const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
-    const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;
-    const endPosition =
-      startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
-
-    if (target) {
-      for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
-        this.processListenerChange(target, iterator <= addEventListenersPosition, this.strings.get(mutations[iterator]), mutations[iterator + 1]);
-      }
-    } else {
-      console.error(`getNode() yields null – ${target}`);
-    }
-
-    return endPosition;
-  };
-
-  /**
-   * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,
-   * ensure that only a single 'change' event is attached to prevent sending values multiple times.
-   * @param target node to change listeners on
-   * @param addEvent is this an 'addEvent' or 'removeEvent' change
-   * @param type event type requested to change
-   * @param index number in the listeners array this event corresponds to.
-   */
-  private processListenerChange(target: RenderableElement, addEvent: boolean, type: string, index: number): void {
-    let changeEventSubscribed: boolean = target.onchange !== null;
-    const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
-    const isChangeEvent = type === 'change';
-
-    if (addEvent) {
-      if (isChangeEvent) {
-        changeEventSubscribed = true;
-        target.onchange = null;
-      }
-      (target as HTMLElement).addEventListener(type, (this.knownListeners[index] = eventHandler(this.workerContext, target._index_)));
-    } else {
-      if (isChangeEvent) {
-        changeEventSubscribed = false;
-      }
-      (target as HTMLElement).removeEventListener(type, this.knownListeners[index]);
-    }
-    if (shouldTrack && !changeEventSubscribed) {
-      applyDefaultChangeListener(this.workerContext, target as RenderableElement);
-    }
-  }
-}
+import { CommandExecutor } from './interface';
 
 /**
  * Instead of a whitelist of elements that need their value tracked, use the existence
@@ -149,3 +85,95 @@ const eventHandler = (workerContext: WorkerContext, index: number) => (event: Ev
     },
   });
 };
+
+export class EventSubscriptionProcessor implements CommandExecutor {
+  private strings: Strings;
+  private workerContext: WorkerContext;
+  // TODO(choumx): Support SYNC events for properties other than 'value', e.g. 'checked'.
+  private knownListeners: Array<(event: Event) => any>;
+
+  constructor(strings: Strings, workerContext: WorkerContext) {
+    this.strings = strings;
+    this.workerContext = workerContext;
+    this.knownListeners = [];
+  }
+
+  /**
+   * Process event subscription changes transfered from worker thread to main thread.
+   * @param mutation mutation record containing commands to execute.
+   * @param startPosition
+   * @param target
+   */
+  public execute = (mutations: Uint16Array, startPosition: number, target: RenderableElement): number => {
+    const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
+    const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
+    const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;
+    const endPosition =
+      startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
+
+    if (target) {
+      for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
+        this.processListenerChange(target, iterator <= addEventListenersPosition, this.strings.get(mutations[iterator]), mutations[iterator + 1]);
+      }
+    } else {
+      console.error(`getNode() yields null – ${target}`);
+    }
+
+    return endPosition;
+  };
+
+  public print = (mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object => {
+    const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
+    const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
+    const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;
+    const endPosition =
+      startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
+
+    let removedEventListeners: Array<{ type: string; index: number }> = [];
+    let addedEventListeners: Array<{ type: string; index: number }> = [];
+
+    for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
+      const eventList = iterator <= addEventListenersPosition ? addedEventListeners : removedEventListeners;
+      eventList.push({
+        type: this.strings.get(mutations[iterator]),
+        index: mutations[iterator + 1],
+      });
+    }
+
+    return {
+      target,
+      removedEventListeners,
+      addedEventListeners,
+    };
+  };
+
+  /**
+   * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,
+   * ensure that only a single 'change' event is attached to prevent sending values multiple times.
+   * @param target node to change listeners on
+   * @param addEvent is this an 'addEvent' or 'removeEvent' change
+   * @param type event type requested to change
+   * @param index number in the listeners array this event corresponds to.
+   */
+  private processListenerChange(target: RenderableElement, addEvent: boolean, type: string, index: number): void {
+    let changeEventSubscribed: boolean = target.onchange !== null;
+    const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
+    const isChangeEvent = type === 'change';
+
+    if (addEvent) {
+      if (isChangeEvent) {
+        changeEventSubscribed = true;
+        target.onchange = null;
+      }
+      (target as HTMLElement).addEventListener(type, (this.knownListeners[index] = eventHandler(this.workerContext, target._index_)));
+    } else {
+      if (isChangeEvent) {
+        changeEventSubscribed = false;
+      }
+      (target as HTMLElement).removeEventListener(type, this.knownListeners[index]);
+    }
+    if (shouldTrack && !changeEventSubscribed) {
+      applyDefaultChangeListener(this.workerContext, target as RenderableElement);
+    }
+  }
+}

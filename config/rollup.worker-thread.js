@@ -16,6 +16,7 @@
 
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
+import replace from 'rollup-plugin-replace';
 import { babelPlugin, removeTestingDocument } from './rollup.plugins.js';
 import { MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE } from './rollup.utils.js';
 
@@ -33,6 +34,9 @@ const ESModules = [
     },
     plugins: [
       removeTestingDocument(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -55,6 +59,9 @@ const ESModules = [
     },
     plugins: [
       removeTestingDocument(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -71,6 +78,9 @@ const ESModules = [
     },
     plugins: [
       removeTestingDocument(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -93,6 +103,9 @@ const ESModules = [
     },
     plugins: [
       removeTestingDocument(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -112,6 +125,9 @@ const IIFEModules = [
     },
     plugins: [
       removeTestingDocument(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -134,6 +150,9 @@ const IIFEModules = [
     },
     plugins: [
       removeTestingDocument(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -150,6 +169,9 @@ const IIFEModules = [
     },
     plugins: [
       removeTestingDocument(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -172,6 +194,9 @@ const IIFEModules = [
     },
     plugins: [
       removeTestingDocument(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -192,6 +217,9 @@ const debugModules = DEBUG_BUNDLE_VALUE
           outro: 'window.workerDocument = documentForTesting;',
         },
         plugins: [
+          replace({
+            DEBUG_ENABLED: true,
+          }),
           babelPlugin({
             transpileToES5: false,
             allowConsole: DEBUG_BUNDLE_VALUE,

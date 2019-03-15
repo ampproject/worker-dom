@@ -78,7 +78,44 @@ export function removeTestingDocument() {
           if (node.id && node.id.type === 'Identifier' && node.id.name && node.id.name === 'documentForTesting') {
             const range = node.range;
             if (range) {
-              source.overwrite(node.range[0], node.range[1], 'documentForTesting = undefined');
+              source.overwrite(range[0], range[1], 'documentForTesting = undefined');
+            }
+          }
+        },
+      });
+      
+      return {
+        code: source.toString(),
+        map: source.generateMap(),
+      };
+    },
+  };
+}
+
+/**
+ * RollupPlugin that removes the testing document singleton from output source.
+ */
+export function removeDebugCommandExecutors() {
+  let context;
+
+  return {
+    name: 'remove-debug-command-executors',
+    buildStart() {
+      context = this;
+    },
+    renderChunk: async (code) => {
+      const source = new MagicString(code);
+      const program = context.parse(code, { ranges: true });
+
+      walk.simple(program, {
+        ExpressionStatement(node) {
+          if (node.expression.type === 'AssignmentExpression') {
+            const {expression} = node;
+            if (expression.left.type === 'MemberExpression' && expression.left.object.type === 'ThisExpression' && expression.left.property.type === 'Identifier' && expression.left.property.name === 'print') {
+              const range = node.range;
+              if (range) {
+                source.remove(range[0], range[1]);
+              }
             }
           }
         },

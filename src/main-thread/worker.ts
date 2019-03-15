@@ -17,9 +17,12 @@
 import { MessageToWorker } from '../transfer/Messages';
 import { WorkerCallbacks } from './callbacks';
 import { createHydrateableRootNode } from './serialize';
+import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
+import { NodeContext } from './nodes';
 
 export class WorkerContext {
   public worker: Worker;
+  private nodeContext: NodeContext;
 
   /**
    * Stored callbacks for the most recently created worker.
@@ -33,8 +36,16 @@ export class WorkerContext {
    * @param authorScript
    * @param authorScriptURL
    */
-  constructor(baseElement: HTMLElement, workerDOMScript: string, authorScript: string, authorScriptURL: string, callbacks?: WorkerCallbacks) {
+  constructor(
+    baseElement: HTMLElement,
+    workerDOMScript: string,
+    authorScript: string,
+    authorScriptURL: string,
+    nodeContext: NodeContext,
+    callbacks?: WorkerCallbacks,
+  ) {
     this.callbacks = callbacks;
+    this.nodeContext = nodeContext;
 
     // TODO(KB): Minify this output during build process.
     const keys: Array<string> = [];
@@ -73,6 +84,9 @@ export class WorkerContext {
       }).call(WorkerThread.workerDOM);
   //# sourceURL=${encodeURI(authorScriptURL)}`;
     this.worker = new Worker(URL.createObjectURL(new Blob([code])));
+    if (DEBUG_ENABLED) {
+      console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement));
+    }
     if (callbacks && callbacks.onCreateWorker) {
       callbacks.onCreateWorker(baseElement);
     }
@@ -82,6 +96,9 @@ export class WorkerContext {
    * @param message
    */
   messageToWorker(message: MessageToWorker) {
+    if (DEBUG_ENABLED) {
+      console.info('debug', 'messageToWorker', readableMessageToWorker(this.nodeContext, message));
+    }
     if (this.callbacks && this.callbacks.onSendMessage) {
       this.callbacks.onSendMessage(message);
     }

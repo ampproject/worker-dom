@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2019 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { HTMLElement } from './dom/HTMLElement';
-import { SVGElement } from './dom/SVGElement';
-import { Text } from './dom/Text';
-import { Comment } from './dom/Comment';
+export const enum BoundClientRectMutationIndex {
+  Target = 1,
+  LastStaticNode = 1, // This value is the last static value of a Mutation.
+}
 
-type RenderableElement = HTMLElement | SVGElement | Text | Comment;
-type PostMessage = (message: any, transfer?: Transferable[]) => void;
-declare const DEBUG_ENABLED: boolean;
+// [top, right, bottom, left, width, height]
+export type TransferrableBoundingClientRect = [number, number, number, number, number, number];
