@@ -34,43 +34,6 @@ test.beforeEach(t => {
   };
 });
 
-test.serial('execute a long task', t => {
-  const { document, longTask } = t.context;
-
-  let startResolver: Function;
-  let endResolver: Function;
-  const startPromise = new Promise(resolve => {
-    startResolver = resolve;
-  });
-  const endPromise = new Promise(resolve => {
-    endResolver = resolve;
-  });
-
-  const observer = new document.defaultView.MutationObserver(
-    (mutations: MutationRecord[]): void => {
-      for (const mutation of mutations) {
-        if (mutation.type == MutationRecordType.LONG_TASK_START) {
-          startResolver();
-        }
-        if (mutation.type == MutationRecordType.LONG_TASK_END) {
-          endResolver();
-        }
-      }
-    },
-  );
-  observer.observe(document);
-
-  return longTask
-    .execute(Promise.resolve(-1))
-    .then((result: any) => {
-      t.is(result, -1);
-      return Promise.all([startPromise, endPromise]) as Promise<any>;
-    })
-    .then(() => {
-      observer.disconnect();
-    });
-});
-
 test.serial('execute a long task via wrapper', t => {
   const { document, longTask } = t.context;
 
