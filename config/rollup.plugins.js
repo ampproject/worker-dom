@@ -16,16 +16,18 @@
 
 import babel from 'rollup-plugin-babel';
 import MagicString from 'magic-string';
+import fs from 'fs';
+import path from 'path';
 const walk = require('acorn-walk');
 
 /**
  * Invoke Babel on source, with some configuration.
- * @param {object} config, two keys transpileToES5, and allowConsole 
+ * @param {object} config, two keys transpileToES5, and allowConsole
  * - transpileToES5 Should we transpile down to ES5 or features supported by `module` capable browsers?
  * - allowConsole Should we allow `console` methods in the output?
  * - allowPostMessage Should we allow postMessage to/from the Worker?
  */
-export function babelPlugin({transpileToES5, allowConsole = false, allowPostMessage = true}) {
+export function babelPlugin({ transpileToES5, allowConsole = false, allowPostMessage = true }) {
   const targets = transpileToES5 ? { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] } : { esmodules: true };
   const exclude = allowConsole ? ['error', 'warn', 'trace', 'info', 'log', 'time', 'timeEnd'] : [];
 
@@ -44,19 +46,24 @@ export function babelPlugin({transpileToES5, allowConsole = false, allowPostMess
     plugins: [
       ['@babel/plugin-proposal-object-rest-spread'],
       ['@babel/proposal-class-properties'],
-      ['babel-plugin-minify-replace', {
-        'replacements': [{
-          'identifierName': '__ALLOW_POST_MESSAGE__',
-          'replacement': {
-            'type': 'booleanLiteral',
-            'value': allowPostMessage
-          }
-        }]
-      }],
+      [
+        'babel-plugin-minify-replace',
+        {
+          replacements: [
+            {
+              identifierName: '__ALLOW_POST_MESSAGE__',
+              replacement: {
+                type: 'booleanLiteral',
+                value: allowPostMessage,
+              },
+            },
+          ],
+        },
+      ],
       ['babel-plugin-transform-remove-console', { exclude }],
     ],
   });
-};
+}
 
 /**
  * RollupPlugin that removes the testing document singleton from output source.
@@ -69,21 +76,20 @@ export function removeTestingDocument() {
     buildStart() {
       context = this;
     },
-    renderChunk: async (code) => {
+    renderChunk: async code => {
       const source = new MagicString(code);
       const program = context.parse(code, { ranges: true });
 
       walk.simple(program, {
         VariableDeclarator(node) {
           if (node.id && node.id.type === 'Identifier' && node.id.name && node.id.name === 'documentForTesting') {
-            const range = node.range;
-            if (range) {
-              source.overwrite(range[0], range[1], 'documentForTesting = undefined');
+            if (node.range) {
+              source.overwrite(node.range[0], node.range[1], 'documentForTesting = undefined');
             }
           }
         },
       });
-      
+
       return {
         code: source.toString(),
         map: source.generateMap(),
@@ -97,30 +103,43 @@ export function removeTestingDocument() {
  */
 export function removeDebugCommandExecutors() {
   let context;
+  let toDiscover;
 
   return {
     name: 'remove-debug-command-executors',
-    buildStart() {
+    buildStart(options) {
       context = this;
+      toDiscover = fs
+        .readdirSync(path.join(path.dirname(options.input), 'commands'))
+        .filter(file => path.extname(file) !== '.map' && path.basename(file, '.js') !== 'interface').length;
     },
-    renderChunk: async (code) => {
+    renderChunk: async code => {
       const source = new MagicString(code);
       const program = context.parse(code, { ranges: true });
 
       walk.simple(program, {
         ExpressionStatement(node) {
           if (node.expression.type === 'AssignmentExpression') {
-            const {expression} = node;
-            if (expression.left.type === 'MemberExpression' && expression.left.object.type === 'ThisExpression' && expression.left.property.type === 'Identifier' && expression.left.property.name === 'print') {
-              const range = node.range;
-              if (range) {
-                source.remove(range[0], range[1]);
+            const { expression } = node;
+            if (
+              expression.left.type === 'MemberExpression' &&
+              expression.left.object.type === 'ThisExpression' &&
+              expression.left.property.type === 'Identifier' &&
+              expression.left.property.name === 'print'
+            ) {
+              toDiscover--;
+              if (node.range) {
+                source.remove(node.range[0], node.range[1]);
               }
             }
           }
         },
       });
-      
+
+      if (toDiscover > 0) {
+        context.warn(`${toDiscover} CommandExecutors were not found during compilation.`);
+      }
+
       return {
         code: source.toString(),
         map: source.generateMap(),
