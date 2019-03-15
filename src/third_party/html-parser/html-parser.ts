@@ -1,5 +1,6 @@
 import { Element } from '../../worker-thread/dom/Element';
 import { Node } from '../../worker-thread/dom/Node';
+import { SVG_NAMESPACE, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 interface Elements {
   [key: string]: boolean;
@@ -82,6 +83,7 @@ export function parse(data: string, rootElement: Element) {
   ownerDocument.createElementNS(rootElement.namespaceURI, rootElement.localName);
 
   let currentParent = root as Node;
+  let currentNamespace = root.namespaceURI;
   const stack = [root as Node];
   let lastTextPos = 0;
   let match: RegExpExecArray | null;
@@ -110,6 +112,12 @@ export function parse(data: string, rootElement: Element) {
 
     const normalizedTagName = tagName.toUpperCase();
 
+    if (normalizedTagName === 'SVG') {
+      if (beginningSlash) {
+        currentNamespace = HTML_NAMESPACE;
+      } else currentNamespace = SVG_NAMESPACE;
+    }
+
     if (!beginningSlash) {
       // not </ tags
       if (!endSlash && kElementsClosedByOpening[currentParent.tagName]) {
@@ -117,8 +125,18 @@ export function parse(data: string, rootElement: Element) {
           tagsClosed.push(currentParent.tagName);
         }
       }
-      const childToAppend = 
-      ownerDocument.createElementNS(currentParent.namespaceURI, tagName.toLowerCase());
+
+      let childToAppend;
+      switch(currentNamespace){
+        case HTML_NAMESPACE:
+          childToAppend = ownerDocument.createElementNS(currentNamespace, tagName.toLowerCase());
+          break;
+        case SVG_NAMESPACE:
+          childToAppend = ownerDocument.createElementNS(currentNamespace, tagName);
+          break;
+        default:
+          throw new Error("Namespace currently not supported.");
+      }
 
       for (let attMatch; (attMatch = kAttributePattern.exec(matchAttributes)); ) {
         const attrName = attMatch[2];
@@ -140,6 +158,13 @@ export function parse(data: string, rootElement: Element) {
         }
       }
     }
+
+    if (tagName === 'foreignObject' && currentNamespace === SVG_NAMESPACE) {
+      if (beginningSlash) {
+        currentNamespace = SVG_NAMESPACE;
+      } else currentNamespace = HTML_NAMESPACE;
+    }
+    
     if (beginningSlash || endSlash || kSelfClosingElements[normalizedTagName]) {
       // </ or /> or <br> etc.
       while (true) {

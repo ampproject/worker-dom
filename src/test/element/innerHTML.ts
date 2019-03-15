@@ -18,7 +18,7 @@ import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
 import { Comment } from '../../worker-thread/dom/Comment';
-import { NodeType, SVG_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { NodeType, SVG_NAMESPACE, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { createDocument } from '../../worker-thread/dom/Document';
 import { HTMLInputElement } from '../../worker-thread/dom/HTMLInputElement';
 
@@ -188,17 +188,39 @@ test('set creates correct types of HTML elements', t => {
   t.true(child instanceof HTMLInputElement);
 });
 
-test.skip('set has svg tags live in SVG namespace', t => {
+test('set has svg tag live in SVG namespace', t => {
   const { node } = t.context;
   node.innerHTML = '<svg></svg>';
   const child = node.firstChild!;
   t.is(child.namespaceURI, SVG_NAMESPACE);
 });
 
-test.skip('set keeps tagName\'s case', t => {
+test('set keeps localName\'s case for tags in SVG namespace', t => {
   const { node } = t.context;
   node.innerHTML = '<svg><feImage></feImage></svg>';
   const svgWrapper = node.firstChild!;
   const child = svgWrapper.firstChild!;
-  t.is(child.nodeName, 'feImage');
+  t.is(child.localName, 'feImage');
+  t.is(child.namespaceURI, SVG_NAMESPACE);
+});
+
+test('set resets namespace', t => {
+  const { node } = t.context;
+  node.innerHTML = '<svg></svg><div></div>';
+  const htmlChild = node.lastChild!;
+  t.is(htmlChild.namespaceURI, HTML_NAMESPACE);
+});
+
+test('set handles foreignObject tags correctly', t => {
+  const { node } = t.context;
+  node.innerHTML = '<svg><foreignObject><div></div></foreignObject></svg>';
+  const svgWrapper = node.firstChild!;
+  
+  // foreignObject tag lives in SVG namespace
+  const foreignObjectNode = svgWrapper.firstChild!;
+  t.is(foreignObjectNode.namespaceURI, SVG_NAMESPACE);
+
+  // children of foreignObject live in HTML namespace
+  const foreignObjectChild = foreignObjectNode.firstChild!;
+  t.is(foreignObjectChild.namespaceURI, HTML_NAMESPACE);
 });
