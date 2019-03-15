@@ -25,3 +25,5 @@ export function upgradeElement(baseElement: Element, workerDOMUrl: string, callb
   }
   return Promise.resolve(null);
 }
+
+export { WorkerDom };

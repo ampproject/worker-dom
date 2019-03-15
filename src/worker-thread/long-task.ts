@@ -25,7 +25,7 @@ export class LongTask {
     this.doc = doc;
   }
 
-  execute(promise: Promise<any>, message?: string): Promise<any> {
+  private execute(promise: Promise<any>, message?: string): Promise<any> {
     // Start the task.
     mutate({ type: MutationRecordType.LONG_TASK_START, target: this.doc });
     return promise.then(
