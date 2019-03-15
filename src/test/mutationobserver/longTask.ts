@@ -16,26 +16,23 @@
 
 import anyTest, { TestInterface } from 'ava';
 import { createDocument, Document } from '../../worker-thread/dom/Document';
-import { LongTask } from '../../worker-thread/long-task';
+import { wrap as longTaskWrap } from '../../worker-thread/long-task';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 const test = anyTest as TestInterface<{
   document: Document;
-  longTask: LongTask;
 }>;
 
 test.beforeEach(t => {
   const document = createDocument();
-  const longTask = new LongTask(document);
 
   t.context = {
     document,
-    longTask,
   };
 });
 
 test.serial('execute a long task via wrapper', t => {
-  const { document, longTask } = t.context;
+  const { document } = t.context;
 
   const callback = function() {
     return Promise.resolve(-1);
@@ -64,8 +61,7 @@ test.serial('execute a long task via wrapper', t => {
   );
   observer.observe(document);
 
-  return longTask
-    .wrap(callback)()
+  return longTaskWrap(document, callback)()
     .then((result: any) => {
       t.is(result, -1);
       return Promise.all([startPromise, endPromise]) as Promise<any>;

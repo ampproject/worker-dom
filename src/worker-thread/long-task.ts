@@ -14,38 +14,29 @@
  * limitations under the License.
  */
 
-import { Document } from './dom/Document';
+import { Node } from './dom/Node';
 import { MutationRecordType } from './MutationRecord';
 import { mutate } from './MutationObserver';
 
-export class LongTask {
-  private doc: Document;
+export function wrap(target: Node, func: Function): Function {
+  return function() {
+    return execute(target, Promise.resolve(func.apply(null, arguments)));
+  };
+}
 
-  constructor(doc: Document) {
-    this.doc = doc;
-  }
-
-  private execute(promise: Promise<any>, message?: string): Promise<any> {
-    // Start the task.
-    mutate({ type: MutationRecordType.LONG_TASK_START, target: this.doc });
-    return promise.then(
-      result => {
-        // Complete the task.
-        mutate({ type: MutationRecordType.LONG_TASK_END, target: this.doc });
-        return result;
-      },
-      reason => {
-        // Complete the task.
-        mutate({ type: MutationRecordType.LONG_TASK_END, target: this.doc });
-        throw reason;
-      },
-    );
-  }
-
-  wrap(func: Function): Function {
-    const longTask = this;
-    return function() {
-      return longTask.execute(Promise.resolve(func.apply(null, arguments)));
-    };
-  }
+function execute(target: Node, promise: Promise<any>, message?: string): Promise<any> {
+  // Start the task.
+  mutate({ type: MutationRecordType.LONG_TASK_START, target });
+  return promise.then(
+    result => {
+      // Complete the task.
+      mutate({ type: MutationRecordType.LONG_TASK_END, target });
+      return result;
+    },
+    reason => {
+      // Complete the task.
+      mutate({ type: MutationRecordType.LONG_TASK_END, target });
+      throw reason;
+    },
+  );
 }

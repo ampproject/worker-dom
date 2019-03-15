@@ -46,7 +46,7 @@ import { createDocument } from './dom/Document';
 import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { appendKeys } from './css/CSSStyleDeclaration';
 import { consumeInitialDOM } from './initialize';
-import { LongTask } from './long-task';
+import { wrap as longTaskWrap } from './long-task';
 
 const WHITELISTED_GLOBALS = [
   'Array',
@@ -173,7 +173,6 @@ export const workerDOM: WorkerDOMGlobalScope = {
  * @param global
  */
 function updateLongTask(global: WorkerGlobalScope) {
-  const longTask = new LongTask(doc);
   const originalFetch = global['fetch'];
   if (originalFetch) {
     try {
@@ -181,7 +180,7 @@ function updateLongTask(global: WorkerGlobalScope) {
         enumerable: true,
         writable: true,
         configurable: true,
-        value: longTask.wrap(originalFetch.bind(global)),
+        value: longTaskWrap(doc, originalFetch.bind(global)),
       });
     } catch (e) {
       console.warn(e);
