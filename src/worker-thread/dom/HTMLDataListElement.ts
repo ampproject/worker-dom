@@ -28,7 +28,7 @@ export class HTMLDataListElement extends HTMLElement {
     return this.childNodes.filter((node: Node): boolean => node.nodeName === 'OPTION') as Element[];
   }
 }
-registerSubclass('DATALIST', HTMLDataListElement);
+registerSubclass('datalist', HTMLDataListElement);
 
 /**
  * HTMLDataListElement.options Read only

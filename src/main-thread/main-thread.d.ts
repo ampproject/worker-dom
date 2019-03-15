@@ -20,6 +20,7 @@ declare interface DOMPurify {
   removeAllHooks(): void;
   sanitize(dirty: string | Node, cfg: Object): string | Node;
 }
+
 declare module 'dompurify' {
   var purify: DOMPurify;
   export default purify;

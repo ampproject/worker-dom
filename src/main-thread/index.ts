@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
+import { WorkerCallbacks } from './callbacks';
+import { WorkerDom } from './worker-dom';
 import { fetchAndInstall } from './install';
 
-export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
+export function upgradeElement(baseElement: Element, workerDOMUrl: string, callbacks?: WorkerCallbacks): Promise<WorkerDom | null> {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
-    fetchAndInstall(baseElement as HTMLElement, authorURL, workerDOMUrl);
+    return fetchAndInstall(baseElement as HTMLElement, authorURL, workerDOMUrl, callbacks);
   }
+  return Promise.resolve(null);
 }
+
+export { WorkerDom };

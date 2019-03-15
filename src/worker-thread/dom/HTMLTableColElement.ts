@@ -19,7 +19,7 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLTableColElement extends HTMLElement {}
-registerSubclass('COL', HTMLTableColElement);
+registerSubclass('col', HTMLTableColElement);
 
 // Reflected Properties
 // HTMLTableColElement.span => number, reflected attribute

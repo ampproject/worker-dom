@@ -18,6 +18,7 @@ import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
 import { Comment } from '../../worker-thread/dom/Comment';
+import { NodeType, SVG_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { createDocument } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
@@ -65,4 +66,131 @@ test('element with comment', t => {
 
   node.appendChild(comment);
   t.is(node.innerHTML, '<!--comment-->');
+});
+
+test('set nothing', t => {
+  const { node } = t.context;
+  node.innerHTML = '';
+  t.is(node.hasChildNodes(), false);
+});
+
+test('set replaces children', t => {
+  const { node, child } = t.context;
+  node.appendChild(child);
+  node.innerHTML = '';
+  t.is(node.hasChildNodes(), false);
+});
+
+test('set an element node', t => {
+  const { node } = t.context;
+  node.innerHTML = '<div></div>';
+  t.is(node.childNodes.length, 1);
+
+  const child = node.firstChild!;
+  t.is(child.nodeType, NodeType.ELEMENT_NODE);
+  t.is(child.nodeName, 'DIV');
+});
+
+test('set a text node', t => {
+  const { node } = t.context;
+  const testString = 'Hello, World!';
+  node.innerHTML = testString;
+  t.is(node.childNodes.length, 1);
+
+  const child = node.firstChild!;
+  t.is(child.nodeType, NodeType.TEXT_NODE);
+  t.is(child.textContent, testString);
+});
+
+test('set comment node', t => {
+  const { node } = t.context;
+  const testString = 'this is a comment';
+  node.innerHTML = '<!--' + testString + '-->';
+  t.is(node.childNodes.length, 1);
+
+  const child = node.firstChild!;
+  t.is(child.nodeType, NodeType.COMMENT_NODE);
+  t.is(child.textContent, testString);
+});
+
+test('set nested elements', t => {
+  const { node } = t.context;
+  node.innerHTML = '<div><div></div></div>';
+  t.is(node.childNodes.length, 1);
+
+  const child = node.firstChild!;
+  t.is(child.childNodes.length, 1);
+});
+
+test('set non-nested elements', t => {
+  const { node } = t.context;
+  node.innerHTML = '<div></div><div></div>';
+  t.is(node.childNodes.length, 2);
+});
+
+test('set element with attributes', t => {
+  const { node } = t.context;
+  node.innerHTML = '<div hi="hello"></div>';
+  const child = node.firstChild!;
+  t.is(child.attributes.length, 1);
+  t.is(child.attributes[0].name, "hi");
+  t.is(child.attributes[0].value, "hello");
+});
+
+test('set self closing tags', t => {
+  const { node } = t.context;
+  node.innerHTML = '<br>';
+  const child = node.firstChild!;
+  t.is(child.nodeType, NodeType.ELEMENT_NODE);
+  t.is(child.nodeName, 'BR');
+});
+
+test('set invalid html throws', t => {
+  const { node } = t.context;
+  // Use an unclosed tag.
+  t.throws(() => node.innerHTML = '<div>');
+});
+
+test('set closes tags by closing others', t => {
+  const { node } = t.context;
+  node.innerHTML = '<div><a></div>';
+  let child = node.firstChild!;
+  t.is(child.nodeName, 'DIV');
+  t.is(child.firstChild!.nodeName, 'A');
+
+  node.innerHTML = '<a><div></div>';
+  child = node.firstChild!;
+  t.is(child.nodeName, 'A');
+  t.is(child.firstChild!.nodeName, 'DIV');
+});
+
+test('set takes all block text element content as text', t => {
+  const { node } = t.context;
+  node.innerHTML = '<style><div></div></style>';
+  const child = node.firstChild!; // style node
+  const childContent = child.firstChild!;
+  t.is(childContent.nodeType, NodeType.TEXT_NODE);
+});
+
+test('set normalizes html namespace tag names', t => {
+  const { node } = t.context;
+  node.innerHTML = '<Div></Div>';
+  const child = node.firstChild!;
+  t.is(child.localName, 'div');
+  t.is(child.nodeName, 'DIV');
+});
+
+test.skip('set has svg tags live in SVG namespace', t => {
+  const { node } = t.context;
+  node.innerHTML = '<svg></svg>';
+  const child = node.firstChild!;
+  t.is(child.namespaceURI, SVG_NAMESPACE);
+});
+
+test.skip('set keeps tagName\'s case', t => {
+  const { node } = t.context;
+  node.innerHTML = '<svg><feImage></feImage></svg>';
+  const svgWrapper = node.firstChild!;
+  const child = svgWrapper.firstChild!;
+  t.is(child.nodeName, 'feImage');
 });

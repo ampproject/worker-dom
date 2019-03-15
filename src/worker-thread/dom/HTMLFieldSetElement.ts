@@ -29,7 +29,7 @@ export class HTMLFieldSetElement extends HTMLElement {
     return toLower(this.tagName);
   }
 }
-registerSubclass('FIELDSET', HTMLFieldSetElement);
+registerSubclass('fieldset', HTMLFieldSetElement);
 HTMLFormControlsCollectionMixin(HTMLFieldSetElement);
 
 // Reflected properties

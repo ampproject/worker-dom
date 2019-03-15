@@ -104,3 +104,15 @@ test('setting cssText with a single miscapitalized value requiring key conversio
   declaration.cssText = '-webkit-linE-height: 10px';
   t.is(declaration.webkitLineHeight, '10px');
 });
+
+test('setting cssText with a non-string should set empty string instead', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node);
+  appendKeys(['width']);
+  t.is(declaration.cssText, '');
+
+  declaration.cssText = 'width: 10px;';
+  t.is(declaration.width, '10px');
+
+  declaration.cssText = { width: '10px' } as any;
+  t.is(declaration.cssText, '');
+});

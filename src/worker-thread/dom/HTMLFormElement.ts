@@ -28,7 +28,7 @@ export class HTMLFormElement extends HTMLElement {
     return (this.elements as Array<Element>).length;
   }
 }
-registerSubclass('FORM', HTMLFormElement);
+registerSubclass('form', HTMLFormElement);
 HTMLFormControlsCollectionMixin(HTMLFormElement);
 
 // Reflected properties

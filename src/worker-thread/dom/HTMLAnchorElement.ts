@@ -49,7 +49,7 @@ export class HTMLAnchorElement extends HTMLElement {
     this.textContent = text;
   }
 }
-registerSubclass('A', HTMLAnchorElement);
+registerSubclass('a', HTMLAnchorElement);
 
 // Reflected properties, strings.
 // HTMLAnchorElement.href => string, reflected attribute

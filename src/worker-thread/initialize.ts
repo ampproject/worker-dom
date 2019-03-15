@@ -22,15 +22,16 @@ import { RenderableElement } from './worker-thread';
 import { Document } from './dom/Document';
 import { HTMLElement } from './dom/HTMLElement';
 import { SVGElement } from './dom/SVGElement';
-import { set as setPhase, Phases } from './phase';
+import { Phase } from '../transfer/phase';
+import { set as setPhase } from './phase';
 
 export function consumeInitialDOM(document: Document, strings: Array<string>, hydrateableNode: HydrateableNode): void {
   strings.forEach(storeString);
   (hydrateableNode[TransferrableKeys.childNodes] || []).forEach(child => document.body.appendChild(create(document, strings, child)));
-  setPhase(Phases.Hydrating);
+  setPhase(Phase.Hydrating);
 }
 
-export function create(document: Document, strings: Array<string>, skeleton: HydrateableNode): RenderableElement {
+function create(document: Document, strings: Array<string>, skeleton: HydrateableNode): RenderableElement {
   switch (skeleton[TransferrableKeys.nodeType]) {
     case NodeType.TEXT_NODE:
       const text = document.createTextNode(strings[skeleton[TransferrableKeys.textContent] as number]);
@@ -43,10 +44,8 @@ export function create(document: Document, strings: Array<string>, skeleton: Hyd
     default:
       const namespace: string | undefined =
         skeleton[TransferrableKeys.namespaceURI] !== undefined ? strings[skeleton[TransferrableKeys.namespaceURI] as number] : undefined;
-      const nodeName = strings[skeleton[TransferrableKeys.nodeName]];
-      const node: HTMLElement | SVGElement = namespace
-        ? (document.createElementNS(namespace, nodeName) as SVGElement)
-        : document.createElement(nodeName);
+      const name = strings[skeleton[TransferrableKeys.localOrNodeName]];
+      const node: HTMLElement | SVGElement = namespace ? (document.createElementNS(namespace, name) as SVGElement) : document.createElement(name);
       (skeleton[TransferrableKeys.attributes] || []).forEach(attribute => {
         const namespaceURI = strings[attribute[0]];
         if (namespaceURI !== 'null') {

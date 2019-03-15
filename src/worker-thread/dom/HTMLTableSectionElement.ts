@@ -58,6 +58,6 @@ export class HTMLTableSectionElement extends HTMLElement {
     return tr;
   }
 }
-registerSubclass('THEAD', HTMLTableSectionElement);
-registerSubclass('TFOOT', HTMLTableSectionElement);
-registerSubclass('TBODY', HTMLTableSectionElement);
+registerSubclass('thead', HTMLTableSectionElement);
+registerSubclass('tfoot', HTMLTableSectionElement);
+registerSubclass('tbody', HTMLTableSectionElement);

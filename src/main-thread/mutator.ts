@@ -14,21 +14,28 @@
  * limitations under the License.
  */
 
+import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
+import { EventSubscriptionProcessor } from './commands/event-subscription';
+import { LongTaskProcessor } from './commands/long-task';
+import { MutationPumpFunction, WorkerCallbacks } from './callbacks';
+import { MutationRecordType } from '../worker-thread/MutationRecord';
+import { NodeContext } from './nodes';
+import { Phase } from '../transfer/phase';
+import { Strings } from './strings';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { TransferrableNode } from '../transfer/TransferrableNodes';
-import { NodeContext } from './nodes';
-import { Strings } from './strings';
 import { WorkerContext } from './worker';
-import { EventSubscriptionProcessor } from './commands/event-subscription';
-import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
 
 export class MutatorProcessor {
   private strings: Strings;
   private nodeContext: NodeContext;
+  private mutationPump: MutationPumpFunction;
+  private boundSyncFlush: () => void;
   private mutationQueue: Array<TransferrableMutationRecord>;
-  private pendingMutations: boolean;
+  private stringQueue: Array<string>;
+  private nodeQueue: Array<TransferrableNode>;
+  private pendingQueue: boolean;
   private sanitizer: Sanitizer | undefined;
   private mutators: {
     [key: number]: (mutation: TransferrableMutationRecord, target: Node) => void;
@@ -38,17 +45,22 @@ export class MutatorProcessor {
    * @param strings
    * @param nodeContext
    * @param workerContext
-   * @param passedSanitizer Sanitizer to apply to content if needed.
+   * @param sanitizer Sanitizer to apply to content if needed.
    */
-  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, passedSanitizer?: Sanitizer) {
+  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, callbacks?: WorkerCallbacks, sanitizer?: Sanitizer) {
     this.strings = strings;
     this.nodeContext = nodeContext;
-    this.sanitizer = passedSanitizer;
+    this.sanitizer = sanitizer;
+    this.mutationPump = (callbacks && callbacks.onMutationPump) || requestAnimationFrame.bind(null);
+    this.boundSyncFlush = this.syncFlush.bind(this);
+    this.stringQueue = [];
+    this.nodeQueue = [];
     this.mutationQueue = [];
-    this.pendingMutations = false;
+    this.pendingQueue = false;
 
     const eventSubscriptionProcessor = new EventSubscriptionProcessor(strings, nodeContext, workerContext);
     const boundingClientRectProcessor = new BoundingClientRectProcessor(nodeContext, workerContext);
+    const longTaskProcessor = new LongTaskProcessor(callbacks);
 
     this.mutators = {
       [MutationRecordType.CHILD_LIST]: this.mutateChildList.bind(this),
@@ -57,28 +69,25 @@ export class MutatorProcessor {
       [MutationRecordType.PROPERTIES]: this.mutateProperties.bind(this),
       [MutationRecordType.EVENT_SUBSCRIPTION]: eventSubscriptionProcessor.process.bind(eventSubscriptionProcessor),
       [MutationRecordType.GET_BOUNDING_CLIENT_RECT]: boundingClientRectProcessor.process.bind(boundingClientRectProcessor),
+      [MutationRecordType.LONG_TASK_START]: longTaskProcessor.processStart,
+      [MutationRecordType.LONG_TASK_END]: longTaskProcessor.processEnd,
     };
   }
 
   /**
    * Process MutationRecords from worker thread applying changes to the existing DOM.
+   * @param phase
    * @param nodes New nodes to add in the main thread with the incoming mutations.
    * @param stringValues Additional string values to use in decoding messages.
    * @param mutations Changes to apply in both graph shape and content of Elements.
    */
-  mutate(nodes: Array<TransferrableNode>, stringValues: Array<string>, mutations: Array<TransferrableMutationRecord>): void {
-    //mutations: TransferrableMutationRecord[]): void {
-    // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
-    // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
-    //   return;
-    // }
-    // this.lastGestureTime = lastGestureTime;
-    this.strings.storeValues(stringValues);
-    nodes.forEach(node => this.nodeContext.createNode(node, this.sanitizer));
+  mutate(phase: Phase, nodes: Array<TransferrableNode>, stringValues: Array<string>, mutations: Array<TransferrableMutationRecord>): void {
+    this.stringQueue = this.stringQueue.concat(stringValues);
+    this.nodeQueue = this.nodeQueue.concat(nodes);
     this.mutationQueue = this.mutationQueue.concat(mutations);
-    if (!this.pendingMutations) {
-      this.pendingMutations = true;
-      requestAnimationFrame(this.syncFlush.bind(this));
+    if (!this.pendingQueue) {
+      this.pendingQueue = true;
+      this.mutationPump(this.boundSyncFlush, phase);
     }
   }
 
@@ -89,6 +98,14 @@ export class MutatorProcessor {
    * Investigations in using asyncFlush to resolve are worth considering.
    */
   private syncFlush(): void {
+    this.pendingQueue = false;
+
+    this.strings.storeValues(this.stringQueue);
+    this.stringQueue.length = 0;
+
+    this.nodeQueue.forEach(node => this.nodeContext.createNode(node, this.sanitizer));
+    this.nodeQueue.length = 0;
+
     this.mutationQueue.forEach(mutation => {
       const nodeId = mutation[TransferrableKeys.target];
       const node = this.nodeContext.getNode(nodeId);
@@ -98,8 +115,7 @@ export class MutatorProcessor {
       }
       this.mutators[mutation[TransferrableKeys.type]](mutation, node);
     });
-    this.mutationQueue = [];
-    this.pendingMutations = false;
+    this.mutationQueue.length = 0;
   }
 
   private mutateChildList(mutation: TransferrableMutationRecord, target: HTMLElement) {

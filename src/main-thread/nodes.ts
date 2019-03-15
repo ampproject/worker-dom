@@ -64,11 +64,13 @@ export class NodeContext {
       node = document.createTextNode(this.strings.get(skeleton[TransferrableKeys.textContent] as number));
     } else if (skeleton[TransferrableKeys.nodeType] === NodeType.DOCUMENT_FRAGMENT_NODE) {
       node = document.createDocumentFragment();
+    } else if (skeleton[TransferrableKeys.nodeType] === NodeType.COMMENT_NODE) {
+      node = document.createComment(this.strings.get(skeleton[TransferrableKeys.textContent] as number));
     } else {
       const namespace =
         skeleton[TransferrableKeys.namespaceURI] !== undefined ? this.strings.get(skeleton[TransferrableKeys.namespaceURI] as number) : undefined;
-      const nodeName = this.strings.get(skeleton[TransferrableKeys.nodeName]);
-      node = namespace ? document.createElementNS(namespace, nodeName) : document.createElement(nodeName);
+      const localName = this.strings.get(skeleton[TransferrableKeys.localOrNodeName]);
+      node = namespace ? document.createElementNS(namespace, localName) : document.createElement(localName);
 
       // TODO(KB): Restore Properties
       // skeleton.properties.forEach(property => {

@@ -19,9 +19,10 @@ import { SVG_NAMESPACE, NodeType } from '../../transfer/TransferrableNodes';
 import { NodeName, Node, NamespaceURI } from './Node';
 
 export class SVGElement extends Element {
-  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node) {
-    super(nodeType, nodeName, SVG_NAMESPACE, ownerDocument);
-    this.localName = nodeName;
+  constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node) {
+    super(nodeType, localName, SVG_NAMESPACE, ownerDocument);
+    // Element uppercases its nodeName, but SVG elements don't.
+    this.nodeName = localName;
   }
 }
-registerSubclass('SVG', SVGElement);
+registerSubclass('svg', SVGElement, SVG_NAMESPACE);

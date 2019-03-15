@@ -106,6 +106,13 @@ export abstract class Node {
    * @return text from all childNodes.
    */
   get textContent(): string {
+    return this.getTextContent();
+  }
+
+  /**
+   * Use `this.getTextContent()` instead of `super.textContent` to avoid incorrect or expensive ES5 transpilation.
+   */
+  protected getTextContent(): string {
     let textContent = '';
     const childNodes = this.childNodes;
 
@@ -277,34 +284,46 @@ export abstract class Node {
     return null;
   }
 
-  // TODO(KB): Verify behaviour.
   /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/replaceChild
-   * @param newChild new Node to replace old Node.
-   * @param oldChild existing Node to be replaced.
+   * @param newChild
+   * @param oldChild
    * @return child that was replaced.
+   * @note `HierarchyRequestError` not handled e.g. newChild is an ancestor of current node.
+   * @see https://dom.spec.whatwg.org/#concept-node-replace
    */
   public replaceChild(newChild: Node, oldChild: Node): Node {
-    if (newChild !== oldChild) {
-      const index = this.childNodes.indexOf(oldChild);
-      if (index >= 0) {
-        oldChild.parentNode = null;
-        propagate(oldChild, 'isConnected', false);
-        propagate(oldChild, TransferrableKeys.scopingRoot, oldChild);
-        this.childNodes.splice(index, 1, newChild);
-        propagate(newChild, 'isConnected', this.isConnected);
-        propagate(newChild, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
-
-        mutate({
-          addedNodes: [newChild],
-          removedNodes: [oldChild],
-          type: MutationRecordType.CHILD_LIST,
-          nextSibling: this.childNodes[index + 1],
-          target: this,
-        });
-      }
+    if (
+      newChild === oldChild ||
+      // In DOM, this throws DOMException: "The node to be replaced is not a child of this node."
+      oldChild.parentNode !== this ||
+      // In DOM, this throws DOMException: "The new child element contains the parent."
+      newChild.contains(this)
+    ) {
+      return oldChild;
     }
+    // If newChild already exists in the DOM, it is first removed.
+    // TODO: Consider using a mutation-free API here to avoid two mutations
+    // per replaceChild() call.
+    newChild.remove();
 
+    oldChild.parentNode = null;
+    propagate(oldChild, 'isConnected', false);
+    propagate(oldChild, TransferrableKeys.scopingRoot, oldChild);
+
+    const index = this.childNodes.indexOf(oldChild);
+    this.childNodes.splice(index, 1, newChild);
+
+    newChild.parentNode = this;
+    propagate(newChild, 'isConnected', this.isConnected);
+    propagate(newChild, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
+
+    mutate({
+      addedNodes: [newChild],
+      removedNodes: [oldChild],
+      type: MutationRecordType.CHILD_LIST,
+      nextSibling: this.childNodes[index + 1],
+      target: this,
+    });
     return oldChild;
   }
 
