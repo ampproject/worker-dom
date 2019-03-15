@@ -18,7 +18,7 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { MessageType } from '../../transfer/Messages';
 import { WorkerContext } from '../worker';
 import { CommandExecutor } from './interface';
-import { BoundClientRectMutationIndex } from '../../transfer/replacement/TransferrableBoundClientRect';
+import { BoundClientRectMutationIndex } from '../../transfer/TransferrableBoundClientRect';
 
 export class BoundingClientRectProcessor implements CommandExecutor {
   private workerContext: WorkerContext;

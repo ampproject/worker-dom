@@ -52,13 +52,13 @@ import { Event } from '../Event';
 import { Text } from './Text';
 import { Comment } from './Comment';
 import { MutationObserver } from '../MutationObserver';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/replacement/TransferrableNodes';
-import { propagate as propagateEvents } from '../../transfer/TransferrableEvent';
-import { propagate as propagateSyncValues } from '../../transfer/TransferrableSyncValue';
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
 import { PostMessage } from '../worker-thread';
 import { observe } from '../MutationTransfer';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { propagate as propagateEvents } from '../../transfer/TransferrableEvent';
+import { propagate as propagateSyncValues } from '../../transfer/TransferrableSyncValue';
 
 export class Document extends Element {
   public defaultView: {

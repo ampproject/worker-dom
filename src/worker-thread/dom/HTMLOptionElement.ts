@@ -18,7 +18,7 @@ import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { NodeName, NamespaceURI, Node } from './Node';
-import { NodeType } from '../../transfer/replacement/TransferrableNodes';
+import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export class HTMLOptionElement extends HTMLElement {

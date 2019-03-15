@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ChildListMutationIndex } from '../../transfer/replacement/TransferrableMutation';
+import { ChildListMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutor } from './interface';
 import { NodeContext } from '../nodes';
 

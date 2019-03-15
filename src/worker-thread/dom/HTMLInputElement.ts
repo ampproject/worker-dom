@@ -19,7 +19,7 @@ import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
 import { reflectProperties } from './enhanceElement';
 import { registerSubclass } from './Element';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { store as storeString } from '../strings';
 import { Document } from './Document';
 import { transfer } from '../MutationTransfer';

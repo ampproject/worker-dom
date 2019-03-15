@@ -20,7 +20,7 @@ import { Element } from '../dom/Element';
 import { NamespaceURI } from '../dom/Node';
 import { toLower } from '../../utils';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { store as storeString } from '../strings';
 import { Document } from '../dom/Document';
 

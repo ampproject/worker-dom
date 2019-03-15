@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HydrateableNode, NodeType } from '../transfer/replacement/TransferrableNodes';
+import { HydrateableNode, NodeType } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { NumericBoolean } from '../utils';
 

@@ -19,7 +19,7 @@ import { consume as consumeStrings } from './strings';
 import { MessageType } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { Node } from './dom/Node';
-import { phase, Phases, set as setPhase } from '../transfer/replacement/phase';
+import { phase, Phases, set as setPhase } from '../transfer/Phase';
 import { PostMessage } from './worker-thread';
 
 let allowTransfer = false;

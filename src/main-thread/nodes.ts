@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NodeType, TransferrableNodeIndex } from '../transfer/replacement/TransferrableNodes';
+import { NodeType, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
 import { Strings } from './strings';
 
 export class NodeContext {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AttributeMutationIndex } from '../../transfer/replacement/TransferrableMutation';
+import { AttributeMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutor } from './interface';
 import { Strings } from '../strings';
 

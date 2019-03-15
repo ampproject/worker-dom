@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2019 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { TransferredNode } from './replacement/TransferrableNodes';
+import { TransferredNode } from './TransferrableNodes';
 import { TransferrableKeys } from './TransferrableKeys';
-import { MessageType, EventToWorker } from './Messages';
+import { EventToWorker, MessageType } from './Messages';
 import { get } from '../worker-thread/nodes';
 import { Event } from '../worker-thread/Event';
 
@@ -38,14 +38,26 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.keyCode]?: number;
 }
 
-type TransferrableEventSubscriptionType = number;
-type TransferrableEventSubscriptionTarget = number;
-type TransferrableEventSubscriptionIdentifer = number;
-export type TransferrableEventSubscriptionChange = [
-  TransferrableEventSubscriptionType,
-  TransferrableEventSubscriptionTarget,
-  TransferrableEventSubscriptionIdentifer
-];
+export const enum EventSubscriptionMutationIndex {
+  Target = 1,
+  RemoveEventListenerCount = 2,
+  AddEventListenerCount = 3,
+  Events = 4,
+  LastStaticNode = 3, // This value is the last static value of a Mutation.
+}
+export const EVENT_SUBSCRIPTION_LENGTH = 2;
+/**
+ * Event Subscription Transfer
+ *
+ * [
+ *   TransferrableMutationType.EVENT_SUBSCRIPTION,
+ *   Target.index,
+ *   RemoveEventListener.count,
+ *   AddEventListener.count,
+ *   ...RemoveEvent<[ EventRegistration.type, EventRegistration.index ]>,
+ *   ...AddEvent<[ EventRegistration.type, EventRegistration.index ]>,
+ * ]
+ */
 
 /**
  * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.

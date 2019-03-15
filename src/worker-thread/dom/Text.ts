@@ -16,10 +16,10 @@
 
 import { CharacterData } from './CharacterData';
 import { NumericBoolean } from '../../utils';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { NodeType } from '../../transfer/replacement/TransferrableNodes';
 import { store as storeString } from '../strings';
 import { Node } from './Node';
+import { NodeType } from '../../transfer/TransferrableNodes';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {

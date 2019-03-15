@@ -15,7 +15,7 @@
  */
 
 import { Node } from './dom/Node';
-import { phase, Phases } from '../transfer/replacement/phase';
+import { phase, Phases } from '../transfer/Phase';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 let count: number = 0;

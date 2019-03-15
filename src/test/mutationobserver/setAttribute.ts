@@ -17,7 +17,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { createDocument, Document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
-import { HTML_NAMESPACE } from '../../transfer/replacement/TransferrableNodes';
+import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 
 const test = anyTest as TestInterface<{
   document: Document;

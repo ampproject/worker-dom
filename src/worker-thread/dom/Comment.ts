@@ -16,10 +16,10 @@
 
 import { CharacterData } from './CharacterData';
 import { NumericBoolean } from '../../utils';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { NodeType } from '../../transfer/replacement/TransferrableNodes';
 import { store as storeString } from '../strings';
 import { Node } from './Node';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { NodeType } from '../../transfer/TransferrableNodes';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Comment
 export class Comment extends CharacterData {

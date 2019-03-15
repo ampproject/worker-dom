@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PropertyMutationIndex } from '../../transfer/replacement/TransferrableMutation';
+import { PropertyMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutor } from './interface';
 import { Strings } from '../strings';
 

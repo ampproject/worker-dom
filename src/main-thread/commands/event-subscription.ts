@@ -17,7 +17,7 @@
 import { MessageType } from '../../transfer/Messages';
 import { Strings } from '../strings';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { EVENT_SUBSCRIPTION_LENGTH, EventSubscriptionMutationIndex } from '../../transfer/replacement/TransferrableEvent';
+import { EVENT_SUBSCRIPTION_LENGTH, EventSubscriptionMutationIndex } from '../../transfer/TransferrableEvent';
 import { WorkerContext } from '../worker';
 import { CommandExecutor } from './interface';
 

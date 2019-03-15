@@ -15,8 +15,8 @@
  */
 
 import { Element, registerSubclass } from './Element';
-import { SVG_NAMESPACE, NodeType } from '../../transfer/replacement/TransferrableNodes';
 import { NodeName, Node, NamespaceURI } from './Node';
+import { SVG_NAMESPACE, NodeType } from '../../transfer/TransferrableNodes';
 
 export class SVGElement extends Element {
   constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node) {

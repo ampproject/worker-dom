@@ -15,11 +15,11 @@
  */
 
 import { ParentNode } from './ParentNode';
-import { NodeType } from '../../transfer/replacement/TransferrableNodes';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { NumericBoolean } from '../../utils';
 import { store as storeString } from '../strings';
 import { Node } from './Node';
+import { NodeType } from '../../transfer/TransferrableNodes';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export class DocumentFragment extends ParentNode {
   constructor(ownerDocument: Node) {

@@ -23,7 +23,7 @@
  */
 
 import { EventToWorker, MessageType, MessageToWorker, ValueSyncToWorker, BoundingClientRectToWorker } from '../transfer/Messages';
-import { HydrateableNode, TransferredNode, TransferrableNodeIndex } from '../transfer/replacement/TransferrableNodes';
+import { HydrateableNode, TransferredNode, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
 import { NodeContext } from './nodes';
 import { TransferrableEvent } from '../transfer/TransferrableEvent';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';

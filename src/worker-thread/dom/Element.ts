@@ -25,15 +25,15 @@ import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/replacement/TransferrableNodes';
 import { store as storeString } from '../strings';
 import { toLower } from '../../utils';
-import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
-import { TransferrableBoundingClientRect } from '../../transfer/replacement/TransferrableBoundClientRect';
-import { TransferrableMutationType } from '../../transfer/replacement/TransferrableMutation';
 import { Document } from './Document';
 import { transfer } from '../MutationTransfer';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { TransferrableBoundingClientRect } from '../../transfer/TransferrableBoundClientRect';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
 
 export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
 export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {

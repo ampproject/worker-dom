@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CharacterDataMutationIndex } from '../../transfer/replacement/TransferrableMutation';
+import { CharacterDataMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutor } from './interface';
 import { Strings } from '../strings';
 
