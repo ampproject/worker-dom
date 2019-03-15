@@ -129,7 +129,7 @@ test.serial('batch mutations with custom pump', t => {
     tasks.push({ phase, flush });
   };
 
-  const mutator = new MutatorProcessor(strings, nodeContext, workerContext, mutationPump);
+  const mutator = new MutatorProcessor(strings, nodeContext, workerContext, { onMutationPump: mutationPump });
 
   mutator.mutate(
     Phase.Mutating,

@@ -28,9 +28,11 @@ export const enum MessageType {
   MUTATE = 3,
   SYNC = 4,
   GET_BOUNDING_CLIENT_RECT = 5,
-  // NAVIGATION_PUSH_STATE = 6,
-  // NAVIGATION_REPLACE_STATE = 7,
-  // NAVIGATION_POP_STATE = 8,
+  LONG_TASK_START = 6,
+  LONG_TASK_END = 7,
+  // NAVIGATION_PUSH_STATE = 8,
+  // NAVIGATION_REPLACE_STATE = 9,
+  // NAVIGATION_POP_STATE = 10,
 }
 
 export interface MutationFromWorker {
@@ -61,4 +63,10 @@ export interface BoundingClientRectToWorker {
   [TransferrableKeys.target]: TransferredNode;
   [TransferrableKeys.data]: TransferrableBoundingClientRect;
 }
-export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker;
+export interface LongTaskStartToWorker {
+  [TransferrableKeys.type]: MessageType.LONG_TASK_START;
+}
+export interface LongTaskEndToWorker {
+  [TransferrableKeys.type]: MessageType.LONG_TASK_END;
+}
+export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker | LongTaskStartToWorker | LongTaskEndToWorker;

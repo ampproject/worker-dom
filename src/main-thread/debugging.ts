@@ -22,7 +22,16 @@
  * @see https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#9.4
  */
 
-import { EventToWorker, MessageFromWorker, MessageType, MessageToWorker, ValueSyncToWorker, BoundingClientRectToWorker } from '../transfer/Messages';
+import {
+  EventToWorker,
+  MessageFromWorker,
+  MessageType,
+  MessageToWorker,
+  ValueSyncToWorker,
+  BoundingClientRectToWorker,
+  LongTaskStartToWorker,
+  LongTaskEndToWorker,
+} from '../transfer/Messages';
 import { HydrateableNode, TransferredNode } from '../transfer/TransferrableNodes';
 import { NodeContext } from './nodes';
 import { TransferrableEvent } from '../transfer/TransferrableEvent';
@@ -42,6 +51,8 @@ const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
   '3': 'PROPERTIES',
   '4': 'EVENT_SUBSCRIPTION',
   '5': 'GET_BOUNDING_CLIENT_RECT',
+  '6': 'LONG_TASK_START',
+  '7': 'LONG_TASK_END',
 };
 
 export class DebuggingContext {
@@ -104,6 +115,10 @@ export class DebuggingContext {
         type: 'GET_BOUNDING_CLIENT_RECT',
         target: readableTransferredNode(this.nodeContext, message[TransferrableKeys.target]),
       };
+    } else if (isLongTaskStart(message)) {
+      return { type: 'LONG_TASK_START' };
+    } else if (isLongTaskEnd(message)) {
+      return { type: 'LONG_TASK_END' };
     } else {
       return 'Unrecognized MessageToWorker type: ' + message[TransferrableKeys.type];
     }
@@ -218,6 +233,20 @@ function isValueSync(message: MessageToWorker): message is ValueSyncToWorker {
  */
 function isBoundingClientRect(message: MessageToWorker): message is BoundingClientRectToWorker {
   return message[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT;
+}
+
+/**
+ * @param data
+ */
+function isLongTaskStart(message: MessageToWorker): message is LongTaskStartToWorker {
+  return message[TransferrableKeys.type] === MessageType.LONG_TASK_START;
+}
+
+/**
+ * @param data
+ */
+function isLongTaskEnd(message: MessageToWorker): message is LongTaskEndToWorker {
+  return message[TransferrableKeys.type] === MessageType.LONG_TASK_END;
 }
 
 /**
