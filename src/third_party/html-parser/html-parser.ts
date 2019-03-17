@@ -157,7 +157,7 @@ export function parse(data: string, rootElement: Element) {
       }
     }
 
-    if (tagName === 'foreignObject' && currentNamespace === SVG_NAMESPACE) {
+    if (tagName === 'foreignObject') {
       beginningSlash ? currentNamespace = SVG_NAMESPACE : currentNamespace = HTML_NAMESPACE;
     }
     
