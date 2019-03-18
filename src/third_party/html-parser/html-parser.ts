@@ -130,7 +130,7 @@ export function parse(data: string, rootElement: Element) {
       }
 
       const childToAppend = ownerDocument.createElementNS(
-        currentNamespace, currentNamespace === SVG_NAMESPACE ? tagName : toLower(tagName));
+        currentNamespace, currentNamespace === HTML_NAMESPACE ? toLower(tagName) : tagName);
 
       for (let attMatch; (attMatch = kAttributePattern.exec(matchAttributes)); ) {
         const attrName = attMatch[2];
