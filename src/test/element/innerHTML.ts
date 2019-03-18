@@ -224,3 +224,12 @@ test('set handles foreignObject tags correctly', t => {
   const foreignObjectChild = foreignObjectNode.firstChild!;
   t.is(foreignObjectChild.namespaceURI, HTML_NAMESPACE);
 });
+
+test('set resets namespace after foreignObject end tag', t => {
+  const { node } = t.context;
+  node.innerHTML = '<svg><foreignObject></foreignObject><div></div></svg>';
+
+  const svgWrapper = node.firstChild!;
+  const foreignObjectSibling = svgWrapper.lastChild!; // div node
+  t.is(foreignObjectSibling.namespaceURI, SVG_NAMESPACE);
+});
