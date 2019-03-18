@@ -113,7 +113,7 @@ export function parse(data: string, rootElement: Element) {
     const normalizedTagName = tagName.toUpperCase();
 
     if (normalizedTagName === 'SVG') {
-      beginningSlash ? currentNamespace = HTML_NAMESPACE : currentNamespace = SVG_NAMESPACE;
+      currentNamespace = beginningSlash ? HTML_NAMESPACE : SVG_NAMESPACE;
     }
 
     if (!beginningSlash) {
@@ -158,7 +158,7 @@ export function parse(data: string, rootElement: Element) {
     }
 
     if (tagName === 'foreignObject') {
-      beginningSlash ? currentNamespace = SVG_NAMESPACE : currentNamespace = HTML_NAMESPACE;
+      currentNamespace = beginningSlash ? SVG_NAMESPACE : HTML_NAMESPACE;
     }
     
     if (beginningSlash || endSlash || kSelfClosingElements[normalizedTagName]) {
