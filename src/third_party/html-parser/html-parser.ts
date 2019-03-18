@@ -1,6 +1,7 @@
 import { Element } from '../../worker-thread/dom/Element';
 import { Node } from '../../worker-thread/dom/Node';
 import { SVG_NAMESPACE, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { toLower } from '../../utils';
 
 interface Elements {
   [key: string]: boolean;
@@ -124,17 +125,12 @@ export function parse(data: string, rootElement: Element) {
         }
       }
 
-      let childToAppend;
-      switch(currentNamespace){
-        case HTML_NAMESPACE:
-          childToAppend = ownerDocument.createElementNS(currentNamespace, tagName.toLowerCase());
-          break;
-        case SVG_NAMESPACE:
-          childToAppend = ownerDocument.createElementNS(currentNamespace, tagName);
-          break;
-        default:
-          throw new Error("Namespace currently not supported.");
+      if (currentNamespace !== SVG_NAMESPACE && currentNamespace !== HTML_NAMESPACE) {
+        throw new Error("Namespace not supported.");
       }
+
+      const childToAppend = ownerDocument.createElementNS(
+        currentNamespace, currentNamespace === SVG_NAMESPACE ? tagName : toLower(tagName));
 
       for (let attMatch; (attMatch = kAttributePattern.exec(matchAttributes)); ) {
         const attrName = attMatch[2];
@@ -147,7 +143,7 @@ export function parse(data: string, rootElement: Element) {
       stack.push(currentParent);
       if (kBlockTextElements[normalizedTagName]) {
         // a little test to find next </script> or </style> ...
-        const closeMarkup = '</' + normalizedTagName.toLowerCase() + '>';
+        const closeMarkup = '</' + toLower(normalizedTagName) + '>';
         const index = data.indexOf(closeMarkup, kMarkupPattern.lastIndex);
         if (index == -1) {
           throw new Error('Close markup not found.');
