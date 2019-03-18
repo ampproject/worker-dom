@@ -233,3 +233,12 @@ test('set resets namespace after foreignObject end tag', t => {
   const foreignObjectSibling = svgWrapper.lastChild!; // div node
   t.is(foreignObjectSibling.namespaceURI, SVG_NAMESPACE);
 });
+
+test('set throws for unsupported namespaces', t => {
+  const { node } = t.context;
+  node.namespaceURI = 'http://www.w3.org/TR/2010/REC-MathML3-20101021/';
+  t.throws(() => {
+    // the value to set should not be relevant here.
+    node.innerHTML = '<div></div>';
+  });
+});
