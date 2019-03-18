@@ -92,7 +92,7 @@ export function parse(data: string, rootElement: Element) {
   const tagsClosed = [] as string[];
 
   if (currentNamespace !== SVG_NAMESPACE && currentNamespace !== HTML_NAMESPACE) {
-    throw new Error("Namespace not supported.");
+    throw new Error("Namespace not supported: " + currentNamespace);
   }
 
   while ((match = kMarkupPattern.exec(data))) {
