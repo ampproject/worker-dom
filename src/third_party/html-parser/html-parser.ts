@@ -91,6 +91,10 @@ export function parse(data: string, rootElement: Element) {
   data = '<div>' + data + '</div>';
   const tagsClosed = [] as string[];
 
+  if (currentNamespace !== SVG_NAMESPACE && currentNamespace !== HTML_NAMESPACE) {
+    throw new Error("Namespace not supported.");
+  }
+
   while ((match = kMarkupPattern.exec(data))) {
 
     const commentContents = match[1]; // <!--contents-->
@@ -123,10 +127,6 @@ export function parse(data: string, rootElement: Element) {
         if (kElementsClosedByOpening[currentParent.tagName][normalizedTagName]) {
           tagsClosed.push(currentParent.tagName);
         }
-      }
-
-      if (currentNamespace !== SVG_NAMESPACE && currentNamespace !== HTML_NAMESPACE) {
-        throw new Error("Namespace not supported.");
       }
 
       const childToAppend = ownerDocument.createElementNS(
