@@ -1,5 +1,7 @@
 import { Element } from '../../worker-thread/dom/Element';
 import { Node } from '../../worker-thread/dom/Node';
+import { SVG_NAMESPACE, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { toLower } from '../../utils';
 
 interface Elements {
   [key: string]: boolean;
@@ -82,11 +84,16 @@ export function parse(data: string, rootElement: Element) {
   ownerDocument.createElementNS(rootElement.namespaceURI, rootElement.localName);
 
   let currentParent = root as Node;
+  let currentNamespace = root.namespaceURI;
   const stack = [root as Node];
   let lastTextPos = 0;
   let match: RegExpExecArray | null;
   data = '<div>' + data + '</div>';
   const tagsClosed = [] as string[];
+
+  if (currentNamespace !== SVG_NAMESPACE && currentNamespace !== HTML_NAMESPACE) {
+    throw new Error("Namespace not supported: " + currentNamespace);
+  }
 
   while ((match = kMarkupPattern.exec(data))) {
 
@@ -110,6 +117,10 @@ export function parse(data: string, rootElement: Element) {
 
     const normalizedTagName = tagName.toUpperCase();
 
+    if (normalizedTagName === 'SVG') {
+      currentNamespace = beginningSlash ? HTML_NAMESPACE : SVG_NAMESPACE;
+    }
+
     if (!beginningSlash) {
       // not </ tags
       if (!endSlash && kElementsClosedByOpening[currentParent.tagName]) {
@@ -117,8 +128,9 @@ export function parse(data: string, rootElement: Element) {
           tagsClosed.push(currentParent.tagName);
         }
       }
-      const childToAppend = 
-      ownerDocument.createElementNS(currentParent.namespaceURI, tagName.toLowerCase());
+
+      const childToAppend = ownerDocument.createElementNS(
+        currentNamespace, currentNamespace === HTML_NAMESPACE ? toLower(tagName) : tagName);
 
       for (let attMatch; (attMatch = kAttributePattern.exec(matchAttributes)); ) {
         const attrName = attMatch[2];
@@ -131,7 +143,7 @@ export function parse(data: string, rootElement: Element) {
       stack.push(currentParent);
       if (kBlockTextElements[normalizedTagName]) {
         // a little test to find next </script> or </style> ...
-        const closeMarkup = '</' + normalizedTagName.toLowerCase() + '>';
+        const closeMarkup = '</' + toLower(normalizedTagName) + '>';
         const index = data.indexOf(closeMarkup, kMarkupPattern.lastIndex);
         if (index == -1) {
           throw new Error('Close markup not found.');
@@ -140,6 +152,11 @@ export function parse(data: string, rootElement: Element) {
         }
       }
     }
+
+    if (tagName === 'foreignObject') {
+      currentNamespace = beginningSlash ? SVG_NAMESPACE : HTML_NAMESPACE;
+    }
+    
     if (beginningSlash || endSlash || kSelfClosingElements[normalizedTagName]) {
       // </ or /> or <br> etc.
       while (true) {
