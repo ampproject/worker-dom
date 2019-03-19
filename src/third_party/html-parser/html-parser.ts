@@ -88,7 +88,7 @@ export function parse(data: string, rootElement: Element) {
   const stack = [root as Node];
   let lastTextPos = 0;
   let match: RegExpExecArray | null;
-  data = '<div>' + data + '</div>';
+  data = '<q>' + data + '</q>';
   const tagsClosed = [] as string[];
 
   if (currentNamespace !== SVG_NAMESPACE && currentNamespace !== HTML_NAMESPACE) {
