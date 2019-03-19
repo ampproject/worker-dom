@@ -159,10 +159,13 @@ test('set closes tags by closing others', t => {
   t.is(child.nodeName, 'DIV');
   t.is(child.firstChild!.nodeName, 'A');
 
-  node.innerHTML = '<a><div></div>';
-  child = node.firstChild!;
-  t.is(child.nodeName, 'A');
-  t.is(child.firstChild!.nodeName, 'DIV');
+  node.innerHTML = '<p><div></div>';
+  const pChild = node.firstChild!;
+  const divChild = node.lastChild!;
+  t.true(node.childNodes.length === 2);
+  t.is(pChild.nodeName, 'P');
+  t.is(divChild.nodeName, 'DIV');
+  
 });
 
 test('set takes all block text element content as text', t => {

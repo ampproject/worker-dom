@@ -114,7 +114,8 @@ export function parse(data: string, rootElement: Element) {
       // not </ tags
       if (!endSlash && kElementsClosedByOpening[currentParent.tagName]) {
         if (kElementsClosedByOpening[currentParent.tagName][normalizedTagName]) {
-          tagsClosed.push(currentParent.tagName);
+          stack.pop();
+          currentParent = arr_back(stack);
         }
       }
       const childToAppend = 
