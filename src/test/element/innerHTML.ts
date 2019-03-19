@@ -168,6 +168,17 @@ test('set closes tags by closing others', t => {
   
 });
 
+// Expected behavior, as discussed in:
+// https://github.com/ampproject/worker-dom/issues/372
+test('set will not alter root element', t => {
+  const document = createDocument();
+  const pNode = document.createElement('p');
+  // normally, a <div> would automatically close a <p>
+  pNode.innerHTML = '<div></div>';
+  const child = pNode.firstChild!;
+  t.is(child.nodeName, 'DIV');
+});
+
 test('set takes all block text element content as text', t => {
   const { node } = t.context;
   node.innerHTML = '<style><div></div></style>';
