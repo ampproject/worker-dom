@@ -53,7 +53,6 @@ const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
   '5': 'GET_BOUNDING_CLIENT_RECT',
   '6': 'LONG_TASK_START',
   '7': 'LONG_TASK_END',
-  '8': 'OFFSCREEN_CANVAS_INSTANCE',
 };
 
 export class DebuggingContext {

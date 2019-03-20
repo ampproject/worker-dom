@@ -65,5 +65,4 @@ export const enum MutationRecordType {
   GET_BOUNDING_CLIENT_RECT = 5,
   LONG_TASK_START = 6,
   LONG_TASK_END = 7,
-  GET_GOOD_OFFSCREEN_CANVAS = 8,
 }

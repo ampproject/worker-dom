@@ -33,7 +33,6 @@ export const enum MessageType {
   // NAVIGATION_PUSH_STATE = 8,
   // NAVIGATION_REPLACE_STATE = 9,
   // NAVIGATION_POP_STATE = 10,
-  OFFSCREEN_CANVAS_INSTANCE = 11,
 }
 
 export interface MutationFromWorker {
@@ -70,9 +69,4 @@ export interface LongTaskStartToWorker {
 export interface LongTaskEndToWorker {
   [TransferrableKeys.type]: MessageType.LONG_TASK_END;
 }
-export interface OffscreenCanvasToWorker {
-  [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE;
-  [TransferrableKeys.target]: TransferredNode;
-  [TransferrableKeys.data]: Object; // This will be an OffscreenCanvas
-}
-export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker | LongTaskStartToWorker | LongTaskEndToWorker | OffscreenCanvasToWorker;
+export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker | LongTaskStartToWorker | LongTaskEndToWorker;

@@ -18,7 +18,6 @@ import { Element, NS_NAME_TO_CLASS } from './Element';
 import { HTMLElement } from './HTMLElement';
 import './HTMLAnchorElement';
 import './HTMLButtonElement';
-import './HTMLCanvasElement';
 import './HTMLDataElement';
 import './HTMLDataListElement';
 import './HTMLEmbedElement';

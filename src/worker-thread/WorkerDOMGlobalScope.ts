@@ -16,7 +16,6 @@
 
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
-import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { HTMLDataElement } from './dom/HTMLDataElement';
 import { HTMLEmbedElement } from './dom/HTMLEmbedElement';
 import { HTMLFieldSetElement } from './dom/HTMLFieldSetElement';
@@ -59,7 +58,6 @@ export interface WorkerDOMGlobalScope {
   consumeInitialDOM: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode) => void;
   HTMLAnchorElement: typeof HTMLAnchorElement;
   HTMLButtonElement: typeof HTMLButtonElement;
-  HTMLCanvasElement: typeof HTMLCanvasElement;
   HTMLDataElement: typeof HTMLDataElement;
   HTMLEmbedElement: typeof HTMLEmbedElement;
   HTMLFieldSetElement: typeof HTMLFieldSetElement;
