@@ -28,7 +28,7 @@ import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
-import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
+import { MessageToWorker, MessageType, BoundingClientRectToWorker, OffscreenCanvasToWorker } from '../../transfer/Messages';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
 import { parse } from '../../third_party/html-parser/html-parser';
 import { propagate } from './Node';
@@ -457,6 +457,27 @@ export class Element extends ParentNode {
       this.childNodes.forEach((child: Node) => clone.appendChild(child.cloneNode(deep)));
     }
     return clone;
+  }
+
+  public getOffscreenCanvasAsync(): Promise<Object> {
+    return new Promise(resolve => {
+      if (typeof addEventListener !== 'function' || !this.isConnected) {
+        // throwing is probably not the best behavior here
+        // maybe resolve with a default value?
+        // if not, TODO: make this message more specific.
+        throw new Error("Something went wrong");
+      } else {
+        addEventListener('message', ({ data }: { data: MessageToWorker }) => {
+          if (
+            data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE &&
+            (data as OffscreenCanvasToWorker)[TransferrableKeys.target][TransferrableKeys.index] === this[TransferrableKeys.index]
+          ) {
+            const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
+            resolve(transferredOffscreenCanvas);
+          }
+        });
+      }
+    })
   }
 
   /**

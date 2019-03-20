@@ -16,6 +16,7 @@
 
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
+import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { HTMLDataElement } from './dom/HTMLDataElement';
 import { HTMLEmbedElement } from './dom/HTMLEmbedElement';
 import { HTMLFieldSetElement } from './dom/HTMLFieldSetElement';
@@ -62,6 +63,7 @@ export const workerDOM: WorkerDOMGlobalScope = {
   consumeInitialDOM,
   HTMLAnchorElement,
   HTMLButtonElement,
+  HTMLCanvasElement,
   HTMLDataElement,
   HTMLEmbedElement,
   HTMLFieldSetElement,
