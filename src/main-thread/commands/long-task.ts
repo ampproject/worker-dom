@@ -14,24 +14,36 @@
  * limitations under the License.
  */
 
-import { CharacterDataMutationIndex } from '../../transfer/TransferrableMutation';
+import { WorkerDOMConfiguration } from '../configuration';
 import { CommandExecutor } from './interface';
-import { Strings } from '../strings';
+import { TransferrableMutationType, ReadableMutationType } from '../../transfer/TransferrableMutation';
 
-export function CharacterDataProcessor(strings: Strings): CommandExecutor {
+export function LongTaskProcessor(config: WorkerDOMConfiguration): CommandExecutor {
+  let index: number = 0;
+  let currentResolver: Function | null;
+
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      const value = mutations[startPosition + CharacterDataMutationIndex.Value];
-      if (value) {
-        // Sanitization not necessary for textContent.
-        target.textContent = strings.get(value);
+      if (config.longTask) {
+        if (mutations[startPosition] === TransferrableMutationType.LONG_TASK_START) {
+          index++;
+          if (!currentResolver) {
+            config.longTask(new Promise(resolve => (currentResolver = resolve)));
+          }
+        } else if (mutations[startPosition] === TransferrableMutationType.LONG_TASK_END) {
+          index--;
+          if (currentResolver && index <= 0) {
+            currentResolver();
+            currentResolver = null;
+            index = 0;
+          }
+        }
       }
-      return startPosition + CharacterDataMutationIndex.LastStaticNode + 1;
+      return startPosition + 2;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       return {
-        target,
-        value: strings.get(mutations[startPosition + CharacterDataMutationIndex.Value]),
+        type: ReadableMutationType[mutations[startPosition]],
       };
     },
   };

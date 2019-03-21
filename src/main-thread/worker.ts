@@ -15,7 +15,7 @@
  */
 
 import { MessageToWorker } from '../transfer/Messages';
-import { WorkerCallbacks } from './callbacks';
+import { WorkerDOMConfiguration } from './configuration';
 import { createHydrateableRootNode } from './serialize';
 import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
 import { NodeContext } from './nodes';
@@ -23,29 +23,18 @@ import { NodeContext } from './nodes';
 export class WorkerContext {
   public worker: Worker;
   private nodeContext: NodeContext;
-
-  /**
-   * Stored callbacks for the most recently created worker.
-   * Note: This can be easily changed to a lookup table to support multiple workers.
-   */
-  private callbacks: WorkerCallbacks | undefined;
+  private config: WorkerDOMConfiguration;
 
   /**
    * @param baseElement
+   * @param nodeContext
    * @param workerDOMScript
    * @param authorScript
-   * @param authorScriptURL
+   * @param config
    */
-  constructor(
-    baseElement: HTMLElement,
-    workerDOMScript: string,
-    authorScript: string,
-    authorScriptURL: string,
-    nodeContext: NodeContext,
-    callbacks?: WorkerCallbacks,
-  ) {
-    this.callbacks = callbacks;
+  constructor(baseElement: HTMLElement, nodeContext: NodeContext, workerDOMScript: string, authorScript: string, config: WorkerDOMConfiguration) {
     this.nodeContext = nodeContext;
+    this.config = config;
 
     // TODO(KB): Minify this output during build process.
     const keys: Array<string> = [];
@@ -82,13 +71,13 @@ export class WorkerContext {
         document.observe();
         ${authorScript}
       }).call(WorkerThread.workerDOM);
-  //# sourceURL=${encodeURI(authorScriptURL)}`;
+  //# sourceURL=${encodeURI(config.authorURL)}`;
     this.worker = new Worker(URL.createObjectURL(new Blob([code])));
     if (DEBUG_ENABLED) {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement));
     }
-    if (callbacks && callbacks.onCreateWorker) {
-      callbacks.onCreateWorker(baseElement);
+    if (config.onCreateWorker) {
+      config.onCreateWorker(baseElement);
     }
   }
 
@@ -99,8 +88,8 @@ export class WorkerContext {
     if (DEBUG_ENABLED) {
       console.info('debug', 'messageToWorker', readableMessageToWorker(this.nodeContext, message));
     }
-    if (this.callbacks && this.callbacks.onSendMessage) {
-      this.callbacks.onSendMessage(message);
+    if (this.config.onSendMessage) {
+      this.config.onSendMessage(message);
     }
     this.worker.postMessage(message);
   }

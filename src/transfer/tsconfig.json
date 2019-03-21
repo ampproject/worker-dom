@@ -15,5 +15,8 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "alwaysStrict": true
-  }
+  },
+  "include": [
+    "*.ts"
+  ]
 }

@@ -45,7 +45,7 @@ export class NodeContext {
     baseElement.childNodes.forEach(this.storeNodes);
   }
 
-  public createNodes(buffer: ArrayBuffer, sanitizer?: Sanitizer): void {
+  public createNodes = (buffer: ArrayBuffer, sanitizer?: Sanitizer): void => {
     const nodeBuffer = new Uint16Array(buffer);
     const nodeBufferLength = nodeBuffer.length;
 
@@ -80,14 +80,14 @@ export class NodeContext {
 
       this.storeNode(node, nodeBuffer[iterator]);
     }
-  }
+  };
 
   /**
    * Returns the real DOM Element corresponding to a serialized Element object.
    * @param id
    * @return RenderableElement | null
    */
-  public getNode(id: number): RenderableElement | null {
+  public getNode = (id: number): RenderableElement | null => {
     const node = this.nodes.get(id);
 
     if (node && node.nodeName === 'BODY') {
@@ -97,7 +97,7 @@ export class NodeContext {
       return this.baseElement as RenderableElement;
     }
     return node as RenderableElement;
-  }
+  };
 
   /**
    * Store the requested node and all of its children.

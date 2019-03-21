@@ -21,26 +21,21 @@ export const enum TransferrableMutationType {
   PROPERTIES = 3,
   EVENT_SUBSCRIPTION = 4,
   GET_BOUNDING_CLIENT_RECT = 5,
+  LONG_TASK_START = 6,
+  LONG_TASK_END = 7,
 }
 
-export const ReadableMutationType = {
+export const ReadableMutationType: { [key: number]: string } = {
   0: 'ATTRIBUTES',
   1: 'CHARACTER_DATA',
   2: 'CHILD_LIST',
   3: 'PROPERTIES',
   4: 'EVENT_SUBSCRIPTION',
   5: 'GET_BOUNDING_CLIENT_RECT',
+  6: 'LONG_TASK_START',
+  7: 'LONG_TASK_END',
 };
 
-export const enum ChildListMutationIndex {
-  Target = 1,
-  NextSibling = 2,
-  PreviousSibling = 3,
-  AppendedNodeCount = 4,
-  RemovedNodeCount = 5,
-  Nodes = 6,
-  LastStaticNode = 5,
-}
 /**
  * Child List Mutations
  * [
@@ -54,14 +49,16 @@ export const enum ChildListMutationIndex {
  *   ... RemovedNode.index,
  * ]
  */
-
-export const enum AttributeMutationIndex {
+export const enum ChildListMutationIndex {
   Target = 1,
-  Name = 2,
-  Namespace = 3,
-  Value = 4,
-  LastStaticNode = 4,
+  NextSibling = 2,
+  PreviousSibling = 3,
+  AppendedNodeCount = 4,
+  RemovedNodeCount = 5,
+  Nodes = 6,
+  LastStaticNode = 5,
 }
+
 /**
  * Attribute Mutations
  * [
@@ -72,12 +69,14 @@ export const enum AttributeMutationIndex {
  *   Attr.value
  * ]
  */
-
-export const enum CharacterDataMutationIndex {
+export const enum AttributeMutationIndex {
   Target = 1,
-  Value = 2,
-  LastStaticNode = 2,
+  Name = 2,
+  Namespace = 3,
+  Value = 4,
+  LastStaticNode = 4,
 }
+
 /**
  * Character Data Mutations
  * [
@@ -86,13 +85,12 @@ export const enum CharacterDataMutationIndex {
  *   CharacterData.value
  * ]
  */
-
-export const enum PropertyMutationIndex {
+export const enum CharacterDataMutationIndex {
   Target = 1,
-  Name = 2,
-  Value = 3,
-  LastStaticNode = 3,
+  Value = 2,
+  LastStaticNode = 2,
 }
+
 /**
  * Properties Mutations
  * [
@@ -102,3 +100,9 @@ export const enum PropertyMutationIndex {
  *   Property.value
  * ]
  */
+export const enum PropertyMutationIndex {
+  Target = 1,
+  Name = 2,
+  Value = 3,
+  LastStaticNode = 3,
+}

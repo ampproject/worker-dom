@@ -20,44 +20,34 @@ import { WorkerContext } from '../worker';
 import { CommandExecutor } from './interface';
 import { BoundClientRectMutationIndex } from '../../transfer/TransferrableBoundClientRect';
 
-export class BoundingClientRectProcessor implements CommandExecutor {
-  private workerContext: WorkerContext;
+export function BoundingClientRectProcessor(workerContext: WorkerContext): CommandExecutor {
+  return {
+    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+      if (target) {
+        const boundingRect = target.getBoundingClientRect();
+        workerContext.messageToWorker({
+          [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
+          [TransferrableKeys.target]: [target._index_],
+          [TransferrableKeys.data]: [
+            boundingRect.top,
+            boundingRect.right,
+            boundingRect.bottom,
+            boundingRect.left,
+            boundingRect.width,
+            boundingRect.height,
+          ],
+        });
+      } else {
+        console.error(`getNode() yields null – ${target}`);
+      }
 
-  /**
-   * @param workerContext whom to dispatch events toward.
-   */
-  constructor(workerContext: WorkerContext) {
-    this.workerContext = workerContext;
-  }
-
-  /**
-   * Process commands transfered from worker thread to main thread.
-   * @param mutation mutation record containing commands to execute.
-   */
-  public execute = (mutations: Uint16Array, startPosition: number, target: RenderableElement): number => {
-    if (target) {
-      const boundingRect = target.getBoundingClientRect();
-      this.workerContext.messageToWorker({
-        [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
-        [TransferrableKeys.target]: [target._index_],
-        [TransferrableKeys.data]: [
-          boundingRect.top,
-          boundingRect.right,
-          boundingRect.bottom,
-          boundingRect.left,
-          boundingRect.width,
-          boundingRect.height,
-        ],
-      });
-    } else {
-      console.error(`getNode() yields null – ${target}`);
-    }
-
-    return startPosition + BoundClientRectMutationIndex.LastStaticNode + 1;
+      return startPosition + BoundClientRectMutationIndex.LastStaticNode + 1;
+    },
+    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+      return {
+        type: 'GET_BOUNDING_CLIENT_RECT',
+        target,
+      };
+    },
   };
-
-  public print = (mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object => ({
-    type: 'GET_BOUNDING_CLIENT_RECT',
-    target,
-  });
 }

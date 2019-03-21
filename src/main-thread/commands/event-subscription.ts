@@ -44,7 +44,7 @@ const applyDefaultChangeListener = (workerContext: WorkerContext, node: Renderab
  * @param worker whom to dispatch value toward.
  * @param node where to get the value from.
  */
-const fireValueChange = (workerContext: WorkerContext, node: RenderableElement): void => {
+const fireValueChange = (workerContext: WorkerContext, node: RenderableElement): void =>
   workerContext.messageToWorker({
     [TransferrableKeys.type]: MessageType.SYNC,
     [TransferrableKeys.sync]: {
@@ -52,7 +52,6 @@ const fireValueChange = (workerContext: WorkerContext, node: RenderableElement):
       [TransferrableKeys.value]: node.value,
     },
   });
-};
 
 /**
  * Register an event handler for dispatching events to worker thread
@@ -86,66 +85,8 @@ const eventHandler = (workerContext: WorkerContext, index: number) => (event: Ev
   });
 };
 
-export class EventSubscriptionProcessor implements CommandExecutor {
-  private strings: Strings;
-  private workerContext: WorkerContext;
-  // TODO(choumx): Support SYNC events for properties other than 'value', e.g. 'checked'.
-  private knownListeners: Array<(event: Event) => any>;
-
-  constructor(strings: Strings, workerContext: WorkerContext) {
-    this.strings = strings;
-    this.workerContext = workerContext;
-    this.knownListeners = [];
-  }
-
-  /**
-   * Process event subscription changes transfered from worker thread to main thread.
-   * @param mutation mutation record containing commands to execute.
-   * @param startPosition
-   * @param target
-   */
-  public execute = (mutations: Uint16Array, startPosition: number, target: RenderableElement): number => {
-    const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
-    const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
-    const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;
-    const endPosition =
-      startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
-
-    if (target) {
-      for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
-        this.processListenerChange(target, iterator <= addEventListenersPosition, this.strings.get(mutations[iterator]), mutations[iterator + 1]);
-      }
-    } else {
-      console.error(`getNode() yields null – ${target}`);
-    }
-
-    return endPosition;
-  };
-
-  public print = (mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object => {
-    const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
-    const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
-    const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;
-    const endPosition =
-      startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
-
-    let removedEventListeners: Array<{ type: string; index: number }> = [];
-    let addedEventListeners: Array<{ type: string; index: number }> = [];
-
-    for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
-      const eventList = iterator <= addEventListenersPosition ? addedEventListeners : removedEventListeners;
-      eventList.push({
-        type: this.strings.get(mutations[iterator]),
-        index: mutations[iterator + 1],
-      });
-    }
-
-    return {
-      target,
-      removedEventListeners,
-      addedEventListeners,
-    };
-  };
+export function EventSubscriptionProcessor(strings: Strings, workerContext: WorkerContext): CommandExecutor {
+  const knownListeners: Array<(event: Event) => any> = [];
 
   /**
    * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,
@@ -155,7 +96,7 @@ export class EventSubscriptionProcessor implements CommandExecutor {
    * @param type event type requested to change
    * @param index number in the listeners array this event corresponds to.
    */
-  private processListenerChange(target: RenderableElement, addEvent: boolean, type: string, index: number): void {
+  const processListenerChange = (target: RenderableElement, addEvent: boolean, type: string, index: number): void => {
     let changeEventSubscribed: boolean = target.onchange !== null;
     const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
     const isChangeEvent = type === 'change';
@@ -165,15 +106,59 @@ export class EventSubscriptionProcessor implements CommandExecutor {
         changeEventSubscribed = true;
         target.onchange = null;
       }
-      (target as HTMLElement).addEventListener(type, (this.knownListeners[index] = eventHandler(this.workerContext, target._index_)));
+      (target as HTMLElement).addEventListener(type, (knownListeners[index] = eventHandler(workerContext, target._index_)));
     } else {
       if (isChangeEvent) {
         changeEventSubscribed = false;
       }
-      (target as HTMLElement).removeEventListener(type, this.knownListeners[index]);
+      (target as HTMLElement).removeEventListener(type, knownListeners[index]);
     }
     if (shouldTrack && !changeEventSubscribed) {
-      applyDefaultChangeListener(this.workerContext, target as RenderableElement);
+      applyDefaultChangeListener(workerContext, target as RenderableElement);
     }
-  }
+  };
+
+  return {
+    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+      const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
+      const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
+      const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;
+      const endPosition =
+        startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
+
+      if (target) {
+        for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
+          processListenerChange(target, iterator <= addEventListenersPosition, strings.get(mutations[iterator]), mutations[iterator + 1]);
+        }
+      } else {
+        console.error(`getNode() yields null – ${target}`);
+      }
+
+      return endPosition;
+    },
+    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+      const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
+      const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
+      const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;
+      const endPosition =
+        startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
+
+      let removedEventListeners: Array<{ type: string; index: number }> = [];
+      let addedEventListeners: Array<{ type: string; index: number }> = [];
+
+      for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
+        const eventList = iterator <= addEventListenersPosition ? addedEventListeners : removedEventListeners;
+        eventList.push({
+          type: strings.get(mutations[iterator]),
+          index: mutations[iterator + 1],
+        });
+      }
+
+      return {
+        target,
+        removedEventListeners,
+        addedEventListeners,
+      };
+    },
+  };
 }

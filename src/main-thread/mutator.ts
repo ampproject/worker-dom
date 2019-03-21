@@ -27,13 +27,17 @@ import { ChildListProcessor } from './commands/child-list';
 import { AttributeProcessor } from './commands/attribute';
 import { CharacterDataProcessor } from './commands/character-data';
 import { PropertyProcessor } from './commands/property';
+import { LongTaskProcessor } from './commands/long-task';
 import { CommandExecutor } from './commands/interface';
+import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
+import { phase } from '../transfer/Phase';
 
 export class MutatorProcessor {
   private strings: Strings;
   private nodeContext: NodeContext;
   private mutationQueue: Array<Uint16Array> = [];
   private pendingMutations: boolean = false;
+  private mutationPumpFunction: MutationPumpFunction;
   private sanitizer: Sanitizer | undefined;
   private executors: {
     [key: number]: CommandExecutor;
@@ -45,18 +49,22 @@ export class MutatorProcessor {
    * @param workerContext
    * @param sanitizer Sanitizer to apply to content if needed.
    */
-  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, sanitizer?: Sanitizer) {
+  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, config: WorkerDOMConfiguration) {
     this.strings = strings;
     this.nodeContext = nodeContext;
-    this.sanitizer = sanitizer;
+    this.sanitizer = config.sanitizer;
+    this.mutationPumpFunction = config.mutationPump || requestAnimationFrame;
 
+    const LongTaskProcessorInstance = LongTaskProcessor(config);
     this.executors = {
-      [TransferrableMutationType.CHILD_LIST]: new ChildListProcessor(nodeContext),
-      [TransferrableMutationType.ATTRIBUTES]: new AttributeProcessor(strings, sanitizer),
-      [TransferrableMutationType.CHARACTER_DATA]: new CharacterDataProcessor(strings),
-      [TransferrableMutationType.PROPERTIES]: new PropertyProcessor(strings, sanitizer),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION]: new EventSubscriptionProcessor(strings, workerContext),
-      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: new BoundingClientRectProcessor(workerContext),
+      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor(nodeContext),
+      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor(strings, config),
+      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor(strings),
+      [TransferrableMutationType.PROPERTIES]: PropertyProcessor(strings, config),
+      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor(strings, workerContext),
+      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor(workerContext),
+      [TransferrableMutationType.LONG_TASK_START]: LongTaskProcessorInstance,
+      [TransferrableMutationType.LONG_TASK_END]: LongTaskProcessorInstance,
     };
   }
 
@@ -72,7 +80,7 @@ export class MutatorProcessor {
     this.mutationQueue = this.mutationQueue.concat(mutations);
     if (!this.pendingMutations) {
       this.pendingMutations = true;
-      requestAnimationFrame(this.syncFlush);
+      this.mutationPumpFunction(this.syncFlush, phase);
     }
   }
 

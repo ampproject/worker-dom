@@ -15,8 +15,31 @@
  */
 
 import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
+import { Phases } from '../transfer/phase';
 
-export interface WorkerCallbacks {
+/**
+ * The callback for `onMutationPump`. If specified, this callback will be called
+ * for the new set of mutations pending. The callback can either immediately
+ * call `flush()`, or it can reject mutations, or it can batch them further.
+ */
+export type MutationPumpFunction = (flush: Function, phase: Phases) => void;
+
+export type LongTaskFunction = (promise: Promise<any>) => void;
+
+export interface WorkerDOMConfiguration {
+  // ---- Required Values.
+  authorURL: string;
+  domURL: string;
+
+  // ---- Optional Overrides
+  // Schedules mutation phase.
+  mutationPump?: MutationPumpFunction;
+  // Schedules long task.
+  longTask?: LongTaskFunction;
+  // Sanitizer for DOM Mutations
+  sanitizer?: Sanitizer;
+
+  // ---- Optional Callbacks
   // Called when worker consumes the page's initial DOM state.
   onCreateWorker?: (initialDOM: RenderableElement) => void;
   // Called when the worker is hydrated (sends a HYDRATE message).

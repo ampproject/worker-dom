@@ -76,7 +76,7 @@ export function removeTestingDocument() {
     buildStart() {
       context = this;
     },
-    renderChunk: async code => {
+    async renderChunk(code) {
       const source = new MagicString(code);
       const program = context.parse(code, { ranges: true });
 
@@ -113,23 +113,22 @@ export function removeDebugCommandExecutors() {
         .readdirSync(path.join(path.dirname(options.input), 'commands'))
         .filter(file => path.extname(file) !== '.map' && path.basename(file, '.js') !== 'interface').length;
     },
-    renderChunk: async code => {
+    async renderChunk(code) {
       const source = new MagicString(code);
       const program = context.parse(code, { ranges: true });
 
       walk.simple(program, {
-        ExpressionStatement(node) {
-          if (node.expression.type === 'AssignmentExpression') {
-            const { expression } = node;
-            if (
-              expression.left.type === 'MemberExpression' &&
-              expression.left.object.type === 'ThisExpression' &&
-              expression.left.property.type === 'Identifier' &&
-              expression.left.property.name === 'print'
-            ) {
-              toDiscover--;
-              if (node.range) {
-                source.remove(node.range[0], node.range[1]);
+        ObjectExpression(node) {
+          const propertyNames = node.properties && node.properties.map(property => property.key.name) || [];
+
+          if (propertyNames.includes('execute') && propertyNames.includes('print')) {
+            for (const property of node.properties) {
+              if (property.key.type === 'Identifier' && property.key.name === 'print') {
+                toDiscover--;
+                if (property.range) {
+                  source.remove(property.range[0], property.range[1]);
+                }
+                break;
               }
             }
           }

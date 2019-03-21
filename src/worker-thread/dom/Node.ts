@@ -344,8 +344,8 @@ export abstract class Node {
             this.childNodes[index + 1] ? this.childNodes[index + 1][TransferrableKeys.index] : 0,
             0,
             1,
-            newChild[TransferrableKeys.index],
             1,
+            newChild[TransferrableKeys.index],
             oldChild[TransferrableKeys.index],
           ],
         );

@@ -19,7 +19,7 @@ import { MutatorProcessor } from './mutator';
 import { NodeContext } from './nodes';
 import { Strings } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { WorkerCallbacks } from './callbacks';
+import { WorkerDOMConfiguration } from './configuration';
 import { WorkerContext } from './worker';
 import { set as setPhase, Phases } from '../transfer/Phase';
 
@@ -33,44 +33,30 @@ const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
  * @param sanitizer
  * @param debug
  */
-export function fetchAndInstall(
-  baseElement: HTMLElement,
-  authorScriptURL: string,
-  workerDOMURL: string,
-  callbacks?: WorkerCallbacks,
-  sanitizer?: Sanitizer,
-): void {
+export function fetchAndInstall(baseElement: HTMLElement, config: WorkerDOMConfiguration): void {
   const fetchPromise = Promise.all([
     // TODO(KB): Fetch Polyfill for IE11.
-    fetch(workerDOMURL).then(response => response.text()),
-    fetch(authorScriptURL).then(response => response.text()),
-    Promise.resolve(authorScriptURL),
+    fetch(config.domURL).then(response => response.text()),
+    fetch(config.authorURL).then(response => response.text()),
   ]);
-  install(fetchPromise, baseElement, callbacks, sanitizer);
+  install(fetchPromise, baseElement, config);
 }
 
 /**
  * @param fetchPromise
  * @param baseElement
- * @param callbacks
- * @param sanitizer
- * @param debug
+ * @param config
  */
-export function install(
-  fetchPromise: Promise<[string, string, string]>,
-  baseElement: HTMLElement,
-  callbacks?: WorkerCallbacks,
-  sanitizer?: Sanitizer,
-): void {
+export function install(fetchPromise: Promise<[string, string]>, baseElement: HTMLElement, config: WorkerDOMConfiguration): void {
   const strings = new Strings();
   const nodeContext = new NodeContext(strings, baseElement);
-  fetchPromise.then(([workerDOMScript, authorScript, authorScriptURL]) => {
-    if (workerDOMScript && authorScript && authorScriptURL) {
-      const workerContext = new WorkerContext(baseElement, workerDOMScript, authorScript, authorScriptURL, nodeContext, callbacks);
+  fetchPromise.then(([domScriptContent, authorScriptContent]) => {
+    if (domScriptContent && authorScriptContent && config.authorURL) {
+      const workerContext = new WorkerContext(baseElement, nodeContext, domScriptContent, authorScriptContent, config);
       setPhase(Phases.Hydrating);
 
       // console.log('set phase to hydration', worker);
-      const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, sanitizer);
+      const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, config);
       workerContext.worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
         const type = data[TransferrableKeys.type];
@@ -85,14 +71,13 @@ export function install(
           (data as MutationFromWorker)[TransferrableKeys.strings],
           new Uint16Array(data[TransferrableKeys.mutations]),
         );
+
         // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
-        if (callbacks) {
-          if (type === MessageType.HYDRATE && callbacks.onHydration) {
-            callbacks.onHydration();
-          }
-          if (callbacks.onReceiveMessage) {
-            callbacks.onReceiveMessage(message);
-          }
+        if (type === MessageType.HYDRATE && config.onHydration) {
+          config.onHydration();
+        }
+        if (config.onReceiveMessage) {
+          config.onReceiveMessage(message);
         }
       };
     }

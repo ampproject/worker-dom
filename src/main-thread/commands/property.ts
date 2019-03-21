@@ -17,48 +17,38 @@
 import { PropertyMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutor } from './interface';
 import { Strings } from '../strings';
+import { WorkerDOMConfiguration } from '../configuration';
 
-export class PropertyProcessor implements CommandExecutor {
-  private strings: Strings;
-  private sanitizer: Sanitizer | undefined;
-
-  constructor(strings: Strings, sanitizer?: Sanitizer) {
-    this.strings = strings;
-    this.sanitizer = sanitizer;
-  }
-
-  public execute = (mutations: Uint16Array, startPosition: number, target: RenderableElement): number => {
-    const name =
-      (mutations[startPosition + PropertyMutationIndex.Name] !== 0 && this.strings.get(mutations[startPosition + PropertyMutationIndex.Name])) ||
-      null;
-    const value =
-      (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && this.strings.get(mutations[startPosition + PropertyMutationIndex.Value])) ||
-      null;
-    if (name && value != null) {
-      const stringValue = String(value);
-      if (!this.sanitizer || this.sanitizer.validProperty(target.nodeName, name, stringValue)) {
-        // TODO(choumx, #122): Proper support for non-string property mutations.
-        const isBooleanProperty = name == 'checked';
-        target[name] = isBooleanProperty ? value === 'true' : value;
-      } else {
-        // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
+export function PropertyProcessor(strings: Strings, config: WorkerDOMConfiguration): CommandExecutor {
+  return {
+    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+      const name =
+        (mutations[startPosition + PropertyMutationIndex.Name] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Name])) || null;
+      const value =
+        (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) || null;
+      if (name && value != null) {
+        const stringValue = String(value);
+        if (!config.sanitizer || config.sanitizer.validProperty(target.nodeName, name, stringValue)) {
+          // TODO(choumx, #122): Proper support for non-string property mutations.
+          const isBooleanProperty = name == 'checked';
+          target[name] = isBooleanProperty ? value === 'true' : value;
+        } else {
+          // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
+        }
       }
-    }
-    return startPosition + PropertyMutationIndex.LastStaticNode + 1;
-  };
+      return startPosition + PropertyMutationIndex.LastStaticNode + 1;
+    },
+    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+      const name =
+        (mutations[startPosition + PropertyMutationIndex.Name] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Name])) || null;
+      const value =
+        (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) || null;
 
-  public print = (mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object => {
-    const name =
-      (mutations[startPosition + PropertyMutationIndex.Name] !== 0 && this.strings.get(mutations[startPosition + PropertyMutationIndex.Name])) ||
-      null;
-    const value =
-      (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && this.strings.get(mutations[startPosition + PropertyMutationIndex.Value])) ||
-      null;
-
-    return {
-      target,
-      name,
-      value,
-    };
+      return {
+        target,
+        name,
+        value,
+      };
+    },
   };
 }
