@@ -160,11 +160,8 @@ test('set closes tags by closing others', t => {
   t.is(child.firstChild!.nodeName, 'A');
 
   node.innerHTML = '<p><div></div>';
-  const pChild = node.firstChild!;
-  const divChild = node.lastChild!;
   t.true(node.childNodes.length === 2);
-  t.is(pChild.nodeName, 'P');
-  t.is(divChild.nodeName, 'DIV');
+  t.is(node.innerHTML, '<p></p><div></div>');
   
 });
 
