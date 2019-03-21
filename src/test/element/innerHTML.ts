@@ -165,7 +165,8 @@ test('set closes tags by closing others', t => {
   
 });
 
-// Expected behavior, as discussed in:
+// Some tags will automatically close others. Set innerHTML should consider this behavior, yet
+// it should not apply for the root element's tags:
 // https://github.com/ampproject/worker-dom/issues/372
 test('set will not alter root element', t => {
   const document = createDocument();
