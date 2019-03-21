@@ -105,7 +105,7 @@ export function removeTestingDocument() {
  */
 const outputPropertyRange = (code, validPropertyRanges) => (
   `{
-    ${validPropertyRanges.map((range, index) => `${index > 0 && '\n\t\t'}${code.substring(range[0], range[1])}`)}
+    ${validPropertyRanges.map((range, index) => `${index > 0 ? '\n\t\t' : ''}${code.substring(range[0], range[1])}`)}
   }`
 );
 

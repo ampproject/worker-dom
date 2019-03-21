@@ -16,7 +16,7 @@
 
 import { DOMPurifySanitizer } from './DOMPurifySanitizer';
 import { fetchAndInstall, install } from './install';
-import { WorkerDOMConfiguration } from './configuration';
+import { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
 
 /** Users can import this and configure the sanitizer with custom DOMPurify hooks, etc. */
 export const sanitizer = new DOMPurifySanitizer();
@@ -25,13 +25,14 @@ export const sanitizer = new DOMPurifySanitizer();
  * @param baseElement
  * @param domURL
  */
-export function upgradeElement(baseElement: Element, domURL: string): void {
+export function upgradeElement(baseElement: Element, domURL: string, longTask?: LongTaskFunction): void {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
     fetchAndInstall(baseElement as HTMLElement, {
       domURL,
       authorURL,
       sanitizer,
+      longTask,
     });
   }
 }
