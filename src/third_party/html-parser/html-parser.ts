@@ -88,7 +88,7 @@ export function parse(data: string, rootElement: Element) {
   const stack = [root as Node];
   let lastTextPos = 0;
   let match: RegExpExecArray | null;
-  data = '<div>' + data + '</div>';
+  data = '<q>' + data + '</q>';
   const tagsClosed = [] as string[];
 
   if (currentNamespace !== SVG_NAMESPACE && currentNamespace !== HTML_NAMESPACE) {
@@ -125,7 +125,8 @@ export function parse(data: string, rootElement: Element) {
       // not </ tags
       if (!endSlash && kElementsClosedByOpening[currentParent.tagName]) {
         if (kElementsClosedByOpening[currentParent.tagName][normalizedTagName]) {
-          tagsClosed.push(currentParent.tagName);
+          stack.pop();
+          currentParent = arr_back(stack);
         }
       }
 
