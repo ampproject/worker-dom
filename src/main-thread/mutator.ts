@@ -26,6 +26,7 @@ import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableNode } from '../transfer/TransferrableNodes';
 import { WorkerContext } from './worker';
+import { OffscreenCanvasProcessor } from './commands/offscreen-canvas';
 
 export class MutatorProcessor {
   private strings: Strings;
@@ -61,6 +62,7 @@ export class MutatorProcessor {
     const eventSubscriptionProcessor = new EventSubscriptionProcessor(strings, nodeContext, workerContext);
     const boundingClientRectProcessor = new BoundingClientRectProcessor(nodeContext, workerContext);
     const longTaskProcessor = new LongTaskProcessor(callbacks);
+    const offscreenCanvasProcessor = new OffscreenCanvasProcessor(nodeContext, workerContext);
 
     this.mutators = {
       [MutationRecordType.CHILD_LIST]: this.mutateChildList.bind(this),
@@ -71,6 +73,7 @@ export class MutatorProcessor {
       [MutationRecordType.GET_BOUNDING_CLIENT_RECT]: boundingClientRectProcessor.process.bind(boundingClientRectProcessor),
       [MutationRecordType.LONG_TASK_START]: longTaskProcessor.processStart,
       [MutationRecordType.LONG_TASK_END]: longTaskProcessor.processEnd,
+      [MutationRecordType.OFFSCREEN_CANVAS_INSTANCE]: offscreenCanvasProcessor.process.bind(offscreenCanvasProcessor),
     };
   }
 

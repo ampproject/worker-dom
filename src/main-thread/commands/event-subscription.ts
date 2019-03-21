@@ -118,7 +118,7 @@ const fireValueChange = (workerContext: WorkerContext, node: RenderableElement):
       [TransferrableKeys.index]: node._index_,
       [TransferrableKeys.value]: node.value,
     },
-  });
+  }, []);
 };
 
 /**
@@ -154,5 +154,5 @@ const eventHandler = (workerContext: WorkerContext, index: number) => (event: Ev
       [TransferrableKeys.type]: event.type,
       [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
     },
-  });
+  }, []);
 };

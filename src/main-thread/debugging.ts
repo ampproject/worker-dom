@@ -31,6 +31,7 @@ import {
   BoundingClientRectToWorker,
   LongTaskStartToWorker,
   LongTaskEndToWorker,
+  OffscreenCanvasToWorker,
 } from '../transfer/Messages';
 import { HydrateableNode, TransferredNode } from '../transfer/TransferrableNodes';
 import { NodeContext } from './nodes';
@@ -53,6 +54,7 @@ const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
   '5': 'GET_BOUNDING_CLIENT_RECT',
   '6': 'LONG_TASK_START',
   '7': 'LONG_TASK_END',
+  '8': 'OFFSCREEN_CANVAS_INSTANCE',
 };
 
 export class DebuggingContext {
@@ -119,6 +121,8 @@ export class DebuggingContext {
       return { type: 'LONG_TASK_START' };
     } else if (isLongTaskEnd(message)) {
       return { type: 'LONG_TASK_END' };
+    } else if (isOffscreenCanvasInstance) {
+      return { type: 'OFFSCREEN_CANVAS_INSTANCE'};
     } else {
       return 'Unrecognized MessageToWorker type: ' + message[TransferrableKeys.type];
     }
@@ -247,6 +251,13 @@ function isLongTaskStart(message: MessageToWorker): message is LongTaskStartToWo
  */
 function isLongTaskEnd(message: MessageToWorker): message is LongTaskEndToWorker {
   return message[TransferrableKeys.type] === MessageType.LONG_TASK_END;
+}
+
+/**
+ * @param data 
+ */
+function isOffscreenCanvasInstance(message: MessageToWorker): message is OffscreenCanvasToWorker {
+  return message[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE;
 }
 
 /**

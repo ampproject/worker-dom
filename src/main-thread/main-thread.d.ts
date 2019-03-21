@@ -32,6 +32,10 @@ declare interface Sanitizer {
   validProperty(tag: string, prop: string, value: string): boolean;
 }
 
+declare interface HTMLCanvasElement {
+  transferControlToOffscreen(): Transferable;
+}
+
 interface Node {
   _index_: number;
 }

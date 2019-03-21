@@ -85,10 +85,10 @@ export class WorkerContext {
   /**
    * @param message
    */
-  messageToWorker(message: MessageToWorker) {
+  messageToWorker(message: MessageToWorker, transferables: Transferable[]) {
     if (this.callbacks && this.callbacks.onSendMessage) {
       this.callbacks.onSendMessage(message);
     }
-    this.worker.postMessage(message);
+    this.worker.postMessage(message, transferables);
   }
 }

@@ -62,6 +62,6 @@ export class BoundingClientRectProcessor {
         boundingRect.width,
         boundingRect.height,
       ],
-    });
+    }, []);
   }
 }
