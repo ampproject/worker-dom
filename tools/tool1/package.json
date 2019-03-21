@@ -1,0 +1,22 @@
+{
+  "name": "@ampproject/worker-dom-tools-tool1",
+  "version": "0.0.1",
+  "description": "TODO: tool1",
+  "author": "The AMP HTML Authors",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/ampproject/worker-dom/tree/master/tools/tool1",
+  "main": "index.js",
+  "keywords": [
+    "babel-plugin"
+  ],
+  "dependencies": {
+    "@babel/helper-plugin-utils": "^7.0.0"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.0.0-0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/helper-plugin-test-runner": "^7.0.0"
+  }
+}
