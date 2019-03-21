@@ -98,6 +98,11 @@ export function removeTestingDocument() {
   };
 }
 
+/**
+ * Formats valid output for trimmed ObjectExpressions.
+ * @param {string} code 
+ * @param {Array<Array<number, number>>} validPropertyRanges 
+ */
 const outputPropertyRange = (code, validPropertyRanges) => (
   `{
     ${validPropertyRanges.map(range => `${code.substring(range[0], range[1])}`)}
@@ -137,13 +142,6 @@ export function removeDebugCommandExecutors() {
                   validPropertyRanges.push([property.range[0], property.range[1]]);
                 }
               }
-              // if (property.key.type === 'Identifier' && property.key.name === 'print') {
-              //   toDiscover--;
-              //   if (property.range) {
-              //     source.remove(property.range[0], property.range[1]);
-              //   }
-              //   break;
-              // }
             }
 
             source.overwrite(node.range[0], node.range[1], outputPropertyRange(code, validPropertyRanges));
