@@ -172,9 +172,8 @@ test('set will alter root element\'s contents, not the element itself', t => {
   const document = createDocument();
   const pNode = document.createElement('p');
 
-  const testString = 'Hello World!';
-  pNode.innerHTML = testString;
-  t.is(pNode.textContent, testString);
+  pNode.innerHTML = 'Hello World!';
+  t.is(pNode.textContent, 'Hello World!');
 });
 
 test('set takes all block text element content as text', t => {
