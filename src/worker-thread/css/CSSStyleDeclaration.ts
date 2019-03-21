@@ -189,7 +189,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
         this[TransferrableKeys.target][TransferrableKeys.index],
         storeString('style'),
         0, // Attribute Namespace is the default value.
-        storeString(value),
+        value !== null ? storeString(value) + 1 : 0,
       ],
     );
   }

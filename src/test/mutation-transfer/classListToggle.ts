@@ -42,7 +42,7 @@ test.serial.cb('Element.classList.toggle transfer remove single value', t => {
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('')],
+      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('') + 1],
       'mutation is as expected',
     );
     t.end();
@@ -63,7 +63,7 @@ test.serial.cb('Element.classList.toggle mutation observed, toggle to add', t =>
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('foo bar')],
+      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('foo bar') + 1],
       'mutation is as expected',
     );
     t.end();

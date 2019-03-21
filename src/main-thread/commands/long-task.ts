@@ -18,7 +18,11 @@ import { WorkerDOMConfiguration } from '../configuration';
 import { CommandExecutor } from './interface';
 import { TransferrableMutationType, ReadableMutationType, LongTaskMutationIndex } from '../../transfer/TransferrableMutation';
 
-export function LongTaskProcessor(config: WorkerDOMConfiguration): CommandExecutor {
+export interface LongTaskCommandExecutor extends CommandExecutor {
+  active: boolean;
+}
+
+export function LongTaskExecutor(config: WorkerDOMConfiguration): LongTaskCommandExecutor {
   let index: number = 0;
   let currentResolver: Function | null;
 
@@ -45,6 +49,9 @@ export function LongTaskProcessor(config: WorkerDOMConfiguration): CommandExecut
       return {
         type: ReadableMutationType[mutations[startPosition]],
       };
+    },
+    get active(): boolean {
+      return currentResolver !== null;
     },
   };
 }

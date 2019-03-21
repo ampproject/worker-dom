@@ -42,7 +42,7 @@ test.serial.cb('Element.classList.replace transfer single pre-existing value', t
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('bar')],
+      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('bar') + 1],
       'mutation is as expected',
     );
     t.end();
@@ -63,7 +63,7 @@ test.serial.cb('Element.classList.replace transfer multiple pre-existing values'
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('bar baz')],
+      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('bar baz') + 1],
       'mutation is as expected',
     );
     t.end();

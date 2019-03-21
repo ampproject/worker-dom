@@ -268,7 +268,13 @@ export class Element extends ParentNode {
         value,
         oldValue,
       },
-      [TransferrableMutationType.ATTRIBUTES, this[TransferrableKeys.index], storeString(name), storeString(namespaceURI), storeString(value)],
+      [
+        TransferrableMutationType.ATTRIBUTES,
+        this[TransferrableKeys.index],
+        storeString(name),
+        storeString(namespaceURI),
+        value !== null ? storeString(value) + 1 : 0,
+      ],
     );
   }
 

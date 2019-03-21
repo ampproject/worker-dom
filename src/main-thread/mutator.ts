@@ -27,7 +27,7 @@ import { ChildListProcessor } from './commands/child-list';
 import { AttributeProcessor } from './commands/attribute';
 import { CharacterDataProcessor } from './commands/character-data';
 import { PropertyProcessor } from './commands/property';
-import { LongTaskProcessor } from './commands/long-task';
+import { LongTaskExecutor } from './commands/long-task';
 import { CommandExecutor } from './commands/interface';
 import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
 import { phase } from '../transfer/Phase';
@@ -53,9 +53,9 @@ export class MutatorProcessor {
     this.strings = strings;
     this.nodeContext = nodeContext;
     this.sanitizer = config.sanitizer;
-    this.mutationPumpFunction = config.mutationPump || requestAnimationFrame;
+    this.mutationPumpFunction = config.mutationPump || requestAnimationFrame.bind(null);
 
-    const LongTaskProcessorInstance = LongTaskProcessor(config);
+    const LongTaskExecutorInstance = LongTaskExecutor(config);
     this.executors = {
       [TransferrableMutationType.CHILD_LIST]: ChildListProcessor(nodeContext),
       [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor(strings, config),
@@ -63,8 +63,8 @@ export class MutatorProcessor {
       [TransferrableMutationType.PROPERTIES]: PropertyProcessor(strings, config),
       [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor(strings, workerContext),
       [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor(workerContext),
-      [TransferrableMutationType.LONG_TASK_START]: LongTaskProcessorInstance,
-      [TransferrableMutationType.LONG_TASK_END]: LongTaskProcessorInstance,
+      [TransferrableMutationType.LONG_TASK_START]: LongTaskExecutorInstance,
+      [TransferrableMutationType.LONG_TASK_END]: LongTaskExecutorInstance,
     };
   }
 

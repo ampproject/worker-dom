@@ -3,9 +3,9 @@
   "compilerOptions": {
     "lib": [
       "es2017",
-      "webworker"
+      "dom",
     ],
-    "outDir": "../../output",
+    "outDir": "../../../output",
     "sourceMap": true,
     "moduleResolution": "node",
     "target": "esnext",
@@ -17,9 +17,7 @@
     "alwaysStrict": true
   },
   "include": [
-    "**/*.ts"
-  ],
-  "exclude": [
-    "main-thread/**/*.ts"
+    "**/*.ts",
+    "../../main-thread/*.d.ts"
   ]
 }

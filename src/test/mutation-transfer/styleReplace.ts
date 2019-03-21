@@ -43,7 +43,7 @@ test.serial.cb('Element.style transfer single value', t => {
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('style'), 0, strings.indexOf('width: 12px;')],
+      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('style'), 0, strings.indexOf('width: 12px;') + 1],
       'mutation is as expected',
     );
     t.end();
@@ -70,7 +70,7 @@ test.serial.cb('Element.style transfer multiple values', t => {
         div[TransferrableKeys.index],
         strings.indexOf('style'),
         0,
-        strings.indexOf('width: 14px; height: 12px;'),
+        strings.indexOf('width: 14px; height: 12px;') + 1,
       ],
       'mutation is as expected',
     );
@@ -94,7 +94,7 @@ test.serial.cb('Element.style transfer single value, setProperty', t => {
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('style'), 0, strings.indexOf('width: 12px;')],
+      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('style'), 0, strings.indexOf('width: 12px;') + 1],
       'mutation is as expected',
     );
     t.end();
@@ -121,7 +121,7 @@ test.serial.cb('Element.style.width mutation observed, multiple values, via cssT
         div[TransferrableKeys.index],
         strings.indexOf('style'),
         0,
-        strings.indexOf('width: 12px; height: 14px;'),
+        strings.indexOf('width: 12px; height: 14px;') + 1,
       ],
       'mutation is as expected',
     );

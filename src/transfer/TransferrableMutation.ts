@@ -65,8 +65,8 @@ export const enum ChildListMutationIndex {
  *   TransferrableMutationType.ATTRIBUTES,
  *   Target.index,
  *   Attr.name,
- *   Attr.namespace,   // 0 the default value.
- *   Attr.value,
+ *   Attr.namespace,   // 0 is the default value.
+ *   Attr.value,       // 0 is the default value.
  * ]
  */
 export const enum AttributeMutationIndex {

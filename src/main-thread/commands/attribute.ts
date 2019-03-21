@@ -22,10 +22,11 @@ import { WorkerDOMConfiguration } from '../configuration';
 export function AttributeProcessor(strings: Strings, config: WorkerDOMConfiguration): CommandExecutor {
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      const attributeName =
-        (mutations[startPosition + AttributeMutationIndex.Name] !== 0 && strings.get(mutations[startPosition + AttributeMutationIndex.Name])) || null;
+      const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);
+      // Value is sent as 0 when it's the default value or removal.
+      // Value is sent as index + 1 when it's a valid value.
       const value =
-        (mutations[startPosition + AttributeMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + AttributeMutationIndex.Value])) ||
+        (mutations[startPosition + AttributeMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + AttributeMutationIndex.Value] - 1)) ||
         null;
 
       if (attributeName != null) {
@@ -42,10 +43,11 @@ export function AttributeProcessor(strings: Strings, config: WorkerDOMConfigurat
       return startPosition + AttributeMutationIndex.LastStaticNode + 1;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
-      const attributeName =
-        (mutations[startPosition + AttributeMutationIndex.Name] !== 0 && strings.get(mutations[startPosition + AttributeMutationIndex.Name])) || null;
+      const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);
+      // Value is sent as 0 when it's the default value or removal.
+      // Value is sent as index + 1 when it's a valid value.
       const value =
-        (mutations[startPosition + AttributeMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + AttributeMutationIndex.Value])) ||
+        (mutations[startPosition + AttributeMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + AttributeMutationIndex.Value] - 1)) ||
         null;
 
       return {

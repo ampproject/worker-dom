@@ -48,7 +48,7 @@ test.serial.cb('Element.setAttribute transfers new attribute', t => {
         el[TransferrableKeys.index],
         strings.indexOf('data-foo'),
         strings.indexOf(HTML_NAMESPACE),
-        strings.indexOf('bar'),
+        strings.indexOf('bar') + 1,
       ],
       'mutation is as expected',
     );
@@ -74,7 +74,7 @@ test.serial.cb('Element.setAttribute transfers attribute overwrite', t => {
         el[TransferrableKeys.index],
         strings.indexOf('data-foo'),
         strings.indexOf(HTML_NAMESPACE),
-        strings.indexOf('baz'),
+        strings.indexOf('baz') + 1,
       ],
       'mutation is as expected',
     );
@@ -99,7 +99,7 @@ test.serial.cb('Element.setAttribute transfers new attribute with namespace', t 
         el[TransferrableKeys.index],
         strings.indexOf('data-foo'),
         strings.indexOf('namespace'),
-        strings.indexOf('bar'),
+        strings.indexOf('bar') + 1,
       ],
       'mutation is as expected',
     );
@@ -125,7 +125,7 @@ test.serial.cb('Element.setAttribute transfers attribute overwrite with namespac
         el[TransferrableKeys.index],
         strings.indexOf('data-foo'),
         strings.indexOf('namespace'),
-        strings.indexOf('baz'),
+        strings.indexOf('baz') + 1,
       ],
       'mutation is as expected',
     );

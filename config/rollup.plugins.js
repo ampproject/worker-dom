@@ -98,6 +98,12 @@ export function removeTestingDocument() {
   };
 }
 
+const outputPropertyRange = (code, validPropertyRanges) => (
+  `{
+    ${validPropertyRanges.map(range => `${code.substring(range[0], range[1])}`)}
+  }`
+);
+
 /**
  * RollupPlugin that removes the debugging printers from CommandExecutors.
  */
@@ -120,17 +126,27 @@ export function removeDebugCommandExecutors() {
       walk.simple(program, {
         ObjectExpression(node) {
           const propertyNames = node.properties && node.properties.map(property => property.key.name) || [];
+          const validPropertyRanges = [];
 
           if (propertyNames.includes('execute') && propertyNames.includes('print')) {
             for (const property of node.properties) {
-              if (property.key.type === 'Identifier' && property.key.name === 'print') {
-                toDiscover--;
-                if (property.range) {
-                  source.remove(property.range[0], property.range[1]);
+              if (property.key.type === 'Identifier') {
+                if (property.key.name === 'print') {
+                  toDiscover--;
+                } else {
+                  validPropertyRanges.push([property.range[0], property.range[1]]);
                 }
-                break;
               }
+              // if (property.key.type === 'Identifier' && property.key.name === 'print') {
+              //   toDiscover--;
+              //   if (property.range) {
+              //     source.remove(property.range[0], property.range[1]);
+              //   }
+              //   break;
+              // }
             }
+
+            source.overwrite(node.range[0], node.range[1], outputPropertyRange(code, validPropertyRanges));
           }
         },
       });

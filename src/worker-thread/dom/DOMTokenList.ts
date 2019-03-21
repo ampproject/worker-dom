@@ -205,7 +205,7 @@ export class DOMTokenList {
         this[TransferrableKeys.target][TransferrableKeys.index],
         storeString(this[TransferrableKeys.attributeName]),
         0, // Attribute Namespace is the default value.
-        storeString(value),
+        value !== null ? storeString(value) + 1 : 0,
       ],
     );
   }

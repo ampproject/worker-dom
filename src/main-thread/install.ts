@@ -33,13 +33,13 @@ const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
  * @param sanitizer
  * @param debug
  */
-export function fetchAndInstall(baseElement: HTMLElement, config: WorkerDOMConfiguration): void {
+export function fetchAndInstall(baseElement: HTMLElement, config: WorkerDOMConfiguration): Promise<Worker | null> {
   const fetchPromise = Promise.all([
     // TODO(KB): Fetch Polyfill for IE11.
     fetch(config.domURL).then(response => response.text()),
     fetch(config.authorURL).then(response => response.text()),
   ]);
-  install(fetchPromise, baseElement, config);
+  return install(fetchPromise, baseElement, config);
 }
 
 /**
@@ -47,10 +47,10 @@ export function fetchAndInstall(baseElement: HTMLElement, config: WorkerDOMConfi
  * @param baseElement
  * @param config
  */
-export function install(fetchPromise: Promise<[string, string]>, baseElement: HTMLElement, config: WorkerDOMConfiguration): void {
+export function install(fetchPromise: Promise<[string, string]>, baseElement: HTMLElement, config: WorkerDOMConfiguration): Promise<Worker | null> {
   const strings = new Strings();
   const nodeContext = new NodeContext(strings, baseElement);
-  fetchPromise.then(([domScriptContent, authorScriptContent]) => {
+  return fetchPromise.then(([domScriptContent, authorScriptContent]) => {
     if (domScriptContent && authorScriptContent && config.authorURL) {
       const workerContext = new WorkerContext(baseElement, nodeContext, domScriptContent, authorScriptContent, config);
       setPhase(Phases.Hydrating);
@@ -80,6 +80,8 @@ export function install(fetchPromise: Promise<[string, string]>, baseElement: HT
           config.onReceiveMessage(message);
         }
       };
+
+      return workerContext.worker;
     }
     return null;
   });
