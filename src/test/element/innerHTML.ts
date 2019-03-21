@@ -168,13 +168,13 @@ test('set closes tags by closing others', t => {
 // Some tags will automatically close others. Set innerHTML should consider this behavior, yet
 // it should not apply for the root element's tags:
 // https://github.com/ampproject/worker-dom/issues/372
-test('set will not alter root element', t => {
+test('set will alter root element\'s contents, not the element itself', t => {
   const document = createDocument();
   const pNode = document.createElement('p');
-  // normally, a <div> would automatically close a <p>
-  pNode.innerHTML = '<div></div>';
-  const child = pNode.firstChild!;
-  t.is(child.nodeName, 'DIV');
+
+  const testString = 'Hello World!';
+  pNode.innerHTML = testString;
+  t.is(pNode.textContent, testString);
 });
 
 test('set takes all block text element content as text', t => {
