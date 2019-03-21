@@ -65,8 +65,8 @@ export const enum ChildListMutationIndex {
  *   TransferrableMutationType.ATTRIBUTES,
  *   Target.index,
  *   Attr.name,
- *   Attr.namespace   // 0 the default value.
- *   Attr.value
+ *   Attr.namespace,   // 0 the default value.
+ *   Attr.value,
  * ]
  */
 export const enum AttributeMutationIndex {
@@ -82,7 +82,7 @@ export const enum AttributeMutationIndex {
  * [
  *   TransferrableMutationType.CHARACTER_DATA,
  *   Target.index,
- *   CharacterData.value
+ *   CharacterData.value,
  * ]
  */
 export const enum CharacterDataMutationIndex {
@@ -97,7 +97,7 @@ export const enum CharacterDataMutationIndex {
  *   TransferrableMutationType.PROPERTIES,
  *   Target.index,
  *   Property.name,
- *   Property.value
+ *   Property.value,
  * ]
  */
 export const enum PropertyMutationIndex {
@@ -105,4 +105,16 @@ export const enum PropertyMutationIndex {
   Name = 2,
   Value = 3,
   LastStaticNode = 3,
+}
+
+/**
+ * Long Task Mutations
+ * [
+ *   TransferrableMutationType.LONG_TASK_START || TransferrableMutation.LONG_TASK_END
+ *   Target.index,
+ * ]
+ */
+export const enum LongTaskMutationIndex {
+  Target = 1,
+  LastStaticNode = 1,
 }

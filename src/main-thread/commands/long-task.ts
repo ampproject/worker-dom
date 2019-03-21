@@ -16,7 +16,7 @@
 
 import { WorkerDOMConfiguration } from '../configuration';
 import { CommandExecutor } from './interface';
-import { TransferrableMutationType, ReadableMutationType } from '../../transfer/TransferrableMutation';
+import { TransferrableMutationType, ReadableMutationType, LongTaskMutationIndex } from '../../transfer/TransferrableMutation';
 
 export function LongTaskProcessor(config: WorkerDOMConfiguration): CommandExecutor {
   let index: number = 0;
@@ -39,7 +39,7 @@ export function LongTaskProcessor(config: WorkerDOMConfiguration): CommandExecut
           }
         }
       }
-      return startPosition + 2;
+      return startPosition + LongTaskMutationIndex.LastStaticNode + 1;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       return {
