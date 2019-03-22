@@ -16,7 +16,7 @@
 
 export const enum TransferrableKeys {
   nodeType = 0,
-  nodeName = 1,
+  localOrNodeName = 1,
   attributes = 2,
   properties = 3,
   childNodes = 4,
@@ -69,4 +69,5 @@ export const enum TransferrableKeys {
   end = 51,
   selected = 52,
   command = 53,
+  phase = 54,
 }

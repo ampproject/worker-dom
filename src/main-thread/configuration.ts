@@ -15,14 +15,14 @@
  */
 
 import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
-import { Phases } from '../transfer/phase';
+import { Phase } from '../transfer/phase';
 
 /**
  * The callback for `onMutationPump`. If specified, this callback will be called
  * for the new set of mutations pending. The callback can either immediately
  * call `flush()`, or it can reject mutations, or it can batch them further.
  */
-export type MutationPumpFunction = (flush: Function, phase: Phases) => void;
+export type MutationPumpFunction = (flush: Function, phase: Phase) => void;
 
 export type LongTaskFunction = (promise: Promise<any>) => void;
 
@@ -48,4 +48,8 @@ export interface WorkerDOMConfiguration {
   onSendMessage?: (message: MessageToWorker) => void;
   // Called after a message is received from the worker.
   onReceiveMessage?: (message: MessageFromWorker) => void;
+  // Called to schedule mutation phase. See `MutationPumpFunction`.
+  onMutationPump?: MutationPumpFunction;
+  // Called to schedule long task. See `LongTaskFunction`.
+  onLongTask?: LongTaskFunction;
 }

@@ -20,13 +20,12 @@ import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { NumericBoolean } from '../../utils';
+import { NumericBoolean, toLower, toUpper } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
 import { store as storeString } from '../strings';
-import { toLower } from '../../utils';
 import { Document } from './Document';
 import { transfer } from '../MutationTransfer';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
@@ -34,10 +33,13 @@ import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableBoundClientRect';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
+import { parse } from '../../third_party/html-parser/html-parser';
+import { propagate } from './Node';
 
-export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
-export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
-  NODE_NAME_MAPPING[nodeName] = subclass;
+export const NS_NAME_TO_CLASS: { [key: string]: typeof Element } = {};
+export function registerSubclass(localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): void {
+  const key = `${namespace}:${localName}`;
+  NS_NAME_TO_CLASS[key] = subclass;
 }
 
 interface ClientRect {
@@ -51,6 +53,28 @@ interface ClientRect {
   height: number;
 }
 
+/**
+ * There are six kinds of elements, each having different start/close tag semantics.
+ * @see https://html.spec.whatwg.org/multipage/syntax.html#elements-2
+ */
+enum ElementKind {
+  NORMAL,
+  VOID,
+  // The following element kinds have no special handling in worker-dom yet
+  // and are lumped into the NORMAL kind.
+  /*
+  FOREIGN,
+  TEMPLATE,
+  RAW_TEXT,
+  ESCAPABLE_RAW,
+  */
+}
+
+/**
+ * @see https://html.spec.whatwg.org/multipage/syntax.html#void-elements
+ */
+const VOID_ELEMENTS: string[] = ['AREA', 'BASE', 'BR', 'COL', 'EMBED', 'HR', 'IMG', 'INPUT', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'];
+
 export class Element extends ParentNode {
   public localName: NodeName;
   public attributes: Attr[] = [];
@@ -59,10 +83,17 @@ export class Element extends ParentNode {
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
 
-  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null) {
-    super(nodeType, nodeName, ownerDocument);
+  /**
+   * Element "kind" dictates certain behaviors e.g. start/end tag semantics.
+   * @see https://html.spec.whatwg.org/multipage/syntax.html#elements-2
+   */
+  private kind: ElementKind;
+
+  constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null) {
+    super(nodeType, toUpper(localName), ownerDocument);
     this.namespaceURI = namespaceURI || HTML_NAMESPACE;
-    this.localName = toLower(nodeName);
+    this.localName = localName;
+    this.kind = VOID_ELEMENTS.includes(this.tagName) ? ElementKind.VOID : ElementKind.NORMAL;
     this[TransferrableKeys.creationFormat] = [
       this[TransferrableKeys.index],
       this.nodeType,
@@ -132,7 +163,18 @@ export class Element extends ParentNode {
    */
   get outerHTML(): string {
     const tag = this.localName || this.tagName;
-    return `<${[tag, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${tag}>`;
+
+    const start = `<${[tag, attrsToString(this.attributes)].join(' ').trim()}>`;
+    const contents = this.innerHTML;
+
+    if (!contents) {
+      if (this.kind === ElementKind.VOID) {
+        // Void elements e.g. <input> only have a start tag (unless children are added programmatically).
+        // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
+        return start;
+      }
+    }
+    return start + contents + `</${tag}>`;
   }
 
   /**
@@ -160,6 +202,43 @@ export class Element extends ParentNode {
   }
 
   /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
+   * @param html The raw html string to parse.
+   */
+  set innerHTML(html: string) {
+    const root = parse(html, this);
+
+    // remove previous children
+    this.childNodes.forEach(n => {
+      propagate(n, 'isConnected', false);
+      propagate(n, TransferrableKeys.scopingRoot, n);
+    });
+
+    mutate(
+      this.ownerDocument as Document,
+      {
+        removedNodes: this.childNodes,
+        type: MutationRecordType.CHILD_LIST,
+        target: this,
+      },
+      [
+        TransferrableMutationType.CHILD_LIST,
+        this[TransferrableKeys.index],
+        0,
+        0,
+        0,
+        this.childNodes.length,
+        ...this.childNodes.map(node => node[TransferrableKeys.index]),
+      ],
+    );
+
+    this.childNodes = [];
+
+    // add new children
+    root.childNodes.forEach(this.appendChild);
+  }
+
+  /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
    * @param text new text replacing all childNodes content.
    */
@@ -175,7 +254,7 @@ export class Element extends ParentNode {
    * @return text from all childNodes.
    */
   get textContent(): string {
-    return super.textContent;
+    return this.getTextContent();
   }
 
   /**
@@ -192,7 +271,7 @@ export class Element extends ParentNode {
    * @param name attribute name
    * @param value attribute value
    */
-  public setAttribute(name: string, value: string): void {
+  public setAttribute(name: string, value: unknown): void {
     this.setAttributeNS(HTML_NAMESPACE, name, value);
   }
 
@@ -244,20 +323,21 @@ export class Element extends ParentNode {
    * @param name attribute name
    * @param value attribute value
    */
-  public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
+  public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: unknown): void {
+    const valueAsString = String(value);
     if (this[TransferrableKeys.propertyBackedAttributes][name] !== undefined) {
       if (!this.attributes.find(matchAttrPredicate(namespaceURI, name))) {
         this.attributes.push({
           namespaceURI,
           name,
-          value,
+          value: valueAsString,
         });
       }
-      this[TransferrableKeys.propertyBackedAttributes][name][1](value);
+      this[TransferrableKeys.propertyBackedAttributes][name][1](valueAsString);
       return;
     }
 
-    const oldValue = this[TransferrableKeys.storeAttribute](namespaceURI, name, value);
+    const oldValue = this[TransferrableKeys.storeAttribute](namespaceURI, name, valueAsString);
     mutate(
       this.ownerDocument as Document,
       {
@@ -265,7 +345,7 @@ export class Element extends ParentNode {
         target: this,
         attributeName: name,
         attributeNamespace: namespaceURI,
-        value,
+        value: valueAsString,
         oldValue,
       },
       [
@@ -273,7 +353,7 @@ export class Element extends ParentNode {
         this[TransferrableKeys.index],
         storeString(name),
         storeString(namespaceURI),
-        value !== null ? storeString(value) + 1 : 0,
+        value !== null ? storeString(valueAsString) + 1 : 0,
       ],
     );
   }

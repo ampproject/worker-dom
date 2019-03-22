@@ -16,7 +16,7 @@
 
 import { fetchAndInstall } from './install';
 
-export function upgradeElement(baseElement: Element, domURL: string): void {
+export function upgradeElement(baseElement: Element, domURL: string): Promise<Worker | null> {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
     fetchAndInstall(baseElement as HTMLElement, {
@@ -24,4 +24,5 @@ export function upgradeElement(baseElement: Element, domURL: string): void {
       domURL,
     });
   }
+  return Promise.resolve(null);
 }

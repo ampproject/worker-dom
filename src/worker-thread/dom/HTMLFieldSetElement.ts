@@ -18,6 +18,7 @@ import { registerSubclass } from './Element';
 import { reflectProperties } from './enhanceElement';
 import { HTMLFormControlsCollectionMixin } from './HTMLFormControlsMixin';
 import { HTMLElement } from './HTMLElement';
+import { toLower } from '../../utils';
 
 export class HTMLFieldSetElement extends HTMLElement {
   /**
@@ -25,7 +26,7 @@ export class HTMLFieldSetElement extends HTMLElement {
    * @return hardcoded string 'fieldset'
    */
   get type(): string {
-    return this.tagName;
+    return toLower(this.tagName);
   }
 }
 registerSubclass('fieldset', HTMLFieldSetElement);

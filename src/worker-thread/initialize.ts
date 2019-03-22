@@ -21,13 +21,14 @@ import { Document } from './dom/Document';
 import { HTMLElement } from './dom/HTMLElement';
 import { SVGElement } from './dom/SVGElement';
 import { HydrateableNode, NodeType } from '../transfer/TransferrableNodes';
-import { set as setPhase, Phases } from '../transfer/Phase';
+import { Phase } from '../transfer/Phase';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { set as setPhase } from './phase';
 
 export function consumeInitialDOM(document: Document, strings: Array<string>, hydrateableNode: HydrateableNode): void {
+  setPhase(Phase.Hydrating);
   strings.forEach(storeString);
   (hydrateableNode[TransferrableKeys.childNodes] || []).forEach(child => document.body.appendChild(create(document, strings, child)));
-  setPhase(Phases.Hydrating);
 }
 
 function create(document: Document, strings: Array<string>, skeleton: HydrateableNode): RenderableElement {
@@ -43,10 +44,8 @@ function create(document: Document, strings: Array<string>, skeleton: Hydrateabl
     default:
       const namespace: string | undefined =
         skeleton[TransferrableKeys.namespaceURI] !== undefined ? strings[skeleton[TransferrableKeys.namespaceURI] as number] : undefined;
-      const nodeName = strings[skeleton[TransferrableKeys.nodeName]];
-      const node: HTMLElement | SVGElement = namespace
-        ? (document.createElementNS(namespace, nodeName) as SVGElement)
-        : document.createElement(nodeName);
+      const name = strings[skeleton[TransferrableKeys.localOrNodeName]];
+      const node: HTMLElement | SVGElement = namespace ? (document.createElementNS(namespace, name) as SVGElement) : document.createElement(name);
       (skeleton[TransferrableKeys.attributes] || []).forEach(attribute => {
         const namespaceURI = strings[attribute[0]];
         if (namespaceURI !== 'null') {

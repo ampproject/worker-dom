@@ -50,6 +50,7 @@ import { consumeInitialDOM } from './initialize';
 const doc = createDocument(postMessage.bind(self));
 export const workerDOM: WorkerDOMGlobalScope = {
   document: doc,
+  navigator: (self as WorkerGlobalScope).navigator,
   addEventListener: doc.addEventListener.bind(doc),
   removeEventListener: doc.removeEventListener.bind(doc),
   localStorage: {},

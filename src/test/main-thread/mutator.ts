@@ -17,13 +17,11 @@
 import anyTest, { TestInterface } from 'ava';
 import { Env } from './helpers/env';
 import { MutatorProcessor } from '../../main-thread/mutator';
-// import { MutationRecordType } from '../../worker-thread/MutationRecord';
 import { NodeContext } from '../../main-thread/nodes';
 import { Strings } from '../../main-thread/strings';
-// import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { WorkerContext } from '../../main-thread/worker';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { Phases } from '../../transfer/Phase';
+import { Phase } from '../../transfer/Phase';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -71,6 +69,7 @@ test.serial('batch mutations', t => {
   });
 
   mutator.mutate(
+    Phase.Mutating,
     new ArrayBuffer(0),
     ['hidden'],
     new Uint16Array([
@@ -82,6 +81,7 @@ test.serial('batch mutations', t => {
     ]),
   );
   mutator.mutate(
+    Phase.Mutating,
     new ArrayBuffer(0),
     ['data-one'],
     new Uint16Array([
@@ -101,6 +101,7 @@ test.serial('batch mutations', t => {
   t.is(baseElement.getAttribute('data-one'), 'data-one');
 
   mutator.mutate(
+    Phase.Mutating,
     new ArrayBuffer(0),
     ['data-two'],
     new Uint16Array([
@@ -122,16 +123,17 @@ test.serial('batch mutations with custom pump', t => {
   const { env, baseElement, strings, nodeContext, workerContext } = t.context;
   const { rafTasks } = env;
 
-  const tasks: Array<{ phase: Phases; flush: Function }> = [];
+  const tasks: Array<{ phase: Phase; flush: Function }> = [];
   const mutator = new MutatorProcessor(strings, nodeContext, workerContext, {
     domURL: 'domURL',
     authorURL: 'authorURL',
-    mutationPump: (flush: Function, phase: Phases) => {
+    mutationPump: (flush: Function, phase: Phase) => {
       tasks.push({ phase, flush });
     },
   });
 
   mutator.mutate(
+    Phase.Mutating,
     new ArrayBuffer(0),
     ['hidden'],
     new Uint16Array([
@@ -143,6 +145,7 @@ test.serial('batch mutations with custom pump', t => {
     ]),
   );
   mutator.mutate(
+    Phase.Mutating,
     new ArrayBuffer(0),
     ['data-one'],
     new Uint16Array([
@@ -158,12 +161,13 @@ test.serial('batch mutations with custom pump', t => {
   t.is(baseElement.getAttribute('data-one'), null);
   t.is(rafTasks.length, 0);
   t.is(tasks.length, 1);
-  t.is(tasks[0].phase, Phases.Initializing);
+  t.is(tasks[0].phase, Phase.Mutating);
   tasks[0].flush();
   t.is(baseElement.getAttribute('hidden'), 'hidden');
   t.is(baseElement.getAttribute('data-one'), 'data-one');
 
   mutator.mutate(
+    Phase.Mutating,
     new ArrayBuffer(0),
     ['data-two'],
     new Uint16Array([
@@ -190,8 +194,9 @@ test.serial('split strings from mutations', t => {
     authorURL: 'authorURL',
   });
 
-  mutator.mutate(new ArrayBuffer(0), ['hidden'], new Uint16Array([]));
+  mutator.mutate(Phase.Mutating, new ArrayBuffer(0), ['hidden'], new Uint16Array([]));
   mutator.mutate(
+    Phase.Mutating,
     new ArrayBuffer(0),
     [],
     new Uint16Array([

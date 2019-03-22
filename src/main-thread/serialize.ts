@@ -30,7 +30,7 @@ function createHydrateableNode(element: RenderableElement, minimizeString: (valu
     [TransferrableKeys.index]: element._index_,
     [TransferrableKeys.transferred]: NumericBoolean.FALSE,
     [TransferrableKeys.nodeType]: element.nodeType,
-    [TransferrableKeys.nodeName]: minimizeString(element.nodeName),
+    [TransferrableKeys.localOrNodeName]: minimizeString(element.localName || element.nodeName),
     [TransferrableKeys.childNodes]: [].map.call(element.childNodes || [], (child: RenderableElement) => createHydrateableNode(child, minimizeString)),
     [TransferrableKeys.attributes]: [].map.call(element.attributes || [], (attribute: Attr) => [
       minimizeString(attribute.namespaceURI || 'null'),

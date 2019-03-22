@@ -19,7 +19,8 @@ import { consume as consumeStrings } from './strings';
 import { MessageType } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { Node } from './dom/Node';
-import { phase, Phases, set as setPhase } from '../transfer/Phase';
+import { Phase } from '../transfer/Phase';
+import { phase, set as setPhase } from './phase';
 import { PostMessage } from './worker-thread';
 
 let allowTransfer = false;
@@ -27,7 +28,7 @@ let pending = false;
 let pendingMutations: Array<number> = [];
 
 export function transfer(postMessage: PostMessage, mutation: Array<number>): void {
-  if (phase !== Phases.Initializing) {
+  if (phase !== Phase.Initializing) {
     pending = true;
     pendingMutations = pendingMutations.concat(mutation);
 
@@ -59,5 +60,5 @@ export function transfer(postMessage: PostMessage, mutation: Array<number>): voi
 
 export function observe(): void {
   allowTransfer = true;
-  setPhase(Phases.Mutating);
+  setPhase(Phase.Mutating);
 }

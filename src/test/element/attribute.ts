@@ -70,6 +70,28 @@ test('setAttribute overwrites the value if the attribute already exists', t => {
   t.deepEqual(node.attributes[0], attrOverride);
 });
 
+test('setAttribute converts non-strings to strings', t => {
+  const { node } = t.context;
+
+  node.setAttribute('foo', 123);
+  t.is(node.getAttribute('foo'), '123');
+
+  node.setAttribute('foo', false);
+  t.is(node.getAttribute('foo'), 'false');
+
+  node.setAttribute('foo', null);
+  t.is(node.getAttribute('foo'), 'null');
+
+  node.setAttribute('foo', undefined);
+  t.is(node.getAttribute('foo'), 'undefined');
+
+  node.setAttribute('foo', {});
+  t.is(node.getAttribute('foo'), '[object Object]');
+
+  node.setAttribute('foo', { toString: () => 'bar' });
+  t.is(node.getAttribute('foo'), 'bar');
+});
+
 test('removeAttribute deletes a value from the attributes', t => {
   const { node, attr } = t.context;
 

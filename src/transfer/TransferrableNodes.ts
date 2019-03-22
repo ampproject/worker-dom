@@ -38,7 +38,7 @@ export interface HydrateableNode {
   readonly [TransferrableKeys.index]: number;
   readonly [TransferrableKeys.transferred]: NumericBoolean;
   readonly [TransferrableKeys.nodeType]: NodeType;
-  readonly [TransferrableKeys.nodeName]: number;
+  readonly [TransferrableKeys.localOrNodeName]: number;
   [TransferrableKeys.textContent]?: number;
   [TransferrableKeys.namespaceURI]?: number;
   [TransferrableKeys.attributes]?: Array<[number, number, number]>;

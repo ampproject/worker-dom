@@ -3,7 +3,7 @@
   "compilerOptions": {
     "lib": [
       "es2017",
-      "dom",
+      "dom"
     ],
     "outDir": "../../../output",
     "sourceMap": true,

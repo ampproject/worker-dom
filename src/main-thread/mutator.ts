@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// import { TransferrableKeys } from '../transfer/TransferrableKeys';
-// import { MutationRecordType } from '../worker-thread/MutationRecord';
-// import { TransferrableNode } from '../transfer/replacement/TransferrableNodes';
 import { NodeContext } from './nodes';
 import { Strings } from './strings';
 import { WorkerContext } from './worker';
@@ -30,7 +27,7 @@ import { PropertyProcessor } from './commands/property';
 import { LongTaskExecutor } from './commands/long-task';
 import { CommandExecutor } from './commands/interface';
 import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
-import { phase } from '../transfer/Phase';
+import { Phase } from '../transfer/Phase';
 
 export class MutatorProcessor {
   private strings: Strings;
@@ -70,11 +67,12 @@ export class MutatorProcessor {
 
   /**
    * Process MutationRecords from worker thread applying changes to the existing DOM.
+   * @param phase Current Phase Worker Thread exists in.
    * @param nodes New nodes to add in the main thread with the incoming mutations.
    * @param stringValues Additional string values to use in decoding messages.
    * @param mutations Changes to apply in both graph shape and content of Elements.
    */
-  mutate(nodes: ArrayBuffer, stringValues: Array<string>, mutations: Uint16Array): void {
+  public mutate(phase: Phase, nodes: ArrayBuffer, stringValues: Array<string>, mutations: Uint16Array): void {
     this.strings.storeValues(stringValues);
     this.nodeContext.createNodes(nodes, this.sanitizer);
     this.mutationQueue = this.mutationQueue.concat(mutations);

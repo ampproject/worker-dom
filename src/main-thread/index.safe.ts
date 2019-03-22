@@ -25,16 +25,17 @@ export const sanitizer = new DOMPurifySanitizer();
  * @param baseElement
  * @param domURL
  */
-export function upgradeElement(baseElement: Element, domURL: string, longTask?: LongTaskFunction): void {
+export function upgradeElement(baseElement: Element, domURL: string, longTask?: LongTaskFunction): Promise<Worker | null> {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
-    fetchAndInstall(baseElement as HTMLElement, {
+    return fetchAndInstall(baseElement as HTMLElement, {
       domURL,
       authorURL,
       sanitizer,
       longTask,
     });
   }
+  return Promise.resolve(null);
 }
 
 /**
@@ -42,7 +43,7 @@ export function upgradeElement(baseElement: Element, domURL: string, longTask?: 
  * @param baseElement
  * @param fetchPromise Promise that resolves with a tuple containing the worker script, author script, and author script URL.
  */
-export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string]>, config: WorkerDOMConfiguration): void {
+export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string]>, config: WorkerDOMConfiguration): Promise<Worker | null> {
   config.sanitizer = sanitizer;
-  install(fetchPromise, baseElement as HTMLElement, config);
+  return install(fetchPromise, baseElement as HTMLElement, config);
 }

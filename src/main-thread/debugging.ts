@@ -48,7 +48,7 @@ export const readableTransferredNode = (nodeContext: NodeContext, node: Transfer
 function readableHydrateableNode(node: HydrateableNode): Object {
   const out: any = {
     nodeType: node[TransferrableKeys.nodeType],
-    nodeName: node[TransferrableKeys.nodeName],
+    name: node[TransferrableKeys.localOrNodeName],
     attributes: null,
     childNodes: null,
   };

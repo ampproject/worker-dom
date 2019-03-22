@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-import test from 'ava';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { Phase } from '../transfer/phase';
 
-test('returns the name of the Node', t => {
-  const document = createDocument();
-  const node = document.createTextNode('');
-  const nodeTwo = document.createElement('div');
-
-  t.is(document.nodeName, '#document', 'document node returns a valid document node name');
-  t.is(node.nodeName, '#text', 'text node returns a valid text node name');
-  t.is(nodeTwo.nodeName, 'DIV', 'standard element node returns a valid node name');
-});
+export let phase: Phase = Phase.Initializing;
+export const set = (newPhase: Phase) => (phase = newPhase);

@@ -21,7 +21,6 @@ import { Strings } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { WorkerDOMConfiguration } from './configuration';
 import { WorkerContext } from './worker';
-import { set as setPhase, Phases } from '../transfer/Phase';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
@@ -53,27 +52,22 @@ export function install(fetchPromise: Promise<[string, string]>, baseElement: HT
   return fetchPromise.then(([domScriptContent, authorScriptContent]) => {
     if (domScriptContent && authorScriptContent && config.authorURL) {
       const workerContext = new WorkerContext(baseElement, nodeContext, domScriptContent, authorScriptContent, config);
-      setPhase(Phases.Hydrating);
-
-      // console.log('set phase to hydration', worker);
       const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, config);
       workerContext.worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
-        const type = data[TransferrableKeys.type];
 
-        if (!ALLOWABLE_MESSAGE_TYPES.includes(type)) {
+        if (!ALLOWABLE_MESSAGE_TYPES.includes(data[TransferrableKeys.type])) {
           return;
         }
-        // TODO(KB): Hydration has special rules limiting the types of allowed mutations.
-        // Re-introduce Hydration and add a specialized handler.
         mutatorContext.mutate(
+          (data as MutationFromWorker)[TransferrableKeys.phase],
           (data as MutationFromWorker)[TransferrableKeys.nodes],
           (data as MutationFromWorker)[TransferrableKeys.strings],
           new Uint16Array(data[TransferrableKeys.mutations]),
         );
 
         // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
-        if (type === MessageType.HYDRATE && config.onHydration) {
+        if (data[TransferrableKeys.type] === MessageType.HYDRATE && config.onHydration) {
           config.onHydration();
         }
         if (config.onReceiveMessage) {

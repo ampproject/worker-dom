@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Element, NODE_NAME_MAPPING } from './Element';
+import { Element, NS_NAME_TO_CLASS } from './Element';
 import { HTMLElement } from './HTMLElement';
 import './HTMLAnchorElement';
 import './HTMLButtonElement';
@@ -57,8 +57,10 @@ import { DocumentFragment } from './DocumentFragment';
 import { PostMessage } from '../worker-thread';
 import { observe } from '../MutationTransfer';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
-import { propagate as propagateEvents } from '../../transfer/TransferrableEvent';
-import { propagate as propagateSyncValues } from '../../transfer/TransferrableSyncValue';
+import { propagate as propagateEvents } from '../Event';
+import { propagate as propagateSyncValues } from '../SyncValuePropagation';
+
+const DOCUMENT_NAME = '#document';
 
 export class Document extends Element {
   public defaultView: {
@@ -77,7 +79,9 @@ export class Document extends Element {
   public postMessage: PostMessage;
 
   constructor() {
-    super(NodeType.DOCUMENT_NODE, '#document', HTML_NAMESPACE, null);
+    super(NodeType.DOCUMENT_NODE, DOCUMENT_NAME, HTML_NAMESPACE, null);
+    // Element uppercases its nodeName, but Document doesn't.
+    this.nodeName = DOCUMENT_NAME;
     this.documentElement = this;
     this.observe = (): void => {
       // Sync Document Changes.
@@ -98,11 +102,12 @@ export class Document extends Element {
     };
   }
 
-  public createElement(tagName: string): Element {
-    return this.createElementNS(HTML_NAMESPACE, tagName);
+  public createElement(name: string): Element {
+    return this.createElementNS(HTML_NAMESPACE, toLower(name));
   }
-  public createElementNS(namespaceURI: NamespaceURI, tagName: string): Element {
-    return new (NODE_NAME_MAPPING[toLower(tagName)] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI, this);
+  public createElementNS(namespaceURI: NamespaceURI, localName: string): Element {
+    const constructor = NS_NAME_TO_CLASS[`${namespaceURI}:${localName}`] || HTMLElement;
+    return new constructor(NodeType.ELEMENT_NODE, localName, namespaceURI, this);
   }
 
   public createTextNode(text: string): Text {
@@ -111,7 +116,6 @@ export class Document extends Element {
   public createComment(text: string): Comment {
     return new Comment(text, this);
   }
-
   public createDocumentFragment(): DocumentFragment {
     return new DocumentFragment(this);
   }
