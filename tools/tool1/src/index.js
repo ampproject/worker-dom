@@ -35,27 +35,26 @@ module.exports = function({types: t}) {
         }
 
         const parentOfParentPath = parentPath && parentPath.parentPath;
+        const parentOfParent = parentOfParentPath && parentOfParentPath.node;
         const parentOfParentType =
             parentOfParentPath && parentOfParentPath.node.type;
 
         const filtered =
             // Member properties and function calls.
             // `btn.offsetWidth`, `btn.getBoundingClientRect()`
-            (parent.type == 'MemberExpression'
-             && parentKey == 'property')
+            (t.isMemberExpression(parent, {property: node}))
             ||
             // Object property pattern in declaration.
             // `const {offsetWidth} = btn`
-            (parent.type == 'ObjectProperty'
-             && parentKey == 'key'
+            (t.isObjectProperty(parent, {key: node})
              && !path.isReferencedIdentifier()
-             && parentOfParentType == 'ObjectPattern')
+             && t.isObjectPattern(parentOfParent)
+             )
             ||
             // Global function calls.
             // `getComputedStyle()`
             (spec.global
-             && parent.type == 'CallExpression'
-             && parentKey == 'callee'
+             && t.isCallExpression(parent, {callee: node})
              && !path.scope.hasBinding(name))
             ||
             // Global property reads.
