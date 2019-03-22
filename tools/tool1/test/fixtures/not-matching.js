@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+'pageXOffset';
 pageXOffset = x;
 x = {pageXOffset: 1};
 offsetWidth.other;
@@ -27,4 +28,7 @@ function two(getComputedStyle) {
 function three(other) {
   var pageXOffset = other;
   pageXOffset;
+}
+function four(offsetWidth) {
+  btn[offsetWidth];
 }

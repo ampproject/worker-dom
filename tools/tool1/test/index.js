@@ -45,7 +45,7 @@ test.serial('test matching-no-ok', t => {
   process('matching-no-ok');
 
   const { warnings } = t.context;
-  t.is(warnings.length, 12);
+  t.is(warnings.length, 15);
   // `pageXOffset;`
   t.true(warnings[0].message.indexOf('Cannot use \'pageXOffset\'') != -1);
   // `x = pageXOffset;`
@@ -58,21 +58,30 @@ test.serial('test matching-no-ok', t => {
   t.true(warnings[4].message.indexOf('pageXOffset') != -1);
   // `btn.offsetWidth;`
   t.true(warnings[5].message.indexOf('offsetWidth') != -1);
+  // `btn['offsetWidth'];`
+  t.true(warnings[6].message.indexOf('offsetWidth') != -1);
   // `bth.getBoundingClientRect();`
-  t.true(warnings[6].message.indexOf('getBoundingClientRect') != -1);
+  t.true(warnings[7].message.indexOf('getBoundingClientRect') != -1);
+  // bth['getBoundingClientRect']();
+  t.true(warnings[8].message.indexOf('getBoundingClientRect') != -1);
   // `getComputedStyle();`
-  t.true(warnings[7].message.indexOf('getComputedStyle') != -1);
-  // `getComputedStyle(btn);`
-  t.true(warnings[8].message.indexOf('getComputedStyle') != -1);
-  // `window.getComputedStyle(btn);`
   t.true(warnings[9].message.indexOf('getComputedStyle') != -1);
+  // `getComputedStyle(btn);`
+  t.true(warnings[10].message.indexOf('getComputedStyle') != -1);
+  // `window.getComputedStyle(btn);`
+  t.true(warnings[11].message.indexOf('getComputedStyle') != -1);
   // `if (pageXOffset) {}`
-  t.true(warnings[10].message.indexOf('pageXOffset') != -1);
+  t.true(warnings[12].message.indexOf('pageXOffset') != -1);
   // ```function one(btn) {
   //   var { offsetWidth } = btn;
   //   offsetWidth;
   // }```
-  t.true(warnings[11].message.indexOf('offsetWidth') != -1);
+  t.true(warnings[13].message.indexOf('offsetWidth') != -1);
+  // ```function two(btn) {
+  //   var { 'offsetWidth': x } = btn;
+  //   offsetWidth;
+  // }```
+  t.true(warnings[14].message.indexOf('offsetWidth') != -1);
 });
 
 test.serial('test matching-ok', t => {

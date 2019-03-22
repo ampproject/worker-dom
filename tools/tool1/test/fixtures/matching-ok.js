@@ -20,7 +20,11 @@ x = /*OK*/pageXOffset + 10;
 x(/*OK*/pageXOffset);
 window./*OK*/pageXOffset;
 btn./*OK*/offsetWidth;
+btn[/*OK*/'offsetWidth'];
+btn/*OK*/['offsetWidth'];
 bth./*OK*/getBoundingClientRect();
+bth[/*OK*/'getBoundingClientRect']();
+bth/*OK*/['getBoundingClientRect']();
 /*OK*/getComputedStyle();
 /*OK*/getComputedStyle(btn);
 window./*OK*/getComputedStyle(btn);
@@ -28,4 +32,7 @@ if (/*OK*/pageXOffset) {}
 function one(btn) {
   var { /*OK*/offsetWidth } = btn;
   offsetWidth;
+}
+function two(btn) {
+  var { /*OK*/'offsetWidth': x } = btn;
 }

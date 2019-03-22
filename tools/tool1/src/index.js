@@ -21,67 +21,82 @@ module.exports = function({types: t}) {
   return {
     visitor: {
       Identifier(path) {
-        const { node, parent, parentKey, parentPath } = path;
-        if (!node || !parent) {
-          return;
-        }
-        const { name } = node;
-        if (!name) {
-          return;
-        }
-        const spec = DICT[name];
-        if (!spec) {
-          return;
-        }
-
-        const parentOfParentPath = parentPath && parentPath.parentPath;
-        const parentOfParent = parentOfParentPath && parentOfParentPath.node;
-        const parentOfParentType =
-            parentOfParentPath && parentOfParentPath.node.type;
-
-        const filtered =
-            // Member properties and function calls.
-            // `btn.offsetWidth`, `btn.getBoundingClientRect()`
-            (t.isMemberExpression(parent, {property: node}))
-            ||
-            // Object property pattern in declaration.
-            // `const {offsetWidth} = btn`
-            (t.isObjectProperty(parent, {key: node})
-             && !path.isReferencedIdentifier()
-             && t.isObjectPattern(parentOfParent)
-             )
-            ||
-            // Global function calls.
-            // `getComputedStyle()`
-            (spec.global
-             && t.isCallExpression(parent, {callee: node})
-             && !path.scope.hasBinding(name))
-            ||
-            // Global property reads.
-            // `x = pageXOffset`
-            (spec.global
-             && path.isReferencedIdentifier()
-             && !path.scope.hasBinding(name));
-
-        // Max depth is 3 for a function call.
-        const hasOk = hasOkComment(node)
-            || hasOkComment(parentPath && parentPath.node)
-            || hasOkComment(parentOfParentPath && parentOfParentPath.node);
-
-        if (filtered && !hasOk) {
-          const message =
-              `Cannot use '${name}' in WorkerDOM directly.`
-              + (spec.replacement ? ` Use '${spec.replacement}' instead.` : '');
-          const error = path.buildCodeFrameError(message, TypeError);
-          if (console.test) {
-            console.test(error);
-          } else {
-            console.warn(error);
-          }
-        }
+        checkMatch(t, path);
+      },
+      Literal(path) {
+        checkMatch(t, path);
       },
     },
   };
+}
+
+
+/**
+ * @param {Types} t
+ * @param {Literal|Identifier} path
+ */
+function checkMatch(t, path) {
+  const { node, parent, parentKey, parentPath, scope } = path;
+  if (!node || !parent) {
+    return;
+  }
+  const isLiteral = t.isLiteral(node);
+  const name = isLiteral ? node.value : node.name;
+  if (!name) {
+    return;
+  }
+  const spec = DICT[name];
+  if (!spec) {
+    return;
+  }
+
+  const hasBinding = isLiteral ? false : scope.hasBinding(name);
+  const parentOfParentPath = parentPath && parentPath.parentPath;
+  const parentOfParent = parentOfParentPath && parentOfParentPath.node;
+
+  const filtered =
+      // Member properties and function calls.
+      // `btn.offsetWidth`, `btn.getBoundingClientRect()`
+      // `btn['offsetWidth']`, `btn['getBoundingClientRect']()`
+      (t.isMemberExpression(parent, {property: node})
+       && !hasBinding)
+      ||
+      // Object property pattern in declaration.
+      // `const {offsetWidth} = btn`
+      // `const {'offsetWidth': x} = btn`
+      (t.isObjectProperty(parent, {key: node})
+       && t.isObjectPattern(parentOfParent))
+      ||
+      // Global function calls.
+      // `getComputedStyle()`
+      (!isLiteral
+       && spec.global
+       && t.isCallExpression(parent, {callee: node})
+       && !hasBinding)
+      ||
+      // Global property reads.
+      // `x = pageXOffset`
+      (!isLiteral
+       && spec.global
+       && path.isReferencedIdentifier()
+       && !hasBinding);
+
+  // Max depth is 3 for a function call.
+  const hasOk = hasOkComment(node)
+      || hasOkComment(parentPath && parentPath.node)
+      || hasOkComment(parentOfParentPath && parentOfParentPath.node);
+
+  if (filtered && !hasOk) {
+    const message =
+        `Cannot use '${name}' in WorkerDOM directly.`
+        + (spec.replacement ? ` Use '${spec.replacement}' instead.` : '');
+    const error = path.buildCodeFrameError(message, TypeError);
+    if (console.test) {
+      console.test(error);
+    } else {
+      console.warn(error);
+    }
+  }
 }
 
 
