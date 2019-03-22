@@ -34,25 +34,40 @@ module.exports = function({types: t}) {
           return;
         }
 
+        const parentOfParentPath = parentPath && parentPath.parentPath;
+        const parentOfParentType =
+            parentOfParentPath && parentOfParentPath.node.type;
+
         const filtered =
             // Member properties and function calls.
+            // `btn.offsetWidth`, `btn.getBoundingClientRect()`
             (parent.type == 'MemberExpression'
              && parentKey == 'property')
             ||
+            // Object property pattern in declaration.
+            // `const {offsetWidth} = btn`
+            (parent.type == 'ObjectProperty'
+             && parentKey == 'key'
+             && !path.isReferencedIdentifier()
+             && parentOfParentType == 'ObjectPattern')
+            ||
             // Global function calls.
+            // `getComputedStyle()`
             (spec.global
              && parent.type == 'CallExpression'
-             && parentKey == 'callee')
+             && parentKey == 'callee'
+             && !path.scope.hasBinding(name))
             ||
             // Global property reads.
+            // `x = pageXOffset`
             (spec.global
-             && path.isReferencedIdentifier());
+             && path.isReferencedIdentifier()
+             && !path.scope.hasBinding(name));
 
         // Max depth is 3 for a function call.
         const hasOk = hasOkComment(node)
             || hasOkComment(parentPath && parentPath.node)
-            || hasOkComment(parentPath && parentPath.parentPath
-                  && parentPath.parentPath.node);
+            || hasOkComment(parentOfParentPath && parentOfParentPath.node);
 
         if (filtered && !hasOk) {
           const message =
@@ -72,7 +87,7 @@ module.exports = function({types: t}) {
 
 
 /**
- * @param {} node
+ * @param node
  * @return {boolean}
  */
 function hasOkComment(node) {

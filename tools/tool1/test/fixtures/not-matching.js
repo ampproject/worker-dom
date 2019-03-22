@@ -15,5 +15,16 @@
  */
 
 pageXOffset = x;
+x = {pageXOffset: 1};
 offsetWidth.other;
 getBoundingClientRect.other();
+function one(pageXOffset) {
+  pageXOffset;
+}
+function two(getComputedStyle) {
+  getComputedStyle();
+}
+function three(other) {
+  var pageXOffset = other;
+  pageXOffset;
+}

@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-/*OK*/pageXOffset;
-x = /*OK*/pageXOffset;
-x = /*OK*/pageXOffset + 10;
-x(/*OK*/pageXOffset);
-btn./*OK*/offsetWidth;
-bth./*OK*/getBoundingClientRect();
-/*OK*/getComputedStyle();
-/*OK*/getComputedStyle(btn);
-if (/*OK*/pageXOffset) {
+pageXOffset;
+x = pageXOffset;
+x = pageXOffset + 10;
+x(pageXOffset);
+window.pageXOffset;
+btn.offsetWidth;
+bth.getBoundingClientRect();
+getComputedStyle();
+getComputedStyle(btn);
+window.getComputedStyle(btn);
+if (pageXOffset) {}
+function one(btn) {
+  var { offsetWidth } = btn;
+  offsetWidth;
 }
