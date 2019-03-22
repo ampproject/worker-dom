@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-
 pageXOffset;
 x = pageXOffset;
-pageXOffset = x;
+x = pageXOffset + 10;
 x(pageXOffset);
+window.pageXOffset;
 btn.offsetWidth;
 bth.getBoundingClientRect();
-bth./*OK*/getBoundingClientRect();
 getComputedStyle();
 getComputedStyle(btn);
+window.getComputedStyle(btn);
 if (pageXOffset) {
 }

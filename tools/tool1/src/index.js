@@ -36,8 +36,7 @@ module.exports = function({types: t}) {
 
         const filtered =
             // Member properties and function calls.
-            (!spec.global
-             && parent.type == 'MemberExpression'
+            (parent.type == 'MemberExpression'
              && parentKey == 'property')
             ||
             // Global function calls.
@@ -59,7 +58,12 @@ module.exports = function({types: t}) {
           const message =
               `Cannot use '${name}' in WorkerDOM directly.`
               + (spec.replacement ? ` Use '${spec.replacement}' instead.` : '');
-          console.warn(path.buildCodeFrameError(message, TypeError));
+          const error = path.buildCodeFrameError(message, TypeError);
+          if (console.test) {
+            console.test(error);
+          } else {
+            console.warn(error);
+          }
         }
       },
     },
@@ -72,9 +76,15 @@ module.exports = function({types: t}) {
  * @return {boolean}
  */
 function hasOkComment(node) {
-  return node
-      && node.leadingComments
-      && node.leadingComments.length > 0
-      && node.leadingComments[0].value == 'OK'
-      || false;
+  if (!node
+      || !node.leadingComments
+      || node.leadingComments.length == 0) {
+    return false;
+  }
+  for (let i = 0; i < node.leadingComments.length; i++) {
+    if (node.leadingComments[i].value == 'OK') {
+      return true;
+    }
+  }
+  return false;
 }
