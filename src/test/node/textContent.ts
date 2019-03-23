@@ -94,6 +94,8 @@ test('textContent setter removes other child text nodes', t => {
   node.appendChild(document.createTextNode('o'));
 
   t.is(node.textContent, 'foo');
+  t.is(node.childNodes.length, 3);
   node.textContent = '';
   t.is(node.textContent, '');
+  t.is(node.childNodes.length, 1);
 });
