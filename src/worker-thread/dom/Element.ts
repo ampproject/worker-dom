@@ -21,7 +21,6 @@ import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate }
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { NumericBoolean, toLower, toUpper } from '../../utils';
-import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
@@ -244,8 +243,8 @@ export class Element extends ParentNode {
    */
   set textContent(text: string) {
     // TODO(KB): Investigate removing all children in a single .splice to childNodes.
-    this.childNodes.forEach(childNode => childNode.remove());
-    this.appendChild(new Text(text, this.ownerDocument));
+    this.childNodes.slice().forEach((child: Node) => child.remove());
+    this.appendChild(this.ownerDocument.createTextNode(text));
   }
 
   /**
