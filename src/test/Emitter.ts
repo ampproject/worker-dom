@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import test from 'ava';
 import { Document } from '../worker-thread/dom/Document';
 import { MutationFromWorker } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
@@ -60,3 +61,11 @@ export function emitter(document: Document): Emitter {
     unsubscribe,
   };
 }
+
+test('test allowing windows builds to pass', t => {
+  // Without a test in this file, the transpiled output is picked up by `ava`
+  // only on Windows systems.
+  // This means a build will fail because this helper file does not have any found tests.
+  // EX: 'No tests found in output\test\reflectPropertiesHelper.js'
+  t.pass();
+});
