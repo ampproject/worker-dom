@@ -34,7 +34,7 @@ export function store(node: Node): number {
   }
 
   mapping.set((node[TransferrableKeys.index] = ++count), node);
-  if (phase !== Phase.Initializing) {
+  if (phase > Phase.Hydrating) {
     // After Initialization, include all future dom node creation into the list for next transfer.
     transfer.push(node);
   }

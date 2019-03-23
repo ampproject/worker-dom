@@ -28,7 +28,7 @@ let pending = false;
 let pendingMutations: Array<number> = [];
 
 export function transfer(postMessage: PostMessage, mutation: Array<number>): void {
-  if (phase !== Phase.Initializing) {
+  if (phase > Phase.Hydrating) {
     pending = true;
     pendingMutations = pendingMutations.concat(mutation);
 
