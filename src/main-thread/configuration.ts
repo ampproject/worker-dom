@@ -15,7 +15,7 @@
  */
 
 import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
-import { Phase } from '../transfer/phase';
+import { Phase } from '../transfer/Phase';
 
 /**
  * The callback for `onMutationPump`. If specified, this callback will be called
