@@ -18,6 +18,7 @@ import anyTest, { TestInterface } from 'ava';
 import { Text } from '../../worker-thread/dom/Text';
 import { Element } from '../../worker-thread/dom/Element';
 import { createDocument, Document } from '../../worker-thread/dom/Document';
+import { NodeType } from '../../transfer/TransferrableNodes';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -77,9 +78,13 @@ test('textContent setter removes other child element nodes', t => {
   child.textContent = 'foo';
   node.appendChild(child);
 
+  t.is(node.childNodes.length, 1);
+  t.is(node.childNodes[0].nodeType, NodeType.ELEMENT_NODE);
   t.is(node.textContent, 'foo');
   node.textContent = 'bar';
   t.is(node.textContent, 'bar');
+  t.is(node.childNodes.length, 1);
+  t.is(node.childNodes[0].nodeType, NodeType.TEXT_NODE);
 });
 
 test('textContent setter removes other child text nodes', t => {
