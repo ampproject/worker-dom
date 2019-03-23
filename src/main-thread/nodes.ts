@@ -118,7 +118,6 @@ export class NodeContext {
    * @param id
    */
   private storeNode(node: Node, id: number): void {
-    // console.log('store node', id);
     (node as Node)._index_ = id;
     this.nodes.set(id, node as Node);
   }

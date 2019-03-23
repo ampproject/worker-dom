@@ -235,7 +235,7 @@ export class Element extends ParentNode {
     this.childNodes = [];
 
     // add new children
-    root.childNodes.forEach(this.appendChild);
+    root.childNodes.forEach((child: Node) => this.appendChild(child));
   }
 
   /**

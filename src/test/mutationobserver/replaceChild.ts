@@ -121,8 +121,6 @@ test.serial.cb('replaceChild mutation, remove sibling node', t => {
           type: MutationRecordType.CHILD_LIST,
           target: document.body,
           removedNodes: [div],
-          addedNodes: undefined,
-          nextSibling: undefined,
         },
         {
           type: MutationRecordType.CHILD_LIST,
