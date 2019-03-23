@@ -35,7 +35,7 @@ test.beforeEach(t => {
   };
 });
 
-test.cb('Element.classList.set transfer', t => {
+test.serial.cb('Element.classList.set transfer', t => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
