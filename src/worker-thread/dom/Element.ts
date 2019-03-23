@@ -97,7 +97,7 @@ export class Element extends ParentNode {
     this[TransferrableKeys.creationFormat] = [
       this[TransferrableKeys.index],
       this.nodeType,
-      storeString(this.nodeName),
+      storeString(this.localName),
       NumericBoolean.FALSE,
       0,
       this.namespaceURI === null ? NumericBoolean.FALSE : NumericBoolean.TRUE,

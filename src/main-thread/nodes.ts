@@ -53,6 +53,8 @@ export class NodeContext {
       let node: Node;
       if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.TEXT_NODE) {
         node = document.createTextNode(this.strings.get(nodeBuffer[iterator + TransferrableNodeIndex.TextContent]));
+      } else if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.COMMENT_NODE) {
+        node = document.createComment(this.strings.get(nodeBuffer[iterator + TransferrableNodeIndex.TextContent]));
       } else if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.DOCUMENT_FRAGMENT_NODE) {
         node = document.createDocumentFragment();
       } else {
