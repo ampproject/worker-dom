@@ -22,8 +22,7 @@ import { WorkerDOMConfiguration } from '../configuration';
 export function PropertyProcessor(strings: Strings, config: WorkerDOMConfiguration): CommandExecutor {
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      const name =
-        (mutations[startPosition + PropertyMutationIndex.Name] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Name])) || null;
+      const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
       const value =
         (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) || null;
       if (name && value != null) {
@@ -39,8 +38,7 @@ export function PropertyProcessor(strings: Strings, config: WorkerDOMConfigurati
       return startPosition + PropertyMutationIndex.LastStaticNode + 1;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
-      const name =
-        (mutations[startPosition + PropertyMutationIndex.Name] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Name])) || null;
+      const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
       const value =
         (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) || null;
 
