@@ -1,7 +1,7 @@
-import { Comment } from '../../worker-thread/dom/Comment';
 import { Element } from '../../worker-thread/dom/Element';
 import { Node } from '../../worker-thread/dom/Node';
-import { Text } from '../../worker-thread/dom/Text';
+import { SVG_NAMESPACE, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { toLower } from '../../utils';
 
 interface Elements {
   [key: string]: boolean;
@@ -80,14 +80,20 @@ const kBlockTextElements: Elements = {
  */
 export function parse(data: string, rootElement: Element) {
   const ownerDocument = rootElement.ownerDocument;
-  const root = new Element(rootElement.nodeType, rootElement.nodeName, rootElement.namespaceURI, ownerDocument);
+  const root = 
+  ownerDocument.createElementNS(rootElement.namespaceURI, rootElement.localName);
 
   let currentParent = root as Node;
+  let currentNamespace = root.namespaceURI;
   const stack = [root as Node];
   let lastTextPos = 0;
   let match: RegExpExecArray | null;
-  data = '<div>' + data + '</div>';
+  data = '<q>' + data + '</q>';
   const tagsClosed = [] as string[];
+
+  if (currentNamespace !== SVG_NAMESPACE && currentNamespace !== HTML_NAMESPACE) {
+    throw new Error("Namespace not supported: " + currentNamespace);
+  }
 
   while ((match = kMarkupPattern.exec(data))) {
 
@@ -100,29 +106,32 @@ export function parse(data: string, rootElement: Element) {
     if (lastTextPos < match.index) {
       // if has content
       const text = data.slice(lastTextPos, match.index);
-      currentParent.appendChild(new Text(text, ownerDocument));
+      currentParent.appendChild(ownerDocument.createTextNode(text));
     }
     lastTextPos = kMarkupPattern.lastIndex;
     if (commentContents !== undefined) {
       // this is a comment
-      currentParent.appendChild(new Comment(commentContents, ownerDocument));
+      currentParent.appendChild(ownerDocument.createComment(commentContents));
       continue;
     }
 
     const normalizedTagName = tagName.toUpperCase();
 
+    if (normalizedTagName === 'SVG') {
+      currentNamespace = beginningSlash ? HTML_NAMESPACE : SVG_NAMESPACE;
+    }
+
     if (!beginningSlash) {
       // not </ tags
       if (!endSlash && kElementsClosedByOpening[currentParent.tagName]) {
         if (kElementsClosedByOpening[currentParent.tagName][normalizedTagName]) {
-          tagsClosed.push(currentParent.tagName);
+          stack.pop();
+          currentParent = arr_back(stack);
         }
       }
-      const childToAppend = new Element(
-        currentParent.nodeType, 
-        tagName.toLowerCase(), // TODO only do this for HTML namespace elements
-        currentParent.namespaceURI, 
-        ownerDocument);
+
+      const childToAppend = ownerDocument.createElementNS(
+        currentNamespace, currentNamespace === HTML_NAMESPACE ? toLower(tagName) : tagName);
 
       for (let attMatch; (attMatch = kAttributePattern.exec(matchAttributes)); ) {
         const attrName = attMatch[2];
@@ -135,7 +144,7 @@ export function parse(data: string, rootElement: Element) {
       stack.push(currentParent);
       if (kBlockTextElements[normalizedTagName]) {
         // a little test to find next </script> or </style> ...
-        const closeMarkup = '</' + normalizedTagName.toLowerCase() + '>';
+        const closeMarkup = '</' + toLower(normalizedTagName) + '>';
         const index = data.indexOf(closeMarkup, kMarkupPattern.lastIndex);
         if (index == -1) {
           throw new Error('Close markup not found.');
@@ -144,6 +153,11 @@ export function parse(data: string, rootElement: Element) {
         }
       }
     }
+
+    if (tagName === 'foreignObject') {
+      currentNamespace = beginningSlash ? SVG_NAMESPACE : HTML_NAMESPACE;
+    }
+    
     if (beginningSlash || endSlash || kSelfClosingElements[normalizedTagName]) {
       // </ or /> or <br> etc.
       while (true) {
@@ -185,20 +199,14 @@ export function parse(data: string, rootElement: Element) {
     throw new Error('Attempting to parse invalid HTML content.');
   }
 
-  root.childNodes.forEach(node => {
-    if (node instanceof Element) {
-      node.parentNode = null;
-    }
-  });
+  const wrapper = root.firstChild;
 
-  // remove the added <div>
-  if (root.firstChild) {
-    root.firstChild.childNodes.forEach(node => {
-      if (node instanceof Node) {
-        node.parentNode = null;
-      }
+  if (wrapper) {
+    wrapper.parentNode = null;
+    wrapper.childNodes.forEach((node: Node) => {
+      node.parentNode = null;    
     });
-    return root.firstChild;
+    return wrapper;
   }
 
   throw new Error('Attempting to parse invalid HTML.');
