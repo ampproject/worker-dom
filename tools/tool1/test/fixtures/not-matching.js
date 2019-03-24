@@ -19,6 +19,9 @@ pageXOffset = x;
 x = {pageXOffset: 1};
 offsetWidth.other;
 getBoundingClientRect.other();
+btn.other;
+btn['other'];
+btn[1];
 function one(pageXOffset) {
   pageXOffset;
 }

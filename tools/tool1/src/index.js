@@ -20,11 +20,122 @@ const DICT = require('./dict');
 module.exports = function({types: t}) {
   return {
     visitor: {
-      Identifier(path) {
-        checkMatch(t, path);
+      /**
+       * Global function calls and property reads, such as:
+       *  - `getComputedStyle()`
+       *  - `x = pageXOffset`
+       */
+      ReferencedIdentifier(path) {
+        const { node, parent, parentPath, scope } = path;
+        if (!node || !parent) {
+          return;
+        }
+        const { name } = node;
+        if (!name) {
+          return;
+        }
+        const spec = DICT[name];
+        if (!spec) {
+          return;
+        }
+        if (hasOkComment(node, parent, parentPath.parent)) {
+          return;
+        }
+
+        const hasBinding = scope.hasBinding(name);
+        const filtered =
+            // Global function calls.
+            // `getComputedStyle()`
+            (spec.global
+             && t.isCallExpression(parent, {callee: node})
+             && !hasBinding)
+            ||
+            // Global property reads.
+            // `x = pageXOffset`
+            (spec.global
+             && path.isReferencedIdentifier()
+             && !hasBinding);
+        if (filtered) {
+          report(path, name, spec);
+        }
       },
-      Literal(path) {
-        checkMatch(t, path);
+
+      /**
+       * Member properties and function calls, such as:
+       *  - `btn.offsetWidth`
+       *  - `btn.getBoundingClientRect()`
+       *  - `btn['offsetWidth']`
+       *  - `btn['getBoundingClientRect']()`
+       */
+      MemberExpression(path) {
+        const { node, parent } = path;
+        if (!node || !parent) {
+          return;
+        }
+        const { property } = node;
+        if (!property) {
+          return;
+        }
+        const name =
+            t.isStringLiteral(property)
+            ? property.value
+            : t.isIdentifier(property)
+            ? property.name
+            : null;
+        if (!name) {
+          return;
+        }
+        const spec = DICT[name];
+        if (!spec) {
+          return;
+        }
+        if (hasOkComment(property)) {
+          return;
+        }
+        if (t.isIdentifier(property) && node.computed) {
+          return;
+        }
+        report(path, name, spec);
+      },
+
+      /**
+       * Object property pattern in declaration, such as:
+       *  - `const {offsetWidth} = btn`
+       *  - `const {'offsetWidth': x} = btn`
+       */
+      ObjectPattern(path) {
+        const { node, parent } = path;
+        if (!node || !parent) {
+          return;
+        }
+        const { properties } = node;
+        if (!properties || properties.length == 0) {
+          return;
+        }
+
+        for (const property of properties) {
+          const { key } = property;
+          if (!key) {
+            continue;
+          }
+          const name =
+              t.isStringLiteral(key)
+              ? key.value
+              : t.isIdentifier(key)
+              ? key.name
+              : null;
+          if (!name) {
+            continue;
+          }
+          const spec = DICT[name];
+          if (!spec) {
+            continue;
+          }
+          if (hasOkComment(property)) {
+            continue;
+          }
+          report(path, name, spec);
+        }
       },
     },
   };
@@ -32,87 +143,39 @@ module.exports = function({types: t}) {
 
 
 /**
- * @param {Types} t
- * @param {Literal|Identifier} path
+ * @param {!Path} path
+ * @param {string} name
+ * @param {!Object} spec
  */
-function checkMatch(t, path) {
-  const { node, parent, parentKey, parentPath, scope } = path;
-  if (!node || !parent) {
-    return;
-  }
-  const isLiteral = t.isLiteral(node);
-  const name = isLiteral ? node.value : node.name;
-  if (!name) {
-    return;
-  }
-  const spec = DICT[name];
-  if (!spec) {
-    return;
-  }
-
-  const hasBinding = isLiteral ? false : scope.hasBinding(name);
-  const parentOfParentPath = parentPath && parentPath.parentPath;
-  const parentOfParent = parentOfParentPath && parentOfParentPath.node;
-
-  const filtered =
-      // Member properties and function calls.
-      // `btn.offsetWidth`, `btn.getBoundingClientRect()`
-      // `btn['offsetWidth']`, `btn['getBoundingClientRect']()`
-      (t.isMemberExpression(parent, {property: node})
-       && !hasBinding)
-      ||
-      // Object property pattern in declaration.
-      // `const {offsetWidth} = btn`
-      // `const {'offsetWidth': x} = btn`
-      (t.isObjectProperty(parent, {key: node})
-       && t.isObjectPattern(parentOfParent))
-      ||
-      // Global function calls.
-      // `getComputedStyle()`
-      (!isLiteral
-       && spec.global
-       && t.isCallExpression(parent, {callee: node})
-       && !hasBinding)
-      ||
-      // Global property reads.
-      // `x = pageXOffset`
-      (!isLiteral
-       && spec.global
-       && path.isReferencedIdentifier()
-       && !hasBinding);
-
-  // Max depth is 3 for a function call.
-  const hasOk = hasOkComment(node)
-      || hasOkComment(parentPath && parentPath.node)
-      || hasOkComment(parentOfParentPath && parentOfParentPath.node);
-
-  if (filtered && !hasOk) {
-    const message =
-        `Cannot use '${name}' in WorkerDOM directly.`
-        + (spec.replacement ? ` Use '${spec.replacement}' instead.` : '');
-    const error = path.buildCodeFrameError(message, TypeError);
-    if (console.test) {
-      console.test(error);
-    } else {
-      console.warn(error);
-    }
+function report(path, name, spec) {
+  const message =
+      `Cannot use '${name}' in WorkerDOM directly.`
+      + (spec.replacement ? ` Use '${spec.replacement}' instead.` : '');
+  const error = path.buildCodeFrameError(message, TypeError);
+  if (console.test) {
+    console.test(error);
+  } else {
+    console.warn(error);
   }
 }
 
 
 /**
- * @param node
+ * @param {...} var_args
  * @return {boolean}
  */
-function hasOkComment(node) {
-  if (!node
-      || !node.leadingComments
-      || node.leadingComments.length == 0) {
-    return false;
-  }
-  for (let i = 0; i < node.leadingComments.length; i++) {
-    if (node.leadingComments[i].value == 'OK') {
-      return true;
+function hasOkComment(var_args) {
+  for (let i = 0; i < arguments.length; i++) {
+    const node = arguments[i];
+    if (!node
+        || !node.leadingComments
+        || node.leadingComments.length == 0) {
+      continue;
+    }
+    for (let i = 0; i < node.leadingComments.length; i++) {
+      if (node.leadingComments[i].value.trim() == 'OK') {
+        return true;
+      }
     }
   }
   return false;
