@@ -17,7 +17,7 @@
 const DICT = require('./dict');
 
 
-module.exports = function({types: t}) {
+module.exports = function({ types: t }) {
   return {
     visitor: {
       /**
@@ -44,17 +44,12 @@ module.exports = function({types: t}) {
 
         const hasBinding = scope.hasBinding(name);
         const filtered =
-            // Global function calls.
-            // `getComputedStyle()`
-            (spec.global
-             && t.isCallExpression(parent, {callee: node})
-             && !hasBinding)
-            ||
-            // Global property reads.
-            // `x = pageXOffset`
-            (spec.global
-             && path.isReferencedIdentifier()
-             && !hasBinding);
+          // Global function calls.
+          // `getComputedStyle()`
+          (spec.global && t.isCallExpression(parent, { callee: node }) && !hasBinding) ||
+          // Global property reads.
+          // `x = pageXOffset`
+          (spec.global && path.isReferencedIdentifier() && !hasBinding);
         if (filtered) {
           report(path, name, spec);
         }
@@ -76,12 +71,7 @@ module.exports = function({types: t}) {
         if (!property) {
           return;
         }
-        const name =
-            t.isStringLiteral(property)
-            ? property.value
-            : t.isIdentifier(property)
-            ? property.name
-            : null;
+        const name = t.isStringLiteral(property) ? property.value : t.isIdentifier(property) ? property.name : null;
         if (!name) {
           return;
         }
@@ -118,12 +108,7 @@ module.exports = function({types: t}) {
           if (!key) {
             continue;
           }
-          const name =
-              t.isStringLiteral(key)
-              ? key.value
-              : t.isIdentifier(key)
-              ? key.name
-              : null;
+          const name = t.isStringLiteral(key) ? key.value : t.isIdentifier(key) ? key.name : null;
           if (!name) {
             continue;
           }
@@ -139,8 +124,7 @@ module.exports = function({types: t}) {
       },
     },
   };
-}
-
+};
 
 /**
  * @param {!Path} path
@@ -148,9 +132,7 @@ module.exports = function({types: t}) {
  * @param {!Object} spec
  */
 function report(path, name, spec) {
-  const message =
-      `Cannot use '${name}' in WorkerDOM directly.`
-      + (spec.replacement ? ` Use '${spec.replacement}' instead.` : '');
+  const message = `Cannot use '${name}' in WorkerDOM directly.` + (spec.replacement ? ` Use '${spec.replacement}' instead.` : '');
   const error = path.buildCodeFrameError(message, TypeError);
   if (console.test) {
     console.test(error);
@@ -159,7 +141,6 @@ function report(path, name, spec) {
   }
 }
 
-
 /**
  * @param {...} var_args
  * @return {boolean}
@@ -167,9 +148,7 @@ function report(path, name, spec) {
 function hasOkComment(var_args) {
   for (let i = 0; i < arguments.length; i++) {
     const node = arguments[i];
-    if (!node
-        || !node.leadingComments
-        || node.leadingComments.length == 0) {
+    if (!node || !node.leadingComments || node.leadingComments.length == 0) {
       continue;
     }
     for (let i = 0; i < node.leadingComments.length; i++) {
