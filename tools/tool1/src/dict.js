@@ -15,22 +15,46 @@
  */
 
 
+/**
+ * @const {!Object<string, {
+ *   global: (boolean|undefined),
+ *   replacement: (string|undefined),
+ * }>}
+ */
 module.exports = {
-  'pageXOffset': {
-    type: 'property',
-    global: true,
-  },
-  'offsetWidth': {
-    type: 'property',
-    global: false,
-  },
+  'clientHeight': {},
+  'clientLeft': {},
+  'clientTop': {},
+  'clientWidth': {},
+  'computedName': {},
+  'computedRole': {},
   'getBoundingClientRect': {
-    type: 'method',
-    global: false,
     replacement: 'getBoundingClientRectAsync()',
   },
-  'getComputedStyle': {
-    type: 'method',
-    global: true,
-  },
+  'getClientRects': {},
+  'getComputedAccessibleNode': {global: true},
+  'getComputedStyle': {global: true},
+  'getSelection': {global: true},
+  'innerHeight': {global: true},
+  'innerWidth': {global: true},
+  'offsetHeight': {},
+  'offsetLeft': {},
+  'offsetParent': {},
+  'offsetTop': {},
+  'offsetWidth': {},
+  'outerHeight': {global: true},
+  'outerWidth': {global: true},
+  'pageXOffset': {global: true},
+  'pageYOffset': {global: true},
+  'screenLeft': {global: true},
+  'screenTop': {global: true},
+  'screenX': {global: true},
+  'screenY': {global: true},
+  'scrollHeight': {},
+  'scrollLeft': {},
+  'scrollTop': {},
+  'scrollWidth': {},
+  'scrollX': {global: true},
+  'scrollY': {global: true},
+  'scrollingElement': {},
 };
