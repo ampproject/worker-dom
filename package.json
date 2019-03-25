@@ -77,6 +77,10 @@
     "*.ts": [
       "prettier --config config/.prettierrc --write",
       "git add"
+    ],
+    "*.js": [
+      "prettier --config config/.prettierrc --write",
+      "git add"
     ]
   },
   "husky": {
