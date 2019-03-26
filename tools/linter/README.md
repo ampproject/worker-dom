@@ -1,6 +1,9 @@
-# @ampproject/worker-dom-tools-tool1
+# @ampproject/worker-dom-linter
 
-TODO: tool1
+WorkerDOM supports most of DOM API transparently, but due to multi-threaded
+environment, 100% support is not feasible. The `@ampproject/worker-dom-linter`
+Babel plugin validates and reports APIs that are not implemented or implemented
+differently in WorkerDOM.
 
 See [WorkerDOM project](https://github.com/ampproject/worker-dom/) for context.
 
@@ -9,13 +12,13 @@ See [WorkerDOM project](https://github.com/ampproject/worker-dom/) for context.
 Using npm:
 
 ```sh
-npm install --save-dev @ampproject/worker-dom-tools-tool1
+npm install --save-dev @ampproject/worker-dom-linter
 ```
 
 or using yarn:
 
 ```sh
-yarn add @ampproject/worker-dom-tools-tool1 --dev
+yarn add @ampproject/worker-dom-linter --dev
 ```
 
 ## Use in babel
@@ -25,7 +28,7 @@ Modify your .babelrc:
 ```
 {
   "plugins": [
-    ["@ampproject/worker-dom-tools-tool1", {}]
+    ["@ampproject/worker-dom-linter", {}]
   ]
 }
 ```

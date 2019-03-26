@@ -1,10 +1,10 @@
 {
-  "name": "@ampproject/worker-dom-tools-tool1",
+  "name": "@ampproject/worker-dom-linter",
   "version": "0.0.1",
-  "description": "TODO: tool1",
+  "description": "Worker DOM Linter Babel plugin",
   "author": "The AMP HTML Authors",
   "license": "Apache-2.0",
-  "repository": "https://github.com/ampproject/worker-dom/tree/master/tools/tool1",
+  "repository": "https://github.com/ampproject/worker-dom/tree/master/tools/linter",
   "main": "lib/index.js",
   "keywords": [
     "babel-plugin"
