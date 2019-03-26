@@ -103,7 +103,8 @@ module.exports = function({ types: t }) {
           return;
         }
 
-        for (const property of properties) {
+        for (let i = 0; i < properties.length; i++) {
+          const property = properties[i];
           const { key } = property;
           if (!key) {
             continue;
@@ -117,6 +118,9 @@ module.exports = function({ types: t }) {
             continue;
           }
           if (hasOkComment(property)) {
+            continue;
+          }
+          if (t.isIdentifier(key) && property.computed) {
             continue;
           }
           report(path, name, spec);

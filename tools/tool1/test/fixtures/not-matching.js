@@ -47,3 +47,6 @@ function four(offsetWidth) {
   // A computed property access.
   btn[offsetWidth];
 }
+function five(btn, offsetWidth) {
+  var { [offsetWidth]: x } = btn;
+}
