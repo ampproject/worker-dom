@@ -16,10 +16,12 @@
 
 
 /**
- * @const {!Object<string, {
- *   global: (boolean|undefined),
- *   replacement: (string|undefined),
- * }>}
+ * @const {
+ *   [key: string]: {
+ *     global?: boolean,
+ *     replacement?: string,
+ *   }
+ * }
  */
 module.exports = {
   'clientHeight': {},
