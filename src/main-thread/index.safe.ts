@@ -41,7 +41,7 @@ export function upgradeElement(baseElement: Element, domURL: string, longTask?: 
 /**
  * This function's API will likely change frequently. Use at your own risk!
  * @param baseElement
- * @param fetchPromise Promise that resolves with a tuple containing the worker script, author script, and author script URL.
+ * @param fetchPromise Promise that resolves containing worker script, and author script.
  */
 export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string]>, config: WorkerDOMConfiguration): Promise<Worker | null> {
   config.sanitizer = sanitizer;
