@@ -100,14 +100,13 @@ export function removeTestingDocument() {
 
 /**
  * Formats valid output for trimmed ObjectExpressions.
- * @param {string} code 
- * @param {Array<Array<number, number>>} validPropertyRanges 
+ * @param {string} code
+ * @param {Array<Array<number, number>>} validPropertyRanges
  */
-const outputPropertyRange = (code, validPropertyRanges) => (
+const outputPropertyRange = (code, validPropertyRanges) =>
   `{
     ${validPropertyRanges.map((range, index) => `${index > 0 ? '\n\t\t' : ''}${code.substring(range[0], range[1])}`)}
-  }`
-);
+  }`;
 
 /**
  * RollupPlugin that removes the debugging printers from CommandExecutors.
@@ -130,7 +129,7 @@ export function removeDebugCommandExecutors() {
 
       walk.simple(program, {
         ObjectExpression(node) {
-          const propertyNames = node.properties && node.properties.map(property => property.key.name) || [];
+          const propertyNames = (node.properties && node.properties.map(property => property.key.name)) || [];
           const validPropertyRanges = [];
 
           if (propertyNames.includes('execute') && propertyNames.includes('print')) {

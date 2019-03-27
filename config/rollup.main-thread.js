@@ -18,8 +18,8 @@ import resolve from 'rollup-plugin-node-resolve';
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
 import replace from 'rollup-plugin-replace';
-import {babelPlugin, removeDebugCommandExecutors} from './rollup.plugins.js';
-import {MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE} from './rollup.utils.js';
+import { babelPlugin, removeDebugCommandExecutors } from './rollup.plugins.js';
+import { MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE } from './rollup.utils.js';
 
 const ESModules = [
   {
@@ -40,7 +40,7 @@ const ESModules = [
       }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
       MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean)
+    ].filter(Boolean),
   },
   {
     input: 'output/main-thread/index.js',
@@ -58,7 +58,7 @@ const ESModules = [
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,
       }),
-    ].filter(Boolean)
+    ].filter(Boolean),
   },
   {
     input: 'output/main-thread/index.safe.js',
@@ -79,7 +79,7 @@ const ESModules = [
       }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
       MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean)
+    ].filter(Boolean),
   },
   {
     input: 'output/main-thread/index.safe.js',
@@ -98,7 +98,7 @@ const ESModules = [
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,
       }),
-    ].filter(Boolean)
+    ].filter(Boolean),
   },
 ];
 
@@ -122,7 +122,7 @@ const IIFEModules = [
       }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
       MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean)
+    ].filter(Boolean),
   },
   {
     input: 'output/main-thread/index.js',
@@ -141,7 +141,7 @@ const IIFEModules = [
         transpileToES5: true,
         allowConsole: DEBUG_BUNDLE_VALUE,
       }),
-    ].filter(Boolean)
+    ].filter(Boolean),
   },
   {
     input: 'output/main-thread/index.safe.js',
@@ -163,7 +163,7 @@ const IIFEModules = [
       }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
       MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean)
+    ].filter(Boolean),
   },
   {
     input: 'output/main-thread/index.safe.js',
@@ -183,35 +183,33 @@ const IIFEModules = [
         transpileToES5: true,
         allowConsole: DEBUG_BUNDLE_VALUE,
       }),
-    ].filter(Boolean)
-  }
+    ].filter(Boolean),
+  },
 ];
 
-const debugModules = DEBUG_BUNDLE_VALUE ? [
-  {
-    input: 'output/main-thread/index.js',
-    output: {
-      file: 'dist/debug.index.js',
-      format: 'iife',
-      name: 'MainThread',
-      sourcemap: true,
-    },
-    plugins: [
-      replace({
-        DEBUG_ENABLED: true,
-      }),
-      babelPlugin({
-        transpileToES5: false,
-        allowConsole: true,
-      }),
-      MINIFY_BUNDLE_VALUE ? compiler() : null,
-      MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean)
-  }
-] : [];
+const debugModules = DEBUG_BUNDLE_VALUE
+  ? [
+      {
+        input: 'output/main-thread/index.js',
+        output: {
+          file: 'dist/debug.index.js',
+          format: 'iife',
+          name: 'MainThread',
+          sourcemap: true,
+        },
+        plugins: [
+          replace({
+            DEBUG_ENABLED: true,
+          }),
+          babelPlugin({
+            transpileToES5: false,
+            allowConsole: true,
+          }),
+          MINIFY_BUNDLE_VALUE ? compiler() : null,
+          MINIFY_BUNDLE_VALUE ? terser() : null,
+        ].filter(Boolean),
+      },
+    ]
+  : [];
 
-export default [
-  ...ESModules,
-  ...IIFEModules,
-  ...debugModules,
-];
+export default [...ESModules, ...IIFEModules, ...debugModules];
