@@ -7,10 +7,14 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 declare var OffscreenCanvas: any;
 
-function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{getContext(c: '2d'): CanvasRenderingContext2DImplementation}> {
-    return new Promise(resolve => {
+export const deferredUpgrades = new WeakMap();
+
+export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{getContext(c: '2d'): CanvasRenderingContext2DImplementation}> {
+    return new Promise((resolve, reject) => {
+        // TODO: This should only happen in test environemnet. Otherwise, we should throw.
         if (typeof addEventListener !== 'function') {
-            throw new Error("Missing 'addEventListener' function.");
+            const deferred = { resolve, reject };
+            deferredUpgrades.set(canvas, deferred);
         } else {
             addEventListener('message', ({ data }: { data: MessageToWorker }) => {
                 if (data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE) {
@@ -39,7 +43,7 @@ export class CanvasRenderingContext2D implements CanvasRenderingContext2DImpleme
         getOffscreenCanvasAsync(this.canvasElement).then((instance) => {
             this.implementation = instance.getContext('2d');
             this.upgraded = true;
-            
+
             for (const call of this.calls) {
                 if (call.setter) {
                     if (call.args.length != 1) {

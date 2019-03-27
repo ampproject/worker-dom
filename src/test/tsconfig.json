@@ -12,14 +12,16 @@
     "allowJs": false,
     "noUnusedLocals": true,
     "strictNullChecks": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noImplicitThis": true,
     "alwaysStrict": true
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts",
+    "**/*.js"
   ],
   "exclude": [
-    "main-thread/**/*.ts"
+    "main-thread/**/*.ts",
+    "node_modules/canvas"
   ]
 }

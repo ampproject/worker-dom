@@ -128,7 +128,7 @@ interface CanvasUserInterface {
 }
 */
 
-interface ImageBitmap {
+export interface ImageBitmap {
     /**
      * Returns the intrinsic height of the image, in CSS
      * pixels.

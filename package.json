@@ -37,6 +37,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
+    "@types/sinon": "^7.0.10",
     "dompurify": "1.0.10"
   },
   "devDependencies": {
@@ -69,6 +70,7 @@
     "rollup-plugin-node-resolve": "4.0.1",
     "rollup-plugin-terser": "4.0.4",
     "serve-static": "1.13.2",
+    "sinon": "^7.1.1",
     "tslint": "5.14.0",
     "typescript": "3.3.4000"
   },
