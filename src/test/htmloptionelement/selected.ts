@@ -36,9 +36,30 @@ test('selected should be false by default', t => {
   t.is(option.selected, false);
 });
 
-test('selected should be settable to a boolean value', t => {
+test('selected should be settable to a boolean true value', t => {
   const { option } = t.context;
 
   option.selected = true;
   t.is(option.selected, true);
+});
+
+test('selected should be settable to a boolean false value', t => {
+  const { option } = t.context;
+
+  option.selected = false;
+  t.is(option.selected, false);
+});
+
+test('selected should be settable to a string truthy value', t => {
+  const { option } = t.context;
+
+  option.selected = 'true';
+  t.is((option.selected as unknown) as boolean, true);
+});
+
+test('selected should be settable to a string falsy value', t => {
+  const { option } = t.context;
+
+  option.selected = 'false';
+  t.is((option.selected as unknown) as boolean, true, 'setting to falsy value causes selected to be true.');
 });

@@ -51,7 +51,7 @@ export function ChildListProcessor({ getNode }: NodeContext): CommandExecutor {
             }
           });
       }
-      return startPosition + ChildListMutationIndex.LastStaticNode + appendNodeCount + removeNodeCount + 1;
+      return startPosition + ChildListMutationIndex.End + appendNodeCount + removeNodeCount;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       const appendNodeCount = mutations[startPosition + ChildListMutationIndex.AppendedNodeCount];

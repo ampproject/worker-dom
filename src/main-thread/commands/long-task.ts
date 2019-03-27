@@ -43,7 +43,7 @@ export function LongTaskExecutor(config: WorkerDOMConfiguration): LongTaskComman
           }
         }
       }
-      return startPosition + LongTaskMutationIndex.LastStaticNode + 1;
+      return startPosition + LongTaskMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       return {

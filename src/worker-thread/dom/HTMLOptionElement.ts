@@ -75,7 +75,7 @@ export class HTMLOptionElement extends HTMLElement {
    * @param value new selected boolean value.
    */
   set selected(value: boolean | string) {
-    this[TransferrableKeys.selected] = value === true || value !== 'false';
+    this[TransferrableKeys.selected] = typeof value === 'boolean' ? value : value !== '';
     transfer((this.ownerDocument as Document).postMessage, [
       TransferrableMutationType.PROPERTIES,
       this[TransferrableKeys.index],

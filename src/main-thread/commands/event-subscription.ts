@@ -64,7 +64,6 @@ const eventHandler = (workerContext: WorkerContext, index: number) => (event: Ev
     fireValueChange(workerContext, event.currentTarget as RenderableElement);
   }
 
-  (event.currentTarget as RenderableElement)._index_;
   workerContext.messageToWorker({
     [TransferrableKeys.type]: MessageType.EVENT,
     [TransferrableKeys.event]: {

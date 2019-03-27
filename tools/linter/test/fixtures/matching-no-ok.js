@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
-export const enum BoundClientRectMutationIndex {
-  Target = 1,
-  End = 2,
+pageXOffset;
+x = pageXOffset;
+x = pageXOffset + 10;
+x(pageXOffset);
+window.pageXOffset;
+btn.offsetWidth;
+btn['offsetWidth'];
+bth.getBoundingClientRect();
+bth['getBoundingClientRect']();
+getComputedStyle();
+getComputedStyle(btn);
+window.getComputedStyle(btn);
+if (pageXOffset) {
 }
-
-// [top, right, bottom, left, width, height]
-export type TransferrableBoundingClientRect = [number, number, number, number, number, number];
+function one(btn) {
+  var { offsetWidth } = btn;
+  offsetWidth;
+}
+function two(btn) {
+  var { offsetWidth: x } = btn;
+}

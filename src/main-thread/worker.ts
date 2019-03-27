@@ -19,9 +19,10 @@ import { WorkerDOMConfiguration } from './configuration';
 import { createHydrateableRootNode } from './serialize';
 import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
 import { NodeContext } from './nodes';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 export class WorkerContext {
-  public worker: Worker;
+  private [TransferrableKeys.worker]: Worker;
   private nodeContext: NodeContext;
   private config: WorkerDOMConfiguration;
 
@@ -72,13 +73,20 @@ export class WorkerContext {
         ${authorScript}
       }).call(WorkerThread.workerDOM);
   //# sourceURL=${encodeURI(config.authorURL)}`;
-    this.worker = new Worker(URL.createObjectURL(new Blob([code])));
+    this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
     if (DEBUG_ENABLED) {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement));
     }
     if (config.onCreateWorker) {
       config.onCreateWorker(baseElement);
     }
+  }
+
+  /**
+   * Returns the private worker.
+   */
+  get worker(): Worker {
+    return this[TransferrableKeys.worker];
   }
 
   /**

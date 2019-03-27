@@ -56,7 +56,7 @@ export const enum ChildListMutationIndex {
   AppendedNodeCount = 4,
   RemovedNodeCount = 5,
   Nodes = 6,
-  LastStaticNode = 5,
+  End = 6,
 }
 
 /**
@@ -74,7 +74,7 @@ export const enum AttributeMutationIndex {
   Name = 2,
   Namespace = 3,
   Value = 4,
-  LastStaticNode = 4,
+  End = 5,
 }
 
 /**
@@ -88,7 +88,7 @@ export const enum AttributeMutationIndex {
 export const enum CharacterDataMutationIndex {
   Target = 1,
   Value = 2,
-  LastStaticNode = 2,
+  End = 3,
 }
 
 /**
@@ -97,7 +97,7 @@ export const enum CharacterDataMutationIndex {
  *   TransferrableMutationType.PROPERTIES,
  *   Target.index,
  *   Property.name,
- *   typeof Property.value === "boolean"
+ *   typeof Property.value === boolean,
  *   Property.value,
  * ]
  */
@@ -106,7 +106,7 @@ export const enum PropertyMutationIndex {
   Name = 2,
   IsBoolean = 3,
   Value = 4,
-  LastStaticNode = 4,
+  End = 5,
 }
 
 /**
@@ -118,5 +118,5 @@ export const enum PropertyMutationIndex {
  */
 export const enum LongTaskMutationIndex {
   Target = 1,
-  LastStaticNode = 1,
+  End = 2,
 }

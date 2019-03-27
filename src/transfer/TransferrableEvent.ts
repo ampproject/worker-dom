@@ -52,6 +52,6 @@ export const enum EventSubscriptionMutationIndex {
   RemoveEventListenerCount = 2,
   AddEventListenerCount = 3,
   Events = 4,
-  LastStaticNode = 3, // This value is the last static value of a Mutation.
+  End = 4,
 }
 export const EVENT_SUBSCRIPTION_LENGTH = 2;

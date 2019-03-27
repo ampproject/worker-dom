@@ -37,7 +37,7 @@ export function PropertyProcessor(strings: Strings, config: WorkerDOMConfigurati
           // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
         }
       }
-      return startPosition + PropertyMutationIndex.LastStaticNode + 1;
+      return startPosition + PropertyMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);

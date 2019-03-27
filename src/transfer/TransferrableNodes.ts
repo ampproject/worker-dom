@@ -77,5 +77,5 @@ export const enum TransferrableNodeIndex {
   TextContent = 4,
   ContainsNamespace = 5,
   Namespace = 6,
-  LastStaticNode = 6,
+  End = 7,
 }
