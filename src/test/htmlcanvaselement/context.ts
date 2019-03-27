@@ -328,7 +328,6 @@ describe('measureText', () => {
     });
 });
 
-// SETTERS
 describe('lineWidth', () => {
     test('context calls set lineWidth', t => {
         const { context2d, implementation } = t.context;
@@ -525,7 +524,6 @@ describe('miterLimit', () => {
     });
 });
 
-// METHODS
 describe('getLineDash', () => {
     test('context calls getLineDash', t => {
         const { context2d, implementation } = t.context;
@@ -614,7 +612,6 @@ describe('setLineDash', () => {
     });
 });
 
-// SETTERS
 describe('lineDashOffset', () => {
     test('context calls set lineDashOffset', t => {
         const { context2d, implementation } = t.context;
@@ -958,7 +955,6 @@ describe('strokeStyle', () => {
     });
 });
 
-// METHODS
 describe('createLinearGradient', () => {
     test('context calls createLinearGradient', t => {
         const { context2d, implementation } = t.context;
@@ -1060,7 +1056,6 @@ describe('createPattern', () => {
     });
 });
 
-// SETTERS
 describe('shadowBlur', () => {
     test('context calls set shadowBlur', t => {
         const { context2d, implementation } = t.context;
@@ -1257,7 +1252,6 @@ describe('shadowOffsetY', () => {
     });
 });
 
-// METHODS
 describe('beginPath', () => {
     test.skip('context calls beginPath', t => {
         const { context2d, implementation } = t.context;
@@ -2069,7 +2063,6 @@ describe('setTransform', () => {
     });
 });
 
-// SETTERS
 describe('globalAlpha', () => {
     test('context calls set globalAlpha', t => {
         const { context2d, implementation } = t.context;
@@ -2169,7 +2162,6 @@ describe('globalCompositeOperation', () => {
     
 });
 
-// METHODS
 describe('drawImage', () => {
     test.skip('context calls drawImage', t => {
         const { context2d, implementation, image } = t.context;
@@ -2282,7 +2274,6 @@ describe('putImageData', () => {
     });
 });
 
-// SETTERS
 describe('imageSmoothingEnabled', () => {
     test('context calls set imageSmoothingEnabled', t => {
         const { context2d, implementation } = t.context;
@@ -2381,7 +2372,6 @@ describe('imageSmoothingQuality', () => {
     });
 });
 
-// METHODS
 describe('save', () => {
     test('context calls save', t => {
         const { context2d, implementation } = t.context;
