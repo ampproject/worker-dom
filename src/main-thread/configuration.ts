@@ -48,8 +48,4 @@ export interface WorkerDOMConfiguration {
   onSendMessage?: (message: MessageToWorker) => void;
   // Called after a message is received from the worker.
   onReceiveMessage?: (message: MessageFromWorker) => void;
-  // Called to schedule mutation phase. See `MutationPumpFunction`.
-  onMutationPump?: MutationPumpFunction;
-  // Called to schedule long task. See `LongTaskFunction`.
-  onLongTask?: LongTaskFunction;
 }
