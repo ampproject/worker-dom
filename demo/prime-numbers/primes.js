@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const sieveOfEratosthenes = (limit) => {
+const sieveOfEratosthenes = limit => {
   const sieve = [];
   const primes = [];
   let k;
@@ -41,7 +41,7 @@ const sieveOfEratosthenes = (limit) => {
   }, primes);
 
   return new Set(primes);
-}
+};
 
 let startNumber = 1;
 
@@ -59,7 +59,7 @@ function generatePrimes() {
 
   for (let i = startNumber; i < limit; i++) {
     const numberDiv = document.createElement('div');
-    numberDiv.className = "number";
+    numberDiv.className = 'number';
     const numberText = document.createTextNode(i);
     if (primes.has(i)) {
       numberDiv.style.fontWeight = 'bold';
@@ -71,11 +71,7 @@ function generatePrimes() {
 
   document.body.appendChild(div);
   startNumber += numDivs;
-
 }
 
 generatePrimes();
 document.body.addEventListener('click', generatePrimes);
-
-
-
