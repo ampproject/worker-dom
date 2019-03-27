@@ -69,4 +69,6 @@ export const enum TransferrableKeys {
   end = 51,
   selected = 52,
   command = 53,
+  phase = 54,
+  worker = 55,
 }

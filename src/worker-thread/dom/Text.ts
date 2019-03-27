@@ -16,22 +16,24 @@
 
 import { CharacterData } from './CharacterData';
 import { NumericBoolean } from '../../utils';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { NodeType } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
 import { Node } from './Node';
+import { NodeType } from '../../transfer/TransferrableNodes';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
   constructor(data: string, ownerDocument: Node) {
     super(data, NodeType.TEXT_NODE, '#text', ownerDocument);
-    this[TransferrableKeys.creationFormat] = {
-      [TransferrableKeys.index]: this[TransferrableKeys.index],
-      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: NodeType.TEXT_NODE,
-      [TransferrableKeys.localOrNodeName]: storeString('#text'),
-      [TransferrableKeys.textContent]: storeString(this.data),
-    };
+    this[TransferrableKeys.creationFormat] = [
+      this[TransferrableKeys.index],
+      NodeType.TEXT_NODE,
+      storeString('#text'),
+      NumericBoolean.TRUE,
+      storeString(this.data),
+      NumericBoolean.FALSE,
+      0,
+    ];
   }
 
   // Unimplemented Properties

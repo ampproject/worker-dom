@@ -52,12 +52,13 @@ import { Event } from '../Event';
 import { Text } from './Text';
 import { Comment } from './Comment';
 import { MutationObserver } from '../MutationObserver';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
-import { observe as observeMutations } from '../DocumentMutations';
-import { propagate as propagateEvents } from '../EventPropagation';
-import { propagate as propagateSyncValues } from '../SyncValuePropagation';
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
+import { PostMessage } from '../worker-thread';
+import { observe } from '../MutationTransfer';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { propagate as propagateEvents } from '../Event';
+import { propagate as propagateSyncValues } from '../SyncValuePropagation';
 
 const DOCUMENT_NAME = '#document';
 
@@ -75,6 +76,7 @@ export class Document extends Element {
   };
   public documentElement: Document;
   public body: Element;
+  public postMessage: PostMessage;
 
   constructor() {
     super(NodeType.DOCUMENT_NODE, DOCUMENT_NAME, HTML_NAMESPACE, null);
@@ -82,7 +84,8 @@ export class Document extends Element {
     this.nodeName = DOCUMENT_NAME;
     this.documentElement = this;
     this.observe = (): void => {
-      observeMutations(this, this.postMessageMethod);
+      // Sync Document Changes.
+      observe();
       propagateEvents();
       propagateSyncValues();
     };
@@ -128,11 +131,10 @@ export class Document extends Element {
 
 /**
  *
- * @param postMessageMethod
  */
-export function createDocument(postMessageMethod?: Function): Document {
+export function createDocument(postMessage?: PostMessage): Document {
   const doc = new Document();
-  doc.postMessageMethod = postMessageMethod;
+  doc.postMessage = postMessage || (() => void 0);
   doc.isConnected = true;
   doc.appendChild((doc.body = doc.createElement('body')));
 

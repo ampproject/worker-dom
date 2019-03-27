@@ -15,11 +15,11 @@
  */
 
 import { TransferrableEvent } from './TransferrableEvent';
-import { TransferrableMutationRecord } from './TransferrableRecord';
 import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
-import { TransferrableNode, HydrateableNode, TransferredNode } from './TransferrableNodes';
-import { TransferrableBoundingClientRect } from './TransferrableCommands';
+import { HydrateableNode, TransferredNode } from './TransferrableNodes';
+import { TransferrableBoundingClientRect } from './TransferrableBoundClientRect';
+import { Phase } from './Phase';
 
 export const enum MessageType {
   // INIT = 0,
@@ -37,9 +37,10 @@ export const enum MessageType {
 
 export interface MutationFromWorker {
   readonly [TransferrableKeys.type]: MessageType;
+  readonly [TransferrableKeys.phase]: Phase;
   readonly [TransferrableKeys.strings]: Array<string>;
-  readonly [TransferrableKeys.nodes]: Array<TransferrableNode>;
-  readonly [TransferrableKeys.mutations]: Array<TransferrableMutationRecord>;
+  readonly [TransferrableKeys.nodes]: ArrayBuffer;
+  readonly [TransferrableKeys.mutations]: ArrayBuffer;
 }
 export type MessageFromWorker = {
   data: MutationFromWorker;
@@ -63,10 +64,4 @@ export interface BoundingClientRectToWorker {
   [TransferrableKeys.target]: TransferredNode;
   [TransferrableKeys.data]: TransferrableBoundingClientRect;
 }
-export interface LongTaskStartToWorker {
-  [TransferrableKeys.type]: MessageType.LONG_TASK_START;
-}
-export interface LongTaskEndToWorker {
-  [TransferrableKeys.type]: MessageType.LONG_TASK_END;
-}
-export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker | LongTaskStartToWorker | LongTaskEndToWorker;
+export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker;

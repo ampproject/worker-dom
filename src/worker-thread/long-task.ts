@@ -15,8 +15,10 @@
  */
 
 import { Node } from './dom/Node';
-import { MutationRecordType } from './MutationRecord';
-import { mutate } from './MutationObserver';
+import { transfer } from './MutationTransfer';
+import { Document } from './dom/Document';
+import { TransferrableMutationType } from '../transfer/TransferrableMutation';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 export function wrap(target: Node, func: Function): Function {
   return function() {
@@ -24,18 +26,18 @@ export function wrap(target: Node, func: Function): Function {
   };
 }
 
-function execute(target: Node, promise: Promise<any>, message?: string): Promise<any> {
+function execute(target: Node, promise: Promise<any>): Promise<any> {
   // Start the task.
-  mutate({ type: MutationRecordType.LONG_TASK_START, target });
+  transfer((target.ownerDocument as Document).postMessage, [TransferrableMutationType.LONG_TASK_START, target[TransferrableKeys.index]]);
   return promise.then(
     result => {
       // Complete the task.
-      mutate({ type: MutationRecordType.LONG_TASK_END, target });
+      transfer((target.ownerDocument as Document).postMessage, [TransferrableMutationType.LONG_TASK_END, target[TransferrableKeys.index]]);
       return result;
     },
     reason => {
       // Complete the task.
-      mutate({ type: MutationRecordType.LONG_TASK_END, target });
+      transfer((target.ownerDocument as Document).postMessage, [TransferrableMutationType.LONG_TASK_END, target[TransferrableKeys.index]]);
       throw reason;
     },
   );

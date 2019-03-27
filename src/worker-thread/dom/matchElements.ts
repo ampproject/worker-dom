@@ -16,8 +16,8 @@
 
 import { Element } from './Element';
 import { toLower, toUpper } from '../../utils';
-import { NodeType } from '../../transfer/TransferrableNodes';
 import { Node } from './Node';
+import { NodeType } from '../../transfer/TransferrableNodes';
 
 export type ConditionPredicate = (element: Element) => boolean;
 // To future authors: It would be great if we could enforce that elements are not modified by a ConditionPredicate.

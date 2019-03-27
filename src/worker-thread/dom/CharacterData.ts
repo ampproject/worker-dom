@@ -17,8 +17,11 @@
 import { Node, NodeName } from './Node';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
+import { store as storeString } from '../strings';
+import { Document } from './Document';
 import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 export abstract class CharacterData extends Node {
@@ -52,12 +55,16 @@ export abstract class CharacterData extends Node {
     const oldValue = this.data;
     this[TransferrableKeys.data] = value;
 
-    mutate({
-      target: this,
-      type: MutationRecordType.CHARACTER_DATA,
-      value,
-      oldValue,
-    });
+    mutate(
+      this.ownerDocument as Document,
+      {
+        target: this,
+        type: MutationRecordType.CHARACTER_DATA,
+        value,
+        oldValue,
+      },
+      [TransferrableMutationType.CHARACTER_DATA, this[TransferrableKeys.index], storeString(value)],
+    );
   }
 
   /**

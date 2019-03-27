@@ -15,9 +15,9 @@
  */
 
 import { Node } from './dom/Node';
-import { Phase } from '../transfer/phase';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { phase } from './phase';
+import { Phase } from '../transfer/Phase';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 let count: number = 0;
 let transfer: Array<Node> = [];
@@ -34,7 +34,7 @@ export function store(node: Node): number {
   }
 
   mapping.set((node[TransferrableKeys.index] = ++count), node);
-  if (phase !== Phase.Initializing) {
+  if (phase > Phase.Hydrating) {
     // After Initialization, include all future dom node creation into the list for next transfer.
     transfer.push(node);
   }
