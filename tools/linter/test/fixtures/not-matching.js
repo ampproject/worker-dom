@@ -19,7 +19,7 @@
 // Implicit global assignment, not read.
 pageXOffset = x;
 // Unrelated object declaration.
-x = {pageXOffset: 1};
+x = { pageXOffset: 1 };
 // Unrelated property read.
 offsetWidth.other;
 // Unrelated method call.

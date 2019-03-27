@@ -26,11 +26,12 @@ bth['getBoundingClientRect']();
 getComputedStyle();
 getComputedStyle(btn);
 window.getComputedStyle(btn);
-if (pageXOffset) {}
+if (pageXOffset) {
+}
 function one(btn) {
   var { offsetWidth } = btn;
   offsetWidth;
 }
 function two(btn) {
-  var { 'offsetWidth': x } = btn;
+  var { offsetWidth: x } = btn;
 }

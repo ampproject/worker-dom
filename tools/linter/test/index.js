@@ -47,7 +47,7 @@ test.serial('test matching-no-ok', t => {
   const { warnings } = t.context;
   t.is(warnings.length, 15);
   // `pageXOffset;`
-  t.true(warnings[0].message.indexOf('Cannot use \'pageXOffset\'') != -1);
+  t.true(warnings[0].message.indexOf("Cannot use 'pageXOffset'") != -1);
   // `x = pageXOffset;`
   t.true(warnings[1].message.indexOf('pageXOffset') != -1);
   // `x = pageXOffset + 10;`

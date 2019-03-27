@@ -15,41 +15,42 @@
  */
 
 // Implicit global reference.
-/*OK*/pageXOffset;
+/*OK*/ pageXOffset;
 // Implicit global reference.
-x = /*OK*/pageXOffset;
+x = /*OK*/ pageXOffset;
 // Implicit global reference.
-x = /*OK*/pageXOffset + 10;
+x = /*OK*/ pageXOffset + 10;
 // Implicit global reference.
-x(/*OK*/pageXOffset);
+x(/*OK*/ pageXOffset);
 // Explicit global reference.
-window./*OK*/pageXOffset;
+window./*OK*/ pageXOffset;
 // Property getter.
-btn./*OK*/offsetWidth;
+btn./*OK*/ offsetWidth;
 // Property getter by key.
-btn[/*OK*/'offsetWidth'];
+btn[/*OK*/ 'offsetWidth'];
 // Property getter by key.
-btn/*OK*/['offsetWidth'];
+btn /*OK*/['offsetWidth'];
 // Method call.
-bth./*OK*/getBoundingClientRect();
+bth./*OK*/ getBoundingClientRect();
 // Method call by key.
-bth[/*OK*/'getBoundingClientRect']();
+bth[/*OK*/ 'getBoundingClientRect']();
 // Method call by key.
-bth/*OK*/['getBoundingClientRect']();
+bth /*OK*/['getBoundingClientRect']();
 // Implicit global method call.
-/*OK*/getComputedStyle();
+/*OK*/ getComputedStyle();
 // Implicit global method call.
-/*OK*/getComputedStyle(btn);
+/*OK*/ getComputedStyle(btn);
 // Explicit global method call.
-window./*OK*/getComputedStyle(btn);
+window./*OK*/ getComputedStyle(btn);
 // Implicit global reference.
-if (/*OK*/pageXOffset) {}
+if (/*OK*/ pageXOffset) {
+}
 function one(btn) {
   // Property access via object destructuring.
-  var { /*OK*/offsetWidth } = btn;
+  var { /*OK*/ offsetWidth } = btn;
   offsetWidth;
 }
 function two(btn) {
   // Property access via object destructuring.
-  var { /*OK*/'offsetWidth': x } = btn;
+  var { /*OK*/ offsetWidth: x } = btn;
 }
