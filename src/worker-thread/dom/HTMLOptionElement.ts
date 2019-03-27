@@ -20,6 +20,11 @@ import { reflectProperties } from './enhanceElement';
 import { NodeName, NamespaceURI, Node } from './Node';
 import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { transfer } from '../MutationTransfer';
+import { Document } from './Document';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { store as storeString } from '../strings';
+import { NumericBoolean } from '../../utils';
 
 export class HTMLOptionElement extends HTMLElement {
   private [TransferrableKeys.selected]: boolean = false;
@@ -61,7 +66,7 @@ export class HTMLOptionElement extends HTMLElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionElement
    * @return boolean based on if the option element is selected.
    */
-  get selected(): boolean {
+  get selected(): boolean | string {
     return this[TransferrableKeys.selected];
   }
 
@@ -69,9 +74,15 @@ export class HTMLOptionElement extends HTMLElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionElement
    * @param value new selected boolean value.
    */
-  set selected(value: boolean) {
-    this[TransferrableKeys.selected] = value;
-    // TODO(KB) This is a mutation.
+  set selected(value: boolean | string) {
+    this[TransferrableKeys.selected] = value === true || value !== 'false';
+    transfer((this.ownerDocument as Document).postMessage, [
+      TransferrableMutationType.PROPERTIES,
+      this[TransferrableKeys.index],
+      storeString('selected'),
+      NumericBoolean.TRUE,
+      this[TransferrableKeys.selected] ? NumericBoolean.TRUE : NumericBoolean.FALSE,
+    ]);
   }
 
   /**

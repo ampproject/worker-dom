@@ -17,7 +17,7 @@
 import { NodeContext } from './nodes';
 import { Strings } from './strings';
 import { WorkerContext } from './worker';
-import { TransferrableMutationType } from '../transfer/TransferrableMutation';
+import { TransferrableMutationType, ReadableMutationType } from '../transfer/TransferrableMutation';
 import { EventSubscriptionProcessor } from './commands/event-subscription';
 import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
 import { ChildListProcessor } from './commands/child-list';
@@ -89,6 +89,9 @@ export class MutatorProcessor {
    * Investigations in using asyncFlush to resolve are worth considering.
    */
   private syncFlush = (): void => {
+    if (DEBUG_ENABLED) {
+      console.group('Mutations');
+    }
     this.mutationQueue.forEach(mutationArray => {
       let operationStart: number = 0;
       let length: number = mutationArray.length;
@@ -100,11 +103,17 @@ export class MutatorProcessor {
           return;
         }
         if (DEBUG_ENABLED) {
-          console.info('debug', 'mutation', this.executors[mutationArray[operationStart]].print(mutationArray, operationStart, target));
+          console.log(
+            ReadableMutationType[mutationArray[operationStart]],
+            this.executors[mutationArray[operationStart]].print(mutationArray, operationStart, target),
+          );
         }
         operationStart = this.executors[mutationArray[operationStart]].execute(mutationArray, operationStart, target);
       }
     });
+    if (DEBUG_ENABLED) {
+      console.groupEnd();
+    }
     this.mutationQueue = [];
     this.pendingMutations = false;
   };

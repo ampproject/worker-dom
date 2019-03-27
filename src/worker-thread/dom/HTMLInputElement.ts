@@ -23,6 +23,7 @@ import { TransferrableMutationType } from '../../transfer/TransferrableMutation'
 import { store as storeString } from '../strings';
 import { Document } from './Document';
 import { transfer } from '../MutationTransfer';
+import { NumericBoolean } from '../../utils';
 
 export class HTMLInputElement extends HTMLElement {
   // Per spec, some attributes like 'value' and 'checked' change behavior based on dirty flags.
@@ -51,6 +52,7 @@ export class HTMLInputElement extends HTMLElement {
       TransferrableMutationType.PROPERTIES,
       this[TransferrableKeys.index],
       storeString('value'),
+      NumericBoolean.FALSE,
       storeString(value),
     ]);
   }
@@ -99,7 +101,8 @@ export class HTMLInputElement extends HTMLElement {
       TransferrableMutationType.PROPERTIES,
       this[TransferrableKeys.index],
       storeString('checked'),
-      storeString(String(value)),
+      NumericBoolean.TRUE,
+      value === true ? NumericBoolean.TRUE : NumericBoolean.FALSE,
     ]);
   }
 
