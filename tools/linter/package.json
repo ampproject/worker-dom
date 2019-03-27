@@ -23,9 +23,9 @@
     "@babel/core": "^7.0.0-0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/register": "^7.0.0",
+    "@babel/cli": "7.2.3",
+    "@babel/core": "7.4.0",
+    "@babel/register": "7.4.0",
     "ava": "1.4.1",
     "lint-staged": "8.1.5",
     "prettier": "1.16.3",
