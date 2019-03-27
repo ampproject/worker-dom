@@ -26,7 +26,7 @@ export function CharacterDataProcessor(strings: Strings): CommandExecutor {
         // Sanitization not necessary for textContent.
         target.textContent = strings.get(value);
       }
-      return startPosition + CharacterDataMutationIndex.LastStaticNode + 1;
+      return startPosition + CharacterDataMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       return {

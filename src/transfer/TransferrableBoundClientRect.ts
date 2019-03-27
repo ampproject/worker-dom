@@ -16,7 +16,7 @@
 
 export const enum BoundClientRectMutationIndex {
   Target = 1,
-  LastStaticNode = 1, // This value is the last static value of a Mutation.
+  End = 2,
 }
 
 // [top, right, bottom, left, width, height]

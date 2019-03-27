@@ -40,7 +40,7 @@ export function AttributeProcessor(strings: Strings, config: WorkerDOMConfigurat
           }
         }
       }
-      return startPosition + AttributeMutationIndex.LastStaticNode + 1;
+      return startPosition + AttributeMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);

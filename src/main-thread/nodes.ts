@@ -49,7 +49,7 @@ export class NodeContext {
     const nodeBuffer = new Uint16Array(buffer);
     const nodeBufferLength = nodeBuffer.length;
 
-    for (let iterator = 0; iterator < nodeBufferLength; iterator += TransferrableNodeIndex.LastStaticNode + 1) {
+    for (let iterator = 0; iterator < nodeBufferLength; iterator += TransferrableNodeIndex.End) {
       let node: Node;
       if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.TEXT_NODE) {
         node = document.createTextNode(this.strings.get(nodeBuffer[iterator + TransferrableNodeIndex.TextContent]));

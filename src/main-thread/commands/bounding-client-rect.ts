@@ -41,7 +41,7 @@ export function BoundingClientRectProcessor(workerContext: WorkerContext): Comma
         console.error(`getNode() yields null – ${target}`);
       }
 
-      return startPosition + BoundClientRectMutationIndex.LastStaticNode + 1;
+      return startPosition + BoundClientRectMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       return {
