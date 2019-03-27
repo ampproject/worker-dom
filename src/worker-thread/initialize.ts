@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import { HydrateableNode, NodeType } from '../transfer/TransferrableNodes';
 import { store as storeString } from './strings';
 import { store as storeNode } from './nodes';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { RenderableElement } from './worker-thread';
 import { Document } from './dom/Document';
 import { HTMLElement } from './dom/HTMLElement';
 import { SVGElement } from './dom/SVGElement';
-import { Phase } from '../transfer/phase';
+import { HydrateableNode, NodeType } from '../transfer/TransferrableNodes';
+import { Phase } from '../transfer/Phase';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { set as setPhase } from './phase';
 
 export function consumeInitialDOM(document: Document, strings: Array<string>, hydrateableNode: HydrateableNode): void {
+  setPhase(Phase.Hydrating);
   strings.forEach(storeString);
   (hydrateableNode[TransferrableKeys.childNodes] || []).forEach(child => document.body.appendChild(create(document, strings, child)));
-  setPhase(Phase.Hydrating);
 }
 
 function create(document: Document, strings: Array<string>, skeleton: HydrateableNode): RenderableElement {

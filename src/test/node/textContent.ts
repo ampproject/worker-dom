@@ -17,9 +17,11 @@
 import anyTest, { TestInterface } from 'ava';
 import { Text } from '../../worker-thread/dom/Text';
 import { Element } from '../../worker-thread/dom/Element';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createDocument, Document } from '../../worker-thread/dom/Document';
+import { NodeType } from '../../transfer/TransferrableNodes';
 
 const test = anyTest as TestInterface<{
+  document: Document;
   node: Element;
   child: Element;
   nodeText: Text;
@@ -30,6 +32,7 @@ test.beforeEach(t => {
   const document = createDocument();
 
   t.context = {
+    document,
     node: document.createElement('div'),
     child: document.createElement('p'),
     nodeText: document.createTextNode('text in node'),
@@ -68,4 +71,31 @@ test('textContent returns the value of all depths childNodes when there are chil
   node.appendChild(child);
   t.is(node.textContent, nodeText.textContent + childText.textContent);
   t.is(node.textContent, 'text in node text in child');
+});
+
+test('textContent setter removes other child element nodes', t => {
+  const { node, child } = t.context;
+  child.textContent = 'foo';
+  node.appendChild(child);
+
+  t.is(node.childNodes.length, 1);
+  t.is(node.childNodes[0].nodeType, NodeType.ELEMENT_NODE);
+  t.is(node.textContent, 'foo');
+  node.textContent = 'bar';
+  t.is(node.textContent, 'bar');
+  t.is(node.childNodes.length, 1);
+  t.is(node.childNodes[0].nodeType, NodeType.TEXT_NODE);
+});
+
+test('textContent setter removes other child text nodes', t => {
+  const { node, document } = t.context;
+  node.appendChild(document.createTextNode('f'));
+  node.appendChild(document.createTextNode('o'));
+  node.appendChild(document.createTextNode('o'));
+
+  t.is(node.textContent, 'foo');
+  t.is(node.childNodes.length, 3);
+  node.textContent = '';
+  t.is(node.textContent, '');
+  t.is(node.childNodes.length, 1);
 });

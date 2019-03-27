@@ -17,6 +17,8 @@
 import { Node } from './dom/Node';
 import { MutationRecord } from './MutationRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { Document } from './dom/Document';
+import { transfer } from './MutationTransfer';
 
 const observers: MutationObserver[] = [];
 let pendingMutations = false;
@@ -41,24 +43,17 @@ const pushMutation = (observer: MutationObserver, record: MutationRecord): void 
  * These records are then pushed into MutationObserver instances that match the MutationRecord.target
  * @param record MutationRecord to push into MutationObservers.
  */
-export function mutate(record: MutationRecord): void {
-  observers.forEach(observer => {
-    if (!observer.options.flatten) {
-      // TODO: Restore? || record.type === MutationRecordType.COMMAND
-      pushMutation(observer, record);
-      return;
-    }
+export function mutate(document: Document, record: MutationRecord, transferable: Array<number>): void {
+  transfer(document.postMessage, transferable);
 
+  observers.forEach(observer => {
     let target: Node | null = record.target;
-    let matched = match(observer.target, target);
-    if (!matched) {
-      do {
-        if ((matched = match(observer.target, target))) {
-          pushMutation(observer, record);
-          break;
-        }
-      } while ((target = target.parentNode));
-    }
+    do {
+      if (match(observer.target, target)) {
+        pushMutation(observer, record);
+        break;
+      }
+    } while ((target = target.parentNode));
   });
 }
 
@@ -71,10 +66,6 @@ interface MutationObserverInit {
   // characterDataOldValue?: boolean;
   // childList?: boolean;  // Default false
   // subtree?: boolean;    // Default false
-
-  // Except for this one (not specced) that will force all mutations to be observed
-  // Without flattening the record to the node requested to be observed.
-  flatten?: boolean;
 }
 
 export class MutationObserver {
@@ -95,7 +86,7 @@ export class MutationObserver {
   public observe(target: Node, options?: MutationObserverInit): void {
     this.disconnect();
     this.target = target;
-    this.options = Object.assign({ flatten: false }, options);
+    this.options = options || {};
 
     observers.push(this);
   }

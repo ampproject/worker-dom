@@ -16,28 +16,37 @@
 
 import anyTest, { TestInterface } from 'ava';
 import { Env } from './helpers/env';
-import { LongTaskProcessor } from '../../main-thread/commands/long-task';
+import { LongTaskCommandExecutor, LongTaskExecutor } from '../../main-thread/commands/long-task';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
 const test = anyTest as TestInterface<{
   env: Env;
-  processor: LongTaskProcessor;
+  executor: LongTaskCommandExecutor;
   longTasks: Array<Promise<any>>;
+  baseElement: HTMLElement;
 }>;
 
 test.beforeEach(t => {
   const env = new Env();
-
+  const { document } = env;
   const longTasks: Array<Promise<any>> = [];
-  const processor = new LongTaskProcessor({
-    onLongTask: (promise: Promise<any>) => {
+  const executor = LongTaskExecutor({
+    authorURL: 'authorURL',
+    domURL: 'domURL',
+    longTask: (promise: Promise<any>) => {
       longTasks.push(promise);
     },
   });
 
+  const baseElement = document.createElement('div');
+  baseElement._index_ = 1;
+  document.body.appendChild(baseElement);
+
   t.context = {
     env,
-    processor,
+    executor,
     longTasks,
+    baseElement,
   };
 });
 
@@ -47,74 +56,77 @@ test.afterEach(t => {
 });
 
 test.serial('should tolerate no callback', t => {
-  const { longTasks } = t.context;
-  const processor = new LongTaskProcessor();
+  const { longTasks, baseElement } = t.context;
+  const executor = LongTaskExecutor({
+    authorURL: 'authorURL',
+    domURL: 'domURL',
+  });
 
-  processor.processStart();
-  processor.processEnd();
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, baseElement);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, baseElement);
   t.is(longTasks.length, 0);
 });
 
 test.serial('should create and release a long task', t => {
-  const { processor, longTasks } = t.context;
+  const { executor, longTasks, baseElement } = t.context;
 
-  processor.processStart();
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, baseElement);
   t.is(longTasks.length, 1);
-  t.true(processor.isInLongTask());
+  t.true(executor.active);
 
   // Ensure the promise is resolved in the end.
-  processor.processEnd();
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, baseElement);
   t.is(longTasks.length, 1);
-  t.false(processor.isInLongTask());
+  t.false(executor.active);
   return longTasks[0];
 });
 
 test.serial('should nest long tasks', t => {
-  const { processor, longTasks } = t.context;
+  const { executor, longTasks, baseElement } = t.context;
 
-  processor.processStart();
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, baseElement);
   t.is(longTasks.length, 1);
-  t.true(processor.isInLongTask());
+  t.true(executor.active);
 
   // Nested: no new promise/task created.
-  processor.processStart();
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, baseElement);
   t.is(longTasks.length, 1);
-  t.true(processor.isInLongTask());
+  t.true(executor.active);
 
   // Unnest: the task is still active.
-  processor.processEnd();
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, baseElement);
   t.is(longTasks.length, 1);
-  t.true(processor.isInLongTask());
+  t.true(executor.active);
 
   // Ensure the promise is resolved in the end.
-  processor.processEnd();
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, baseElement);
   t.is(longTasks.length, 1);
-  t.false(processor.isInLongTask());
+  t.false(executor.active);
   return longTasks[0];
 });
 
 test.serial('should restart a next long tasks', t => {
-  const { processor, longTasks } = t.context;
+  const { executor, longTasks, baseElement } = t.context;
 
   // Start 1st task.
-  processor.processStart();
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, baseElement);
   t.is(longTasks.length, 1);
-  t.true(processor.isInLongTask());
+  t.true(executor.active);
 
   // End 1st task.
-  processor.processEnd();
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, baseElement);
   t.is(longTasks.length, 1);
-  t.false(processor.isInLongTask());
+  t.false(executor.active);
 
   // Start 2nd task.
-  processor.processStart();
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, baseElement);
   t.is(longTasks.length, 2);
-  t.true(processor.isInLongTask());
+  t.true(executor.active);
 
   // End 2nd task.
-  processor.processEnd();
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, baseElement);
   t.is(longTasks.length, 2);
-  t.false(processor.isInLongTask());
+  t.false(executor.active);
 
   // All tasks must resolve.
   return Promise.all(longTasks) as Promise<any>;

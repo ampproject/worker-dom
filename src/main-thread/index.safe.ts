@@ -15,21 +15,25 @@
  */
 
 import { DOMPurifySanitizer } from './DOMPurifySanitizer';
-import { WorkerCallbacks } from './callbacks';
-import { WorkerDom } from './worker-dom';
 import { fetchAndInstall, install } from './install';
+import { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
 
 /** Users can import this and configure the sanitizer with custom DOMPurify hooks, etc. */
 export const sanitizer = new DOMPurifySanitizer();
 
 /**
  * @param baseElement
- * @param workerDOMUrl
+ * @param domURL
  */
-export function upgradeElement(baseElement: Element, workerDOMUrl: string, callbacks?: WorkerCallbacks, debug?: boolean): Promise<WorkerDom | null> {
+export function upgradeElement(baseElement: Element, domURL: string, longTask?: LongTaskFunction): Promise<Worker | null> {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
-    return fetchAndInstall(baseElement as HTMLElement, authorURL, workerDOMUrl, callbacks, sanitizer, debug);
+    return fetchAndInstall(baseElement as HTMLElement, {
+      domURL,
+      authorURL,
+      sanitizer,
+      longTask,
+    });
   }
   return Promise.resolve(null);
 }
@@ -37,15 +41,9 @@ export function upgradeElement(baseElement: Element, workerDOMUrl: string, callb
 /**
  * This function's API will likely change frequently. Use at your own risk!
  * @param baseElement
- * @param fetchPromise Promise that resolves with a tuple containing the worker script, author script, and author script URL.
+ * @param fetchPromise Promise that resolves containing worker script, and author script.
  */
-export function upgrade(
-  baseElement: Element,
-  fetchPromise: Promise<[string, string, string]>,
-  callbacks?: WorkerCallbacks,
-  debug?: boolean,
-): Promise<WorkerDom | null> {
-  return install(fetchPromise, baseElement as HTMLElement, callbacks, sanitizer, debug);
+export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string]>, config: WorkerDOMConfiguration): Promise<Worker | null> {
+  config.sanitizer = sanitizer;
+  return install(fetchPromise, baseElement as HTMLElement, config);
 }
-
-export { WorkerDom };

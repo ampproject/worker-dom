@@ -47,9 +47,7 @@ import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { appendKeys } from './css/CSSStyleDeclaration';
 import { consumeInitialDOM } from './initialize';
 
-declare var __ALLOW_POST_MESSAGE__: boolean;
-
-const doc = createDocument(__ALLOW_POST_MESSAGE__ ? (self as DedicatedWorkerGlobalScope).postMessage : undefined);
+const doc = createDocument(postMessage.bind(self));
 export const workerDOM: WorkerDOMGlobalScope = {
   document: doc,
   navigator: (self as WorkerGlobalScope).navigator,

@@ -14,54 +14,40 @@
  * limitations under the License.
  */
 
-import { TransferrableMutationRecord } from '../../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { MessageType } from '../../transfer/Messages';
-import { NodeContext } from '../nodes';
-import { NumericBoolean } from '../../utils';
 import { WorkerContext } from '../worker';
+import { CommandExecutor } from './interface';
+import { BoundClientRectMutationIndex } from '../../transfer/TransferrableBoundClientRect';
 
-export class BoundingClientRectProcessor {
-  private nodeContext: NodeContext;
-  private workerContext: WorkerContext;
+export function BoundingClientRectProcessor(workerContext: WorkerContext): CommandExecutor {
+  return {
+    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+      if (target) {
+        const boundingRect = target.getBoundingClientRect();
+        workerContext.messageToWorker({
+          [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
+          [TransferrableKeys.target]: [target._index_],
+          [TransferrableKeys.data]: [
+            boundingRect.top,
+            boundingRect.right,
+            boundingRect.bottom,
+            boundingRect.left,
+            boundingRect.width,
+            boundingRect.height,
+          ],
+        });
+      } else {
+        console.error(`getNode() yields null – ${target}`);
+      }
 
-  /**
-   * @param nodeContext
-   * @param workerContext whom to dispatch events toward.
-   */
-  constructor(nodeContext: NodeContext, workerContext: WorkerContext) {
-    this.nodeContext = nodeContext;
-    this.workerContext = workerContext;
-  }
-
-  /**
-   * Process commands transfered from worker thread to main thread.
-   * @param mutation mutation record containing commands to execute.
-   */
-  process(mutation: TransferrableMutationRecord): void {
-    const nodeId = mutation[TransferrableKeys.target];
-    const target = this.nodeContext.getNode(nodeId);
-
-    if (!target) {
-      console.error('getNode() yields a null value. Node id (' + nodeId + ') was not found.');
-      return;
-    }
-
-    const boundingRect = target.getBoundingClientRect();
-    this.workerContext.messageToWorker({
-      [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
-      [TransferrableKeys.target]: {
-        [TransferrableKeys.index]: target._index_,
-        [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-      },
-      [TransferrableKeys.data]: [
-        boundingRect.top,
-        boundingRect.right,
-        boundingRect.bottom,
-        boundingRect.left,
-        boundingRect.width,
-        boundingRect.height,
-      ],
-    });
-  }
+      return startPosition + BoundClientRectMutationIndex.End;
+    },
+    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+      return {
+        type: 'GET_BOUNDING_CLIENT_RECT',
+        target,
+      };
+    },
+  };
 }

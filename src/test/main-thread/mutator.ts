@@ -17,12 +17,11 @@
 import anyTest, { TestInterface } from 'ava';
 import { Env } from './helpers/env';
 import { MutatorProcessor } from '../../main-thread/mutator';
-import { MutationRecordType } from '../../worker-thread/MutationRecord';
 import { NodeContext } from '../../main-thread/nodes';
-import { Phase } from '../../transfer/phase';
 import { Strings } from '../../main-thread/strings';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { WorkerContext } from '../../main-thread/worker';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { Phase } from '../../transfer/Phase';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -64,33 +63,34 @@ test.afterEach(t => {
 test.serial('batch mutations', t => {
   const { env, baseElement, strings, nodeContext, workerContext } = t.context;
   const { rafTasks } = env;
-  const mutator = new MutatorProcessor(strings, nodeContext, workerContext);
+  const mutator = new MutatorProcessor(strings, nodeContext, workerContext, {
+    domURL: 'domURL',
+    authorURL: 'authorURL',
+  });
 
   mutator.mutate(
     Phase.Mutating,
-    [],
+    new ArrayBuffer(0),
     ['hidden'],
-    [
-      {
-        [TransferrableKeys.type]: MutationRecordType.ATTRIBUTES,
-        [TransferrableKeys.target]: 2, // Base node.
-        [TransferrableKeys.attributeName]: 0,
-        [TransferrableKeys.value]: 0,
-      },
-    ],
+    new Uint16Array([
+      TransferrableMutationType.ATTRIBUTES,
+      2, // Base Node
+      0,
+      0,
+      0 + 1,
+    ]),
   );
   mutator.mutate(
     Phase.Mutating,
-    [],
+    new ArrayBuffer(0),
     ['data-one'],
-    [
-      {
-        [TransferrableKeys.type]: MutationRecordType.ATTRIBUTES,
-        [TransferrableKeys.target]: 2, // Base node.
-        [TransferrableKeys.attributeName]: 1,
-        [TransferrableKeys.value]: 1,
-      },
-    ],
+    new Uint16Array([
+      TransferrableMutationType.ATTRIBUTES,
+      2, // Base Node
+      1,
+      0,
+      1 + 1,
+    ]),
   );
 
   t.is(baseElement.getAttribute('hidden'), null);
@@ -102,16 +102,15 @@ test.serial('batch mutations', t => {
 
   mutator.mutate(
     Phase.Mutating,
-    [],
+    new ArrayBuffer(0),
     ['data-two'],
-    [
-      {
-        [TransferrableKeys.type]: MutationRecordType.ATTRIBUTES,
-        [TransferrableKeys.target]: 2, // Base node.
-        [TransferrableKeys.attributeName]: 2,
-        [TransferrableKeys.value]: 2,
-      },
-    ],
+    new Uint16Array([
+      TransferrableMutationType.ATTRIBUTES,
+      2, // Base Node
+      2,
+      0,
+      2 + 1,
+    ]),
   );
 
   t.is(baseElement.getAttribute('data-two'), null);
@@ -125,37 +124,37 @@ test.serial('batch mutations with custom pump', t => {
   const { rafTasks } = env;
 
   const tasks: Array<{ phase: Phase; flush: Function }> = [];
-  const mutationPump = (flush: Function, phase: Phase) => {
-    tasks.push({ phase, flush });
-  };
-
-  const mutator = new MutatorProcessor(strings, nodeContext, workerContext, { onMutationPump: mutationPump });
+  const mutator = new MutatorProcessor(strings, nodeContext, workerContext, {
+    domURL: 'domURL',
+    authorURL: 'authorURL',
+    mutationPump: (flush: Function, phase: Phase) => {
+      tasks.push({ phase, flush });
+    },
+  });
 
   mutator.mutate(
     Phase.Mutating,
-    [],
+    new ArrayBuffer(0),
     ['hidden'],
-    [
-      {
-        [TransferrableKeys.type]: MutationRecordType.ATTRIBUTES,
-        [TransferrableKeys.target]: 2, // Base node.
-        [TransferrableKeys.attributeName]: 0,
-        [TransferrableKeys.value]: 0,
-      },
-    ],
+    new Uint16Array([
+      TransferrableMutationType.ATTRIBUTES,
+      2, // Base Node
+      0,
+      0,
+      0 + 1,
+    ]),
   );
   mutator.mutate(
     Phase.Mutating,
-    [],
+    new ArrayBuffer(0),
     ['data-one'],
-    [
-      {
-        [TransferrableKeys.type]: MutationRecordType.ATTRIBUTES,
-        [TransferrableKeys.target]: 2, // Base node.
-        [TransferrableKeys.attributeName]: 1,
-        [TransferrableKeys.value]: 1,
-      },
-    ],
+    new Uint16Array([
+      TransferrableMutationType.ATTRIBUTES,
+      2, // Base Node
+      1,
+      0,
+      1 + 1,
+    ]),
   );
 
   t.is(baseElement.getAttribute('hidden'), null);
@@ -169,16 +168,15 @@ test.serial('batch mutations with custom pump', t => {
 
   mutator.mutate(
     Phase.Mutating,
-    [],
+    new ArrayBuffer(0),
     ['data-two'],
-    [
-      {
-        [TransferrableKeys.type]: MutationRecordType.ATTRIBUTES,
-        [TransferrableKeys.target]: 2, // Base node.
-        [TransferrableKeys.attributeName]: 2,
-        [TransferrableKeys.value]: 2,
-      },
-    ],
+    new Uint16Array([
+      TransferrableMutationType.ATTRIBUTES,
+      2, // Base Node
+      2,
+      0,
+      2 + 1,
+    ]),
   );
 
   t.is(baseElement.getAttribute('data-two'), null);
@@ -191,21 +189,23 @@ test.serial('batch mutations with custom pump', t => {
 test.serial('split strings from mutations', t => {
   const { env, baseElement, strings, nodeContext, workerContext } = t.context;
   const { rafTasks } = env;
-  const mutator = new MutatorProcessor(strings, nodeContext, workerContext);
+  const mutator = new MutatorProcessor(strings, nodeContext, workerContext, {
+    domURL: 'domURL',
+    authorURL: 'authorURL',
+  });
 
-  mutator.mutate(Phase.Mutating, [], ['hidden'], []);
+  mutator.mutate(Phase.Mutating, new ArrayBuffer(0), ['hidden'], new Uint16Array([]));
   mutator.mutate(
     Phase.Mutating,
+    new ArrayBuffer(0),
     [],
-    [],
-    [
-      {
-        [TransferrableKeys.type]: MutationRecordType.ATTRIBUTES,
-        [TransferrableKeys.target]: 2, // Base node.
-        [TransferrableKeys.attributeName]: 0,
-        [TransferrableKeys.value]: 0,
-      },
-    ],
+    new Uint16Array([
+      TransferrableMutationType.ATTRIBUTES,
+      2, // Base Node
+      0,
+      0,
+      0 + 1,
+    ]),
   );
 
   t.is(baseElement.getAttribute('hidden'), null);
