@@ -499,30 +499,32 @@ export class Element extends ParentNode {
     };
 
     return new Promise(resolve => {
+      const messageHandler = ({ data }: { data: MessageToWorker }) => {
+        if (
+          data[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT &&
+          (data as BoundingClientRectToWorker)[TransferrableKeys.target][0] === this[TransferrableKeys.index]
+        ) {
+          removeEventListener('message', messageHandler);
+          const transferredBoundingClientRect: TransferrableBoundingClientRect = (data as BoundingClientRectToWorker)[TransferrableKeys.data];
+          resolve({
+            top: transferredBoundingClientRect[0],
+            right: transferredBoundingClientRect[1],
+            bottom: transferredBoundingClientRect[2],
+            left: transferredBoundingClientRect[3],
+            width: transferredBoundingClientRect[4],
+            height: transferredBoundingClientRect[5],
+            x: transferredBoundingClientRect[0],
+            y: transferredBoundingClientRect[3],
+          });
+        }
+      };
+
       if (typeof addEventListener !== 'function' || !this.isConnected) {
         // Elements run within Node runtimes are missing addEventListener as a global.
         // In this case, treat the return value the same as a disconnected node.
         resolve(defaultValue);
       } else {
-        addEventListener('message', ({ data }: { data: MessageToWorker }) => {
-          if (
-            data[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT &&
-            (data as BoundingClientRectToWorker)[TransferrableKeys.target][0] === this[TransferrableKeys.index]
-          ) {
-            const transferredBoundingClientRect: TransferrableBoundingClientRect = (data as BoundingClientRectToWorker)[TransferrableKeys.data];
-            resolve({
-              top: transferredBoundingClientRect[0],
-              right: transferredBoundingClientRect[1],
-              bottom: transferredBoundingClientRect[2],
-              left: transferredBoundingClientRect[3],
-              width: transferredBoundingClientRect[4],
-              height: transferredBoundingClientRect[5],
-              x: transferredBoundingClientRect[0],
-              y: transferredBoundingClientRect[3],
-            });
-          }
-        });
-
+        addEventListener('message', messageHandler);
         transfer((this.ownerDocument as Document).postMessage, [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]]);
         setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.
       }
