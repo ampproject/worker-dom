@@ -17,8 +17,7 @@
     "alwaysStrict": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.js"
+    "**/*.ts"
   ],
   "exclude": [
     "main-thread/**/*.ts",
