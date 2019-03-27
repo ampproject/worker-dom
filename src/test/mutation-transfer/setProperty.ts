@@ -62,7 +62,7 @@ test.serial.cb('HTMLOptionElement.selected transfers updated falsy property', t 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.PROPERTIES, el[TransferrableKeys.index], strings.indexOf('selected'), NumericBoolean.TRUE, NumericBoolean.TRUE],
+      [TransferrableMutationType.PROPERTIES, el[TransferrableKeys.index], strings.indexOf('selected'), NumericBoolean.TRUE, NumericBoolean.FALSE],
       'mutation is as expected',
     );
     t.end();
@@ -70,7 +70,7 @@ test.serial.cb('HTMLOptionElement.selected transfers updated falsy property', t 
 
   Promise.resolve().then(() => {
     emitter.once(transmitted);
-    el.selected = 'false';
+    el.selected = null;
   });
 });
 

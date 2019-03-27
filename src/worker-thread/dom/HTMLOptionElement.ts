@@ -66,7 +66,7 @@ export class HTMLOptionElement extends HTMLElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionElement
    * @return boolean based on if the option element is selected.
    */
-  get selected(): boolean | string {
+  get selected(): any {
     return this[TransferrableKeys.selected];
   }
 
@@ -74,8 +74,8 @@ export class HTMLOptionElement extends HTMLElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionElement
    * @param value new selected boolean value.
    */
-  set selected(value: boolean | string) {
-    this[TransferrableKeys.selected] = typeof value === 'boolean' ? value : value !== '';
+  set selected(value: any) {
+    this[TransferrableKeys.selected] = !!value;
     transfer((this.ownerDocument as Document).postMessage, [
       TransferrableMutationType.PROPERTIES,
       this[TransferrableKeys.index],
