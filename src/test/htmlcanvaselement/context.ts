@@ -20,14 +20,12 @@ import { CanvasRenderingContext2D, deferredUpgrades } from '../../worker-thread/
 import { createDocument } from '../../worker-thread/dom/Document';
 import { HTMLCanvasElement } from '../../worker-thread/dom/HTMLCanvasElement';
 import { CanvasRenderingContext2DImplementation } from '../../worker-thread/DOMTypes';
-import { HTMLImageElement } from '../../worker-thread/dom/HTMLImageElement';
 
 const test = anyTest as TestInterface<{
     canvas: HTMLCanvasElement,
     context2d: CanvasRenderingContext2D;
     deferredUpgrade: {resolve: (instance: OffscreenCanvas) => void, reject: (errorMsg: string) => void};
     implementation: CanvasRenderingContext2DImplementation;
-    image: HTMLImageElement;
 }>;
 
 let sandbox: sinon.SinonSandbox;
@@ -60,7 +58,6 @@ test.beforeEach(t => {
         context2d: canvas.getContext('2d'),
         deferredUpgrade: deferredUpgrades.get(canvas),
         implementation: OffscreenCanvas.mostRecentInstance.getContext('2d'),
-        image: document.createElement('img') as HTMLImageElement,
     };
 });
 
@@ -1046,14 +1043,12 @@ describe('createRadialGradient', () => {
 
 describe('createPattern', () => {
     test.skip('context calls createPattern', t => {
-        const { context2d, implementation, image } = t.context;
+        const { context2d, implementation } = t.context;
         const stub = createStub(implementation, "createPattern");
 
-        const imageBitmapPromise = createImageBitmap((image as unknown) as ImageBitmapSource, 10, 20, 30, 40);
-        imageBitmapPromise.then((imageBitmap) => {
-            context2d.createPattern(imageBitmap, "repeat");
-            t.true(stub.withArgs(imageBitmap, "repeat").calledOnce);
-        });
+        const imageBitmap = new ImageBitmap();
+        context2d.createPattern(imageBitmap, "repeat");
+        t.true(stub.withArgs(imageBitmap, "repeat").calledOnce);
     });
 });
 
@@ -2235,14 +2230,13 @@ describe('globalCompositeOperation', () => {
 
 describe('drawImage', () => {
     test.skip('context calls drawImage', t => {
-        const { context2d, implementation, image } = t.context;
+        const { context2d, implementation } = t.context;
         const stub = createStub(implementation, "drawImage");
 
-        const imageBitmapPromise = createImageBitmap((image as unknown) as ImageBitmapSource, 10, 20, 30, 40);
-        imageBitmapPromise.then((imageBitmap) => {
-            context2d.drawImage(imageBitmap, 10, 10);
-            t.true(stub.withArgs(imageBitmap, 10, 10).calledOnce);
-        });
+        const imageBitmap = new ImageBitmap();
+
+        context2d.drawImage(imageBitmap, 10, 10);
+        t.true(stub.withArgs(imageBitmap, 10, 10).calledOnce);
     });
 });
 
