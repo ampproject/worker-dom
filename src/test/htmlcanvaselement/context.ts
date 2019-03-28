@@ -33,18 +33,18 @@ const test = anyTest as TestInterface<{
 let sandbox: sinon.SinonSandbox;
 
 class OffscreenCanvas {
-    public static implementation: CanvasRenderingContext2DImplementation;
-    public ownedImplementation: CanvasRenderingContext2DImplementation;
+    public static mostRecentInstance: OffscreenCanvas;
+    public implementation: CanvasRenderingContext2DImplementation;
 
     constructor() {
         // this.x, y
         const context = ({} as unknown) as CanvasRenderingContext2DImplementation;
-        OffscreenCanvas.implementation = context;
-        this.ownedImplementation = context;
+        OffscreenCanvas.mostRecentInstance = this;
+        this.implementation = context;
     }
 
     getContext(c: string): CanvasRenderingContext2DImplementation {
-        return this.ownedImplementation;
+        return this.implementation;
     }
 
 }
@@ -59,7 +59,7 @@ test.beforeEach(t => {
         canvas,
         context2d: canvas.getContext('2d'),
         deferredUpgrade: deferredUpgrades.get(canvas),
-        implementation: OffscreenCanvas.implementation,
+        implementation: OffscreenCanvas.mostRecentInstance.getContext('2d'),
         image: document.createElement('img') as HTMLImageElement,
     };
 });
