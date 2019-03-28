@@ -40,7 +40,7 @@ test('value should be an empty string by default', t => {
   t.is(select.value, '');
 });
 
-test('value be settable with string coercion', t => {
+test('value should be settable with string coercion', t => {
   const { document, select } = t.context;
   const option = document.createElement('option') as HTMLOptionElement;
   const optionTwo = document.createElement('option') as HTMLOptionElement;
@@ -54,6 +54,39 @@ test('value be settable with string coercion', t => {
   t.is(select.value, '1931');
   t.is(option.selected, false);
   t.is(optionTwo.selected, true);
+});
+
+test('singular select: value should be settable to invalid value', t => {
+  const { document, select } = t.context;
+  const option = document.createElement('option') as HTMLOptionElement;
+  const optionTwo = document.createElement('option') as HTMLOptionElement;
+
+  option.value = '1930';
+  optionTwo.value = '1931';
+  select.appendChild(option);
+  select.appendChild(optionTwo);
+  select.value = 'foo';
+
+  t.is(select.value, '');
+  t.is(option.selected, false);
+  t.is(optionTwo.selected, false);
+});
+
+test('multiple select: value should be settable to invalid value', t => {
+  const { document, select } = t.context;
+  select.multiple = true;
+  const option = document.createElement('option') as HTMLOptionElement;
+  const optionTwo = document.createElement('option') as HTMLOptionElement;
+
+  option.value = '1930';
+  optionTwo.value = '1931';
+  select.appendChild(option);
+  select.appendChild(optionTwo);
+  select.value = 'foo';
+
+  t.is(select.value, '');
+  t.is(option.selected, false);
+  t.is(optionTwo.selected, false);
 });
 
 test('singular select: value should become the only option appended', t => {
