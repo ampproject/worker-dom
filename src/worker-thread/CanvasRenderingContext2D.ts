@@ -262,14 +262,14 @@ export class CanvasRenderingContext2D implements CanvasRenderingContext2DImpleme
 
     /* PATHS */
     beginPath(): void {
-        this.implementation.beginPath;
+        this.implementation.beginPath();
         if (!this.upgraded) {
             this.calls.push({fnName: 'beginPath', args: [], setter: false});
         }
     }
 
     closePath(): void {
-        this.implementation.closePath;
+        this.implementation.closePath();
         if (!this.upgraded) {
             this.calls.push({fnName: 'closePath', args: [], setter: false});
         }

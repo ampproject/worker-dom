@@ -1254,20 +1254,90 @@ describe('shadowOffsetY', () => {
 });
 
 describe('beginPath', () => {
-    test.skip('context calls beginPath', t => {
+    test('context calls beginPath', t => {
         const { context2d, implementation } = t.context;
         const stub = createStub(implementation, "beginPath");
         context2d.beginPath();
         t.true(stub.calledOnce);
     });
+
+    test('context only calls upgraded beginPath if available', async t => {
+        const { context2d, deferredUpgrade } = t.context;
+
+        const instance = new OffscreenCanvas();
+        const stub = createStub(instance.getContext('2d'), "beginPath");
+        const promise = new Promise((res) => {
+            deferredUpgrade.resolve(instance);
+            res();
+        });
+        promise.then(() => {
+            context2d.beginPath();
+            t.true(stub.calledOnce);
+        });
+    });
+
+    test('context calls both versions of beginPath when called before upgrade', async t => {
+        const { context2d, deferredUpgrade, implementation } = t.context;
+        const instance = new OffscreenCanvas();
+
+        const instanceStub = createStub(instance.getContext('2d'), "beginPath");
+        const implStub = createStub(implementation, "beginPath");
+
+        context2d.beginPath();
+        t.true(implStub.calledOnce);
+        t.false(instanceStub.called);
+
+        const promise = new Promise((res) => {
+            deferredUpgrade.resolve(instance);
+            res();
+        });
+        promise.then(() => {
+            t.true(instanceStub.calledOnce);
+        });
+    });
 });
 
 describe('closePath', () => {
-    test.skip('context calls closePath', t => {
+    test('context calls closePath', t => {
         const { context2d, implementation } = t.context;
         const stub = createStub(implementation, "closePath");
         context2d.closePath();
         t.true(stub.withArgs().calledOnce);
+    });
+
+    test('context only calls upgraded closePath if available', async t => {
+        const { context2d, deferredUpgrade } = t.context;
+
+        const instance = new OffscreenCanvas();
+        const stub = createStub(instance.getContext('2d'), "closePath");
+        const promise = new Promise((res) => {
+            deferredUpgrade.resolve(instance);
+            res();
+        });
+        promise.then(() => {
+            context2d.closePath();
+            t.true(stub.calledOnce);
+        });
+    });
+
+    test('context calls both versions of closePath when called before upgrade', async t => {
+        const { context2d, deferredUpgrade, implementation } = t.context;
+        const instance = new OffscreenCanvas();
+
+        const instanceStub = createStub(instance.getContext('2d'), "closePath");
+        const implStub = createStub(implementation, "closePath");
+
+        context2d.closePath();
+        t.true(implStub.calledOnce);
+        t.false(instanceStub.called);
+
+        const promise = new Promise((res) => {
+            deferredUpgrade.resolve(instance);
+            res();
+        });
+        promise.then(() => {
+            t.true(instanceStub.calledOnce);
+        });
     });
 });
 
