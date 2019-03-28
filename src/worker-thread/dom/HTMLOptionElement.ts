@@ -106,7 +106,7 @@ export class HTMLOptionElement extends HTMLElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionElement
    * @return value attribute value or text content if there is no attribute.
    */
-  get value(): string {
+  get value(): any {
     return this.getAttribute('value') || this.textContent;
   }
 
@@ -114,7 +114,7 @@ export class HTMLOptionElement extends HTMLElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionElement
    * @param value new value for an option element.
    */
-  set value(value: string) {
+  set value(value: any) {
     this.setAttribute('value', value);
   }
 }

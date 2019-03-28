@@ -71,4 +71,6 @@ export const enum TransferrableKeys {
   command = 53,
   phase = 54,
   worker = 55,
+  insertedNode = 56,
+  removedNode = 57,
 }
