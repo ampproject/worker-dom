@@ -73,10 +73,11 @@ describe('clearRect', () => {
     });
     
     test('context only calls upgraded clearRect if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "clearRect");
+        const implStub = createStub(implementation, "clearRect");
         const promise = new Promise((res) => {
             deferredUpgrade.resolve(instance);
             res();
@@ -84,6 +85,7 @@ describe('clearRect', () => {
         promise.then(() => {
             context2d.clearRect(1, 2, 3, 4);
             t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -96,7 +98,6 @@ describe('clearRect', () => {
 
         context2d.clearRect(10, 9, 8, 7);
         t.true(implStub.withArgs(10, 9, 8, 7).calledOnce);
-        t.false(instanceStub.called);
 
         const promise = new Promise((res) => {
             deferredUpgrade.resolve(instance);
