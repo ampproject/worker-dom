@@ -2343,6 +2343,43 @@ describe('putImageData', () => {
         context2d.putImageData(imageData, 10, 10);
         t.true(stub.withArgs(imageData, 10, 10).calledOnce);
     });
+
+    test.skip('context only calls upgraded putImageData if available', async t => {
+        const { context2d, deferredUpgrade } = t.context;
+
+        const instance = new OffscreenCanvas();
+        const stub = createStub(instance.getContext('2d'), "putImageData");
+        const imageData = new ImageData(1, 2);
+        const promise = new Promise((res) => {
+            deferredUpgrade.resolve(instance);
+            res();
+        });
+        promise.then(() => {
+            context2d.putImageData(imageData, 1, 2);
+            t.true(stub.withArgs(imageData, 1, 2).calledOnce);
+        });
+    });
+
+    test.skip('context calls both versions of putImageData when called before upgrade', async t => {
+        const { context2d, deferredUpgrade, implementation } = t.context;
+        const instance = new OffscreenCanvas();
+
+        const instanceStub = createStub(instance.getContext('2d'), "putImageData");
+        const implStub = createStub(implementation, "putImageData");
+        const imageData = new ImageData(2, 1);
+
+        context2d.putImageData(imageData, 2, 1);
+        t.true(implStub.withArgs(imageData, 2, 1).calledOnce);
+        t.false(instanceStub.called);
+
+        const promise = new Promise((res) => {
+            deferredUpgrade.resolve(instance);
+            res();
+        });
+        promise.then(() => {
+            t.true(instanceStub.withArgs(imageData, 2, 1).calledOnce);
+        });
+    });
 });
 
 describe('imageSmoothingEnabled', () => {
