@@ -97,14 +97,16 @@ export const enum CharacterDataMutationIndex {
  *   TransferrableMutationType.PROPERTIES,
  *   Target.index,
  *   Property.name,
+ *   typeof Property.value === boolean,
  *   Property.value,
  * ]
  */
 export const enum PropertyMutationIndex {
   Target = 1,
   Name = 2,
-  Value = 3,
-  End = 4,
+  IsBoolean = 3,
+  Value = 4,
+  End = 5,
 }
 
 /**

@@ -39,13 +39,7 @@ export interface PropertyPair {
 export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element): void => {
   properties.forEach(pair => {
     for (let property in pair) {
-      const p = pair[property];
-
-      const defaultValue = p[0];
-      const attributeName = p[1] || toLower(property);
-      const keywords = p[2];
-
-      const propertyIsNumber = typeof defaultValue === 'number';
+      const { 0: defaultValue, 1: attributeName = toLower(property), 2: keywords } = pair[property];
       // Boolean attributes only care about presence, not attribute value.
       // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attributes
       const isBooleanAttribute = typeof defaultValue === 'boolean';
@@ -54,19 +48,15 @@ export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typ
         enumerable: true,
         get(): PropertyValue {
           const element = this as Element;
-          const attributeValue = (this as Element).getAttribute(attributeName);
+          const attributeValue = element.getAttribute(attributeName);
           if (keywords) {
-            if (element.hasAttribute(attributeName)) {
-              return attributeValue === keywords[0];
-            } else {
-              return defaultValue;
-            }
+            return element.hasAttribute(attributeName) ? attributeValue === keywords[0] : defaultValue;
           }
           if (isBooleanAttribute) {
             return element.hasAttribute(attributeName);
           }
           const castableValue = attributeValue || defaultValue;
-          return propertyIsNumber ? Number(castableValue) : String(castableValue);
+          return typeof defaultValue === 'number' ? Number(castableValue) : String(castableValue);
         },
         set(value: PropertyValue) {
           const element = this as Element;

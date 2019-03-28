@@ -23,7 +23,7 @@ import { HTMLOptionElement } from './HTMLOptionElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 const isOptionPredicate = tagNameConditionPredicate(['OPTION']);
-const isSelectedOptionPredicate = (element: Element): boolean => element.tagName === 'OPTION' && (element as HTMLOptionElement).selected;
+const isSelectedOptionPredicate = (element: Element): boolean => element.tagName === 'OPTION' && (element as HTMLOptionElement).selected === true;
 
 const enum SizeDefaults {
   SINGLE = 1,

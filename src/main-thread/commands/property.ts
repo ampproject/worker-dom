@@ -18,19 +18,21 @@ import { PropertyMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutor } from './interface';
 import { Strings } from '../strings';
 import { WorkerDOMConfiguration } from '../configuration';
+import { NumericBoolean } from '../../utils';
 
 export function PropertyProcessor(strings: Strings, config: WorkerDOMConfiguration): CommandExecutor {
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
       const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
-      const value =
-        (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) || null;
+      const isBooleanProperty = mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE;
+      const value = isBooleanProperty
+        ? mutations[startPosition + PropertyMutationIndex.Value] === NumericBoolean.TRUE
+        : (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) ||
+          null;
+
       if (name && value != null) {
-        const stringValue = String(value);
-        if (!config.sanitizer || config.sanitizer.validProperty(target.nodeName, name, stringValue)) {
-          // TODO(choumx, #122): Proper support for non-string property mutations.
-          const isBooleanProperty = name == 'checked';
-          target[name] = isBooleanProperty ? value === 'true' : value;
+        if (!config.sanitizer || config.sanitizer.validProperty(target.nodeName, name, String(value))) {
+          target[name] = value;
         } else {
           // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
         }
@@ -39,8 +41,11 @@ export function PropertyProcessor(strings: Strings, config: WorkerDOMConfigurati
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
-      const value =
-        (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) || null;
+      const isBooleanProperty = mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE;
+      const value = isBooleanProperty
+        ? mutations[startPosition + PropertyMutationIndex.Value] === NumericBoolean.TRUE
+        : (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) ||
+          null;
 
       return {
         target,
