@@ -1018,6 +1018,42 @@ describe('createPattern', () => {
         context2d.createPattern(imageBitmap, "repeat");
         t.true(stub.withArgs(imageBitmap, "repeat").calledOnce);
     });
+
+    test('context only calls upgraded createPattern if available', async t => {
+        const { context2d, deferredUpgrade, implementation } = t.context;
+
+        const instance = new OffscreenCanvas();
+        const stub = createStub(instance.getContext('2d'), "createPattern");
+        const implStub = createStub(implementation, "createPattern");
+        const imageBitmap = {} as ImageBitmap;
+
+        deferredUpgrade.resolve(instance);
+
+        await context2d.goodOffscreenPromise.then(() => {
+            context2d.createPattern(imageBitmap, "repeat");
+            t.true(stub.withArgs(imageBitmap, "repeat").calledOnce);
+            t.false(implStub.called);
+        });
+    });
+
+    test('context calls both versions of createPattern when called before upgrade', async t => {
+        const { context2d, deferredUpgrade, implementation } = t.context;
+        const instance = new OffscreenCanvas();
+
+        const instanceStub = createStub(instance.getContext('2d'), "createPattern");
+        const implStub = createStub(implementation, "createPattern");
+        const imageBitmap = {} as ImageBitmap;
+
+        context2d.createPattern(imageBitmap, "repeat");
+        t.true(implStub.withArgs(imageBitmap, "repeat").calledOnce);
+        
+        deferredUpgrade.resolve(instance);
+
+        await context2d.goodOffscreenPromise.then(() => {
+            t.true(instanceStub.withArgs(imageBitmap, "repeat").calledOnce);
+        });
+    });
+    
 });
 
 describe('shadowBlur', () => {
@@ -2151,14 +2187,49 @@ describe('globalCompositeOperation', () => {
 });
 
 describe('drawImage', () => {
-    test.skip('context calls drawImage', t => {
+    test('context calls drawImage', t => {
         const { context2d, implementation } = t.context;
         const stub = createStub(implementation, "drawImage");
 
-        const imageBitmap = new ImageBitmap();
+        const imageBitmap = {} as ImageBitmap;
 
         context2d.drawImage(imageBitmap, 10, 10);
         t.true(stub.withArgs(imageBitmap, 10, 10).calledOnce);
+    });
+
+    test('context only calls upgraded drawImage if available', async t => {
+        const { context2d, deferredUpgrade, implementation } = t.context;
+
+        const instance = new OffscreenCanvas();
+        const stub = createStub(instance.getContext('2d'), "drawImage");
+        const implStub = createStub(implementation, "drawImage");
+
+        deferredUpgrade.resolve(instance);
+        const imageBitmap = {} as ImageBitmap;
+
+        await context2d.goodOffscreenPromise.then(() => {
+            context2d.drawImage(imageBitmap, 200, 100);
+            t.true(stub.withArgs(imageBitmap, 200, 100).calledOnce);
+            t.false(implStub.called);
+        });
+    });
+
+    test('context calls both versions of drawImage when called before upgrade', async t => {
+        const { context2d, deferredUpgrade, implementation } = t.context;
+        const instance = new OffscreenCanvas();
+
+        const instanceStub = createStub(instance.getContext('2d'), "drawImage");
+        const implStub = createStub(implementation, "drawImage");
+        const imageBitmap = {} as ImageBitmap;
+
+        context2d.drawImage(imageBitmap, 0, 1);
+        t.true(implStub.withArgs(imageBitmap, 0, 1).calledOnce);
+        
+        deferredUpgrade.resolve(instance);
+
+        await context2d.goodOffscreenPromise.then(() => {
+            t.true(instanceStub.withArgs(imageBitmap, 0, 1).calledOnce);
+        });
     });
 });
 
@@ -2247,47 +2318,47 @@ describe('getImageData', () => {
 });
 
 describe('putImageData', () => {
-    test.skip('context calls putImageData', t => {
+    test('context calls putImageData', t => {
         const { context2d, implementation } = t.context;
         const stub = createStub(implementation, "putImageData");
-        const imageData = new ImageData(10, 10);
+        const imageData = {} as ImageData;
 
         context2d.putImageData(imageData, 10, 10);
         t.true(stub.withArgs(imageData, 10, 10).calledOnce);
     });
 
-    test.skip('context only calls upgraded putImageData if available', async t => {
+    test('context only calls upgraded putImageData if available', async t => {
         const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "putImageData");
         const implStub = createStub(implementation, "putImageData");
-        const imageData = new ImageData(1, 2);
 
         deferredUpgrade.resolve(instance);
+        const imageData = {} as ImageData;
 
         await context2d.goodOffscreenPromise.then(() => {
-            context2d.putImageData(imageData, 1, 2);
-            t.true(stub.withArgs(imageData, 1, 2).calledOnce);
+            context2d.putImageData(imageData, 200, 100);
+            t.true(stub.withArgs(imageData, 200, 100).calledOnce);
             t.false(implStub.called);
         });
     });
 
-    test.skip('context calls both versions of putImageData when called before upgrade', async t => {
+    test('context calls both versions of putImageData when called before upgrade', async t => {
         const { context2d, deferredUpgrade, implementation } = t.context;
         const instance = new OffscreenCanvas();
 
         const instanceStub = createStub(instance.getContext('2d'), "putImageData");
         const implStub = createStub(implementation, "putImageData");
-        const imageData = new ImageData(2, 1);
+        const imageData = {} as ImageData;
 
-        context2d.putImageData(imageData, 2, 1);
-        t.true(implStub.withArgs(imageData, 2, 1).calledOnce);
+        context2d.putImageData(imageData, 0, 1);
+        t.true(implStub.withArgs(imageData, 0, 1).calledOnce);
         
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
-            t.true(instanceStub.withArgs(imageData, 2, 1).calledOnce);
+            t.true(instanceStub.withArgs(imageData, 0, 1).calledOnce);
         });
     });
 });
