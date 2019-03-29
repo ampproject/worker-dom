@@ -112,16 +112,18 @@ describe('fillRect', () => {
     });
 
     test('context only calls upgraded fillRect if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "fillRect");
+        const implStub = createStub(implementation, "fillRect");
        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.fillRect(1, 2, 3, 4);
             t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -152,16 +154,18 @@ describe('strokeRect', () => {
     });
 
     test('context only calls upgraded strokeRect if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "strokeRect");
+        const implStub = createStub(implementation, "strokeRect");
         
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.strokeRect(1, 2, 3, 4);
             t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -192,16 +196,18 @@ describe('fillText', () => {
     });
 
     test('context only calls upgraded fillText if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "fillText");
+        const implStub = createStub(implementation, "fillText");
         
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.fillText("hello, world", 1, 2);
             t.true(stub.withArgs("hello, world", 1, 2).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -232,16 +238,18 @@ describe('strokeText', () => {
     });
 
     test('context only calls upgraded strokeText if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "strokeText");
+        const implStub = createStub(implementation, "strokeText");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.strokeText("hello, world", 1, 2);
             t.true(stub.withArgs("hello, world", 1, 2).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -272,16 +280,18 @@ describe('measureText', () => {
     });
 
     test('context only calls upgraded measureText if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "measureText");
+        const implStub = createStub(implementation, "measureText");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.measureText("hello, world");
             t.true(stub.withArgs("hello, world").calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -313,17 +323,20 @@ describe('lineWidth', () => {
     });
 
     test('context only calls upgraded set lineWidth if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "lineWidth", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "lineWidth", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.lineWidth = 100;
             t.true(spy.withArgs(100).calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -358,17 +371,20 @@ describe('lineCap', () => {
     });
 
     test('context only calls upgraded set lineCap if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "lineCap", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "lineCap", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.lineCap = "butt";
             t.true(spy.withArgs("butt").calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -403,17 +419,20 @@ describe('lineJoin', () => {
     });
 
     test('context only calls upgraded set lineJoin if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "lineJoin", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "lineJoin", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.lineJoin = "bevel";
             t.true(spy.withArgs("bevel").calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -448,17 +467,20 @@ describe('miterLimit', () => {
     });
 
     test('context only calls upgraded set miterLimit if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "miterLimit", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "miterLimit", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.miterLimit = 100;
             t.true(spy.withArgs(100).calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -492,16 +514,18 @@ describe('getLineDash', () => {
     });
 
     test('context only calls upgraded getLineDash if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "getLineDash");
+        const implStub = createStub(implementation, "getLineDash");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.getLineDash();
             t.true(stub.calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -532,16 +556,18 @@ describe('setLineDash', () => {
     });
 
     test('context only calls upgraded setLineDash if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "setLineDash");
+        const implStub = createStub(implementation, "setLineDash");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.setLineDash([1, 2, 3, 4]);
             t.true(stub.withArgs([1, 2, 3, 4]).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -573,17 +599,20 @@ describe('lineDashOffset', () => {
     });
 
     test('context only calls upgraded set lineDashOffset if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "lineDashOffset", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "lineDashOffset", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.lineDashOffset = 200;
             t.true(spy.withArgs(200).calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -618,17 +647,20 @@ describe('font', () => {
     });
 
     test('context only calls upgraded set font if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "font", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "font", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.font = "Arial";
             t.true(spy.withArgs("Arial").calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -663,17 +695,20 @@ describe('textAlign', () => {
     });
 
     test('context only calls upgraded set textAlign if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "textAlign", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "textAlign", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.textAlign = "left";
             t.true(spy.withArgs("left").calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -708,17 +743,20 @@ describe('textBaseline', () => {
     });
 
     test('context only calls upgraded set textBaseline if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "textBaseline", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "textBaseline", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.textBaseline = "middle";
             t.true(spy.withArgs("middle").calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -753,17 +791,20 @@ describe('direction', () => {
     });
 
     test('context only calls upgraded set direction if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "direction", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "direction", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.direction = "ltr";
             t.true(spy.withArgs("ltr").calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -798,17 +839,20 @@ describe('fillStyle', () => {
     });
 
     test('context only calls upgraded set fillStyle if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "fillStyle", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "fillStyle", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.fillStyle = "yellow";
             t.true(spy.withArgs("yellow").calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -843,17 +887,20 @@ describe('strokeStyle', () => {
     });
 
     test('context only calls upgraded set strokeStyle if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "strokeStyle", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "strokeStyle", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.strokeStyle = "green";
             t.true(spy.withArgs("green").calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -887,16 +934,18 @@ describe('createLinearGradient', () => {
     });
 
     test('context only calls upgraded createLinearGradient if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "createLinearGradient");
+        const implStub = createStub(implementation, "createLinearGradient");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.createLinearGradient(1, 2, 3, 4);
             t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -927,16 +976,18 @@ describe('createRadialGradient', () => {
     });
 
     test('context only calls upgraded createRadialGradient if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "createRadialGradient");
+        const implStub = createStub(implementation, "createRadialGradient");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.createRadialGradient(1, 2, 3, 4, 5, 6);
             t.true(stub.withArgs(1, 2, 3, 4, 5, 6).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -979,17 +1030,20 @@ describe('shadowBlur', () => {
     });
 
     test('context only calls upgraded set shadowBlur if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "shadowBlur", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "shadowBlur", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.shadowBlur = 500;
             t.true(spy.withArgs(500).calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -1024,17 +1078,20 @@ describe('shadowColor', () => {
     });
 
     test('context only calls upgraded set shadowColor if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation} = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "shadowColor", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "shadowColor", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.shadowColor = "red";
             t.true(spy.withArgs("red").calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -1069,17 +1126,20 @@ describe('shadowOffsetX', () => {
     });
 
     test('context only calls upgraded set shadowOffsetX if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "shadowOffsetX", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "shadowOffsetX", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.shadowOffsetX = 200;
             t.true(spy.withArgs(200).calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -1114,17 +1174,20 @@ describe('shadowOffsetY', () => {
     });
 
     test('context only calls upgraded set shadowOffsetY if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "shadowOffsetY", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "shadowOffsetY", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.shadowOffsetY = 200;
             t.true(spy.withArgs(200).calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -1158,16 +1221,18 @@ describe('beginPath', () => {
     });
 
     test('context only calls upgraded beginPath if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "beginPath");
+        const implStub = createStub(implementation, "beginPath");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.beginPath();
             t.true(stub.calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1198,16 +1263,18 @@ describe('closePath', () => {
     });
 
     test('context only calls upgraded closePath if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "closePath");
+        const implStub = createStub(implementation, "closePath");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.closePath();
             t.true(stub.calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1238,16 +1305,18 @@ describe('moveTo', () => {
     });
 
     test('context only calls upgraded moveTo if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "moveTo");
+        const implStub = createStub(implementation, "moveTo");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.moveTo(1, 2);
             t.true(stub.withArgs(1, 2).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1278,16 +1347,18 @@ describe('lineTo', () => {
     });
 
     test('context only calls upgraded lineTo if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "lineTo");
+        const implStub = createStub(implementation, "lineTo");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.lineTo(1, 2);
             t.true(stub.withArgs(1, 2).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1318,16 +1389,18 @@ describe('bezierCurveTo', () => {
     });
 
     test('context only calls upgraded bezierCurveTo if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "bezierCurveTo");
+        const implStub = createStub(implementation, "bezierCurveTo");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.bezierCurveTo(6, 5, 4, 3, 2, 1);
             t.true(stub.withArgs(6, 5, 4, 3, 2, 1).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1358,16 +1431,18 @@ describe('quadraticCurveTo', () => {
     });
 
     test('context only calls upgraded quadraticCurveTo if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "quadraticCurveTo");
+        const implStub = createStub(implementation, "quadraticCurveTo");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.quadraticCurveTo(6, 5, 4, 3);
             t.true(stub.withArgs(6, 5, 4, 3).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1398,16 +1473,18 @@ describe('arc', () => {
     });
 
     test('context only calls upgraded arc if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "arc");
+        const implStub = createStub(implementation, "arc");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.arc(6, 5, 4, 3, 2);
             t.true(stub.withArgs(6, 5, 4, 3, 2).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1438,16 +1515,18 @@ describe('arcTo', () => {
     });
 
     test('context only calls upgraded arcTo if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "arcTo");
+        const implStub = createStub(implementation, "arcTo");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.arcTo(6, 5, 4, 3, 2);
             t.true(stub.withArgs(6, 5, 4, 3, 2).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1478,16 +1557,18 @@ describe('ellipse', () => {
     });
 
     test('context only calls upgraded ellipse if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "ellipse");
+        const implStub = createStub(implementation, "ellipse");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.ellipse(7, 6, 5, 4, 3, 2, 1);
             t.true(stub.withArgs(7, 6, 5, 4, 3, 2, 1).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1518,16 +1599,18 @@ describe('rect', () => {
     });
 
     test('context only calls upgraded rect if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "rect");
+        const implStub = createStub(implementation, "rect");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.rect(4, 3, 2, 1);
             t.true(stub.withArgs(4, 3, 2, 1).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1559,16 +1642,18 @@ describe('fill', () => {
     });
 
     test('context only calls upgraded fill if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "fill");
+        const implStub = createStub(implementation, "fill");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.fill("evenodd");
             t.true(stub.withArgs("evenodd").calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1599,16 +1684,18 @@ describe('stroke', () => {
     });
 
     test('context only calls upgraded stroke if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "stroke");
+        const implStub = createStub(implementation, "stroke");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.stroke();
             t.true(stub.calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1639,16 +1726,18 @@ describe('clip', () => {
     });
 
     test('context only calls upgraded clip if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "clip");
+        const implStub = createStub(implementation, "clip");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.clip();
             t.true(stub.calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1679,16 +1768,18 @@ describe('isPointInPath', () => {
     });
 
     test('context only calls upgraded isPointInPath if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "isPointInPath");
+        const implStub = createStub(implementation, "isPointInPath");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.isPointInPath(2, 1);
             t.true(stub.withArgs(2, 1).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1719,16 +1810,18 @@ describe('isPointInStroke', () => {
     });
 
     test('context only calls upgraded isPointInStroke if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "isPointInStroke");
+        const implStub = createStub(implementation, "isPointInStroke");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.isPointInStroke(2, 1);
             t.true(stub.withArgs(2, 1).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1759,16 +1852,18 @@ describe('rotate', () => {
     });
 
     test('context only calls upgraded rotate if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "rotate");
+        const implStub = createStub(implementation, "rotate");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.rotate(12);
             t.true(stub.withArgs(12).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1799,16 +1894,18 @@ describe('scale', () => {
     });
 
     test('context only calls upgraded scale if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "scale");
+        const implStub = createStub(implementation, "scale");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.scale(12, 12);
             t.true(stub.withArgs(12, 12).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1839,16 +1936,18 @@ describe('translate', () => {
     });
 
     test('context only calls upgraded translate if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "translate");
+        const implStub = createStub(implementation, "translate");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.translate(12, 12);
             t.true(stub.withArgs(12, 12).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1879,16 +1978,18 @@ describe('transform', () => {
     });
 
     test('context only calls upgraded transform if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "transform");
+        const implStub = createStub(implementation, "transform");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.transform(1, 1, 1, 1, 1, 1);
             t.true(stub.withArgs(1, 1, 1, 1, 1, 1).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1919,16 +2020,18 @@ describe('setTransform', () => {
     });
 
     test('context only calls upgraded setTransform if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "setTransform");
+        const implStub = createStub(implementation, "setTransform");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.setTransform(2, 2, 2, 2, 2, 2);
             t.true(stub.withArgs(2, 2, 2, 2, 2, 2).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -1960,17 +2063,20 @@ describe('globalAlpha', () => {
     });
 
     test('context only calls upgraded set globalAlpha if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "globalAlpha", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "globalAlpha", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.globalAlpha = 200;
             t.true(spy.withArgs(200).calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -2005,17 +2111,20 @@ describe('globalCompositeOperation', () => {
     });
 
     test('context only calls upgraded set globalCompositeOperation if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "globalCompositeOperation", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "globalCompositeOperation", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.globalCompositeOperation = "source-out";
             t.true(spy.withArgs("source-out").calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -2062,16 +2171,18 @@ describe('createImageData', () => {
     });
 
     test('context only calls upgraded createImageData if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "createImageData");
+        const implStub = createStub(implementation, "createImageData");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.createImageData(200, 100);
             t.true(stub.withArgs(200, 100).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -2102,16 +2213,18 @@ describe('getImageData', () => {
     });
 
     test('context only calls upgraded getImageData if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "getImageData");
+        const implStub = createStub(implementation, "getImageData");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.getImageData(4, 3, 2, 1);
             t.true(stub.withArgs(4, 3, 2, 1).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -2144,10 +2257,11 @@ describe('putImageData', () => {
     });
 
     test.skip('context only calls upgraded putImageData if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "putImageData");
+        const implStub = createStub(implementation, "putImageData");
         const imageData = new ImageData(1, 2);
 
         deferredUpgrade.resolve(instance);
@@ -2155,6 +2269,7 @@ describe('putImageData', () => {
         await context2d.goodOffscreenPromise.then(() => {
             context2d.putImageData(imageData, 1, 2);
             t.true(stub.withArgs(imageData, 1, 2).calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -2187,17 +2302,20 @@ describe('imageSmoothingEnabled', () => {
     });
 
     test('context only calls upgraded set imageSmoothingEnabled if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "imageSmoothingEnabled", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "imageSmoothingEnabled", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.imageSmoothingEnabled = false;
             t.true(spy.withArgs(false).calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -2232,17 +2350,20 @@ describe('imageSmoothingQuality', () => {
     });
 
     test('context only calls upgraded set imageSmoothingQuality if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "imageSmoothingQuality", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "imageSmoothingQuality", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.imageSmoothingQuality = "medium";
             t.true(spy.withArgs("medium").calledOnce);
+            t.false(implSpy.called);
         });
     });
 
@@ -2276,16 +2397,18 @@ describe('save', () => {
     });
 
     test('context only calls upgraded save if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "save");
+        const implStub = createStub(implementation, "save");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.save();
             t.true(stub.calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -2316,16 +2439,18 @@ describe('restore', () => {
     });
 
     test('context only calls upgraded restore if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const stub = createStub(instance.getContext('2d'), "restore");
+        const implStub = createStub(implementation, "restore");
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.restore();
             t.true(stub.calledOnce);
+            t.false(implStub.called);
         });
     });
 
@@ -2357,17 +2482,20 @@ describe('filter', () => {
     });
     
     test('context only calls upgraded set filter if available', async t => {
-        const { context2d, deferredUpgrade } = t.context;
+        const { context2d, deferredUpgrade, implementation } = t.context;
 
         const instance = new OffscreenCanvas();
         const spy = sandbox.spy();
         createSetterStub(instance.getContext('2d'), "filter", spy);
+        const implSpy = sandbox.spy();
+        createSetterStub(implementation, "filter", implSpy);
 
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
             context2d.filter = "none";
             t.true(spy.withArgs("none").calledOnce);
+            t.false(implSpy.called);
         });
     });
 
