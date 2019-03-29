@@ -524,7 +524,7 @@ export class Element extends ParentNode {
         resolve(defaultValue);
       } else {
         addEventListener('message', messageHandler);
-        transfer((this.ownerDocument as Document).postMessage, [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]]);
+        transfer(this.ownerDocument as Document, [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]]);
         setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.
       }
     });
