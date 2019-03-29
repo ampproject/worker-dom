@@ -134,8 +134,8 @@ test('set element with attributes', t => {
   node.innerHTML = '<div hi="hello"></div>';
   const child = node.firstChild!;
   t.is(child.attributes.length, 1);
-  t.is(child.attributes[0].name, "hi");
-  t.is(child.attributes[0].value, "hello");
+  t.is(child.attributes[0].name, 'hi');
+  t.is(child.attributes[0].value, 'hello');
 });
 
 test('set self closing tags', t => {
@@ -149,7 +149,7 @@ test('set self closing tags', t => {
 test('set invalid html throws', t => {
   const { node } = t.context;
   // Use an unclosed tag.
-  t.throws(() => node.innerHTML = '<div>');
+  t.throws(() => (node.innerHTML = '<div>'));
 });
 
 test('set closes tags by closing others', t => {
@@ -159,10 +159,20 @@ test('set closes tags by closing others', t => {
   t.is(child.nodeName, 'DIV');
   t.is(child.firstChild!.nodeName, 'A');
 
-  node.innerHTML = '<a><div></div>';
-  child = node.firstChild!;
-  t.is(child.nodeName, 'A');
-  t.is(child.firstChild!.nodeName, 'DIV');
+  node.innerHTML = '<p><div></div>';
+  t.true(node.childNodes.length === 2);
+  t.is(node.innerHTML, '<p></p><div></div>');
+});
+
+// Some tags will automatically close others. Set innerHTML should consider this behavior, yet
+// it should not apply for the root element's tags:
+// https://github.com/ampproject/worker-dom/issues/372
+test("set will alter root element's contents, not the element itself", t => {
+  const document = createDocument();
+  const pNode = document.createElement('p');
+
+  pNode.innerHTML = 'Hello World!';
+  t.is(pNode.textContent, 'Hello World!');
 });
 
 test('set takes all block text element content as text', t => {
@@ -195,7 +205,7 @@ test('set has svg tag live in SVG namespace', t => {
   t.is(child.namespaceURI, SVG_NAMESPACE);
 });
 
-test('set keeps localName\'s case for tags in SVG namespace', t => {
+test("set keeps localName's case for tags in SVG namespace", t => {
   const { node } = t.context;
   node.innerHTML = '<svg><feImage></feImage></svg>';
   const svgWrapper = node.firstChild!;
@@ -215,7 +225,7 @@ test('set handles foreignObject tags correctly', t => {
   const { node } = t.context;
   node.innerHTML = '<svg><foreignObject><div></div></foreignObject></svg>';
   const svgWrapper = node.firstChild!;
-  
+
   // foreignObject tag lives in SVG namespace
   const foreignObjectNode = svgWrapper.firstChild!;
   t.is(foreignObjectNode.namespaceURI, SVG_NAMESPACE);

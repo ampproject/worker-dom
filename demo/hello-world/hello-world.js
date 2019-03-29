@@ -18,7 +18,7 @@ const btn = document.getElementsByTagName('button')[0];
 
 btn.addEventListener('click', async () => {
   const h1 = document.createElement('h1');
-  h1.textContent = 'Hello World!'
+  h1.textContent = 'Hello World!';
   document.body.appendChild(h1);
 
   const boundingClientRect = await h1.getBoundingClientRectAsync();

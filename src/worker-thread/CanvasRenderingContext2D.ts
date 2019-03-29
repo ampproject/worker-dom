@@ -1,7 +1,5 @@
 import { CanvasRenderingContext2DImplementation, CanvasDirection, CanvasFillRule, CanvasImageSource, CanvasLineCap, CanvasLineJoin, CanvasTextAlign, CanvasTextBaseline, ImageSmoothingQuality, CanvasGradient, CanvasPattern } from './DOMTypes';
 import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
-import { MutationRecordType } from './MutationRecord';
-import { mutate } from './MutationObserver';
 import { MessageType, MessageToWorker, OffscreenCanvasToWorker } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
@@ -21,10 +19,6 @@ export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{get
                     const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
                     resolve(transferredOffscreenCanvas as {getContext(c: '2d'): CanvasRenderingContext2DImplementation});
                 }
-            });
-            mutate({
-                type: MutationRecordType.OFFSCREEN_CANVAS_INSTANCE,
-                target: canvas,
             });
         }
     })

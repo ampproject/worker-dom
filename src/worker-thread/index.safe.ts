@@ -128,7 +128,7 @@ const WHITELISTED_GLOBALS = [
   'unescape',
 ];
 
-const doc = createDocument((self as DedicatedWorkerGlobalScope).postMessage);
+const doc = createDocument(postMessage.bind(self));
 export const workerDOM: WorkerDOMGlobalScope = {
   document: doc,
   navigator: (self as WorkerGlobalScope).navigator,

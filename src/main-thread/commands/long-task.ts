@@ -14,55 +14,44 @@
  * limitations under the License.
  */
 
-import { LongTaskFunction, WorkerCallbacks } from '../callbacks';
-import { TransferrableMutationRecord } from '../../transfer/TransferrableRecord';
+import { WorkerDOMConfiguration } from '../configuration';
+import { CommandExecutor } from './interface';
+import { TransferrableMutationType, ReadableMutationType, LongTaskMutationIndex } from '../../transfer/TransferrableMutation';
 
-export class LongTaskProcessor {
-  private onLongTask: LongTaskFunction | null;
-  private currentResolver: Function | null;
-  private index: number;
+export interface LongTaskCommandExecutor extends CommandExecutor {
+  active: boolean;
+}
 
-  constructor(callbacks?: WorkerCallbacks) {
-    this.onLongTask = (callbacks && callbacks.onLongTask) || null;
-    this.currentResolver = null;
-    this.index = 0;
-  }
+export function LongTaskExecutor(config: WorkerDOMConfiguration): LongTaskCommandExecutor {
+  let index: number = 0;
+  let currentResolver: Function | null;
 
-  isInLongTask(): boolean {
-    return !!this.currentResolver;
-  }
-
-  /**
-   * Process commands transfered from worker thread to main thread.
-   * @param mutation mutation record containing commands to execute.
-   */
-  processStart = (mutation?: TransferrableMutationRecord): void => {
-    if (!this.onLongTask) {
-      return;
-    }
-    this.index++;
-    if (!this.currentResolver) {
-      this.onLongTask(
-        new Promise(resolve => {
-          this.currentResolver = resolve;
-        }),
-      );
-    }
-  };
-
-  /**
-   * Process commands transfered from worker thread to main thread.
-   * @param mutation mutation record containing commands to execute.
-   */
-  processEnd = (mutation?: TransferrableMutationRecord): void => {
-    if (!this.onLongTask) {
-      return;
-    }
-    this.index--;
-    if (this.currentResolver && this.index <= 0) {
-      this.currentResolver();
-      this.currentResolver = null;
-      this.index = 0;
-    }
+  return {
+    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+      if (config.longTask) {
+        if (mutations[startPosition] === TransferrableMutationType.LONG_TASK_START) {
+          index++;
+          if (!currentResolver) {
+            config.longTask(new Promise(resolve => (currentResolver = resolve)));
+          }
+        } else if (mutations[startPosition] === TransferrableMutationType.LONG_TASK_END) {
+          index--;
+          if (currentResolver && index <= 0) {
+            currentResolver();
+            currentResolver = null;
+            index = 0;
+          }
+        }
+      }
+      return startPosition + LongTaskMutationIndex.End;
+    },
+    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+      return {
+        type: ReadableMutationType[mutations[startPosition]],
+      };
+    },
+    get active(): boolean {
+      return currentResolver !== null;
+    },
   };
 }

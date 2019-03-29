@@ -14,19 +14,7 @@
  * limitations under the License.
  */
 
-export class WorkerDom {
-  private worker: Worker;
-
-  /**
-   */
-  constructor(worker: Worker) {
-    this.worker = worker;
-  }
-
-  /**
-   * Terminates the worker-dom completely.
-   */
-  terminate() {
-    this.worker.terminate();
-  }
+export interface CommandExecutor {
+  execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number;
+  print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object;
 }

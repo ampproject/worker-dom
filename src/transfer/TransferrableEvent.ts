@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2019 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,23 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.keyCode]?: number;
 }
 
-export interface TransferrableEventSubscriptionChange {
-  readonly [TransferrableKeys.type]: number;
-  readonly [TransferrableKeys.index]: number;
-  readonly [TransferrableKeys.index]: number;
+/**
+ * Event Subscription Transfer
+ *
+ * [
+ *   TransferrableMutationType.EVENT_SUBSCRIPTION,
+ *   Target.index,
+ *   RemoveEventListener.count,
+ *   AddEventListener.count,
+ *   ...RemoveEvent<[ EventRegistration.type, EventRegistration.index ]>,
+ *   ...AddEvent<[ EventRegistration.type, EventRegistration.index ]>,
+ * ]
+ */
+export const enum EventSubscriptionMutationIndex {
+  Target = 1,
+  RemoveEventListenerCount = 2,
+  AddEventListenerCount = 3,
+  Events = 4,
+  End = 4,
 }
+export const EVENT_SUBSCRIPTION_LENGTH = 2;

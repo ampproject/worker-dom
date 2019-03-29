@@ -1,0 +1,6 @@
+{
+  "printWidth": 150,
+  "trailingComma": "all",
+  "parser": "javascript",
+  "singleQuote": true
+}

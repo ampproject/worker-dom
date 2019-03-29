@@ -63,6 +63,11 @@ export class Env {
       configurable: true,
       value: requestAnimationFrame,
     });
+
+    Object.defineProperty(global, 'DEBUG_ENABLED', {
+      configurable: true,
+      value: false,
+    });
   }
 
   dispose() {

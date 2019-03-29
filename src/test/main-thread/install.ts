@@ -16,7 +16,6 @@
 
 import anyTest, { TestInterface } from 'ava';
 import { Env } from './helpers/env';
-import { WorkerDom } from '../../main-thread/worker-dom';
 import { install } from '../../main-thread/install';
 
 const test = anyTest as TestInterface<{
@@ -43,12 +42,15 @@ test.afterEach(t => {
 test.serial('terminate the worker-dom', t => {
   const { env, baseElement } = t.context;
 
-  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript'), Promise.resolve('authorScriptURL')]);
-  return install(fetchPromise, baseElement).then((workerDom: WorkerDom) => {
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
+  return install(fetchPromise, baseElement, {
+    authorURL: 'authorURL',
+    domURL: 'domURL',
+  }).then((workerDOM: Worker) => {
     t.is(env.workers.length, 1);
     const worker = env.workers[0];
     t.is(worker.terminated, false);
-    workerDom.terminate();
+    workerDOM.terminate();
     t.is(worker.terminated, true);
   });
 });

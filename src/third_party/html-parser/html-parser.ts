@@ -33,18 +33,42 @@ const kSelfClosingElements: Elements = {
   PARAM: true,
   SOURCE: true,
   TRACK: true,
-  WBR: true
+  WBR: true,
 };
 const kElementsClosedByOpening: ElementMapping = {
   LI: { LI: true },
   DT: { DT: true, DD: true },
   DD: { DD: true, DT: true },
-  P: { ADDRESS: true, ARTICLE: true, ASIDE: true, BLOCKQUOTE: true, 
-    DETAILS: true, DIV: true, DL: true, FIELDSET: true, FIGCAPTION: true, 
-    FIGURE: true, FOOTER: true, FORM: true, H1: true, H2: true, H3: true, 
-    H4: true, H5: true, H6: true, HEADER: true, HR: true, MAIN: true, 
-    NAV: true, OL: true, P: true, PRE: true, SECTION: true, TABLE: true,
-    UL: true },
+  P: {
+    ADDRESS: true,
+    ARTICLE: true,
+    ASIDE: true,
+    BLOCKQUOTE: true,
+    DETAILS: true,
+    DIV: true,
+    DL: true,
+    FIELDSET: true,
+    FIGCAPTION: true,
+    FIGURE: true,
+    FOOTER: true,
+    FORM: true,
+    H1: true,
+    H2: true,
+    H3: true,
+    H4: true,
+    H5: true,
+    H6: true,
+    HEADER: true,
+    HR: true,
+    MAIN: true,
+    NAV: true,
+    OL: true,
+    P: true,
+    PRE: true,
+    SECTION: true,
+    TABLE: true,
+    UL: true,
+  },
   RT: { RT: true, RP: true },
   RP: { RT: true, RP: true },
   OPTGROUP: { OPTGROUP: true },
@@ -80,23 +104,21 @@ const kBlockTextElements: Elements = {
  */
 export function parse(data: string, rootElement: Element) {
   const ownerDocument = rootElement.ownerDocument;
-  const root = 
-  ownerDocument.createElementNS(rootElement.namespaceURI, rootElement.localName);
+  const root = ownerDocument.createElementNS(rootElement.namespaceURI, rootElement.localName);
 
   let currentParent = root as Node;
   let currentNamespace = root.namespaceURI;
   const stack = [root as Node];
   let lastTextPos = 0;
   let match: RegExpExecArray | null;
-  data = '<div>' + data + '</div>';
+  data = '<q>' + data + '</q>';
   const tagsClosed = [] as string[];
 
   if (currentNamespace !== SVG_NAMESPACE && currentNamespace !== HTML_NAMESPACE) {
-    throw new Error("Namespace not supported: " + currentNamespace);
+    throw new Error('Namespace not supported: ' + currentNamespace);
   }
 
   while ((match = kMarkupPattern.exec(data))) {
-
     const commentContents = match[1]; // <!--contents-->
     let beginningSlash = match[2]; // ... </ ...
     const tagName = match[3];
@@ -125,12 +147,12 @@ export function parse(data: string, rootElement: Element) {
       // not </ tags
       if (!endSlash && kElementsClosedByOpening[currentParent.tagName]) {
         if (kElementsClosedByOpening[currentParent.tagName][normalizedTagName]) {
-          tagsClosed.push(currentParent.tagName);
+          stack.pop();
+          currentParent = arr_back(stack);
         }
       }
 
-      const childToAppend = ownerDocument.createElementNS(
-        currentNamespace, currentNamespace === HTML_NAMESPACE ? toLower(tagName) : tagName);
+      const childToAppend = ownerDocument.createElementNS(currentNamespace, currentNamespace === HTML_NAMESPACE ? toLower(tagName) : tagName);
 
       for (let attMatch; (attMatch = kAttributePattern.exec(matchAttributes)); ) {
         const attrName = attMatch[2];
@@ -156,7 +178,7 @@ export function parse(data: string, rootElement: Element) {
     if (tagName === 'foreignObject') {
       currentNamespace = beginningSlash ? SVG_NAMESPACE : HTML_NAMESPACE;
     }
-    
+
     if (beginningSlash || endSlash || kSelfClosingElements[normalizedTagName]) {
       // </ or /> or <br> etc.
       while (true) {
@@ -203,7 +225,7 @@ export function parse(data: string, rootElement: Element) {
   if (wrapper) {
     wrapper.parentNode = null;
     wrapper.childNodes.forEach((node: Node) => {
-      node.parentNode = null;    
+      node.parentNode = null;
     });
     return wrapper;
   }
