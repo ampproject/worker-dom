@@ -71,7 +71,7 @@
     "rollup-plugin-terser": "4.0.4",
     "serve-static": "1.13.2",
     "tslint": "5.14.0",
-    "typescript": "3.3.4000"
+    "typescript": "3.4.1"
   },
   "lint-staged": {
     "*.ts": [
