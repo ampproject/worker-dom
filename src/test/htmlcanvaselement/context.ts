@@ -134,7 +134,6 @@ describe('fillRect', () => {
 
         context2d.fillRect(10, 9, 8, 7);
         t.true(implStub.withArgs(10, 9, 8, 7).calledOnce);
-        t.false(instanceStub.called);
 
         deferredUpgrade.resolve(instance);
 
@@ -175,7 +174,6 @@ describe('strokeRect', () => {
 
         context2d.strokeRect(10, 9, 8, 7);
         t.true(implStub.withArgs(10, 9, 8, 7).calledOnce);
-        t.false(instanceStub.called);
 
         deferredUpgrade.resolve(instance);
 
@@ -216,7 +214,6 @@ describe('fillText', () => {
 
         context2d.fillText("hello, world", 1, 2);
         t.true(implStub.withArgs("hello, world", 1, 2).calledOnce);
-        t.false(instanceStub.called);
 
         deferredUpgrade.resolve(instance);
 
@@ -257,7 +254,6 @@ describe('strokeText', () => {
 
         context2d.strokeText("hello, world", 1, 2);
         t.true(implStub.withArgs("hello, world", 1, 2).calledOnce);
-        t.false(instanceStub.called);
 
         deferredUpgrade.resolve(instance);
 
@@ -298,7 +294,6 @@ describe('measureText', () => {
 
         context2d.measureText("hello, world");
         t.true(implStub.withArgs("hello, world").calledOnce);
-        t.false(instanceStub.called);
 
         deferredUpgrade.resolve(instance);
 
@@ -344,7 +339,6 @@ describe('lineWidth', () => {
 
         context2d.lineWidth = 200;
         t.true(implSpy.withArgs(200).calledOnce);
-        t.false(instanceSpy.called);
 
         deferredUpgrade.resolve(instance);
 
@@ -390,7 +384,6 @@ describe('lineCap', () => {
 
         context2d.lineCap = "round";
         t.true(implSpy.withArgs("round").calledOnce);
-        t.false(instanceSpy.called);
 
         deferredUpgrade.resolve(instance);
 
@@ -436,8 +429,7 @@ describe('lineJoin', () => {
 
         context2d.lineJoin = "miter";
         t.true(implSpy.withArgs("miter").calledOnce);
-        t.false(instanceSpy.called);
-
+    
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -482,8 +474,7 @@ describe('miterLimit', () => {
 
         context2d.miterLimit = 200;
         t.true(implSpy.withArgs(200).calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -523,8 +514,7 @@ describe('getLineDash', () => {
 
         context2d.getLineDash();
         t.true(implStub.calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -564,8 +554,7 @@ describe('setLineDash', () => {
 
         context2d.setLineDash([0, 1, 2]);
         t.true(implStub.withArgs([0, 1, 2]).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -610,8 +599,7 @@ describe('lineDashOffset', () => {
 
         context2d.lineDashOffset = 50;
         t.true(implSpy.withArgs(50).calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -656,8 +644,7 @@ describe('font', () => {
 
         context2d.font = "Courier";
         t.true(implSpy.withArgs("Courier").calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -702,8 +689,7 @@ describe('textAlign', () => {
 
         context2d.textAlign = "end";
         t.true(implSpy.withArgs("end").calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -748,8 +734,7 @@ describe('textBaseline', () => {
 
         context2d.textBaseline = "hanging";
         t.true(implSpy.withArgs("hanging").calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -794,8 +779,7 @@ describe('direction', () => {
 
         context2d.direction = "inherit";
         t.true(implSpy.withArgs("inherit").calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -840,8 +824,7 @@ describe('fillStyle', () => {
 
         context2d.fillStyle = "black";
         t.true(implSpy.withArgs("black").calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -886,8 +869,7 @@ describe('strokeStyle', () => {
 
         context2d.strokeStyle = "black";
         t.true(implSpy.withArgs("black").calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -927,8 +909,7 @@ describe('createLinearGradient', () => {
 
         context2d.createLinearGradient(0, 1, 2, 3);
         t.true(implStub.withArgs(0, 1, 2, 3).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -968,8 +949,7 @@ describe('createRadialGradient', () => {
 
         context2d.createRadialGradient(0, 1, 2, 3, 4, 5);
         t.true(implStub.withArgs(0, 1, 2, 3, 4, 5).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1025,8 +1005,7 @@ describe('shadowBlur', () => {
 
         context2d.shadowBlur = 300;
         t.true(implSpy.withArgs(300).calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1071,8 +1050,7 @@ describe('shadowColor', () => {
 
         context2d.shadowColor = "blue";
         t.true(implSpy.withArgs("blue").calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1117,8 +1095,7 @@ describe('shadowOffsetX', () => {
 
         context2d.shadowOffsetX = 20;
         t.true(implSpy.withArgs(20).calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1163,8 +1140,7 @@ describe('shadowOffsetY', () => {
 
         context2d.shadowOffsetY = 20;
         t.true(implSpy.withArgs(20).calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1204,8 +1180,7 @@ describe('beginPath', () => {
 
         context2d.beginPath();
         t.true(implStub.calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1245,8 +1220,7 @@ describe('closePath', () => {
 
         context2d.closePath();
         t.true(implStub.calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1286,8 +1260,7 @@ describe('moveTo', () => {
 
         context2d.moveTo(0, 1);
         t.true(implStub.withArgs(0, 1).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1327,8 +1300,7 @@ describe('lineTo', () => {
 
         context2d.lineTo(0, 1);
         t.true(implStub.withArgs(0, 1).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1368,8 +1340,7 @@ describe('bezierCurveTo', () => {
 
         context2d.bezierCurveTo(0, 1, 2, 3, 4, 5);
         t.true(implStub.withArgs(0, 1, 2, 3, 4, 5).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1409,8 +1380,7 @@ describe('quadraticCurveTo', () => {
 
         context2d.quadraticCurveTo(0, 1, 2, 3);
         t.true(implStub.withArgs(0, 1, 2, 3).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1450,8 +1420,7 @@ describe('arc', () => {
 
         context2d.arc(0, 1, 2, 3, 4);
         t.true(implStub.withArgs(0, 1, 2, 3, 4).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1491,8 +1460,7 @@ describe('arcTo', () => {
 
         context2d.arcTo(0, 1, 2, 3, 4);
         t.true(implStub.withArgs(0, 1, 2, 3, 4).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1532,8 +1500,7 @@ describe('ellipse', () => {
 
         context2d.ellipse(0, 1, 2, 3, 4, 5, 6);
         t.true(implStub.withArgs(0, 1, 2, 3, 4, 5, 6).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1573,8 +1540,7 @@ describe('rect', () => {
 
         context2d.rect(0, 1, 2, 3);
         t.true(implStub.withArgs(0, 1, 2, 3).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1615,8 +1581,7 @@ describe('fill', () => {
 
         context2d.fill("nonzero");
         t.true(implStub.withArgs("nonzero").calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1656,8 +1621,7 @@ describe('stroke', () => {
 
         context2d.stroke();
         t.true(implStub.calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1697,8 +1661,7 @@ describe('clip', () => {
 
         context2d.clip();
         t.true(implStub.calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1738,8 +1701,7 @@ describe('isPointInPath', () => {
 
         context2d.isPointInPath(0, 1);
         t.true(implStub.withArgs(0, 1).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1779,8 +1741,7 @@ describe('isPointInStroke', () => {
 
         context2d.isPointInStroke(0, 1);
         t.true(implStub.withArgs(0, 1).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1820,8 +1781,7 @@ describe('rotate', () => {
 
         context2d.rotate(21);
         t.true(implStub.withArgs(21).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1861,8 +1821,7 @@ describe('scale', () => {
 
         context2d.scale(0, 1);
         t.true(implStub.withArgs(0, 1).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1902,8 +1861,7 @@ describe('translate', () => {
 
         context2d.translate(0, 1);
         t.true(implStub.withArgs(0, 1).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1943,8 +1901,7 @@ describe('transform', () => {
 
         context2d.transform(0, 1, 0, 1, 0, 1);
         t.true(implStub.withArgs(0, 1, 0, 1, 0, 1).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -1984,8 +1941,7 @@ describe('setTransform', () => {
 
         context2d.setTransform(0, 1, 0, 1, 0, 1);
         t.true(implStub.withArgs(0, 1, 0, 1, 0, 1).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -2030,8 +1986,7 @@ describe('globalAlpha', () => {
 
         context2d.globalAlpha = 20;
         t.true(implSpy.withArgs(20).calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -2076,8 +2031,7 @@ describe('globalCompositeOperation', () => {
 
         context2d.globalCompositeOperation = "source-in";
         t.true(implSpy.withArgs("source-in").calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -2130,8 +2084,7 @@ describe('createImageData', () => {
 
         context2d.createImageData(0, 1);
         t.true(implStub.withArgs(0, 1).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -2171,8 +2124,7 @@ describe('getImageData', () => {
 
         context2d.getImageData(0, 1, 2, 3);
         t.true(implStub.withArgs(0, 1, 2, 3).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -2216,8 +2168,7 @@ describe('putImageData', () => {
 
         context2d.putImageData(imageData, 2, 1);
         t.true(implStub.withArgs(imageData, 2, 1).calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -2262,8 +2213,7 @@ describe('imageSmoothingEnabled', () => {
 
         context2d.imageSmoothingEnabled = true;
         t.true(implSpy.withArgs(true).calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -2308,8 +2258,7 @@ describe('imageSmoothingQuality', () => {
 
         context2d.imageSmoothingQuality = "low";
         t.true(implSpy.withArgs("low").calledOnce);
-        t.false(instanceSpy.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -2349,8 +2298,7 @@ describe('save', () => {
 
         context2d.save();
         t.true(implStub.calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -2390,8 +2338,7 @@ describe('restore', () => {
 
         context2d.restore();
         t.true(implStub.calledOnce);
-        t.false(instanceStub.called);
-
+        
         deferredUpgrade.resolve(instance);
 
         await context2d.goodOffscreenPromise.then(() => {
@@ -2436,10 +2383,9 @@ describe('filter', () => {
 
         context2d.filter = "none";
         t.true(implSpy.withArgs("none").calledOnce);
-        t.false(instanceSpy.called);
-        
+          
         deferredUpgrade.resolve(instance);
-        
+
         await context2d.goodOffscreenPromise.then(() => {
             t.true(instanceSpy.withArgs("none").calledOnce);
         });
