@@ -30,11 +30,14 @@ export class CanvasRenderingContext2D implements CanvasRenderingContext2DImpleme
     private implementation = (new OffscreenCanvas(0, 0) as {getContext(c: "2d"): CanvasRenderingContext2DImplementation}).getContext('2d');
     private upgraded = false;
     private canvasElement: HTMLCanvasElement;
+    
+    // TODO: This should only exist in testing environment
+    public goodOffscreenPromise: Promise<void>;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvasElement = canvas;
 
-        getOffscreenCanvasAsync(this.canvasElement).then((instance) => {
+        this.goodOffscreenPromise = getOffscreenCanvasAsync(this.canvasElement).then((instance) => {
             this.implementation = instance.getContext('2d');
             this.upgraded = true;
 
