@@ -2,6 +2,8 @@ import { CanvasRenderingContext2DImplementation, CanvasDirection, CanvasFillRule
 import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { MessageType, MessageToWorker, OffscreenCanvasToWorker } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { transfer } from './MutationTransfer';
+import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 
 declare var OffscreenCanvas: any;
 
@@ -20,6 +22,7 @@ export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{get
                     resolve(transferredOffscreenCanvas as {getContext(c: '2d'): CanvasRenderingContext2DImplementation});
                 }
             });
+            transfer(/* postMessage */canvas.ownerDocument.postMessage, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
         }
     })
   }
