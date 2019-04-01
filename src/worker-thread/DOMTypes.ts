@@ -1,7 +1,7 @@
 import { HTMLCanvasElement } from "./dom/HTMLCanvasElement";
 
 /** The CanvasRenderingContext2D interface, part of the Canvas API, provides the 2D rendering context for the drawing surface of a <canvas> element. It is used for drawing shapes, text, images, and other objects. */
-export interface CanvasRenderingContext2DImplementation extends 
+export interface CanvasRenderingContext2D extends 
 CanvasState, CanvasTransform, CanvasCompositing, CanvasImageSmoothing, 
 CanvasFillStrokeStyles, CanvasShadowStyles, CanvasFilters, CanvasRect, 
 CanvasDrawPath, CanvasText, CanvasDrawImage, CanvasImageData, 
@@ -9,9 +9,9 @@ CanvasPathDrawingStyles, CanvasTextDrawingStyles, CanvasPath {
     readonly canvas: HTMLCanvasElement;
 }
 
-declare var CanvasRenderingContext2DImplementation: {
-    prototype: CanvasRenderingContext2DImplementation;
-    new(): CanvasRenderingContext2DImplementation;
+declare var CanvasRenderingContext2D: {
+    prototype: CanvasRenderingContext2D;
+    new(): CanvasRenderingContext2D;
 };
 
 interface CanvasDrawImage {

@@ -16,32 +16,32 @@
 
 import anyTest, { TestInterface, afterEach } from 'ava';
 import * as sinon from 'sinon';
-import { CanvasRenderingContext2D, deferredUpgrades } from '../../worker-thread/CanvasRenderingContext2D';
+import { CanvasRenderingContext2DImplementation, deferredUpgrades } from '../../worker-thread/CanvasRenderingContext2D';
 import { createDocument } from '../../worker-thread/dom/Document';
 import { HTMLCanvasElement } from '../../worker-thread/dom/HTMLCanvasElement';
-import { CanvasRenderingContext2DImplementation } from '../../worker-thread/DOMTypes';
+import { CanvasRenderingContext2D } from '../../worker-thread/DOMTypes';
 
 const test = anyTest as TestInterface<{
     canvas: HTMLCanvasElement,
-    context2d: CanvasRenderingContext2D;
+    context2d: CanvasRenderingContext2DImplementation;
     deferredUpgrade: {resolve: (instance: OffscreenCanvas) => void, reject: (errorMsg: string) => void};
-    implementation: CanvasRenderingContext2DImplementation;
+    implementation: CanvasRenderingContext2D;
 }>;
 
 let sandbox: sinon.SinonSandbox;
 
 class OffscreenCanvas {
     public static mostRecentInstance: OffscreenCanvas;
-    public implementation: CanvasRenderingContext2DImplementation;
+    public implementation: CanvasRenderingContext2D;
 
     constructor() {
         // this.x, y
-        const context = ({} as unknown) as CanvasRenderingContext2DImplementation;
+        const context = ({} as unknown) as CanvasRenderingContext2D;
         OffscreenCanvas.mostRecentInstance = this;
         this.implementation = context;
     }
 
-    getContext(c: string): CanvasRenderingContext2DImplementation {
+    getContext(c: string): CanvasRenderingContext2D {
         return this.implementation;
     }
 

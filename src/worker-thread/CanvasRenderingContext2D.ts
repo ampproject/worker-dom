@@ -1,4 +1,4 @@
-import { CanvasRenderingContext2DImplementation, CanvasDirection, CanvasFillRule, CanvasImageSource, CanvasLineCap, CanvasLineJoin, CanvasTextAlign, CanvasTextBaseline, ImageSmoothingQuality, CanvasGradient, CanvasPattern } from './DOMTypes';
+import { CanvasRenderingContext2D, CanvasDirection, CanvasFillRule, CanvasImageSource, CanvasLineCap, CanvasLineJoin, CanvasTextAlign, CanvasTextBaseline, ImageSmoothingQuality, CanvasGradient, CanvasPattern } from './DOMTypes';
 import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { MessageType, MessageToWorker, OffscreenCanvasToWorker } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
@@ -9,13 +9,13 @@ declare var OffscreenCanvas: any;
 
 export const deferredUpgrades = new WeakMap();
 
-export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{getContext(c: '2d'): CanvasRenderingContext2DImplementation}> {
+export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{getContext(c: '2d'): CanvasRenderingContext2D}> {
     return new Promise((resolve, reject) => {
         const messageHandler = ({ data }: { data: MessageToWorker }) => {
             if (data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE) {
                 removeEventListener('message', messageHandler);
                 const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
-                resolve(transferredOffscreenCanvas as {getContext(c: '2d'): CanvasRenderingContext2DImplementation});
+                resolve(transferredOffscreenCanvas as {getContext(c: '2d'): CanvasRenderingContext2D});
             }
         };
 
@@ -30,10 +30,10 @@ export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{get
     })
   }
 
-export class CanvasRenderingContext2D implements CanvasRenderingContext2DImplementation {
+export class CanvasRenderingContext2DImplementation implements CanvasRenderingContext2D {
     
     private calls = [] as {fnName: string, args: any[], setter: boolean}[];
-    private implementation = (new OffscreenCanvas(0, 0) as {getContext(c: "2d"): CanvasRenderingContext2DImplementation}).getContext('2d');
+    private implementation = (new OffscreenCanvas(0, 0) as {getContext(c: "2d"): CanvasRenderingContext2D}).getContext('2d');
     private upgraded = false;
     private canvasElement: HTMLCanvasElement;
     

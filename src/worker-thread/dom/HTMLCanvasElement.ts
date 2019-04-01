@@ -17,16 +17,16 @@
 import { HTMLElement } from './HTMLElement';
 import { registerSubclass } from './Element';
 import { reflectProperties } from './enhanceElement';
-import { CanvasRenderingContext2D } from '../CanvasRenderingContext2D';
+import { CanvasRenderingContext2DImplementation } from '../CanvasRenderingContext2D';
 
 export class HTMLCanvasElement extends HTMLElement {
 
-    private context: CanvasRenderingContext2D;
+    private context: CanvasRenderingContext2DImplementation;
 
-    getContext(contextType: string): CanvasRenderingContext2D {
+    getContext(contextType: string): CanvasRenderingContext2DImplementation {
         if (!this.context) {
             if (contextType === '2D' || contextType === '2d') {
-                this.context = new CanvasRenderingContext2D(this);
+                this.context = new CanvasRenderingContext2DImplementation(this);
             } else {
                 throw new Error("Context type not supported.");
             }
