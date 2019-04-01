@@ -21,14 +21,14 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { Node } from './dom/Node';
 import { Phase } from '../transfer/Phase';
 import { phase, set as setPhase } from './phase';
-import { PostMessage } from './worker-thread';
+import { Document } from './dom/Document';
 
 let allowTransfer = false;
 let pending = false;
 let pendingMutations: Array<number> = [];
 
-export function transfer(postMessage: PostMessage, mutation: Array<number>): void {
-  if (phase > Phase.Hydrating) {
+export function transfer(document: Document, mutation: Array<number>): void {
+  if (phase > Phase.Hydrating && document[TransferrableKeys.allowTransfer]) {
     pending = true;
     pendingMutations = pendingMutations.concat(mutation);
 
@@ -40,7 +40,7 @@ export function transfer(postMessage: PostMessage, mutation: Array<number>): voi
           ).buffer;
           const mutations = new Uint16Array(pendingMutations).buffer;
 
-          postMessage(
+          document.postMessage(
             {
               [TransferrableKeys.type]: MessageType.MUTATE,
               [TransferrableKeys.nodes]: nodes,

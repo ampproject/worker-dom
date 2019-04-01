@@ -76,7 +76,7 @@ export class HTMLOptionElement extends HTMLElement {
    */
   set selected(value: any) {
     this[TransferrableKeys.selected] = !!value;
-    transfer((this.ownerDocument as Document).postMessage, [
+    transfer(this.ownerDocument as Document, [
       TransferrableMutationType.PROPERTIES,
       this[TransferrableKeys.index],
       storeString('selected'),

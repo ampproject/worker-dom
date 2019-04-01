@@ -397,14 +397,7 @@ export abstract class Node {
       this[TransferrableKeys.handlers][lowerType] = [handler];
     }
 
-    transfer((this.ownerDocument as Document).postMessage, [
-      TransferrableMutationType.EVENT_SUBSCRIPTION,
-      this[TransferrableKeys.index],
-      0,
-      1,
-      storedType,
-      index,
-    ]);
+    transfer(this.ownerDocument as Document, [TransferrableMutationType.EVENT_SUBSCRIPTION, this[TransferrableKeys.index], 0, 1, storedType, index]);
   }
 
   /**
@@ -420,7 +413,7 @@ export abstract class Node {
 
     if (index >= 0) {
       handlers.splice(index, 1);
-      transfer((this.ownerDocument as Document).postMessage, [
+      transfer(this.ownerDocument as Document, [
         TransferrableMutationType.EVENT_SUBSCRIPTION,
         this[TransferrableKeys.index],
         1,

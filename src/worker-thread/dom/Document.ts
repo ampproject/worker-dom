@@ -59,6 +59,7 @@ import { observe } from '../MutationTransfer';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { propagate as propagateEvents } from '../Event';
 import { propagate as propagateSyncValues } from '../SyncValuePropagation';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 const DOCUMENT_NAME = '#document';
 
@@ -77,6 +78,7 @@ export class Document extends Element {
   public documentElement: Document;
   public body: Element;
   public postMessage: PostMessage;
+  public [TransferrableKeys.allowTransfer]: boolean = true;
 
   constructor() {
     super(NodeType.DOCUMENT_NODE, DOCUMENT_NAME, HTML_NAMESPACE, null);
