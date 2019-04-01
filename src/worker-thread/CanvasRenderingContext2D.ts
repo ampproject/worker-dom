@@ -11,17 +11,20 @@ export const deferredUpgrades = new WeakMap();
 
 export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{getContext(c: '2d'): CanvasRenderingContext2DImplementation}> {
     return new Promise((resolve, reject) => {
+        const messageHandler = ({ data }: { data: MessageToWorker }) => {
+            if (data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE) {
+                removeEventListener('message', messageHandler);
+                const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
+                resolve(transferredOffscreenCanvas as {getContext(c: '2d'): CanvasRenderingContext2DImplementation});
+            }
+        };
+
         // TODO: This should only happen in test environemnet. Otherwise, we should throw.
         if (typeof addEventListener !== 'function') {
             const deferred = { resolve, reject };
             deferredUpgrades.set(canvas, deferred);
         } else {
-            addEventListener('message', ({ data }: { data: MessageToWorker }) => {
-                if (data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE) {
-                    const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
-                    resolve(transferredOffscreenCanvas as {getContext(c: '2d'): CanvasRenderingContext2DImplementation});
-                }
-            });
+            addEventListener('message', messageHandler);
             transfer(/* postMessage */canvas.ownerDocument.postMessage, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
         }
     })
