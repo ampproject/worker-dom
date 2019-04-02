@@ -1,4 +1,4 @@
-import { HTMLCanvasElement } from "./dom/HTMLCanvasElement";
+import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 
 /** The CanvasRenderingContext2D interface, part of the Canvas API, provides the 2D rendering context for the drawing surface of a <canvas> element. It is used for drawing shapes, text, images, and other objects. */
 export interface CanvasRenderingContext2D extends 
@@ -150,14 +150,14 @@ declare var ImageBitmap: {
     new(): ImageBitmap;
 };
 
-export type CanvasDirection = "ltr" | "rtl" | "inherit";
-export type CanvasFillRule = "nonzero" | "evenodd";
+export type CanvasDirection = 'ltr' | 'rtl' | 'inherit';
+export type CanvasFillRule = 'nonzero' | 'evenodd';
 export type CanvasImageSource = ImageBitmap;
-export type CanvasLineCap = "butt" | "round" | "square";
-export type CanvasLineJoin = "round" | "bevel" | "miter";
-export type CanvasTextAlign = "start" | "end" | "left" | "right" | "center";
-export type CanvasTextBaseline = "top" | "hanging" | "middle" | "alphabetic" | "ideographic" | "bottom";
-export type ImageSmoothingQuality = "low" | "medium" | "high";
+export type CanvasLineCap = 'butt' | 'round' | 'square';
+export type CanvasLineJoin = 'round' | 'bevel' | 'miter';
+export type CanvasTextAlign = 'start' | 'end' | 'left' | 'right' | 'center';
+export type CanvasTextBaseline = 'top' | 'hanging' | 'middle' | 'alphabetic' | 'ideographic' | 'bottom';
+export type ImageSmoothingQuality = 'low' | 'medium' | 'high';
 
 /** The CanvasGradient interface represents an opaque object describing a gradient. 
  * It is returned by the methods CanvasRenderingContext2D.createLinearGradient() or 
@@ -166,8 +166,8 @@ export interface CanvasGradient {
     /**
      * Adds a color stop with the given color to the gradient at the given offset. 0.0 is the offset
      * at one end of the gradient, 1.0 is the offset at the other end.
-     * Throws an "IndexSizeError" DOMException if the offset
-     * is out of range. Throws a "SyntaxError" DOMException if
+     * Throws an 'IndexSizeError' DOMException if the offset
+     * is out of range. Throws a 'SyntaxError' DOMException if
      * the color cannot be parsed.
      */
     addColorStop(offset: number, color: string): void;
