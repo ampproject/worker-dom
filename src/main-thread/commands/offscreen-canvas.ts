@@ -10,9 +10,9 @@ export function OffscreenCanvasProcessor(workerContext: WorkerContext): CommandE
       if (target) {
         const offscreen = (target as HTMLCanvasElement).transferControlToOffscreen();
         workerContext.messageToWorker({
-            [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE,
-            [TransferrableKeys.target]: [target._index_],
-            [TransferrableKeys.data]: offscreen, // Object, an OffscreenCanvas
+          [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE,
+          [TransferrableKeys.target]: [target._index_],
+          [TransferrableKeys.data]: offscreen, // Object, an OffscreenCanvas
         }, [offscreen]);
       } else {
         console.error(`getNode() yields null – ${target}`);
@@ -21,8 +21,8 @@ export function OffscreenCanvasProcessor(workerContext: WorkerContext): CommandE
       return startPosition + OffscreenCanvasMutationIndex.End;
     }, print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       return {
-          type: 'OFFSCREEN_CANVAS_INSTANCE',
-          target,
+        type: 'OFFSCREEN_CANVAS_INSTANCE',
+        target,
       };
     },
   };
