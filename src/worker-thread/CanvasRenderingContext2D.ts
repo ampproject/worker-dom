@@ -1,4 +1,16 @@
-import { CanvasRenderingContext2D, CanvasDirection, CanvasFillRule, CanvasImageSource, CanvasLineCap, CanvasLineJoin, CanvasTextAlign, CanvasTextBaseline, ImageSmoothingQuality, CanvasGradient, CanvasPattern } from './DOMTypes';
+import {
+  CanvasRenderingContext2D,
+  CanvasDirection,
+  CanvasFillRule,
+  CanvasImageSource,
+  CanvasLineCap,
+  CanvasLineJoin,
+  CanvasTextAlign,
+  CanvasTextBaseline,
+  ImageSmoothingQuality,
+  CanvasGradient,
+  CanvasPattern,
+} from './DOMTypes';
 import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { MessageType, MessageToWorker, OffscreenCanvasToWorker } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
@@ -9,281 +21,255 @@ declare var OffscreenCanvas: any;
 
 export const deferredUpgrades = new WeakMap();
 
-export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{getContext(c: '2d'): CanvasRenderingContext2D}> {
-    return new Promise((resolve, reject) => {
-        const messageHandler = ({ data }: { data: MessageToWorker }) => {
-            if (data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE) {
-                removeEventListener('message', messageHandler);
-                const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
-                resolve(transferredOffscreenCanvas as {getContext(c: '2d'): CanvasRenderingContext2D});
-            }
-        };
+export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{ getContext(c: '2d'): CanvasRenderingContext2D }> {
+  return new Promise((resolve, reject) => {
+    const messageHandler = ({ data }: { data: MessageToWorker }) => {
+      if (data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE) {
+        removeEventListener('message', messageHandler);
+        const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
+        resolve(transferredOffscreenCanvas as { getContext(c: '2d'): CanvasRenderingContext2D });
+      }
+    };
 
-        // TODO: This should only happen in test environemnet. Otherwise, we should throw.
-        if (typeof addEventListener !== 'function') {
-            const deferred = { resolve, reject };
-            deferredUpgrades.set(canvas, deferred);
-        } else {
-            addEventListener('message', messageHandler);
-            transfer(/* postMessage */canvas.ownerDocument.postMessage, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
-        }
-    })
-  }
+    // TODO: This should only happen in test environemnet. Otherwise, we should throw.
+    if (typeof addEventListener !== 'function') {
+      const deferred = { resolve, reject };
+      deferredUpgrades.set(canvas, deferred);
+    } else {
+      addEventListener('message', messageHandler);
+      transfer(/* postMessage */ canvas.ownerDocument.postMessage, [
+        TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE,
+        canvas[TransferrableKeys.index],
+      ]);
+    }
+  });
+}
 
 export class CanvasRenderingContext2DImplementation implements CanvasRenderingContext2D {
-    
-    private calls = [] as {fnName: string, args: any[], setter: boolean}[];
-    private implementation = (new OffscreenCanvas(0, 0) as {getContext(c: '2d'): CanvasRenderingContext2D}).getContext('2d');
-    private upgraded = false;
-    private canvasElement: HTMLCanvasElement;
-    
-    // TODO: This should only exist in testing environment
-    public goodOffscreenPromise: Promise<void>;
+  private calls = [] as { fnName: string; args: any[]; setter: boolean }[];
+  private implementation = (new OffscreenCanvas(0, 0) as { getContext(c: '2d'): CanvasRenderingContext2D }).getContext('2d');
+  private upgraded = false;
+  private canvasElement: HTMLCanvasElement;
 
-    constructor(canvas: HTMLCanvasElement) {
-        this.canvasElement = canvas;
+  // TODO: This should only exist in testing environment
+  public goodOffscreenPromise: Promise<void>;
 
-        this.goodOffscreenPromise = getOffscreenCanvasAsync(this.canvasElement).then((instance) => {
-            this.implementation = instance.getContext('2d');
-            this.upgraded = true;
+  constructor(canvas: HTMLCanvasElement) {
+    this.canvasElement = canvas;
 
-            for (const call of this.calls) {
-                if (call.setter) {
-                    if (call.args.length != 1) {
-                        throw new Error(
-                            'Attempting to set property with wrong number of arguments.');
-                    }
-                    (this.implementation as any)[call.fnName] = call.args[0];
-                    
-                } else {
-                    (this.implementation as any)[call.fnName](...call.args);
-                }
-            }
+    this.goodOffscreenPromise = getOffscreenCanvasAsync(this.canvasElement).then(instance => {
+      this.implementation = instance.getContext('2d');
+      this.upgraded = true;
 
-        });
-    }
-
-    private delegate(fnName: string, fnArgs: any[], isSetter: boolean) {
-        let returnValue;
-        if (isSetter) {
-            (this.implementation as any)[fnName] = fnArgs[0];
+      for (const call of this.calls) {
+        if (call.setter) {
+          if (call.args.length != 1) {
+            throw new Error('Attempting to set property with wrong number of arguments.');
+          }
+          (this.implementation as any)[call.fnName] = call.args[0];
         } else {
-            returnValue = (this.implementation as any)[fnName](...fnArgs);
+          (this.implementation as any)[call.fnName](...call.args);
         }
-        if (!this.upgraded) {
-            this.calls.push({fnName, args: fnArgs, setter: isSetter});
-        }
-        return returnValue;
+      }
+    });
+  }
+
+  private delegate(fnName: string, fnArgs: any[], isSetter: boolean) {
+    let returnValue;
+    if (isSetter) {
+      (this.implementation as any)[fnName] = fnArgs[0];
+    } else {
+      returnValue = (this.implementation as any)[fnName](...fnArgs);
     }
-
-    /* DRAWING RECTANGLES */
-    clearRect(x: number, y: number, width: number, height: number): void {
-        this.delegate('clearRect', [x, y, width, height], false);
+    if (!this.upgraded) {
+      this.calls.push({ fnName, args: fnArgs, setter: isSetter });
     }
+    return returnValue;
+  }
 
-    fillRect(x: number, y: number, width: number, height: number): void {
-        this.delegate('fillRect', [x, y, width, height], false);
-    }
+  /* DRAWING RECTANGLES */
+  clearRect(x: number, y: number, width: number, height: number): void {
+    this.delegate('clearRect', [x, y, width, height], false);
+  }
 
-    strokeRect(x: number, y: number, width: number, height: number): void {
-        this.delegate('strokeRect', [x, y, width, height], false);
-    }
+  fillRect(x: number, y: number, width: number, height: number): void {
+    this.delegate('fillRect', [x, y, width, height], false);
+  }
 
-    /* DRAWING TEXT */
-    fillText(text: string, x: number, y: number): void {
-        this.delegate('fillText', [text, x, y], false);
-    }
+  strokeRect(x: number, y: number, width: number, height: number): void {
+    this.delegate('strokeRect', [x, y, width, height], false);
+  }
 
-    strokeText(text: string, x: number, y: number): void {
-        this.delegate('strokeText', [text, x, y], false);
-    }
+  /* DRAWING TEXT */
+  fillText(text: string, x: number, y: number): void {
+    this.delegate('fillText', [text, x, y], false);
+  }
 
-    measureText(text: string): TextMetrics {
-        return this.delegate('measureText', [text], false);
-    }
+  strokeText(text: string, x: number, y: number): void {
+    this.delegate('strokeText', [text, x, y], false);
+  }
 
-    /* LINE STYLES */
-    set lineWidth(value: number) {
-        this.delegate('lineWidth', [value], true);
-    }
+  measureText(text: string): TextMetrics {
+    return this.delegate('measureText', [text], false);
+  }
 
-    set lineCap(value: CanvasLineCap) {
-        this.delegate('lineCap', [value], true);
-    }
+  /* LINE STYLES */
+  set lineWidth(value: number) {
+    this.delegate('lineWidth', [value], true);
+  }
 
-    set lineJoin(value: CanvasLineJoin) {
-        this.delegate('lineJoin', [value], true);
-    }
+  set lineCap(value: CanvasLineCap) {
+    this.delegate('lineCap', [value], true);
+  }
 
-    set miterLimit(value: number) {
-        this.delegate('miterLimit', [value], true);
-    }
+  set lineJoin(value: CanvasLineJoin) {
+    this.delegate('lineJoin', [value], true);
+  }
 
-    getLineDash(): number[] {
-        return this.delegate('getLineDash', [], false);
-    }
+  set miterLimit(value: number) {
+    this.delegate('miterLimit', [value], true);
+  }
 
-    setLineDash(segments: number[]): void {
-        this.delegate('setLineDash', [segments], false);
-    }
+  getLineDash(): number[] {
+    return this.delegate('getLineDash', [], false);
+  }
 
-    set lineDashOffset(value: number) {
-        this.delegate('lineDashOffset', [value], true);
-    }
+  setLineDash(segments: number[]): void {
+    this.delegate('setLineDash', [segments], false);
+  }
 
-    /* TEXT STYLES */
-    set font(value: string) {
-        this.delegate('font', [value], true);
-    }
+  set lineDashOffset(value: number) {
+    this.delegate('lineDashOffset', [value], true);
+  }
 
-    set textAlign(value: CanvasTextAlign) {
-        this.delegate('textAlign', [value], true);
-    }
+  /* TEXT STYLES */
+  set font(value: string) {
+    this.delegate('font', [value], true);
+  }
 
-    set textBaseline(value: CanvasTextBaseline) {
-        this.delegate('textBaseline', [value], true);
-    }
+  set textAlign(value: CanvasTextAlign) {
+    this.delegate('textAlign', [value], true);
+  }
 
-    set direction(value: CanvasDirection) {
-        this.delegate('direction', [value], true);
-    }
+  set textBaseline(value: CanvasTextBaseline) {
+    this.delegate('textBaseline', [value], true);
+  }
 
-    /* FILL AND STROKE STYLES */
-    set fillStyle(value: string | CanvasGradient | CanvasPattern) {
-        this.delegate('fillStyle', [value], true);
-    }
+  set direction(value: CanvasDirection) {
+    this.delegate('direction', [value], true);
+  }
 
-    set strokeStyle(value: string | CanvasGradient | CanvasPattern) {
-        this.delegate('strokeStyle', [value], true);
-    }
+  /* FILL AND STROKE STYLES */
+  set fillStyle(value: string | CanvasGradient | CanvasPattern) {
+    this.delegate('fillStyle', [value], true);
+  }
 
-    /* GRADIENTS AND PATTERNS */
-    createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
-        return this.delegate(
-            'createLinearGradient', [x0, y0, x1, y1], false);
-        
-    }
+  set strokeStyle(value: string | CanvasGradient | CanvasPattern) {
+    this.delegate('strokeStyle', [value], true);
+  }
 
-    createRadialGradient(
-        x0: number, y0: number, r0: number,  x1: number, y1: number, r1: number): CanvasGradient {
-        return this.delegate('createRadialGradient', [x0, y0, r0, x1, y1, r1], false);
-    }
+  /* GRADIENTS AND PATTERNS */
+  createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
+    return this.delegate('createLinearGradient', [x0, y0, x1, y1], false);
+  }
 
-    createPattern(image: CanvasImageSource, repetition: string): CanvasPattern | null {
-        return this.delegate('createPattern', [image, repetition], false);
-    }
+  createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
+    return this.delegate('createRadialGradient', [x0, y0, r0, x1, y1, r1], false);
+  }
 
-    /* SHADOWS */
-    set shadowBlur(value: number) {
-        this.delegate('shadowBlur', [value], true);
-    }
+  createPattern(image: CanvasImageSource, repetition: string): CanvasPattern | null {
+    return this.delegate('createPattern', [image, repetition], false);
+  }
 
-    set shadowColor(value: string) {
-        this.delegate('shadowColor', [value], true);
-    }
+  /* SHADOWS */
+  set shadowBlur(value: number) {
+    this.delegate('shadowBlur', [value], true);
+  }
 
-    set shadowOffsetX(value: number) {
-        this.delegate('shadowOffsetX', [value], true);
-    }
+  set shadowColor(value: string) {
+    this.delegate('shadowColor', [value], true);
+  }
 
-    set shadowOffsetY(value: number) {
-        this.delegate('shadowOffsetY', [value], true);
-    }
+  set shadowOffsetX(value: number) {
+    this.delegate('shadowOffsetX', [value], true);
+  }
 
-    /* PATHS */
-    beginPath(): void {
-        this.delegate('beginPath', [], false);
-    }
+  set shadowOffsetY(value: number) {
+    this.delegate('shadowOffsetY', [value], true);
+  }
 
-    closePath(): void {
-        this.delegate('closePath', [], false);
-    }
+  /* PATHS */
+  beginPath(): void {
+    this.delegate('beginPath', [], false);
+  }
 
-    moveTo(x: number, y: number): void {
-        this.delegate('moveTo', [x, y], false);
-    }
+  closePath(): void {
+    this.delegate('closePath', [], false);
+  }
 
-    lineTo(x: number, y: number): void {
-        this.delegate('lineTo', [x, y], false);
-    }
+  moveTo(x: number, y: number): void {
+    this.delegate('moveTo', [x, y], false);
+  }
 
-    bezierCurveTo(
-        cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void {
-            this.delegate(
-                'bezierCurveTo', [cp1x, cp1y, cp2x, cp2y, x, y], false);
-    }
+  lineTo(x: number, y: number): void {
+    this.delegate('lineTo', [x, y], false);
+  }
 
-    quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void {
-        this.delegate('quadraticCurveTo', [cpx, cpy, x, y], false);
-    }
+  bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void {
+    this.delegate('bezierCurveTo', [cp1x, cp1y, cp2x, cp2y, x, y], false);
+  }
 
-    // OPTIONAL ARGUMENT ATICLOCKWISE
-    arc(x: number, y: number, radius: number, startAngle: number, endAngle: number): void {
-        this.delegate(
-            'arc', [x, y, radius, startAngle, endAngle], false);
-    }
+  quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void {
+    this.delegate('quadraticCurveTo', [cpx, cpy, x, y], false);
+  }
 
-    arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void {
-        this.delegate('arcTo', [x1, y1, x2, y2, radius], false);
-    }
+  // OPTIONAL ARGUMENT ATICLOCKWISE
+  arc(x: number, y: number, radius: number, startAngle: number, endAngle: number): void {
+    this.delegate('arc', [x, y, radius, startAngle, endAngle], false);
+  }
 
-    // OPTIONAL ARGUMENT ATICLOCKWISE
-    ellipse(
-        x: number, 
-        y: number, 
-        radiusX: number, 
-        radiusY: number, 
-        rotation: number, 
-        startAngle: number, 
-        endAngle: number
-        ): void {
-            this.delegate(
-                'ellipse', [x, y, radiusX, radiusY, rotation, startAngle, endAngle], false);
-        }
+  arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void {
+    this.delegate('arcTo', [x1, y1, x2, y2, radius], false);
+  }
 
-    rect(x: number, y: number, width: number, height: number): void {
-        this.delegate('rect', [x, y, width, height], false);
-    }
+  // OPTIONAL ARGUMENT ATICLOCKWISE
+  ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number): void {
+    this.delegate('ellipse', [x, y, radiusX, radiusY, rotation, startAngle, endAngle], false);
+  }
 
-    /* DRAWING PATHS */
-    fill(
-        pathOrFillRule?: Path2D | CanvasFillRule, 
-        fillRule?: CanvasFillRule): void {
-            const args = [...arguments] as 
-                [Path2D, CanvasFillRule | undefined] | [CanvasFillRule | undefined];
-            this.delegate('fill', args, false);
-    }
+  rect(x: number, y: number, width: number, height: number): void {
+    this.delegate('rect', [x, y, width, height], false);
+  }
 
-    stroke(path?: Path2D): void {
-        const args = [...arguments] as [Path2D] | [];
-        this.delegate('stroke', args, false);
-    }
+  /* DRAWING PATHS */
+  fill(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule): void {
+    const args = [...arguments] as [Path2D, CanvasFillRule | undefined] | [CanvasFillRule | undefined];
+    this.delegate('fill', args, false);
+  }
 
-    clip(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule): void {
-        const args = [...arguments] as 
-                [Path2D, CanvasFillRule | undefined] | 
-                [CanvasFillRule | undefined];
-        this.delegate('clip', args, false);
-    }
+  stroke(path?: Path2D): void {
+    const args = [...arguments] as [Path2D] | [];
+    this.delegate('stroke', args, false);
+  }
 
-    isPointInPath(pathOrX: Path2D | number, 
-        xOrY: number, 
-        yOrFillRule?: number | CanvasFillRule, 
-        fillRule?: CanvasFillRule): boolean {
+  clip(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule): void {
+    const args = [...arguments] as [Path2D, CanvasFillRule | undefined] | [CanvasFillRule | undefined];
+    this.delegate('clip', args, false);
+  }
 
-        const args = [...arguments] as [number, number, CanvasFillRule | undefined] |
-                                       [Path2D, number, number, CanvasFillRule | undefined];
+  isPointInPath(pathOrX: Path2D | number, xOrY: number, yOrFillRule?: number | CanvasFillRule, fillRule?: CanvasFillRule): boolean {
+    const args = [...arguments] as [number, number, CanvasFillRule | undefined] | [Path2D, number, number, CanvasFillRule | undefined];
 
-        return this.delegate('isPointInPath', args, false);
-    }
+    return this.delegate('isPointInPath', args, false);
+  }
 
-    isPointInStroke(pathOrX: Path2D | number, xOrY: number, y?: number): boolean {
-        const args = [...arguments] as [number, number] | [Path2D, number, number];
-        return this.delegate('isPointInStroke', args, false);
-    }
+  isPointInStroke(pathOrX: Path2D | number, xOrY: number, y?: number): boolean {
+    const args = [...arguments] as [number, number] | [Path2D, number, number];
+    return this.delegate('isPointInStroke', args, false);
+  }
 
-    /* TRANSFORMATIONS */
-    /* Experimental *** set currentTransform(value: DOMMatrix) {
+  /* TRANSFORMATIONS */
+  /* Experimental *** set currentTransform(value: DOMMatrix) {
         this.implementation.currentTransform = value;
         if (!this.upgraded) {
             this.calls.push({fnName: 'currentTransform', args: [value], setter: true});
@@ -291,92 +277,86 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
     }
     */
 
-    rotate(angle: number): void {
-        this.delegate('rotate', [angle], false);
-    }
+  rotate(angle: number): void {
+    this.delegate('rotate', [angle], false);
+  }
 
-    scale(x: number, y: number): void {
-        this.delegate('scale', [x, y], false);
-    }
+  scale(x: number, y: number): void {
+    this.delegate('scale', [x, y], false);
+  }
 
-    translate(x: number, y: number): void {
-        this.delegate('translate', [x, y], false);
-    }
+  translate(x: number, y: number): void {
+    this.delegate('translate', [x, y], false);
+  }
 
-    transform(a: number, b: number, c: number, d: number, e: number, f: number): void {
-        this.delegate('transform', [a, b, c, d, e, f], false);
-    }
+  transform(a: number, b: number, c: number, d: number, e: number, f: number): void {
+    this.delegate('transform', [a, b, c, d, e, f], false);
+  }
 
-    setTransform(transformOrA?: DOMMatrix2DInit | number, 
-        bOrC?: number, 
-        cOrD?: number, 
-        dOrE?: number, 
-        eOrF?: number,
-        f?: number): void {
-            const args = [...arguments] as [] | [DOMMatrix2DInit] |
-                [number, number, number, number, number, number];
+  setTransform(transformOrA?: DOMMatrix2DInit | number, bOrC?: number, cOrD?: number, dOrE?: number, eOrF?: number, f?: number): void {
+    const args = [...arguments] as [] | [DOMMatrix2DInit] | [number, number, number, number, number, number];
 
-            this.delegate('setTransform', args, false);
-    }
+    this.delegate('setTransform', args, false);
+  }
 
-    /* experimental */resetTransform(): void {
-        this.delegate('resetTransform', [], false);
-    }
+  /* experimental */ resetTransform(): void {
+    this.delegate('resetTransform', [], false);
+  }
 
-    /* COMPOSITING */
-    set globalAlpha(value: number) {
-        this.delegate('globalAlpha', [value], true);
-    }
+  /* COMPOSITING */
+  set globalAlpha(value: number) {
+    this.delegate('globalAlpha', [value], true);
+  }
 
-    set globalCompositeOperation(value: string) {
-        this.delegate('globalCompositeOperation', [value], true);
-    }
+  set globalCompositeOperation(value: string) {
+    this.delegate('globalCompositeOperation', [value], true);
+  }
 
-    /* DRAWING IMAGES */
-    drawImage(image: CanvasImageSource, dx: number, dy: number): void {
-        this.delegate('drawImage', [image, dx, dy], false);
-    }
+  /* DRAWING IMAGES */
+  drawImage(image: CanvasImageSource, dx: number, dy: number): void {
+    this.delegate('drawImage', [image, dx, dy], false);
+  }
 
-    /* PIXEL MANIPULATION */
-    createImageData(imagedataOrWidth: ImageData | number, widthOrHeight?: number): ImageData {
-        const args = [...arguments] as [ImageData] | [number, number];
-        return this.delegate('createImageData', args, false);
-    }
+  /* PIXEL MANIPULATION */
+  createImageData(imagedataOrWidth: ImageData | number, widthOrHeight?: number): ImageData {
+    const args = [...arguments] as [ImageData] | [number, number];
+    return this.delegate('createImageData', args, false);
+  }
 
-    getImageData(sx: number, sy: number, sw: number, sh: number): ImageData {
-        return this.delegate('getImageData', [sx, sy, sw, sh], false);
-    }
+  getImageData(sx: number, sy: number, sw: number, sh: number): ImageData {
+    return this.delegate('getImageData', [sx, sy, sw, sh], false);
+  }
 
-    putImageData(imageData: ImageData, dx: number, dy: number): void {
-        this.delegate('putImageData', [imageData, dx, dy], false);
-    }
+  putImageData(imageData: ImageData, dx: number, dy: number): void {
+    this.delegate('putImageData', [imageData, dx, dy], false);
+  }
 
-    /* IMAGE SMOOTHING */
-    /* experimental */set imageSmoothingEnabled(value: boolean) {
-        this.delegate('imageSmoothingEnabled', [value], true);
-    }
+  /* IMAGE SMOOTHING */
+  /* experimental */ set imageSmoothingEnabled(value: boolean) {
+    this.delegate('imageSmoothingEnabled', [value], true);
+  }
 
-    /* experimental */set imageSmoothingQuality(value: ImageSmoothingQuality) {
-        this.delegate('imageSmoothingQuality', [value], true);
-    }
+  /* experimental */ set imageSmoothingQuality(value: ImageSmoothingQuality) {
+    this.delegate('imageSmoothingQuality', [value], true);
+  }
 
-    /* THE CANVAS STATE */
-    save(): void {
-        this.delegate('save', [], false);
-    }
+  /* THE CANVAS STATE */
+  save(): void {
+    this.delegate('save', [], false);
+  }
 
-    restore(): void {
-        this.delegate('restore', [], false);
-    }
+  restore(): void {
+    this.delegate('restore', [], false);
+  }
 
-    // canvas property is readonly. We don't want to implement getters, but this must be here
-    // in order for TypeScript to not complain (for now)
-    get canvas(): HTMLCanvasElement {
-        return this.canvasElement;
-    }
+  // canvas property is readonly. We don't want to implement getters, but this must be here
+  // in order for TypeScript to not complain (for now)
+  get canvas(): HTMLCanvasElement {
+    return this.canvasElement;
+  }
 
-    /* FILTERS */
-    /* experimental */set filter(value: string) {
-        this.delegate('filter', [value], true);
-    }
+  /* FILTERS */
+  /* experimental */ set filter(value: string) {
+    this.delegate('filter', [value], true);
+  }
 }
