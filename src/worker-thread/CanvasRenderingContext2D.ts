@@ -71,6 +71,7 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
           (this.implementation as any)[call.fnName](...call.args);
         }
       }
+      this.calls.length = 0;
     });
   }
 
