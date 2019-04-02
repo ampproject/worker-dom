@@ -24,8 +24,10 @@ import { HydrateableNode, NodeType } from '../transfer/TransferrableNodes';
 import { Phase } from '../transfer/Phase';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { set as setPhase } from './phase';
+import { appendKeys } from './css/CSSStyleDeclaration';
 
-export function consumeInitialDOM(document: Document, strings: Array<string>, hydrateableNode: HydrateableNode): void {
+export function initialize(document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>): void {
+  appendKeys(keys);
   setPhase(Phase.Hydrating);
   strings.forEach(storeString);
   (hydrateableNode[TransferrableKeys.childNodes] || []).forEach(child => document.body.appendChild(create(document, strings, child)));

@@ -67,8 +67,9 @@ export class WorkerContext {
         function removeEventListener(type, handler) {
           return document.removeEventListener(type, handler);
         }
-        this.consumeInitialDOM(document, ${JSON.stringify(strings)}, ${JSON.stringify(skeleton)});
-        this.appendKeys(${JSON.stringify(keys)});
+        window.innerWidth = ${(typeof window !== 'undefined' && window.innerWidth) || 0};
+        window.innerHeight = ${(typeof window !== 'undefined' && window.innerHeight) || 0};
+        this.initialize(document, ${JSON.stringify(strings)}, ${JSON.stringify(skeleton)}, ${JSON.stringify(keys)});
         document.observe();
         ${authorScript}
       }).call(WorkerThread.workerDOM);

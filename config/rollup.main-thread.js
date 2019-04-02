@@ -18,7 +18,7 @@ import resolve from 'rollup-plugin-node-resolve';
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
 import replace from 'rollup-plugin-replace';
-import { babelPlugin, removeDebugCommandExecutors } from './rollup.plugins.js';
+import { babelPlugin, removeDebugCommandExecutors, removeWindowNullChecks } from './rollup.plugins.js';
 import { MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE } from './rollup.utils.js';
 
 const ESModules = [
@@ -30,6 +30,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -50,6 +51,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -69,6 +71,7 @@ const ESModules = [
     },
     plugins: [
       resolve(),
+      removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -90,6 +93,7 @@ const ESModules = [
     },
     plugins: [
       resolve(),
+      removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -112,6 +116,7 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
+      removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -133,6 +138,7 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
+      removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -153,6 +159,7 @@ const IIFEModules = [
     },
     plugins: [
       resolve(),
+      removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -175,6 +182,7 @@ const IIFEModules = [
     },
     plugins: [
       resolve(),
+      removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
