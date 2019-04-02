@@ -33,7 +33,7 @@ export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{get
 export class CanvasRenderingContext2DImplementation implements CanvasRenderingContext2D {
     
     private calls = [] as {fnName: string, args: any[], setter: boolean}[];
-    private implementation = (new OffscreenCanvas(0, 0) as {getContext(c: "2d"): CanvasRenderingContext2D}).getContext('2d');
+    private implementation = (new OffscreenCanvas(0, 0) as {getContext(c: '2d'): CanvasRenderingContext2D}).getContext('2d');
     private upgraded = false;
     private canvasElement: HTMLCanvasElement;
     
@@ -51,7 +51,7 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
                 if (call.setter) {
                     if (call.args.length != 1) {
                         throw new Error(
-                            "Attempting to set property with wrong number of arguments.");
+                            'Attempting to set property with wrong number of arguments.');
                     }
                     (this.implementation as any)[call.fnName] = call.args[0];
                     

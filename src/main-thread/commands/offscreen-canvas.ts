@@ -1,8 +1,8 @@
-import { WorkerContext } from "../worker";
-import { TransferrableKeys } from "../../transfer/TransferrableKeys";
-import { MessageType } from "../../transfer/Messages";
-import { CommandExecutor } from "./interface";
-import { OffscreenCanvasMutationIndex } from "../../transfer/TransferrableMutation";
+import { WorkerContext } from '../worker';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { MessageType } from '../../transfer/Messages';
+import { CommandExecutor } from './interface';
+import { OffscreenCanvasMutationIndex } from '../../transfer/TransferrableMutation';
 
 export function OffscreenCanvasProcessor(workerContext: WorkerContext): CommandExecutor {
     return {

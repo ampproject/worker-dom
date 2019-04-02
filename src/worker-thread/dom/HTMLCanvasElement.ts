@@ -28,7 +28,7 @@ export class HTMLCanvasElement extends HTMLElement {
             if (contextType === '2D' || contextType === '2d') {
                 this.context = new CanvasRenderingContext2DImplementation(this);
             } else {
-                throw new Error("Context type not supported.");
+                throw new Error('Context type not supported.');
             }
         }
         return this.context;
