@@ -78,7 +78,10 @@ export function propagate(): void {
     const event = data[TransferrableKeys.event] as TransferrableEvent;
     const node = get(event[TransferrableKeys.index]);
     if (node !== null) {
-      const target = event[TransferrableKeys.target];
+      const target =
+        event[TransferrableKeys.target] !== null
+          ? get((event[TransferrableKeys.target] as [number])[0] === 0 ? 1 : (event[TransferrableKeys.target] as [number])[0])
+          : null;
       node.dispatchEvent(
         Object.assign(
           new Event(event[TransferrableKeys.type], { bubbles: event[TransferrableKeys.bubbles], cancelable: event[TransferrableKeys.cancelable] }),
@@ -88,7 +91,7 @@ export function propagate(): void {
             eventPhase: event[TransferrableKeys.eventPhase],
             isTrusted: event[TransferrableKeys.isTrusted],
             returnValue: event[TransferrableKeys.returnValue],
-            target: get(target ? target[0] : null),
+            target: target,
             timeStamp: event[TransferrableKeys.timeStamp],
             scoped: event[TransferrableKeys.scoped],
             keyCode: event[TransferrableKeys.keyCode],

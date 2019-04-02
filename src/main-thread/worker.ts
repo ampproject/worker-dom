@@ -70,7 +70,7 @@ export class WorkerContext {
         window.innerWidth = ${(typeof window !== 'undefined' && window.innerWidth) || 0};
         window.innerHeight = ${(typeof window !== 'undefined' && window.innerHeight) || 0};
         this.initialize(document, ${JSON.stringify(strings)}, ${JSON.stringify(skeleton)}, ${JSON.stringify(keys)});
-        document.observe();
+        document.observe(window);
         ${authorScript}
       }).call(WorkerThread.workerDOM);
   //# sourceURL=${encodeURI(config.authorURL)}`;

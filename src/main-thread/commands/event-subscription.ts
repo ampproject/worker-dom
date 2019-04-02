@@ -20,6 +20,7 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { EVENT_SUBSCRIPTION_LENGTH, EventSubscriptionMutationIndex } from '../../transfer/TransferrableEvent';
 import { WorkerContext } from '../worker';
 import { CommandExecutor } from './interface';
+import { NodeContext } from '../nodes';
 
 /**
  * Instead of a whitelist of elements that need their value tracked, use the existence
@@ -53,6 +54,12 @@ const fireValueChange = (workerContext: WorkerContext, node: RenderableElement):
     },
   });
 
+const fireResizeChange = (workerContext: WorkerContext): void =>
+  workerContext.messageToWorker({
+    [TransferrableKeys.type]: MessageType.RESIZE,
+    [TransferrableKeys.sync]: [window.innerWidth, window.innerHeight],
+  });
+
 /**
  * Register an event handler for dispatching events to worker thread
  * @param worker whom to dispatch events toward
@@ -62,6 +69,8 @@ const fireValueChange = (workerContext: WorkerContext, node: RenderableElement):
 const eventHandler = (workerContext: WorkerContext, index: number) => (event: Event | KeyboardEvent): void => {
   if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
     fireValueChange(workerContext, event.currentTarget as RenderableElement);
+  } else if (event.type === 'resize') {
+    fireResizeChange(workerContext);
   }
 
   workerContext.messageToWorker({
@@ -71,12 +80,12 @@ const eventHandler = (workerContext: WorkerContext, index: number) => (event: Ev
       [TransferrableKeys.bubbles]: event.bubbles,
       [TransferrableKeys.cancelable]: event.cancelable,
       [TransferrableKeys.cancelBubble]: event.cancelBubble,
-      [TransferrableKeys.currentTarget]: [(event.currentTarget as RenderableElement)._index_],
+      [TransferrableKeys.currentTarget]: [(event.currentTarget as RenderableElement)._index_ || 0],
       [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
       [TransferrableKeys.eventPhase]: event.eventPhase,
       [TransferrableKeys.isTrusted]: event.isTrusted,
       [TransferrableKeys.returnValue]: event.returnValue,
-      [TransferrableKeys.target]: [(event.target as RenderableElement)._index_],
+      [TransferrableKeys.target]: [(event.target as RenderableElement)._index_ || 0],
       [TransferrableKeys.timeStamp]: event.timeStamp,
       [TransferrableKeys.type]: event.type,
       [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
@@ -84,7 +93,7 @@ const eventHandler = (workerContext: WorkerContext, index: number) => (event: Ev
   });
 };
 
-export function EventSubscriptionProcessor(strings: Strings, workerContext: WorkerContext): CommandExecutor {
+export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext): CommandExecutor {
   const knownListeners: Array<(event: Event) => any> = [];
 
   /**
@@ -99,14 +108,25 @@ export function EventSubscriptionProcessor(strings: Strings, workerContext: Work
     let changeEventSubscribed: boolean = target.onchange !== null;
     const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
     const isChangeEvent = type === 'change';
+    const isResizeEvent = type === 'resize';
 
     if (addEvent) {
+      if (isResizeEvent && target === nodeContext.baseElement) {
+        addEventListener(type, (knownListeners[index] = eventHandler(workerContext, 1)));
+        return;
+      }
+
       if (isChangeEvent) {
         changeEventSubscribed = true;
         target.onchange = null;
       }
       (target as HTMLElement).addEventListener(type, (knownListeners[index] = eventHandler(workerContext, target._index_)));
     } else {
+      if (isResizeEvent && target === nodeContext.baseElement) {
+        removeEventListener(type, knownListeners[index]);
+        return;
+      }
+
       if (isChangeEvent) {
         changeEventSubscribed = false;
       }
