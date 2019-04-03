@@ -46,12 +46,9 @@ import './HTMLTableRowElement';
 import './HTMLTableSectionElement';
 import './HTMLTimeElement';
 import { matchChildElement } from './matchElements';
-import { SVGElement } from './SVGElement';
-import { Node, NamespaceURI } from './Node';
-import { Event } from '../Event';
+import { NamespaceURI } from './Node';
 import { Text } from './Text';
 import { Comment } from './Comment';
-import { MutationObserver } from '../MutationObserver';
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
 import { PostMessage } from '../worker-thread';
@@ -61,50 +58,37 @@ import { propagate as propagateEvents } from '../Event';
 import { propagate as propagateSyncValues } from '../SyncValuePropagation';
 import { propagate as propagateResize } from '../ResizePropagation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { WorkerDOMGlobalScope, GlobalScope } from '../WorkerDOMGlobalScope';
 
 const DOCUMENT_NAME = '#document';
 
 export class Document extends Element {
-  public defaultView: {
-    document: Document;
-    MutationObserver: typeof MutationObserver;
-    Document: typeof Document;
-    Node: typeof Node;
-    Comment: typeof Comment;
-    Text: typeof Text;
-    Element: typeof Element;
-    SVGElement: typeof SVGElement;
-    Event: typeof Event;
-  };
+  public defaultView: WorkerDOMGlobalScope;
   public documentElement: Document;
   public body: Element;
   public postMessage: PostMessage;
   public [TransferrableKeys.allowTransfer]: boolean = true;
 
-  constructor() {
+  constructor(global: GlobalScope) {
     super(NodeType.DOCUMENT_NODE, DOCUMENT_NAME, HTML_NAMESPACE, null);
     // Element uppercases its nodeName, but Document doesn't.
     this.nodeName = DOCUMENT_NAME;
     this.documentElement = this;
-    this.observe = (window: { innerWidth: number; innerHeight: number }): void => {
-      // Sync Document Changes.
-      observe();
-      propagateEvents();
-      propagateSyncValues();
-      propagateResize(window);
-    };
-    this.defaultView = {
+
+    this.defaultView = Object.assign(global, {
       document: this,
-      MutationObserver,
-      Document,
-      Node,
-      Comment,
-      Text,
-      Element,
-      SVGElement,
-      Event,
-    };
+      addEventListener: this.addEventListener.bind(this),
+      removeEventListener: this.removeEventListener.bind(this),
+    });
   }
+
+  public observe = (): void => {
+    // Sync Document Changes.
+    observe();
+    propagateEvents(this.defaultView);
+    propagateSyncValues();
+    propagateResize(this.defaultView);
+  };
 
   public createElement(name: string): Element {
     return this.createElementNS(HTML_NAMESPACE, toLower(name));
@@ -132,18 +116,3 @@ export class Document extends Element {
     return matchChildElement(this.body, element => element.id === id);
   }
 }
-
-/**
- *
- */
-export function createDocument(postMessage?: PostMessage): Document {
-  const doc = new Document();
-  doc.postMessage = postMessage || (() => void 0);
-  doc.isConnected = true;
-  doc.appendChild((doc.body = doc.createElement('body')));
-
-  return doc;
-}
-
-/** Should only be used for testing. */
-export const documentForTesting = createDocument();

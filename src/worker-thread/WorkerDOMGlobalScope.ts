@@ -45,16 +45,17 @@ import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { Document } from './dom/Document';
 import { EventHandler } from './Event';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
+import { MutationObserver } from './MutationObserver';
 
-export interface WorkerDOMGlobalScope {
-  document: Document;
+export interface GlobalScope {
+  initialize: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>) => void;
   navigator: WorkerNavigator;
-  addEventListener: (type: string, handler: EventHandler) => void;
-  removeEventListener: (type: string, handler: EventHandler) => void;
   localStorage: object;
   location: object;
   url: string;
-  initialize: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>) => void;
+  innerWidth: number;
+  innerHeight: number;
+  MutationObserver: typeof MutationObserver;
   HTMLAnchorElement: typeof HTMLAnchorElement;
   HTMLButtonElement: typeof HTMLButtonElement;
   HTMLDataElement: typeof HTMLDataElement;
@@ -83,4 +84,10 @@ export interface WorkerDOMGlobalScope {
   HTMLTableRowElement: typeof HTMLTableRowElement;
   HTMLTableSectionElement: typeof HTMLTableSectionElement;
   HTMLTimeElement: typeof HTMLTimeElement;
+}
+
+export interface WorkerDOMGlobalScope extends GlobalScope {
+  document: Document;
+  addEventListener: (type: string, handler: EventHandler) => void;
+  removeEventListener: (type: string, handler: EventHandler) => void;
 }
