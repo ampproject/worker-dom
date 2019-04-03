@@ -22,7 +22,7 @@
     "tsc:build:main": "tsc -p config/tsconfig.build.main-thread.json",
     "clean": "rimraf output dist",
     "pretest": "npm-run-all clean --parallel tsc:test:*",
-    "test": "ava -v output/test/**/*.js",
+    "test": "ava -v 'output/test/*/*.js'",
     "pre~rollup": "npm-run-all clean --parallel tsc:build:*",
     "~rollup": "rollup --config config/rollup.config.js",
     "lint:worker": "tslint -c config/tslint.json -p src/worker-thread/",
