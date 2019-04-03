@@ -16,21 +16,22 @@
 
 const existingCanvasBtn = document.getElementById('existingCanvasBtn');
 const newCanvasBtn = document.getElementById('newCanvasBtn');
+const doubleCanvasBtn = document.getElementById('doubleCanvasBtn');
 
 existingCanvasBtn.addEventListener('click', async () => {
-    // Scenario #1:
-    // Canvas is already on the page, retrieve using getElementById
-    const otherCanvas = document.getElementById('myCanvas');
-    const ctx = otherCanvas.getContext('2d');
+  // Scenario #1:
+  // Canvas is already on the page, retrieve using getElementById
+  const canvas = document.getElementById('myCanvas');
+  const ctx = canvas.getContext('2d');
 
-    ctx.lineWidth = 1;
-    ctx.strokeRect(7.5, 14.0, 15.0, 11.0);
-    ctx.fillRect(13.0, 19.0, 4.0, 6.0);
-    ctx.moveTo(5.0, 14.0);
-    ctx.lineTo(15.0, 6.0);
-    ctx.lineTo(25.0, 14.0);
-    ctx.closePath();
-    ctx.stroke();
+  ctx.lineWidth = 1;
+  ctx.strokeRect(7.5, 14.0, 15.0, 11.0);
+  ctx.fillRect(13.0, 19.0, 4.0, 6.0);
+  ctx.moveTo(5.0, 14.0);
+  ctx.lineTo(15.0, 6.0);
+  ctx.lineTo(25.0, 14.0);
+  ctx.closePath();
+  ctx.stroke();
 });
 
 newCanvasBtn.addEventListener('click', async () => {
@@ -48,5 +49,36 @@ newCanvasBtn.addEventListener('click', async () => {
   ctx.lineTo(25.0, 14.0);
   ctx.closePath();
   ctx.stroke();
+});
 
+doubleCanvasBtn.addEventListener('click', async () => {
+  // Scenario #3:
+  // Two different canvas elements created at the same time.
+  // This scenario is needed to make sure async logic works correctly.
+  const canvasOne = document.createElement('canvas');
+  const canvasTwo = document.createElement('canvas');
+
+  document.body.appendChild(canvasOne);
+  document.body.appendChild(canvasTwo);
+
+  const ctxOne = canvasOne.getContext('2d');
+  const ctxTwo = canvasTwo.getContext('2d');
+
+  ctxOne.lineWidth = 1;
+  ctxOne.strokeRect(7.5, 14.0, 15.0, 11.0);
+  ctxOne.fillRect(13.0, 19.0, 4.0, 6.0);
+  ctxOne.moveTo(5.0, 14.0);
+  ctxOne.lineTo(15.0, 6.0);
+  ctxOne.lineTo(25.0, 14.0);
+  ctxOne.closePath();
+  ctxOne.stroke();
+
+  ctxTwo.lineWidth = 1;
+  ctxTwo.strokeRect(7.5, 14.0, 15.0, 11.0);
+  ctxTwo.fillRect(13.0, 19.0, 4.0, 6.0);
+  ctxTwo.moveTo(5.0, 14.0);
+  ctxTwo.lineTo(15.0, 6.0);
+  ctxTwo.lineTo(25.0, 14.0);
+  ctxTwo.closePath();
+  ctxTwo.stroke();
 });
