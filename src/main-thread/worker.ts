@@ -67,8 +67,8 @@ export class WorkerContext {
         function removeEventListener(type, handler) {
           return document.removeEventListener(type, handler);
         }
-        window.innerWidth = ${(typeof window !== 'undefined' && window.innerWidth) || 0};
-        window.innerHeight = ${(typeof window !== 'undefined' && window.innerHeight) || 0};
+        window.innerWidth = ${window.innerWidth};
+        window.innerHeight = ${window.innerHeight};
         this.initialize(document, ${JSON.stringify(strings)}, ${JSON.stringify(skeleton)}, ${JSON.stringify(keys)});
         document.observe(window);
         ${authorScript}

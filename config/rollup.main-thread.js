@@ -30,7 +30,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      removeWindowNullChecks(),
+      // removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -51,7 +51,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      removeWindowNullChecks(),
+      // removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -71,7 +71,7 @@ const ESModules = [
     },
     plugins: [
       resolve(),
-      removeWindowNullChecks(),
+      // removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -93,7 +93,7 @@ const ESModules = [
     },
     plugins: [
       resolve(),
-      removeWindowNullChecks(),
+      // removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -116,7 +116,7 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      removeWindowNullChecks(),
+      // removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -138,7 +138,7 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      removeWindowNullChecks(),
+      // removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -159,7 +159,7 @@ const IIFEModules = [
     },
     plugins: [
       resolve(),
-      removeWindowNullChecks(),
+      // removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
@@ -182,7 +182,7 @@ const IIFEModules = [
     },
     plugins: [
       resolve(),
-      removeWindowNullChecks(),
+      // removeWindowNullChecks(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
