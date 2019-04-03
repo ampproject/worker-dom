@@ -24,7 +24,10 @@ export const deferredUpgrades = new WeakMap();
 export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{ getContext(c: '2d'): CanvasRenderingContext2D }> {
   return new Promise((resolve, reject) => {
     const messageHandler = ({ data }: { data: MessageToWorker }) => {
-      if (data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE) {
+      if (
+        data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE &&
+        (data as OffscreenCanvasToWorker)[TransferrableKeys.target][0] === canvas[TransferrableKeys.index]
+      ) {
         removeEventListener('message', messageHandler);
         const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
         resolve(transferredOffscreenCanvas as { getContext(c: '2d'): CanvasRenderingContext2D });
