@@ -17,14 +17,14 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLEmbedElement } from '../../worker-thread/dom/HTMLEmbedElement';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   element: HTMLEmbedElement;
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     element: document.createElement('embed') as HTMLEmbedElement,

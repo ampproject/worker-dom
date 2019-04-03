@@ -17,7 +17,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { HTMLFieldSetElement } from '../../worker-thread/dom/HTMLFieldSetElement';
 import { Element } from '../../worker-thread/dom/Element';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   element: HTMLFieldSetElement;
@@ -32,7 +32,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     element: document.createElement('fieldset') as HTMLFieldSetElement,

@@ -16,7 +16,7 @@
 
 import anyTest, { TestInterface } from 'ava';
 import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 import { Element } from '../../worker-thread/dom/Element';
 
 const test = anyTest as TestInterface<{
@@ -27,7 +27,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     option: document.createElement('option') as HTMLOptionElement,

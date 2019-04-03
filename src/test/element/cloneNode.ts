@@ -15,7 +15,7 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 import { Element } from '../../worker-thread/dom/Element';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { Text } from '../../worker-thread/dom/Text';
@@ -28,7 +28,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     parent: document.createElement('div'),

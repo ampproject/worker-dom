@@ -17,7 +17,7 @@
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
 import replace from 'rollup-plugin-replace';
-import { babelPlugin, removeTestingDocument } from './rollup.plugins.js';
+import { babelPlugin } from './rollup.plugins.js';
 import { MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE } from './rollup.utils.js';
 
 // Workers do not natively support ES Modules containing `import` or `export` statments.
@@ -33,7 +33,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
       replace({
         DEBUG_ENABLED: false,
       }),
@@ -58,7 +57,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
       replace({
         DEBUG_ENABLED: false,
       }),
@@ -77,7 +75,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
       replace({
         DEBUG_ENABLED: false,
       }),
@@ -102,7 +99,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
       replace({
         DEBUG_ENABLED: false,
       }),
@@ -124,7 +120,6 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
       replace({
         DEBUG_ENABLED: false,
       }),
@@ -149,7 +144,6 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
       replace({
         DEBUG_ENABLED: false,
       }),
@@ -168,7 +162,6 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
       replace({
         DEBUG_ENABLED: false,
       }),
@@ -193,7 +186,6 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
       replace({
         DEBUG_ENABLED: false,
       }),
@@ -205,35 +197,4 @@ const IIFEModules = [
   },
 ];
 
-const debugModules = DEBUG_BUNDLE_VALUE
-  ? [
-      {
-        input: 'output/worker-thread/index.js',
-        output: {
-          file: 'dist/debug.worker.js',
-          format: 'iife',
-          name: 'WorkerThread',
-          sourcemap: true,
-          outro: 'window.workerDocument = documentForTesting;',
-        },
-        plugins: [
-          replace({
-            DEBUG_ENABLED: true,
-          }),
-          babelPlugin({
-            transpileToES5: false,
-            allowConsole: DEBUG_BUNDLE_VALUE,
-            allowPostMessage: false,
-          }),
-          MINIFY_BUNDLE_VALUE
-            ? compiler({
-                env: 'CUSTOM',
-              })
-            : null,
-          MINIFY_BUNDLE_VALUE ? terser() : null,
-        ].filter(Boolean),
-      },
-    ]
-  : [];
-
-export default [...ESModules, ...IIFEModules, ...debugModules];
+export default [...ESModules, ...IIFEModules];

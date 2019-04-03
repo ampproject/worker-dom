@@ -17,14 +17,14 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLSelectElement } from '../../worker-thread/dom/HTMLSelectElement';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   element: HTMLSelectElement;
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     element: document.createElement('select') as HTMLSelectElement,

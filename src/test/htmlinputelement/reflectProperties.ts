@@ -17,14 +17,14 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
 import { HTMLInputElement } from '../../worker-thread/dom/HTMLInputElement';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   element: HTMLInputElement;
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     element: document.createElement('input') as HTMLInputElement,

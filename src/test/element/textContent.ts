@@ -17,7 +17,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   element: Element;
@@ -26,7 +26,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     element: document.createElement('div'),

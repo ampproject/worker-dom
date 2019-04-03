@@ -17,14 +17,14 @@
 import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   tokenList: DOMTokenList;
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     tokenList: new DOMTokenList(Element, document.createElement('div'), 'class', null, null),

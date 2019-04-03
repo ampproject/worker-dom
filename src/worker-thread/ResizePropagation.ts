@@ -16,8 +16,9 @@
 
 import { MessageToWorker, MessageType, ResizeSyncToWorker } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 
-export function propagate(window: { innerWidth: number; innerHeight: number }): void {
+export function propagate(global: WorkerDOMGlobalScope): void {
   if (typeof addEventListener !== 'function') {
     return;
   }
@@ -28,8 +29,8 @@ export function propagate(window: { innerWidth: number; innerHeight: number }): 
 
     const sync = (data as ResizeSyncToWorker)[TransferrableKeys.sync];
     if (sync) {
-      window.innerWidth = sync[0];
-      window.innerHeight = sync[1];
+      global.innerWidth = sync[0];
+      global.innerHeight = sync[1];
     }
   });
 }

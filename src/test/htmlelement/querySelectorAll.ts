@@ -15,9 +15,10 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { Document, createDocument } from '../../worker-thread/dom/Document';
+import { Document } from '../../worker-thread/dom/Document';
 import { toLower } from '../../utils';
 import { Element } from '../../worker-thread/dom/Element';
+import { createTestingDocument } from '../DocumentCreation';
 
 const DIV_ID = 'DIV_ID';
 const DIV_CLASS = 'DIV_CLASS';
@@ -31,7 +32,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
   const parentDiv = document.createElement('div');
   const div = document.createElement('div');
   div.setAttribute('id', DIV_ID);

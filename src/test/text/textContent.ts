@@ -16,14 +16,14 @@
 
 import anyTest, { TestInterface } from 'ava';
 import { Text } from '../../worker-thread/dom/Text';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   text: Text;
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     text: document.createTextNode('default value'),

@@ -17,14 +17,14 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperty } from '../reflectPropertiesHelper';
 import { HTMLButtonElement } from '../../worker-thread/dom/HTMLButtonElement';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   element: HTMLButtonElement;
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     element: document.createElement('button') as HTMLButtonElement,

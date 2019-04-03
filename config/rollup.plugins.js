@@ -66,39 +66,6 @@ export function babelPlugin({ transpileToES5, allowConsole = false, allowPostMes
 }
 
 /**
- * RollupPlugin that removes the testing document singleton from output source.
- */
-export function removeTestingDocument() {
-  let context;
-
-  return {
-    name: 'remove-testing-document',
-    buildStart() {
-      context = this;
-    },
-    async renderChunk(code) {
-      const source = new MagicString(code);
-      const program = context.parse(code, { ranges: true });
-
-      walk.simple(program, {
-        VariableDeclarator(node) {
-          if (node.id && node.id.type === 'Identifier' && node.id.name && node.id.name === 'documentForTesting') {
-            if (node.range) {
-              source.overwrite(node.range[0], node.range[1], 'documentForTesting = undefined');
-            }
-          }
-        },
-      });
-
-      return {
-        code: source.toString(),
-        map: source.generateMap(),
-      };
-    },
-  };
-}
-
-/**
  * Formats valid output for trimmed ObjectExpressions.
  * @param {string} code
  * @param {Array<Array<number, number>>} validPropertyRanges

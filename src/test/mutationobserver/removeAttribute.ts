@@ -15,9 +15,10 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { Document, createDocument } from '../../worker-thread/dom/Document';
+import { Document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -25,7 +26,7 @@ const test = anyTest as TestInterface<{
 
 test.beforeEach(t => {
   t.context = {
-    document: createDocument(),
+    document: createTestingDocument(),
   };
 });
 

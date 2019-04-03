@@ -19,7 +19,7 @@ import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
 import { Comment } from '../../worker-thread/dom/Comment';
 import { NodeType, SVG_NAMESPACE, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 import { HTMLInputElement } from '../../worker-thread/dom/HTMLInputElement';
 
 const test = anyTest as TestInterface<{
@@ -30,7 +30,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     node: document.createElement('div'),
@@ -168,7 +168,7 @@ test('set closes tags by closing others', t => {
 // it should not apply for the root element's tags:
 // https://github.com/ampproject/worker-dom/issues/372
 test("set will alter root element's contents, not the element itself", t => {
-  const document = createDocument();
+  const document = createTestingDocument();
   const pNode = document.createElement('p');
 
   pNode.innerHTML = 'Hello World!';

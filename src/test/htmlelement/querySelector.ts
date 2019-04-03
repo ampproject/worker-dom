@@ -15,8 +15,9 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { Document, createDocument } from '../../worker-thread/dom/Document';
+import { Document } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
+import { createTestingDocument } from '../DocumentCreation';
 
 const PARENT_DIV_ID = 'PARENT_DIV_ID';
 const PARENT_DIV_CLASS = 'PARENT_DIV_CLASS';
@@ -30,7 +31,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
   const parentDiv = document.createElement('div');
   parentDiv.setAttribute('id', PARENT_DIV_ID);
   parentDiv.setAttribute('class', PARENT_DIV_CLASS);

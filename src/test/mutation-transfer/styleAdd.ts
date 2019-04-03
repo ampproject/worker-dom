@@ -15,11 +15,12 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { createDocument, Document } from '../../worker-thread/dom/Document';
+import { Document } from '../../worker-thread/dom/Document';
 import { MutationFromWorker } from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { emitter, Emitter } from '../Emitter';
+import { createTestingDocument } from '../DocumentCreation';
 import { appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
 
 const test = anyTest as TestInterface<{
@@ -28,7 +29,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     document,

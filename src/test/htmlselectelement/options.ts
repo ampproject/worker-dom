@@ -15,9 +15,10 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { createDocument, Document } from '../../worker-thread/dom/Document';
+import { Document } from '../../worker-thread/dom/Document';
 import { HTMLSelectElement } from '../../worker-thread/dom/HTMLSelectElement';
 import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -25,7 +26,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
   const select = document.createElement('select') as HTMLSelectElement;
 
   t.context = {

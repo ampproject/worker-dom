@@ -15,7 +15,7 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 import { DocumentFragment } from '../../worker-thread/dom/DocumentFragment';
 import { Element } from '../../worker-thread/dom/Element';
 
@@ -31,7 +31,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
   const parentFragment = document.createDocumentFragment();
   const parentDiv = document.createElement('div');
   parentDiv.setAttribute('id', PARENT_DIV_ID);

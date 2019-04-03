@@ -17,7 +17,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { Event } from '../../worker-thread/Event';
 import { Element } from '../../worker-thread/dom/Element';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   node: Element;
@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
   const node = document.createElement('div');
   const event = new Event('click', {});
   event.target = node;

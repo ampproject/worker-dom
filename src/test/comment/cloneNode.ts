@@ -15,10 +15,10 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { createDocument } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
 import { Comment } from '../../worker-thread/dom/Comment';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   parent: Element;
@@ -26,7 +26,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
   const parent = document.createElement('div');
   const comment = document.createComment('Super Comment');
 

@@ -15,10 +15,10 @@
  */
 
 import test from 'ava';
-import { createDocument } from '../../worker-thread/dom/Document';
+import { createTestingDocument } from '../DocumentCreation';
 
 test('returns the name of the Node', t => {
-  const document = createDocument();
+  const document = createTestingDocument();
   const node = document.createTextNode('');
   const nodeTwo = document.createElement('div');
 
