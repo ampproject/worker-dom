@@ -80,11 +80,3 @@ function deriveValueToTest(valueToTest: string | boolean | number): string | boo
       return valueToTest;
   }
 }
-
-test('test allowing windows builds to pass', t => {
-  // Without a test in this file, the transpiled output is picked up by `ava`
-  // only on Windows systems.
-  // This means a build will fail because this helper file does not have any found tests.
-  // EX: 'No tests found in output\test\reflectPropertiesHelper.js'
-  t.pass();
-});
