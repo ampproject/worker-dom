@@ -85,6 +85,7 @@ export interface GlobalScope {
   HTMLTableSectionElement: typeof HTMLTableSectionElement;
   HTMLTimeElement: typeof HTMLTimeElement;
 }
+
 export interface WorkerDOMGlobalScope extends GlobalScope {
   document: Document;
   addEventListener: (type: string, handler: EventHandler) => void;
