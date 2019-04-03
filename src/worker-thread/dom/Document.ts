@@ -59,6 +59,7 @@ import { observe } from '../MutationTransfer';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { propagate as propagateEvents } from '../Event';
 import { propagate as propagateSyncValues } from '../SyncValuePropagation';
+import { propagate as propagateResize } from '../ResizePropagation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 const DOCUMENT_NAME = '#document';
@@ -85,11 +86,12 @@ export class Document extends Element {
     // Element uppercases its nodeName, but Document doesn't.
     this.nodeName = DOCUMENT_NAME;
     this.documentElement = this;
-    this.observe = (): void => {
+    this.observe = (window: { innerWidth: number; innerHeight: number }): void => {
       // Sync Document Changes.
       observe();
       propagateEvents();
       propagateSyncValues();
+      propagateResize(window);
     };
     this.defaultView = {
       document: this,

@@ -44,8 +44,7 @@ import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { createDocument } from './dom/Document';
 import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
-import { appendKeys } from './css/CSSStyleDeclaration';
-import { consumeInitialDOM } from './initialize';
+import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
 
 const WHITELISTED_GLOBALS = [
@@ -136,8 +135,7 @@ export const workerDOM: WorkerDOMGlobalScope = {
   localStorage: {},
   location: {},
   url: '/',
-  appendKeys,
-  consumeInitialDOM,
+  initialize,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLDataElement,

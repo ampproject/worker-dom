@@ -27,9 +27,10 @@ export const enum MessageType {
   HYDRATE = 2,
   MUTATE = 3,
   SYNC = 4,
-  GET_BOUNDING_CLIENT_RECT = 5,
-  LONG_TASK_START = 6,
-  LONG_TASK_END = 7,
+  RESIZE = 5,
+  GET_BOUNDING_CLIENT_RECT = 6,
+  LONG_TASK_START = 7,
+  LONG_TASK_END = 8,
   // NAVIGATION_PUSH_STATE = 8,
   // NAVIGATION_REPLACE_STATE = 9,
   // NAVIGATION_POP_STATE = 10,
@@ -64,4 +65,8 @@ export interface BoundingClientRectToWorker {
   [TransferrableKeys.target]: TransferredNode;
   [TransferrableKeys.data]: TransferrableBoundingClientRect;
 }
-export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker;
+export interface ResizeSyncToWorker {
+  [TransferrableKeys.type]: MessageType.RESIZE;
+  [TransferrableKeys.sync]: [number, number];
+}
+export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker | ResizeSyncToWorker;

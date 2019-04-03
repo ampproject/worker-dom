@@ -58,7 +58,7 @@ export class MutatorProcessor {
       [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor(strings, config),
       [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor(strings),
       [TransferrableMutationType.PROPERTIES]: PropertyProcessor(strings, config),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor(strings, workerContext),
+      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor(strings, nodeContext, workerContext),
       [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor(workerContext),
       [TransferrableMutationType.LONG_TASK_START]: LongTaskExecutorInstance,
       [TransferrableMutationType.LONG_TASK_END]: LongTaskExecutorInstance,
