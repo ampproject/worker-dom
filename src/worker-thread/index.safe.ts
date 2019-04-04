@@ -99,6 +99,7 @@ const WHITELISTED_GLOBALS = [
   'Uint8ClampedArray',
   'WeakMap',
   'WeakSet',
+  'XMLHttpRequest',
   'atob',
   'btoa',
   'caches',
