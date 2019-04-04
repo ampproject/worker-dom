@@ -16,6 +16,7 @@
 
 import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
 import { Phase } from '../transfer/Phase';
+import { HydrateableNode } from '../transfer/TransferrableNodes';
 
 /**
  * The callback for `onMutationPump`. If specified, this callback will be called
@@ -41,9 +42,7 @@ export interface WorkerDOMConfiguration {
 
   // ---- Optional Callbacks
   // Called when worker consumes the page's initial DOM state.
-  onCreateWorker?: (initialDOM: RenderableElement) => void;
-  // Called when the worker is hydrated (sends a HYDRATE message).
-  onHydration?: () => void;
+  onCreateWorker?: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => void;
   // Called before a message is sent to the worker.
   onSendMessage?: (message: MessageToWorker) => void;
   // Called after a message is received from the worker.
