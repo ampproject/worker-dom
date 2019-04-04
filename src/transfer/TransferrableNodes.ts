@@ -61,21 +61,15 @@ export interface TransferrableNode extends TransferredNode {
   readonly [1]: NodeType;
   readonly [2]: TransferrableNodeName;
 
-  // Optional keys that are defined at construction of a `Text` or `Element`.
-  // This makes the keys observed.
-  readonly [3]: NumericBoolean;
-  readonly [4]: TransferrableTextContent;
-  readonly [5]: NumericBoolean;
-  readonly [6]: TransferrableNamespaceURI;
+  readonly [3]: TransferrableTextContent;
+  readonly [4]: TransferrableNamespaceURI;
 }
 
 export const enum TransferrableNodeIndex {
   Index = 0,
   NodeType = 1,
   NodeName = 2,
-  ContainsText = 3,
-  TextContent = 4,
-  ContainsNamespace = 5,
-  Namespace = 6,
-  End = 7,
+  TextContent = 3,
+  Namespace = 4,
+  End = 5,
 }

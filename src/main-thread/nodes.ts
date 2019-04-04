@@ -60,7 +60,7 @@ export class NodeContext {
       } else {
         const nodeName = this.strings.get(nodeBuffer[iterator + TransferrableNodeIndex.NodeName]);
         node =
-          nodeBuffer[iterator + TransferrableNodeIndex.ContainsNamespace] !== 0
+          nodeBuffer[iterator + TransferrableNodeIndex.Namespace] !== 0
             ? document.createElementNS(this.strings.get(nodeBuffer[iterator + TransferrableNodeIndex.Namespace]), nodeName)
             : document.createElement(nodeName);
 
