@@ -79,7 +79,7 @@ export class WorkerContext {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement));
     }
     if (config.onCreateWorker) {
-      config.onCreateWorker(baseElement);
+      config.onCreateWorker(baseElement, strings, skeleton, keys);
     }
   }
 

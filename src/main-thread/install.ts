@@ -66,10 +66,6 @@ export function install(fetchPromise: Promise<[string, string]>, baseElement: HT
           new Uint16Array(data[TransferrableKeys.mutations]),
         );
 
-        // Invoke callbacks after hydrate/mutate processing so strings etc. are stored.
-        if (data[TransferrableKeys.type] === MessageType.HYDRATE && config.onHydration) {
-          config.onHydration();
-        }
         if (config.onReceiveMessage) {
           config.onReceiveMessage(message);
         }

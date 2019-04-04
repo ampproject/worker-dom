@@ -52,13 +52,14 @@ import { Comment } from './Comment';
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
 import { PostMessage } from '../worker-thread';
-import { observe } from '../MutationTransfer';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { Phase } from '../../transfer/Phase';
 import { propagate as propagateEvents } from '../Event';
 import { propagate as propagateSyncValues } from '../SyncValuePropagation';
 import { propagate as propagateResize } from '../ResizePropagation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { WorkerDOMGlobalScope, GlobalScope } from '../WorkerDOMGlobalScope';
+import { set as setPhase } from '../phase';
 
 const DOCUMENT_NAME = '#document';
 
@@ -84,7 +85,7 @@ export class Document extends Element {
 
   public observe = (): void => {
     // Sync Document Changes.
-    observe();
+    setPhase(Phase.Mutating);
     propagateEvents(this.defaultView);
     propagateSyncValues();
     propagateResize(this.defaultView);
