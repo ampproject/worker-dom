@@ -83,9 +83,14 @@ export class Document extends Element {
     });
   }
 
-  public observe = (): void => {
-    // Sync Document Changes.
-    setPhase(Phase.Mutating);
+  /**
+   * Observing the Document indicates it's attached to a main thread
+   * version of the document.
+   *
+   * Each mutation needs to be transferred, synced values need to propagate.
+   */
+  public [TransferrableKeys.observe] = (): void => {
+    setPhase(Phase.Hydrating);
     propagateEvents(this.defaultView);
     propagateSyncValues();
     propagateResize(this.defaultView);

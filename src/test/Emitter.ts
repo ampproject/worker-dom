@@ -44,7 +44,7 @@ export function emitter(document: Document): Emitter {
       callback(strings, message, buffers);
     });
   };
-  document.observe();
+  document[TransferrableKeys.observe]();
 
   return {
     once(callback: Subscriber): void {

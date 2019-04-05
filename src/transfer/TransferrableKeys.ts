@@ -74,4 +74,5 @@ export const enum TransferrableKeys {
   insertedNode = 56,
   removedNode = 57,
   allowTransfer = 58,
+  observe = 59,
 }
