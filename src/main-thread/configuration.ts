@@ -19,7 +19,7 @@ import { Phase } from '../transfer/Phase';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
 
 /**
- * The callback for `onMutationPump`. If specified, this callback will be called
+ * The callback for `mutationPump`. If specified, this callback will be called
  * for the new set of mutations pending. The callback can either immediately
  * call `flush()`, or it can reject mutations, or it can batch them further.
  */
