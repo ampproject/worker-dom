@@ -17,16 +17,16 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperty } from '../reflectPropertiesHelper';
 import { HTMLCanvasElement } from '../../worker-thread/dom/HTMLCanvasElement';
-import { createDocument } from '../../worker-thread/dom/Document';
 import { CanvasRenderingContext2DImplementation } from '../../worker-thread/CanvasRenderingContext2D';
 import { CanvasRenderingContext2D } from '../../worker-thread/DOMTypes';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   element: HTMLCanvasElement;
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
 
   t.context = {
     element: document.createElement('canvas') as HTMLCanvasElement,

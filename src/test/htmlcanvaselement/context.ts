@@ -17,9 +17,9 @@
 import anyTest, { TestInterface, afterEach } from 'ava';
 import * as sinon from 'sinon';
 import { CanvasRenderingContext2DImplementation, deferredUpgrades } from '../../worker-thread/CanvasRenderingContext2D';
-import { createDocument } from '../../worker-thread/dom/Document';
 import { HTMLCanvasElement } from '../../worker-thread/dom/HTMLCanvasElement';
 import { CanvasRenderingContext2D } from '../../worker-thread/DOMTypes';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   canvas: HTMLCanvasElement;
@@ -49,7 +49,7 @@ class OffscreenCanvas {
 
 test.beforeEach(t => {
   sandbox = sinon.createSandbox();
-  const document = createDocument();
+  const document = createTestingDocument();
   const canvas = document.createElement('canvas') as HTMLCanvasElement;
 
   t.context = {
