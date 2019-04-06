@@ -21,6 +21,7 @@ import { Strings } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { WorkerDOMConfiguration } from './configuration';
 import { WorkerContext } from './worker';
+import { NumericBoolean } from '../utils';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
@@ -55,16 +56,27 @@ export function install(fetchPromise: Promise<[string, string]>, baseElement: HT
       const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, config);
       workerContext.worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
+        const float32Needed = (data as MutationFromWorker)[TransferrableKeys.extra] === NumericBoolean.TRUE;
 
         if (!ALLOWABLE_MESSAGE_TYPES.includes(data[TransferrableKeys.type])) {
           return;
         }
-        mutatorContext.mutate(
-          (data as MutationFromWorker)[TransferrableKeys.phase],
-          (data as MutationFromWorker)[TransferrableKeys.nodes],
-          (data as MutationFromWorker)[TransferrableKeys.strings],
-          new Uint16Array(data[TransferrableKeys.mutations]),
-        );
+
+        if (float32Needed) {
+          mutatorContext.mutate(
+            (data as MutationFromWorker)[TransferrableKeys.phase],
+            (data as MutationFromWorker)[TransferrableKeys.nodes],
+            (data as MutationFromWorker)[TransferrableKeys.strings],
+            new Float32Array(data[TransferrableKeys.mutations]),
+          );
+        } else {
+          mutatorContext.mutate(
+            (data as MutationFromWorker)[TransferrableKeys.phase],
+            (data as MutationFromWorker)[TransferrableKeys.nodes],
+            (data as MutationFromWorker)[TransferrableKeys.strings],
+            new Uint16Array(data[TransferrableKeys.mutations]),
+          );
+        }
 
         if (config.onReceiveMessage) {
           config.onReceiveMessage(message);

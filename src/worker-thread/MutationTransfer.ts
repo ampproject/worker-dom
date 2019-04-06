@@ -22,11 +22,14 @@ import { Node } from './dom/Node';
 import { Phase } from '../transfer/Phase';
 import { phase, set as setPhase } from './phase';
 import { Document } from './dom/Document';
+import { NumericBoolean } from '../utils';
+
+declare type TypedArray = Uint16ArrayConstructor | Float32ArrayConstructor;
 
 let pending = false;
 let pendingMutations: Array<number> = [];
 
-export function transfer(document: Document, mutation: Array<number>): void {
+export function transfer(document: Document, mutation: Array<number>, constructor: TypedArray = Uint16Array): void {
   if (phase > Phase.Initializing && document[TransferrableKeys.allowTransfer]) {
     pending = true;
     pendingMutations = pendingMutations.concat(mutation);
@@ -36,7 +39,9 @@ export function transfer(document: Document, mutation: Array<number>): void {
         const nodes = new Uint16Array(
           consumeNodes().reduce((acc: Array<number>, node: Node) => acc.concat(node[TransferrableKeys.creationFormat]), []),
         ).buffer;
-        const mutations = new Uint16Array(pendingMutations).buffer;
+        const typedArray = new constructor(pendingMutations);
+        const mutations = typedArray.buffer;
+        const float32needed = constructor === Float32Array ? NumericBoolean.TRUE : NumericBoolean.FALSE;
 
         document.postMessage(
           {
@@ -45,6 +50,7 @@ export function transfer(document: Document, mutation: Array<number>): void {
             [TransferrableKeys.nodes]: nodes,
             [TransferrableKeys.strings]: consumeStrings(),
             [TransferrableKeys.mutations]: mutations,
+            [TransferrableKeys.extra]: float32needed,
           } as MutationFromWorker,
           [nodes, mutations],
         );

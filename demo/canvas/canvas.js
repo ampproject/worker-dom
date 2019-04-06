@@ -21,15 +21,15 @@ const doubleCanvasBtn = document.getElementById('doubleCanvasBtn');
 existingCanvasBtn.addEventListener('click', async () => {
   // Scenario #1:
   // Canvas is already on the page, retrieve using getElementById
-  const canvas = document.getElementById('myCanvas');
-  const ctx = canvas.getContext('2d');
+  const otherCanvas = document.getElementById('myCanvas');
+  const ctx = otherCanvas.getContext('2d');
 
-  ctx.lineWidth = 1;
-  ctx.strokeRect(7.5, 14.0, 15.0, 11.0);
-  ctx.fillRect(13.0, 19.0, 4.0, 6.0);
-  ctx.moveTo(5.0, 14.0);
-  ctx.lineTo(15.0, 6.0);
-  ctx.lineTo(25.0, 14.0);
+  ctx.lineWidth = 2;
+  ctx.strokeRect(15, 28, 30, 22);
+  ctx.fillRect(26, 38, 8, 12);
+  ctx.moveTo(10, 28);
+  ctx.lineTo(30, 12);
+  ctx.lineTo(50, 28);
   ctx.closePath();
   ctx.stroke();
 });
@@ -41,12 +41,12 @@ newCanvasBtn.addEventListener('click', async () => {
   document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
 
-  ctx.lineWidth = 1;
-  ctx.strokeRect(7.5, 14.0, 15.0, 11.0);
-  ctx.fillRect(13.0, 19.0, 4.0, 6.0);
-  ctx.moveTo(5.0, 14.0);
-  ctx.lineTo(15.0, 6.0);
-  ctx.lineTo(25.0, 14.0);
+  ctx.lineWidth = 2;
+  ctx.strokeRect(15, 28, 30, 22);
+  ctx.fillRect(26, 38, 8, 12);
+  ctx.moveTo(10, 28);
+  ctx.lineTo(30, 12);
+  ctx.lineTo(50, 28);
   ctx.closePath();
   ctx.stroke();
 });

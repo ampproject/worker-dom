@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+declare type TypedArray = Uint16Array | Float32Array;
+
 export interface CommandExecutor {
-  execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number;
-  print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object;
+  execute(mutations: TypedArray, startPosition: number, target: RenderableElement): number;
+  print(mutations: TypedArray, startPosition: number, target?: RenderableElement | null): Object;
 }

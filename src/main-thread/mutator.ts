@@ -29,11 +29,14 @@ import { LongTaskExecutor } from './commands/long-task';
 import { CommandExecutor } from './commands/interface';
 import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
 import { Phase } from '../transfer/Phase';
+import { OffscreenPolyfillCallProcessor } from './commands/offscreen-polyfill-calls';
+
+declare type TypedArray = Uint16Array | Float32Array;
 
 export class MutatorProcessor {
   private strings: Strings;
   private nodeContext: NodeContext;
-  private mutationQueue: Array<Uint16Array> = [];
+  private mutationQueue: Array<TypedArray> = [];
   private pendingMutations: boolean = false;
   private mutationPumpFunction: MutationPumpFunction;
   private sanitizer: Sanitizer | undefined;
@@ -65,6 +68,7 @@ export class MutatorProcessor {
       [TransferrableMutationType.LONG_TASK_START]: LongTaskExecutorInstance,
       [TransferrableMutationType.LONG_TASK_END]: LongTaskExecutorInstance,
       [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(workerContext),
+      [TransferrableMutationType.OFFSCREEN_CONTEXT_CALL]: OffscreenPolyfillCallProcessor(strings, workerContext),
     };
   }
 
@@ -75,7 +79,7 @@ export class MutatorProcessor {
    * @param stringValues Additional string values to use in decoding messages.
    * @param mutations Changes to apply in both graph shape and content of Elements.
    */
-  public mutate(phase: Phase, nodes: ArrayBuffer, stringValues: Array<string>, mutations: Uint16Array): void {
+  public mutate(phase: Phase, nodes: ArrayBuffer, stringValues: Array<string>, mutations: TypedArray): void {
     this.strings.storeValues(stringValues);
     this.nodeContext.createNodes(nodes, this.sanitizer);
     this.mutationQueue = this.mutationQueue.concat(mutations);

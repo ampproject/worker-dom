@@ -12,26 +12,39 @@ import {
   CanvasPattern,
 } from './DOMTypes';
 import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
-import { MessageType, MessageToWorker, OffscreenCanvasToWorker } from '../transfer/Messages';
+import { MessageType, OffscreenCanvasToWorker } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { transfer } from './MutationTransfer';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
+import { OffscreenCanvasPolyfill } from './OffscreenCanvasPolyfill';
+import { NumericBoolean } from '../utils';
 import { Document } from './dom/Document';
 
-declare var OffscreenCanvas: any;
+//declare var OffscreenCanvas: any;
+class OffscreenCanvasTemp {
+  constructor() {}
+  getContext(c: string): CanvasRenderingContext2D {
+    return {} as CanvasRenderingContext2D;
+  }
+}
+//(global as any).OffscreenCanvas = OffscreenCanvasTemp;
 
 export const deferredUpgrades = new WeakMap();
 
 export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{ getContext(c: '2d'): CanvasRenderingContext2D }> {
   return new Promise((resolve, reject) => {
-    const messageHandler = ({ data }: { data: MessageToWorker }) => {
-      if (
-        data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE &&
-        (data as OffscreenCanvasToWorker)[TransferrableKeys.target][0] === canvas[TransferrableKeys.index]
-      ) {
+    const messageHandler = ({ data }: { data: OffscreenCanvasToWorker }) => {
+      if (data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE) {
         removeEventListener('message', messageHandler);
-        const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
-        resolve(transferredOffscreenCanvas as { getContext(c: '2d'): CanvasRenderingContext2D });
+        const isOffscreenSupported = data[TransferrableKeys.extra];
+        if (isOffscreenSupported === NumericBoolean.TRUE) {
+          console.log('Native Offscreen used.');
+          const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
+          resolve(transferredOffscreenCanvas as { getContext(c: '2d'): CanvasRenderingContext2D });
+        } else {
+          console.log('Polyfill used.');
+          resolve(new OffscreenCanvasPolyfill(canvas));
+        }
       }
     };
 
@@ -48,7 +61,7 @@ export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{ ge
 
 export class CanvasRenderingContext2DImplementation implements CanvasRenderingContext2D {
   private calls = [] as { fnName: string; args: any[]; setter: boolean }[];
-  private implementation = (new OffscreenCanvas(0, 0) as { getContext(c: '2d'): CanvasRenderingContext2D }).getContext('2d');
+  private implementation = new OffscreenCanvasTemp().getContext('2d');
   private upgraded = false;
   private canvasElement: HTMLCanvasElement;
 
@@ -56,6 +69,7 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
   public goodOffscreenPromise: Promise<void>;
 
   constructor(canvas: HTMLCanvasElement) {
+    console.log('Ajjakjhdakjhsdkjhkhj');
     this.canvasElement = canvas;
 
     this.goodOffscreenPromise = getOffscreenCanvasAsync(this.canvasElement).then(instance => {
@@ -72,19 +86,19 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
           (this.implementation as any)[call.fnName](...call.args);
         }
       }
-      this.calls.length = 0;
     });
   }
 
   private delegate(fnName: string, fnArgs: any[], isSetter: boolean) {
+    if (!this.upgraded) {
+      this.calls.push({ fnName, args: fnArgs, setter: isSetter });
+      return;
+    }
     let returnValue;
     if (isSetter) {
       (this.implementation as any)[fnName] = fnArgs[0];
     } else {
       returnValue = (this.implementation as any)[fnName](...fnArgs);
-    }
-    if (!this.upgraded) {
-      this.calls.push({ fnName, args: fnArgs, setter: isSetter });
     }
     return returnValue;
   }

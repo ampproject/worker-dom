@@ -20,6 +20,7 @@ import { TransferrableKeys } from './TransferrableKeys';
 import { HydrateableNode, TransferredNode } from './TransferrableNodes';
 import { TransferrableBoundingClientRect } from './TransferrableBoundClientRect';
 import { Phase } from './Phase';
+import { NumericBoolean } from '../utils';
 
 export const enum MessageType {
   // INIT = 0,
@@ -32,6 +33,7 @@ export const enum MessageType {
   LONG_TASK_START = 7,
   LONG_TASK_END = 8,
   OFFSCREEN_CANVAS_INSTANCE = 9,
+  OFFSCREEN_CONTEXT_CALL = 10,
   // NAVIGATION_PUSH_STATE = 8,
   // NAVIGATION_REPLACE_STATE = 9,
   // NAVIGATION_POP_STATE = 10,
@@ -43,6 +45,7 @@ export interface MutationFromWorker {
   readonly [TransferrableKeys.strings]: Array<string>;
   readonly [TransferrableKeys.nodes]: ArrayBuffer;
   readonly [TransferrableKeys.mutations]: ArrayBuffer;
+  readonly [TransferrableKeys.extra]: any;
 }
 export type MessageFromWorker = {
   data: MutationFromWorker;
@@ -70,6 +73,7 @@ export interface OffscreenCanvasToWorker {
   [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE;
   [TransferrableKeys.target]: TransferredNode;
   [TransferrableKeys.data]: Object; // This will be an OffscreenCanvas
+  [TransferrableKeys.extra]?: NumericBoolean;
 }
 export interface ResizeSyncToWorker {
   [TransferrableKeys.type]: MessageType.RESIZE;
