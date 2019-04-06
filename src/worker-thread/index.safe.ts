@@ -43,11 +43,11 @@ import { HTMLTableElement } from './dom/HTMLTableElement';
 import { HTMLTableRowElement } from './dom/HTMLTableRowElement';
 import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
-import { createDocument } from './dom/Document';
-import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
-import { appendKeys } from './css/CSSStyleDeclaration';
-import { consumeInitialDOM } from './initialize';
+import { Document } from './dom/Document';
+import { GlobalScope } from './WorkerDOMGlobalScope';
+import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
+import { MutationObserver } from './MutationObserver';
 
 const WHITELISTED_GLOBALS = [
   'Array',
@@ -100,6 +100,7 @@ const WHITELISTED_GLOBALS = [
   'Uint8ClampedArray',
   'WeakMap',
   'WeakSet',
+  'XMLHttpRequest',
   'atob',
   'btoa',
   'caches',
@@ -128,17 +129,15 @@ const WHITELISTED_GLOBALS = [
   'unescape',
 ];
 
-const doc = createDocument(postMessage.bind(self));
-export const workerDOM: WorkerDOMGlobalScope = {
-  document: doc,
+const globalScope: GlobalScope = {
   navigator: (self as WorkerGlobalScope).navigator,
-  addEventListener: doc.addEventListener.bind(doc),
-  removeEventListener: doc.removeEventListener.bind(doc),
   localStorage: {},
   location: {},
   url: '/',
-  appendKeys,
-  consumeInitialDOM,
+  innerWidth: 0,
+  innerHeight: 0,
+  initialize,
+  MutationObserver,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLCanvasElement,
@@ -170,6 +169,17 @@ export const workerDOM: WorkerDOMGlobalScope = {
   HTMLTimeElement,
 };
 
+// WorkerDOM.Document.defaultView ends up being the window object.
+// React requires the classes to exist off the window object for instanceof checks.
+export const workerDOM = (function(postMessage) {
+  const document = new Document(globalScope);
+  document.postMessage = postMessage;
+  document.isConnected = true;
+  document.appendChild((document.body = document.createElement('body')));
+
+  return document.defaultView;
+})(postMessage.bind(self) || (() => void 0));
+
 /**
  * Instruments relevant calls to work via LongTask API.
  * @param global
@@ -182,7 +192,7 @@ function updateLongTask(global: WorkerGlobalScope) {
         enumerable: true,
         writable: true,
         configurable: true,
-        value: longTaskWrap(doc, originalFetch.bind(global)),
+        value: longTaskWrap(workerDOM.document, originalFetch.bind(global)),
       });
     } catch (e) {
       console.warn(e);

@@ -20,6 +20,7 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { EVENT_SUBSCRIPTION_LENGTH, EventSubscriptionMutationIndex } from '../../transfer/TransferrableEvent';
 import { WorkerContext } from '../worker';
 import { CommandExecutor } from './interface';
+import { NodeContext } from '../nodes';
 
 /**
  * Instead of a whitelist of elements that need their value tracked, use the existence
@@ -40,52 +41,80 @@ const applyDefaultChangeListener = (workerContext: WorkerContext, node: Renderab
 };
 
 /**
- * Tell the worker DOM what the value is for a Node.
+ * Tell WorkerDOM what the value is for a Node.
  * @param worker whom to dispatch value toward.
  * @param node where to get the value from.
  */
 const fireValueChange = (workerContext: WorkerContext, node: RenderableElement): void =>
-  workerContext.messageToWorker({
-    [TransferrableKeys.type]: MessageType.SYNC,
-    [TransferrableKeys.sync]: {
-      [TransferrableKeys.index]: node._index_,
-      [TransferrableKeys.value]: node.value,
+  workerContext.messageToWorker(
+    {
+      [TransferrableKeys.type]: MessageType.SYNC,
+      [TransferrableKeys.sync]: {
+        [TransferrableKeys.index]: node._index_,
+        [TransferrableKeys.value]: node.value,
+      },
     },
-  }, []);
+    [],
+  );
 
 /**
- * Register an event handler for dispatching events to worker thread
- * @param worker whom to dispatch events toward
- * @param index node index the event comes from (used to dispatchEvent in worker thread).
- * @return eventHandler function consuming event and dispatching to worker thread
+ * Tell WorkerDOM what the window dimensions are.
+ * @param workerContext
+ * @param cachedWindowSize
  */
-const eventHandler = (workerContext: WorkerContext, index: number) => (event: Event | KeyboardEvent): void => {
-  if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
-    fireValueChange(workerContext, event.currentTarget as RenderableElement);
-  }
-
-  workerContext.messageToWorker({
-    [TransferrableKeys.type]: MessageType.EVENT,
-    [TransferrableKeys.event]: {
-      [TransferrableKeys.index]: index,
-      [TransferrableKeys.bubbles]: event.bubbles,
-      [TransferrableKeys.cancelable]: event.cancelable,
-      [TransferrableKeys.cancelBubble]: event.cancelBubble,
-      [TransferrableKeys.currentTarget]: [(event.currentTarget as RenderableElement)._index_],
-      [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
-      [TransferrableKeys.eventPhase]: event.eventPhase,
-      [TransferrableKeys.isTrusted]: event.isTrusted,
-      [TransferrableKeys.returnValue]: event.returnValue,
-      [TransferrableKeys.target]: [(event.target as RenderableElement)._index_],
-      [TransferrableKeys.timeStamp]: event.timeStamp,
-      [TransferrableKeys.type]: event.type,
-      [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
+const fireResizeChange = (workerContext: WorkerContext, cachedWindowSize: [number, number]): void =>
+  workerContext.messageToWorker(
+    {
+      [TransferrableKeys.type]: MessageType.RESIZE,
+      [TransferrableKeys.sync]: cachedWindowSize,
     },
-  }, []);
-};
+    [],
+  );
 
-export function EventSubscriptionProcessor(strings: Strings, workerContext: WorkerContext): CommandExecutor {
+export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext): CommandExecutor {
   const knownListeners: Array<(event: Event) => any> = [];
+  let cachedWindowSize: [number, number] = [window.innerWidth, window.innerHeight];
+
+  /**
+   * Register an event handler for dispatching events to worker thread
+   * @param worker whom to dispatch events toward
+   * @param index node index the event comes from (used to dispatchEvent in worker thread).
+   * @return eventHandler function consuming event and dispatching to worker thread
+   */
+  const eventHandler = (index: number) => (event: Event | KeyboardEvent): void => {
+    if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
+      fireValueChange(workerContext, event.currentTarget as RenderableElement);
+    } else if (event.type === 'resize') {
+      const { innerWidth, innerHeight } = window;
+      if (cachedWindowSize[0] === innerWidth && cachedWindowSize[1] === innerHeight) {
+        return;
+      }
+      cachedWindowSize = [window.innerWidth, window.innerHeight];
+      fireResizeChange(workerContext, cachedWindowSize);
+    }
+
+    workerContext.messageToWorker(
+      {
+        [TransferrableKeys.type]: MessageType.EVENT,
+        [TransferrableKeys.event]: {
+          [TransferrableKeys.index]: index,
+          [TransferrableKeys.bubbles]: event.bubbles,
+          [TransferrableKeys.cancelable]: event.cancelable,
+          [TransferrableKeys.cancelBubble]: event.cancelBubble,
+          [TransferrableKeys.currentTarget]: [(event.currentTarget as RenderableElement)._index_ || 0],
+          [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
+          [TransferrableKeys.eventPhase]: event.eventPhase,
+          [TransferrableKeys.isTrusted]: event.isTrusted,
+          [TransferrableKeys.returnValue]: event.returnValue,
+          [TransferrableKeys.target]: [(event.target as RenderableElement)._index_ || 0],
+          [TransferrableKeys.timeStamp]: event.timeStamp,
+          [TransferrableKeys.type]: event.type,
+          [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
+        },
+      },
+      [],
+    );
+  };
 
   /**
    * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,
@@ -99,14 +128,25 @@ export function EventSubscriptionProcessor(strings: Strings, workerContext: Work
     let changeEventSubscribed: boolean = target.onchange !== null;
     const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
     const isChangeEvent = type === 'change';
+    const isResizeEvent = type === 'resize';
 
     if (addEvent) {
+      if (isResizeEvent && target === nodeContext.baseElement) {
+        addEventListener(type, (knownListeners[index] = eventHandler(1)));
+        return;
+      }
+
       if (isChangeEvent) {
         changeEventSubscribed = true;
         target.onchange = null;
       }
-      (target as HTMLElement).addEventListener(type, (knownListeners[index] = eventHandler(workerContext, target._index_)));
+      (target as HTMLElement).addEventListener(type, (knownListeners[index] = eventHandler(target._index_)));
     } else {
+      if (isResizeEvent && target === nodeContext.baseElement) {
+        removeEventListener(type, knownListeners[index]);
+        return;
+      }
+
       if (isChangeEvent) {
         changeEventSubscribed = false;
       }

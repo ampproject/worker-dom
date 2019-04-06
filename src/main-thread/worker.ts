@@ -67,9 +67,10 @@ export class WorkerContext {
         function removeEventListener(type, handler) {
           return document.removeEventListener(type, handler);
         }
-        this.consumeInitialDOM(document, ${JSON.stringify(strings)}, ${JSON.stringify(skeleton)});
-        this.appendKeys(${JSON.stringify(keys)});
-        document.observe();
+        window.innerWidth = ${window.innerWidth};
+        window.innerHeight = ${window.innerHeight};
+        this.initialize(document, ${JSON.stringify(strings)}, ${JSON.stringify(skeleton)}, ${JSON.stringify(keys)});
+        document[${TransferrableKeys.observe}](window);
         ${authorScript}
       }).call(WorkerThread.workerDOM);
   //# sourceURL=${encodeURI(config.authorURL)}`;
@@ -78,7 +79,7 @@ export class WorkerContext {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement));
     }
     if (config.onCreateWorker) {
-      config.onCreateWorker(baseElement);
+      config.onCreateWorker(baseElement, strings, skeleton, keys);
     }
   }
 

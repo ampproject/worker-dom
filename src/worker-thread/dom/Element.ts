@@ -20,7 +20,7 @@ import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { NumericBoolean, toLower, toUpper } from '../../utils';
+import { toLower, toUpper } from '../../utils';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
@@ -93,13 +93,12 @@ export class Element extends ParentNode {
     this.namespaceURI = namespaceURI || HTML_NAMESPACE;
     this.localName = localName;
     this.kind = VOID_ELEMENTS.includes(this.tagName) ? ElementKind.VOID : ElementKind.NORMAL;
+
     this[TransferrableKeys.creationFormat] = [
       this[TransferrableKeys.index],
       this.nodeType,
       storeString(this.localName),
-      NumericBoolean.FALSE,
       0,
-      this.namespaceURI === null ? NumericBoolean.FALSE : NumericBoolean.TRUE,
       this.namespaceURI === null ? 0 : storeString(this.namespaceURI),
     ];
   }
@@ -524,7 +523,7 @@ export class Element extends ParentNode {
         resolve(defaultValue);
       } else {
         addEventListener('message', messageHandler);
-        transfer((this.ownerDocument as Document).postMessage, [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]]);
+        transfer(this.ownerDocument as Document, [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]]);
         setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.
       }
     });

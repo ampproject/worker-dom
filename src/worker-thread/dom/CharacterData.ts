@@ -30,6 +30,8 @@ export abstract class CharacterData extends Node {
   constructor(data: string, nodeType: NodeType, nodeName: NodeName, ownerDocument: Node) {
     super(nodeType, nodeName, ownerDocument);
     this[TransferrableKeys.data] = data;
+
+    this[TransferrableKeys.creationFormat] = [this[TransferrableKeys.index], nodeType, storeString(nodeName), storeString(data), 0];
   }
 
   // Unimplemented Methods

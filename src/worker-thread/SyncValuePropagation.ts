@@ -17,6 +17,7 @@
 import { MessageToWorker, MessageType, ValueSyncToWorker } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { get } from './nodes';
+import { Document } from './dom/Document';
 
 /**
  * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.
@@ -35,8 +36,10 @@ export function propagate(): void {
     const sync = (data as ValueSyncToWorker)[TransferrableKeys.sync];
     const node = get(sync[TransferrableKeys.index]);
     if (node) {
+      (node.ownerDocument as Document)[TransferrableKeys.allowTransfer] = false;
       // Modify the private backing ivar of `value` property to avoid mutation/sync cycle.
-      node[TransferrableKeys.value] = sync[TransferrableKeys.value];
+      node.value = sync[TransferrableKeys.value];
+      (node.ownerDocument as Document)[TransferrableKeys.allowTransfer] = true;
     }
   });
 }

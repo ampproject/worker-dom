@@ -207,9 +207,8 @@ export abstract class Node {
 
       // Removing a child can cause this.childNodes to change, meaning we need to splice from its updated location.
       this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child);
-      child.parentNode = this;
-      propagate(child, 'isConnected', this.isConnected);
-      propagate(child, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
+      this[TransferrableKeys.insertedNode](child);
+
       mutate(
         this.ownerDocument as Document,
         {
@@ -229,23 +228,30 @@ export abstract class Node {
         ],
       );
 
-      /*
-      [
-        TransferrableMutationType.CHILD_LIST,
-        Target.index,
-        NextSibling.index,
-        PreviousSibling.index,
-        AppendedNodeCount,
-        RemovedNodeCount,
-        ... AppendedNode.index,
-        ... RemovedNode.index,
-      ]
-      */
-
       return child;
     }
 
     return null;
+  }
+
+  /**
+   * When a Node is inserted, this method is called (and can be extended by other classes)
+   * @param child
+   */
+  protected [TransferrableKeys.insertedNode](child: Node): void {
+    child.parentNode = this;
+    propagate(child, 'isConnected', this.isConnected);
+    propagate(child, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
+  }
+
+  /**
+   * When a node is removed, this method is called (and can be extended by other classes)
+   * @param child
+   */
+  protected [TransferrableKeys.removedNode](child: Node): void {
+    child.parentNode = null;
+    propagate(child, 'isConnected', false);
+    propagate(child, TransferrableKeys.scopingRoot, child);
   }
 
   /**
@@ -259,10 +265,8 @@ export abstract class Node {
       child.childNodes.slice().forEach(this.appendChild, this);
     } else {
       child.remove();
-      child.parentNode = this;
-      propagate(child, 'isConnected', this.isConnected);
-      propagate(child, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
       this.childNodes.push(child);
+      this[TransferrableKeys.insertedNode](child);
 
       const previousSibling = this.childNodes[this.childNodes.length - 2];
       mutate(
@@ -298,10 +302,9 @@ export abstract class Node {
     const exists = index >= 0;
 
     if (exists) {
-      child.parentNode = null;
-      propagate(child, 'isConnected', false);
-      propagate(child, TransferrableKeys.scopingRoot, child);
       this.childNodes.splice(index, 1);
+      this[TransferrableKeys.removedNode](child);
+
       mutate(
         this.ownerDocument as Document,
         {
@@ -340,16 +343,10 @@ export abstract class Node {
     // per replaceChild() call.
     newChild.remove();
 
-    oldChild.parentNode = null;
-    propagate(oldChild, 'isConnected', false);
-    propagate(oldChild, TransferrableKeys.scopingRoot, oldChild);
-
     const index = this.childNodes.indexOf(oldChild);
     this.childNodes.splice(index, 1, newChild);
-
-    newChild.parentNode = this;
-    propagate(newChild, 'isConnected', this.isConnected);
-    propagate(newChild, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
+    this[TransferrableKeys.removedNode](oldChild);
+    this[TransferrableKeys.insertedNode](newChild);
 
     mutate(
       this.ownerDocument as Document,
@@ -400,14 +397,7 @@ export abstract class Node {
       this[TransferrableKeys.handlers][lowerType] = [handler];
     }
 
-    transfer((this.ownerDocument as Document).postMessage, [
-      TransferrableMutationType.EVENT_SUBSCRIPTION,
-      this[TransferrableKeys.index],
-      0,
-      1,
-      storedType,
-      index,
-    ]);
+    transfer(this.ownerDocument as Document, [TransferrableMutationType.EVENT_SUBSCRIPTION, this[TransferrableKeys.index], 0, 1, storedType, index]);
   }
 
   /**
@@ -423,7 +413,7 @@ export abstract class Node {
 
     if (index >= 0) {
       handlers.splice(index, 1);
-      transfer((this.ownerDocument as Document).postMessage, [
+      transfer(this.ownerDocument as Document, [
         TransferrableMutationType.EVENT_SUBSCRIPTION,
         this[TransferrableKeys.index],
         1,
