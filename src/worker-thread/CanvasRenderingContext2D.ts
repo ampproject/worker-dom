@@ -16,6 +16,7 @@ import { MessageType, MessageToWorker, OffscreenCanvasToWorker } from '../transf
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { transfer } from './MutationTransfer';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
+import { Document } from './dom/Document';
 
 declare var OffscreenCanvas: any;
 
@@ -40,10 +41,7 @@ export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{ ge
       deferredUpgrades.set(canvas, deferred);
     } else {
       addEventListener('message', messageHandler);
-      transfer(/* postMessage */ canvas.ownerDocument.postMessage, [
-        TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE,
-        canvas[TransferrableKeys.index],
-      ]);
+      transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
     }
   });
 }
