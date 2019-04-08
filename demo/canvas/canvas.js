@@ -64,21 +64,21 @@ doubleCanvasBtn.addEventListener('click', async () => {
   const ctxOne = canvasOne.getContext('2d');
   const ctxTwo = canvasTwo.getContext('2d');
 
-  ctxOne.lineWidth = 1;
-  ctxOne.strokeRect(7.5, 14.0, 15.0, 11.0);
-  ctxOne.fillRect(13.0, 19.0, 4.0, 6.0);
-  ctxOne.moveTo(5.0, 14.0);
-  ctxOne.lineTo(15.0, 6.0);
-  ctxOne.lineTo(25.0, 14.0);
+  ctxOne.lineWidth = 2;
+  ctxOne.strokeRect(15, 28, 30, 22);
+  ctxOne.fillRect(26, 38, 8, 12);
+  ctxOne.moveTo(10, 28);
+  ctxOne.lineTo(30, 12);
+  ctxOne.lineTo(50, 28);
   ctxOne.closePath();
   ctxOne.stroke();
 
-  ctxTwo.lineWidth = 1;
-  ctxTwo.strokeRect(7.5, 14.0, 15.0, 11.0);
-  ctxTwo.fillRect(13.0, 19.0, 4.0, 6.0);
-  ctxTwo.moveTo(5.0, 14.0);
-  ctxTwo.lineTo(15.0, 6.0);
-  ctxTwo.lineTo(25.0, 14.0);
+  ctxTwo.lineWidth = 2;
+  ctxTwo.strokeRect(15, 28, 30, 22);
+  ctxTwo.fillRect(26, 38, 8, 12);
+  ctxTwo.moveTo(10, 28);
+  ctxTwo.lineTo(30, 12);
+  ctxTwo.lineTo(50, 28);
   ctxTwo.closePath();
   ctxTwo.stroke();
 });

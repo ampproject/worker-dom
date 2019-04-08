@@ -11,7 +11,6 @@ export function OffscreenCanvasProcessor(workerContext: WorkerContext): CommandE
       if (target) {
         const canvas = target as HTMLCanvasElement;
         if (typeof canvas.transferControlToOffscreen === 'function') {
-          console.log('controlTransferToOffsc');
           const offscreen = canvas.transferControlToOffscreen();
           workerContext.messageToWorker(
             {
@@ -23,7 +22,6 @@ export function OffscreenCanvasProcessor(workerContext: WorkerContext): CommandE
             [offscreen],
           );
         } else {
-          console.log('polyfill case');
           workerContext.messageToWorker(
             {
               [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE,
