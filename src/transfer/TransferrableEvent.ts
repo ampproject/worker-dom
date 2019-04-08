@@ -33,6 +33,8 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.type]: string;
   readonly [TransferrableKeys.scoped]?: boolean;
   readonly [TransferrableKeys.keyCode]?: number;
+  readonly [TransferrableKeys.pageX]?: number;
+  readonly [TransferrableKeys.pageY]?: number;
 }
 
 /**
