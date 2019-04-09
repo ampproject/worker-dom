@@ -36,8 +36,16 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     this.canvas = canvas;
   }
 
-  clearRect(x: number, y: number, w: number, h: number): void {
-    const stringsIdForMethodName = store('clearRect');
+  private postToMainThread(
+    fnName: string,
+    isSetter: NumericBoolean,
+    stringArgIndex: number,
+    argCount: number,
+    args: any[],
+    floatNeeded: boolean,
+    textArg?: string,
+  ) {
+    const stringsIdForMethodName = store(fnName);
 
     transfer(
       this.canvas.ownerDocument as Document,
@@ -45,734 +53,181 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
         TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
         this.canvas[TransferrableKeys.index],
         stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1, // string index, -1 if not present
-        4, // Argument count
-        x,
-        y,
-        w,
-        h,
+        isSetter,
+        stringArgIndex,
+        argCount,
+        ...args,
       ],
-      Float32Array,
+      floatNeeded ? Float32Array : Uint16Array,
     );
+  }
+
+  clearRect(x: number, y: number, w: number, h: number): void {
+    this.postToMainThread('clearRect', NumericBoolean.FALSE, -1, 4, [...arguments], true);
   }
 
   fillRect(x: number, y: number, w: number, h: number): void {
-    const stringsIdForMethodName = store('fillRect');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        4, // Argument count
-        x,
-        y,
-        w,
-        h,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('fillRect', NumericBoolean.FALSE, -1, 4, [...arguments], true);
   }
 
   strokeRect(x: number, y: number, w: number, h: number): void {
-    const stringsIdForMethodName = store('strokeRect');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        4, // Argument count
-        x,
-        y,
-        w,
-        h,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('strokeRect', NumericBoolean.FALSE, -1, 4, [...arguments], true);
   }
 
-  set lineWidth(val: number) {
-    const stringsIdForMethodName = store('lineWidth');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.TRUE, // is setter?
-        -1,
-        1, // Argument count
-        val,
-      ],
-      Float32Array,
-    );
+  set lineWidth(value: number) {
+    this.postToMainThread('lineWidth', NumericBoolean.TRUE, -1, 1, [value], true);
   }
 
   fillText(text: string, x: number, y: number) {
-    const stringsIdForMethodName = store('fillText');
-    const stringsIdForTextArg = store(text);
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        0,
-        3, // Argument count
-        stringsIdForTextArg,
-        x,
-        y,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('fillText', NumericBoolean.FALSE, 0, 3, [store(text), x, y], true);
   }
 
   moveTo(x: number, y: number) {
-    const stringsIdForMethodName = store('moveTo');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        2, // Argument count
-        x,
-        y,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('moveTo', NumericBoolean.FALSE, -1, 2, [...arguments], true);
   }
 
   lineTo(x: number, y: number) {
-    const stringsIdForMethodName = store('lineTo');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        2, // Argument count
-        x,
-        y,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('lineTo', NumericBoolean.FALSE, -1, 2, [...arguments], true);
   }
 
   closePath() {
-    const stringsIdForMethodName = store('closePath');
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.FALSE, // is setter?
-      -1,
-      0 /* Argument count */,
-    ]);
+    this.postToMainThread('closePath', NumericBoolean.FALSE, -1, 0, [], false);
   }
 
   stroke() {
-    const stringsIdForMethodName = store('stroke');
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.FALSE, // is setter?
-      -1,
-      0 /* Argument count */,
-    ]);
+    this.postToMainThread('stroke', NumericBoolean.FALSE, -1, 0, [], false);
   }
 
   restore() {
-    const stringsIdForMethodName = store('restore');
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.FALSE, // is setter?
-      -1,
-      0 /* Argument count */,
-    ]);
+    this.postToMainThread('restore', NumericBoolean.FALSE, -1, 0, [], false);
   }
 
   save() {
-    const stringsIdForMethodName = store('save');
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.FALSE, // is setter?
-      -1,
-      0 /* Argument count */,
-    ]);
+    this.postToMainThread('save', NumericBoolean.FALSE, -1, 0, [], false);
   }
 
   resetTransform() {
-    const stringsIdForMethodName = store('resetTransform');
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.FALSE, // is setter?
-      -1,
-      0 /* Argument count */,
-    ]);
+    this.postToMainThread('resetTransform', NumericBoolean.FALSE, -1, 0, [], false);
   }
 
   rotate(angle: number) {
-    const stringsIdForMethodName = store('rotate');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        1 /* Argument count */,
-        angle,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('rotate', NumericBoolean.FALSE, -1, 1, [...arguments], true);
   }
 
   transform(a: number, b: number, c: number, d: number, e: number, f: number) {
-    const stringsIdForMethodName = store('transform');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        6 /* Argument count */,
-        a,
-        b,
-        c,
-        d,
-        e,
-        f,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('transform', NumericBoolean.FALSE, -1, 6, [...arguments], true);
   }
 
   translate(x: number, y: number) {
-    const stringsIdForMethodName = store('translate');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        2 /* Argument count */,
-        x,
-        y,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('translate', NumericBoolean.FALSE, -1, 2, [...arguments], true);
   }
 
   scale(x: number, y: number) {
-    const stringsIdForMethodName = store('scale');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        2 /* Argument count */,
-        x,
-        y,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('scale', NumericBoolean.FALSE, -1, 2, [...arguments], true);
   }
 
   set globalAlpha(value: number) {
-    const stringsIdForMethodName = store('globalAlpha');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.TRUE, // is setter?
-        -1,
-        1 /* Argument count */,
-        value,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('globalAlpha', NumericBoolean.TRUE, -1, 1, [value], true);
   }
 
   set globalCompositeOperation(value: string) {
-    const stringsIdForMethodName = store('globalCompositeOperation');
-    const stringsIdForTextArg = store(value);
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.TRUE, // is setter?
-      0,
-      1 /* Argument count */,
-      stringsIdForTextArg,
-    ]);
+    this.postToMainThread('globalCompositeOperation', NumericBoolean.TRUE, 0, 1, [store(value)], false);
   }
 
   set imageSmoothingQuality(value: ImageSmoothingQuality) {
-    const stringsIdForMethodName = store('imageSmoothingQuality');
-    const stringsIdForTextArg = store(value);
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.TRUE, // is setter?
-      0,
-      1 /* Argument count */,
-      stringsIdForTextArg,
-    ]);
+    this.postToMainThread('imageSmoothingQuality', NumericBoolean.TRUE, 0, 1, [store(value)], false);
   }
 
   set fillStyle(value: string) {
-    const stringsIdForMethodName = store('fillStyle');
-    const stringsIdForTextArg = store(value);
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.TRUE, // is setter?
-      0,
-      1 /* Argument count */,
-      stringsIdForTextArg,
-    ]);
+    this.postToMainThread('fillStyle', NumericBoolean.TRUE, 0, 1, [store(value)], false);
   }
 
   set strokeStyle(value: string) {
-    const stringsIdForMethodName = store('strokeStyle');
-    const stringsIdForTextArg = store(value);
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.TRUE, // is setter?
-      0,
-      1 /* Argument count */,
-      stringsIdForTextArg,
-    ]);
+    this.postToMainThread('strokeStyle', NumericBoolean.TRUE, 0, 1, [store(value)], false);
   }
 
   set shadowBlur(value: number) {
-    const stringsIdForMethodName = store('shadowBlur');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.TRUE, // is setter?
-        -1,
-        1 /* Argument count */,
-        value,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('shadowBlur', NumericBoolean.TRUE, -1, 1, [value], true);
   }
 
   set shadowColor(value: string) {
-    const stringsIdForMethodName = store('shadowColor');
-    const stringsIdForTextArg = store(value);
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.TRUE, // is setter?
-      0,
-      1 /* Argument count */,
-      stringsIdForTextArg,
-    ]);
+    this.postToMainThread('shadowColor', NumericBoolean.TRUE, 0, 1, [store(value)], false);
   }
 
   set shadowOffsetX(value: number) {
-    const stringsIdForMethodName = store('shadowOffsetX');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.TRUE, // is setter?
-        -1,
-        1 /* Argument count */,
-        value,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('shadowOffsetX', NumericBoolean.TRUE, -1, 1, [value], true);
   }
 
   set shadowOffsetY(value: number) {
-    const stringsIdForMethodName = store('shadowOffsetY');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.TRUE, // is setter?
-        -1,
-        1 /* Argument count */,
-        value,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('shadowOffsetY', NumericBoolean.TRUE, -1, 1, [value], true);
   }
 
   set filter(value: string) {
-    const stringsIdForMethodName = store('filter');
-    const stringsIdForTextArg = store(value);
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.TRUE, // is setter?
-      0,
-      1 /* Argument count */,
-      stringsIdForTextArg,
-    ]);
+    this.postToMainThread('filter', NumericBoolean.TRUE, 0, 1, [store(value)], false);
   }
 
   beginPath() {
-    const stringsIdForMethodName = store('beginPath');
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.FALSE, // is setter?
-      -1,
-      0 /* Argument count */,
-    ]);
+    this.postToMainThread('beginPath', NumericBoolean.FALSE, 0, 1, [], false);
   }
 
   strokeText(text: string, x: number, y: number) {
-    const stringsIdForMethodName = store('strokeText');
-    const stringsIdForTextArg = store(text);
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        0,
-        3 /* Argument count */,
-        stringsIdForTextArg,
-        x,
-        y,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('strokeText', NumericBoolean.FALSE, 0, 3, [store(text), x, y], true);
   }
 
   set textAlign(value: CanvasTextAlign) {
-    const stringsIdForMethodName = store('textAlign');
-    const stringsIdForTextArg = store(value);
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.TRUE, // is setter?
-      0,
-      1 /* Argument count */,
-      stringsIdForTextArg,
-    ]);
+    this.postToMainThread('textAlign', NumericBoolean.TRUE, 0, 1, [store(value)], false);
   }
 
   set textBaseline(value: CanvasTextBaseline) {
-    const stringsIdForMethodName = store('filter');
-    const stringsIdForTextArg = store(value);
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.TRUE, // is setter?
-      0,
-      1 /* Argument count */,
-      stringsIdForTextArg,
-    ]);
+    this.postToMainThread('textBaseline', NumericBoolean.TRUE, 0, 1, [store(value)], false);
   }
 
   set lineCap(value: CanvasLineCap) {
-    const stringsIdForMethodName = store('lineCap');
-    const stringsIdForTextArg = store(value);
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.TRUE, // is setter?
-      0,
-      1 /* Argument count */,
-      stringsIdForTextArg,
-    ]);
+    this.postToMainThread('lineCap', NumericBoolean.TRUE, 0, 1, [store(value)], false);
   }
 
   set lineDashOffset(value: number) {
-    const stringsIdForMethodName = store('textAlign');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.TRUE, // is setter?
-        -1,
-        1 /* Argument count */,
-        value,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('lineDashOffset', NumericBoolean.TRUE, -1, 1, [value], true);
   }
 
   set lineJoin(value: CanvasLineJoin) {
-    const stringsIdForMethodName = store('lineJoin');
-    const stringsIdForTextArg = store(value);
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.TRUE, // is setter?
-      0,
-      1 /* Argument count */,
-      stringsIdForTextArg,
-    ]);
+    this.postToMainThread('lineJoin', NumericBoolean.TRUE, 0, 1, [store(value)], false);
   }
 
   set miterLimit(value: number) {
-    const stringsIdForMethodName = store('miterLimit');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.TRUE, // is setter?
-        -1,
-        1 /* Argument count */,
-        value,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('miterLimit', NumericBoolean.TRUE, -1, 1, [value], true);
   }
 
   arc(x: number, y: number, radius: number, startAngle: number, endAngle: number) {
-    const stringsIdForMethodName = store('arc');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        5 /* Argument count */,
-        x,
-        y,
-        radius,
-        startAngle,
-        endAngle,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('arc', NumericBoolean.FALSE, -1, 5, [...arguments], true);
   }
 
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number) {
-    const stringsIdForMethodName = store('arcTo');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        5 /* Argument count */,
-        x1,
-        y1,
-        x2,
-        y2,
-        radius,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('arcTo', NumericBoolean.FALSE, -1, 5, [...arguments], true);
   }
 
   set direction(value: CanvasDirection) {
-    const stringsIdForMethodName = store('direction');
-    const stringsIdForTextArg = store(value);
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.TRUE, // is setter?
-      0,
-      1 /* Argument count */,
-      stringsIdForTextArg,
-    ]);
+    this.postToMainThread('direction', NumericBoolean.TRUE, 0, 1, [store(value)], false);
   }
 
   set font(value: string) {
-    const stringsIdForMethodName = store('font');
-    const stringsIdForTextArg = store(value);
-
-    transfer(this.canvas.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-      this.canvas[TransferrableKeys.index],
-      stringsIdForMethodName,
-      NumericBoolean.TRUE, // is setter?
-      0,
-      1 /* Argument count */,
-      stringsIdForTextArg,
-    ]);
+    this.postToMainThread('font', NumericBoolean.TRUE, 0, 1, [store(value)], false);
   }
 
   ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number) {
-    const stringsIdForMethodName = store('ellipse');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        7 /* Argument count */,
-        x,
-        y,
-        radiusX,
-        radiusY,
-        rotation,
-        startAngle,
-        endAngle,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('ellipse', NumericBoolean.FALSE, -1, 7, [...arguments], true);
   }
 
   bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number) {
-    const stringsIdForMethodName = store('bezierCurveTo');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        6 /* Argument count */,
-        cp1x,
-        cp1y,
-        cp2x,
-        cp2y,
-        x,
-        y,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('bezierCurveTo', NumericBoolean.FALSE, -1, 6, [...arguments], true);
   }
 
   rect(x: number, y: number, width: number, height: number) {
-    const stringsIdForMethodName = store('rect');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        4 /* Argument count */,
-        x,
-        y,
-        width,
-        height,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('rect', NumericBoolean.FALSE, -1, 4, [...arguments], true);
   }
 
   quadraticCurveTo(cpx: number, cpy: number, x: number, y: number) {
-    const stringsIdForMethodName = store('quadraticCurveTo');
-
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
-        this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
-        NumericBoolean.FALSE, // is setter?
-        -1,
-        4 /* Argument count */,
-        cpx,
-        cpy,
-        x,
-        y,
-      ],
-      Float32Array,
-    );
+    this.postToMainThread('quadraticCurveTo', NumericBoolean.FALSE, -1, 4, [...arguments], true);
   }
 
   ////////////////////////////////////////
