@@ -33,11 +33,7 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
       }
 
       if (isSetter) {
-        if (argCount === 1) {
-          (mainContext as any)[methodCalled] = args[0];
-        } else {
-          // do something (throw?)
-        }
+        (mainContext as any)[methodCalled] = args[0];
       } else {
         (mainContext as any)[methodCalled](...args);
       }
