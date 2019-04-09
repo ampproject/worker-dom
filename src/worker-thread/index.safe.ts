@@ -111,7 +111,7 @@ const WHITELISTED_GLOBALS = [
   'encodeURIComponent',
   'escape',
   'eval',
-  'fetch', // TODO(choumx): Wrap this for origin whitelisting.
+  'fetch',
   'indexedDB',
   'isFinite',
   'isNaN',
@@ -134,7 +134,7 @@ export const workerDOM: WorkerDOMGlobalScope = {
   addEventListener: doc.addEventListener.bind(doc),
   removeEventListener: doc.removeEventListener.bind(doc),
   localStorage: {},
-  location: {},
+  location: self.location,
   url: '/',
   appendKeys,
   consumeInitialDOM,

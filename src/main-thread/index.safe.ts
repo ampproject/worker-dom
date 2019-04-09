@@ -14,36 +14,17 @@
  * limitations under the License.
  */
 
-import { DOMPurifySanitizer } from './DOMPurifySanitizer';
-import { fetchAndInstall, install } from './install';
-import { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
-
-/** Users can import this and configure the sanitizer with custom DOMPurify hooks, etc. */
-export const sanitizer = new DOMPurifySanitizer();
-
 /**
- * @param baseElement
- * @param domURL
+ * @fileoverview This entry point API in active development and unstable.
  */
-export function upgradeElement(baseElement: Element, domURL: string, longTask?: LongTaskFunction): Promise<Worker | null> {
-  const authorURL = baseElement.getAttribute('src');
-  if (authorURL) {
-    return fetchAndInstall(baseElement as HTMLElement, {
-      domURL,
-      authorURL,
-      sanitizer,
-      longTask,
-    });
-  }
-  return Promise.resolve(null);
-}
+
+import { install } from './install';
+import { WorkerDOMConfiguration } from './configuration';
 
 /**
- * This function's API will likely change frequently. Use at your own risk!
  * @param baseElement
  * @param fetchPromise Promise that resolves containing worker script, and author script.
  */
 export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string]>, config: WorkerDOMConfiguration): Promise<Worker | null> {
-  config.sanitizer = sanitizer;
   return install(fetchPromise, baseElement as HTMLElement, config);
 }
