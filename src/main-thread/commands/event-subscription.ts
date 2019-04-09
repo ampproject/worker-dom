@@ -75,7 +75,7 @@ export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeCo
    * @param index node index the event comes from (used to dispatchEvent in worker thread).
    * @return eventHandler function consuming event and dispatching to worker thread
    */
-  const eventHandler = (index: number) => (event: Event | KeyboardEvent): void => {
+  const eventHandler = (index: number) => (event: Event | KeyboardEvent | MouseEvent): void => {
     if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
       fireValueChange(workerContext, event.currentTarget as RenderableElement);
     } else if (event.type === 'resize') {
@@ -103,6 +103,8 @@ export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeCo
         [TransferrableKeys.timeStamp]: event.timeStamp,
         [TransferrableKeys.type]: event.type,
         [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
+        [TransferrableKeys.pageX]: 'pageX' in event ? event.pageX : undefined,
+        [TransferrableKeys.pageY]: 'pageY' in event ? event.pageY : undefined,
       },
     });
   };

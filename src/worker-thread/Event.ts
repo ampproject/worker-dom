@@ -47,6 +47,8 @@ export class Event {
   public scoped: boolean;
   public [TransferrableKeys.stop]: boolean = false;
   public [TransferrableKeys.end]: boolean = false;
+  public pageX?: number;
+  public pageY?: number;
 
   constructor(type: string, opts: EventOptions) {
     this.type = type;
@@ -108,6 +110,8 @@ export function propagate(global: WorkerDOMGlobalScope): void {
             timeStamp: event[TransferrableKeys.timeStamp],
             scoped: event[TransferrableKeys.scoped],
             keyCode: event[TransferrableKeys.keyCode],
+            pageX: event[TransferrableKeys.pageX],
+            pageY: event[TransferrableKeys.pageY],
           },
         ),
       );
