@@ -24,7 +24,14 @@ export class OffscreenCanvasPolyfill {
     this.context = new OffscreenCanvasRenderingContext2DPolyfill(canvas);
   }
 
-  getContext(c: string): CanvasRenderingContext2D {
+  getContext(contextType: string): CanvasRenderingContext2D {
+    if (!this.context) {
+      if (contextType === '2D' || contextType === '2d') {
+        this.context = new OffscreenCanvasRenderingContext2DPolyfill(this.canvas);
+      } else {
+        throw new Error('Context type not supported.');
+      }
+    }
     return this.context;
   }
 }
