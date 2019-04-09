@@ -15,15 +15,25 @@
  */
 
 import polka from 'polka';
-import serveStatic from 'serve-static';
+import sirv from 'sirv';
 import path from 'path';
 import fs from 'fs';
 
 const { PORT = 3001 } = process.env;
 
 polka()
-  .use(serveStatic(path.resolve(__dirname, '..')))
-  .use(serveStatic(path.resolve(__dirname)))
+  .use(
+    sirv(path.resolve(__dirname, '..'), {
+      maxAge: 1000000,
+      setHeaders: res => res.setHeader('AMP-Access-Control-Allow-Source-Origin', `http://localhost:${PORT}`),
+    }),
+  )
+  .use(
+    sirv(path.resolve(__dirname), {
+      maxAge: 1000000,
+      setHeaders: res => res.setHeader('AMP-Access-Control-Allow-Source-Origin', `http://localhost:${PORT}`),
+    }),
+  )
   .get('/health', (req, res) => {
     res.end('OK');
   })
