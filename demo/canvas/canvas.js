@@ -24,12 +24,12 @@ existingCanvasBtn.addEventListener('click', async () => {
   const otherCanvas = document.getElementById('myCanvas');
   const ctx = otherCanvas.getContext('2d');
 
-  ctx.lineWidth = 2;
-  ctx.strokeRect(15, 28, 30, 22);
-  ctx.fillRect(26, 38, 8, 12);
-  ctx.moveTo(10, 28);
-  ctx.lineTo(30, 12);
-  ctx.lineTo(50, 28);
+  ctx.lineWidth = 5;
+  ctx.strokeRect(37.5, 70, 75, 55);
+  ctx.fillRect(65, 95, 20, 30);
+  ctx.moveTo(25, 70);
+  ctx.lineTo(75, 30);
+  ctx.lineTo(125, 70);
   ctx.closePath();
   ctx.stroke();
 });
@@ -41,12 +41,12 @@ newCanvasBtn.addEventListener('click', async () => {
   document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
 
-  ctx.lineWidth = 2;
-  ctx.strokeRect(15, 28, 30, 22);
-  ctx.fillRect(26, 38, 8, 12);
-  ctx.moveTo(10, 28);
-  ctx.lineTo(30, 12);
-  ctx.lineTo(50, 28);
+  ctx.lineWidth = 5;
+  ctx.strokeRect(37.5, 70, 75, 55);
+  ctx.fillRect(65, 95, 20, 30);
+  ctx.moveTo(25, 70);
+  ctx.lineTo(75, 30);
+  ctx.lineTo(125, 70);
   ctx.closePath();
   ctx.stroke();
 });
@@ -64,21 +64,21 @@ doubleCanvasBtn.addEventListener('click', async () => {
   const ctxOne = canvasOne.getContext('2d');
   const ctxTwo = canvasTwo.getContext('2d');
 
-  ctxOne.lineWidth = 2;
-  ctxOne.strokeRect(15, 28, 30, 22);
-  ctxOne.fillRect(26, 38, 8, 12);
-  ctxOne.moveTo(10, 28);
-  ctxOne.lineTo(30, 12);
-  ctxOne.lineTo(50, 28);
+  ctxOne.lineWidth = 5;
+  ctxOne.strokeRect(37.5, 70, 75, 55);
+  ctxOne.fillRect(65, 95, 20, 30);
+  ctxOne.moveTo(25, 70);
+  ctxOne.lineTo(75, 30);
+  ctxOne.lineTo(125, 70);
   ctxOne.closePath();
   ctxOne.stroke();
 
-  ctxTwo.lineWidth = 2;
-  ctxTwo.strokeRect(15, 28, 30, 22);
-  ctxTwo.fillRect(26, 38, 8, 12);
-  ctxTwo.moveTo(10, 28);
-  ctxTwo.lineTo(30, 12);
-  ctxTwo.lineTo(50, 28);
+  ctxTwo.lineWidth = 5;
+  ctxTwo.strokeRect(37.5, 70, 75, 55);
+  ctxTwo.fillRect(65, 95, 20, 30);
+  ctxTwo.moveTo(25, 70);
+  ctxTwo.lineTo(75, 30);
+  ctxTwo.lineTo(125, 70);
   ctxTwo.closePath();
   ctxTwo.stroke();
 });
