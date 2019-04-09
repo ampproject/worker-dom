@@ -48,7 +48,7 @@ export class HTMLInputElement extends HTMLElement {
     // Don't early-out if value doesn't appear to have changed.
     // The worker may have a stale value since 'input' events aren't being forwarded.
     this[TransferrableKeys.value] = String(value);
-    transfer((this.ownerDocument as Document).postMessage, [
+    transfer(this.ownerDocument as Document, [
       TransferrableMutationType.PROPERTIES,
       this[TransferrableKeys.index],
       storeString('value'),
@@ -97,7 +97,7 @@ export class HTMLInputElement extends HTMLElement {
       return;
     }
     this[TransferrableKeys.checked] = !!value;
-    transfer((this.ownerDocument as Document).postMessage, [
+    transfer(this.ownerDocument as Document, [
       TransferrableMutationType.PROPERTIES,
       this[TransferrableKeys.index],
       storeString('checked'),

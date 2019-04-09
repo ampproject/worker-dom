@@ -28,11 +28,13 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.isTrusted]?: boolean;
   [TransferrableKeys.returnValue]?: boolean;
   // readonly srcElement: TransferrableTarget | null;
-  readonly [TransferrableKeys.target]?: TransferredNode | null;
+  readonly [TransferrableKeys.target]: TransferredNode | null;
   readonly [TransferrableKeys.timeStamp]?: number;
   readonly [TransferrableKeys.type]: string;
   readonly [TransferrableKeys.scoped]?: boolean;
   readonly [TransferrableKeys.keyCode]?: number;
+  readonly [TransferrableKeys.pageX]?: number;
+  readonly [TransferrableKeys.pageY]?: number;
 }
 
 /**

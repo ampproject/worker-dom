@@ -19,6 +19,9 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { EventToWorker, MessageType } from '../transfer/Messages';
 import { TransferrableEvent } from '../transfer/TransferrableEvent';
 import { get } from './nodes';
+import { Document } from './dom/Document';
+import { TransferredNode } from '../transfer/TransferrableNodes';
+import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 
 interface EventOptions {
   bubbles?: boolean;
@@ -44,6 +47,8 @@ export class Event {
   public scoped: boolean;
   public [TransferrableKeys.stop]: boolean = false;
   public [TransferrableKeys.end]: boolean = false;
+  public pageX?: number;
+  public pageY?: number;
 
   constructor(type: string, opts: EventOptions) {
     this.type = type;
@@ -62,11 +67,25 @@ export class Event {
 }
 
 /**
+ * Determine the target for a TransferrableEvent.
+ * @param document Event intended within the scope of this document.
+ * @param event
+ */
+const targetFromTransfer = (document: Document, event: TransferrableEvent): Node | null => {
+  if (event[TransferrableKeys.target] !== null) {
+    const index = (event[TransferrableKeys.target] as TransferredNode)[0];
+    // If the target was sent as index 0, use the current document.
+    return get(index !== 0 ? index : document[TransferrableKeys.index]);
+  }
+  return null;
+};
+
+/**
  * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.
  * Propagate adds an event listener to the worker global scope and uses the WorkerDOM Node.dispatchEvent
  * method to dispatch the transfered event in the worker thread.
  */
-export function propagate(): void {
+export function propagate(global: WorkerDOMGlobalScope): void {
   if (typeof addEventListener !== 'function') {
     return;
   }
@@ -78,7 +97,6 @@ export function propagate(): void {
     const event = data[TransferrableKeys.event] as TransferrableEvent;
     const node = get(event[TransferrableKeys.index]);
     if (node !== null) {
-      const target = event[TransferrableKeys.target];
       node.dispatchEvent(
         Object.assign(
           new Event(event[TransferrableKeys.type], { bubbles: event[TransferrableKeys.bubbles], cancelable: event[TransferrableKeys.cancelable] }),
@@ -88,10 +106,12 @@ export function propagate(): void {
             eventPhase: event[TransferrableKeys.eventPhase],
             isTrusted: event[TransferrableKeys.isTrusted],
             returnValue: event[TransferrableKeys.returnValue],
-            target: get(target ? target[0] : null),
+            target: targetFromTransfer(global.document, event),
             timeStamp: event[TransferrableKeys.timeStamp],
             scoped: event[TransferrableKeys.scoped],
             keyCode: event[TransferrableKeys.keyCode],
+            pageX: event[TransferrableKeys.pageX],
+            pageY: event[TransferrableKeys.pageY],
           },
         ),
       );

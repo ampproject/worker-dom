@@ -19,12 +19,14 @@ import { JSDOM } from 'jsdom';
 export class Env {
   jsdom: JSDOM;
   document: Document;
+  window: Window;
   workers: Array<WorkerImpl>;
   rafTasks: Array<Function>;
 
   constructor() {
     this.jsdom = new JSDOM('<!DOCTYPE html>');
     this.document = this.jsdom.window.document;
+    this.window = this.jsdom.window;
 
     const workers: Array<WorkerImpl> = (this.workers = []);
     Object.defineProperty(global, 'Worker', {
@@ -67,6 +69,11 @@ export class Env {
     Object.defineProperty(global, 'DEBUG_ENABLED', {
       configurable: true,
       value: false,
+    });
+
+    Object.defineProperty(global, 'window', {
+      configurable: true,
+      value: this.window,
     });
   }
 

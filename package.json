@@ -1,6 +1,6 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.3.0",
+  "version": "0.6.0",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/index",
   "module": "dist/index.mjs",
@@ -22,7 +22,7 @@
     "tsc:build:main": "tsc -p config/tsconfig.build.main-thread.json",
     "clean": "rimraf output dist",
     "pretest": "npm-run-all clean --parallel tsc:test:*",
-    "test": "ava -v output/test/**/*.js",
+    "test": "ava -v output/test/**/*.test.js",
     "pre~rollup": "npm-run-all clean --parallel tsc:build:*",
     "~rollup": "rollup --config config/rollup.config.js",
     "lint:worker": "tslint -c config/tslint.json -p src/worker-thread/",
@@ -39,11 +39,11 @@
   "dependencies": {},
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.8.5",
-    "@babel/cli": "7.2.3",
-    "@babel/core": "7.4.0",
+    "@babel/cli": "7.4.3",
+    "@babel/core": "7.4.3",
     "@babel/plugin-proposal-class-properties": "7.4.0",
-    "@babel/plugin-proposal-object-rest-spread": "7.4.0",
-    "@babel/preset-env": "7.4.2",
+    "@babel/plugin-proposal-object-rest-spread": "7.4.3",
+    "@babel/preset-env": "7.4.3",
     "acorn": "6.1.1",
     "acorn-walk": "6.1.1",
     "ava": "1.4.1",
@@ -62,14 +62,14 @@
     "polka": "0.5.2",
     "prettier": "1.16.4",
     "rimraf": "2.6.3",
-    "rollup": "1.7.4",
+    "rollup": "1.9.0",
     "rollup-plugin-babel": "4.3.2",
-    "rollup-plugin-node-resolve": "4.0.1",
+    "rollup-plugin-node-resolve": "4.2.1",
     "rollup-plugin-replace": "2.1.1",
     "rollup-plugin-terser": "4.0.4",
     "serve-static": "1.13.2",
-    "tslint": "5.14.0",
-    "typescript": "3.4.1"
+    "tslint": "5.15.0",
+    "typescript": "3.4.2"
   },
   "lint-staged": {
     "*.ts": [
@@ -91,12 +91,12 @@
     {
       "path": "./dist/worker.mjs",
       "compression": "brotli",
-      "maxSize": "8.2 kB"
+      "maxSize": "8.3 kB"
     },
     {
       "path": "./dist/worker.safe.mjs",
       "compression": "brotli",
-      "maxSize": "8.7 kB"
+      "maxSize": "8.8 kB"
     },
     {
       "path": "./dist/index.mjs",
