@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-declare type TypedArray = Uint16Array | Float32Array;
-
 export interface CommandExecutor {
-  execute(mutations: TypedArray, startPosition: number, target: RenderableElement): number;
-  print(mutations: TypedArray, startPosition: number, target?: RenderableElement | null): Object;
+  execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number;
+  print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object;
 }

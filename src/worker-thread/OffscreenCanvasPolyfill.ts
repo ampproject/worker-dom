@@ -43,15 +43,7 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     this.canvas = canvas;
   }
 
-  private postToMainThread(
-    fnName: string,
-    isSetter: NumericBoolean,
-    stringArgIndex: number,
-    argCount: number,
-    args: any[],
-    floatNeeded: boolean,
-    textArg?: string,
-  ) {
+  private postToMainThread(fnName: string, isSetter: NumericBoolean, stringArgIndex: number, argCount: number, args: any[], floatNeeded: boolean) {
     const stringsIdForMethodName = store(fnName);
 
     transfer(

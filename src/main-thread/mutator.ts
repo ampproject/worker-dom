@@ -31,12 +31,10 @@ import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
 import { Phase } from '../transfer/Phase';
 import { OffscreenPolyfillCallProcessor } from './commands/offscreen-polyfill-calls';
 
-declare type TypedArray = Uint16Array | Float32Array;
-
 export class MutatorProcessor {
   private strings: Strings;
   private nodeContext: NodeContext;
-  private mutationQueue: Array<TypedArray> = [];
+  private mutationQueue: Array<Uint16Array> = [];
   private pendingMutations: boolean = false;
   private mutationPumpFunction: MutationPumpFunction;
   private sanitizer: Sanitizer | undefined;
@@ -79,7 +77,7 @@ export class MutatorProcessor {
    * @param stringValues Additional string values to use in decoding messages.
    * @param mutations Changes to apply in both graph shape and content of Elements.
    */
-  public mutate(phase: Phase, nodes: ArrayBuffer, stringValues: Array<string>, mutations: TypedArray): void {
+  public mutate(phase: Phase, nodes: ArrayBuffer, stringValues: Array<string>, mutations: Uint16Array): void {
     this.strings.storeValues(stringValues);
     this.nodeContext.createNodes(nodes, this.sanitizer);
     this.mutationQueue = this.mutationQueue.concat(mutations);
@@ -100,22 +98,29 @@ export class MutatorProcessor {
       console.group('Mutations');
     }
     this.mutationQueue.forEach(mutationArray => {
+      let arr = mutationArray as Uint16Array | Float32Array;
       let operationStart: number = 0;
       let length: number = mutationArray.length;
 
       while (operationStart < length) {
-        const target = this.nodeContext.getNode(mutationArray[operationStart + 1]);
+        const u16target = this.nodeContext.getNode(mutationArray[operationStart + 1]);
+        let target;
+
+        if (!u16target) {
+          arr = new Float32Array(mutationArray.buffer);
+          target = this.nodeContext.getNode(arr[operationStart + 1]);
+        } else {
+          target = u16target;
+        }
+
         if (!target) {
           console.error(`getNode() yields null – ${target}`);
           return;
         }
         if (DEBUG_ENABLED) {
-          console.log(
-            ReadableMutationType[mutationArray[operationStart]],
-            this.executors[mutationArray[operationStart]].print(mutationArray, operationStart, target),
-          );
+          console.log(ReadableMutationType[arr[operationStart]], this.executors[arr[operationStart]].print(mutationArray, operationStart, target));
         }
-        operationStart = this.executors[mutationArray[operationStart]].execute(mutationArray, operationStart, target);
+        operationStart = this.executors[arr[operationStart]].execute(mutationArray, operationStart, target);
       }
     });
     if (DEBUG_ENABLED) {
