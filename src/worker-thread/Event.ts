@@ -43,6 +43,7 @@ interface Touch {
 interface TouchList {
   [key: number]: Touch;
   length: number;
+  item: (index: number) => Touch | null;
 }
 
 export class Event {
@@ -109,7 +110,12 @@ const touchListFromTransfer = (
 ): TouchList | undefined => {
   if (event[key] !== undefined) {
     const touchListKeys = Object.keys(event[key] as TransferrableTouchList);
-    const list: TouchList = { length: touchListKeys.length };
+    const list: TouchList = {
+      length: touchListKeys.length,
+      item(index: number) {
+        return this[index] || null;
+      },
+    };
 
     touchListKeys.forEach(touchListKey => {
       const numericKey = Number(touchListKey);
