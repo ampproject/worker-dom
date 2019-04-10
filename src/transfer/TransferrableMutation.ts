@@ -24,7 +24,7 @@ export const enum TransferrableMutationType {
   LONG_TASK_START = 6,
   LONG_TASK_END = 7,
   OFFSCREEN_CANVAS_INSTANCE = 8,
-  OFFSCREEN_CONTEXT_CALL = 9,
+  OFFSCREEN_POLYFILL = 9,
 }
 
 export const ReadableMutationType: { [key: number]: string } = {
@@ -37,7 +37,7 @@ export const ReadableMutationType: { [key: number]: string } = {
   6: 'LONG_TASK_START',
   7: 'LONG_TASK_END',
   8: 'OFFSCREEN_CANVAS_INSTANCE',
-  9: 'OFFSCREEN_CONTEXT_CALL',
+  9: 'OFFSCREEN_POLYFILL',
 };
 
 /**

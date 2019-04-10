@@ -41,7 +41,7 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       return {
-        type: 'OFFSCREEN_CONTEXT_CALL',
+        type: 'OFFSCREEN_POLYFILL',
         target,
       };
     },

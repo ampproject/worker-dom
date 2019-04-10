@@ -56,7 +56,7 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
       // the first two values must be correct in the Uint16Array version, since they're accessed
       // by mutator.ts.
       // Third value is necessary to know whether to convert to Float32, before doing so.
-      const u16values = [TransferrableMutationType.OFFSCREEN_CONTEXT_CALL, this.canvas[TransferrableKeys.index], NumericBoolean.TRUE, 0, 0, 0];
+      const u16values = [TransferrableMutationType.OFFSCREEN_POLYFILL, this.canvas[TransferrableKeys.index], NumericBoolean.TRUE, 0, 0, 0];
 
       for (let n of u16array) {
         u16values.push(n);
@@ -65,7 +65,7 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
       transfer(this.canvas.ownerDocument as Document, u16values);
     } else {
       transfer(this.canvas.ownerDocument as Document, [
-        TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
+        TransferrableMutationType.OFFSCREEN_POLYFILL,
         this.canvas[TransferrableKeys.index],
         NumericBoolean.FALSE,
         store(fnName),
