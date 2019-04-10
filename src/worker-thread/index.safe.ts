@@ -186,6 +186,7 @@ function updateLongTask(global: WorkerGlobalScope) {
   const originalFetch = global['fetch'];
   if (originalFetch) {
     try {
+      // TODO(choumx): Add origin whitelisting.
       Object.defineProperty(global, 'fetch', {
         enumerable: true,
         writable: true,

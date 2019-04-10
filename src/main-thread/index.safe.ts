@@ -18,8 +18,25 @@
  * @fileoverview This entry point API in active development and unstable.
  */
 
-import { install } from './install';
-import { WorkerDOMConfiguration } from './configuration';
+import { fetchAndInstall, install } from './install';
+import { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
+
+/**
+ * @param baseElement
+ * @param domURL
+ */
+export function upgradeElement(baseElement: Element, domURL: string, longTask?: LongTaskFunction, sanitizer?: Sanitizer): Promise<Worker | null> {
+  const authorURL = baseElement.getAttribute('src');
+  if (authorURL) {
+    return fetchAndInstall(baseElement as HTMLElement, {
+      domURL,
+      authorURL,
+      longTask,
+      sanitizer,
+    });
+  }
+  return Promise.resolve(null);
+}
 
 /**
  * @param baseElement
