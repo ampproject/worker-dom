@@ -43,22 +43,38 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     this.canvas = canvas;
   }
 
-  private postToMainThread(fnName: string, isSetter: NumericBoolean, stringArgIndex: number, argCount: number, args: any[], floatNeeded: boolean) {
-    const stringsIdForMethodName = store(fnName);
+  private postToMainThread(fnName: string, isSetter: NumericBoolean, stringArgIndex: number, argCount: number, args: any[], float32Needed: boolean) {
+    if (argCount !== args.length) {
+      throw new Error('Passed argCount does not match length of args[]!');
+    }
 
-    transfer(
-      this.canvas.ownerDocument as Document,
-      [
+    if (float32Needed) {
+      const mutation = [store(fnName), isSetter, stringArgIndex, argCount, ...args];
+      const floatArray = new Float32Array(mutation);
+      const u16array = new Uint16Array(floatArray.buffer);
+
+      // the first two values must be correct in the Uint16Array version, since they're accessed
+      // by mutator.ts.
+      // Third value is necessary to know whether to convert to Float32, before doing so.
+      const u16values = [TransferrableMutationType.OFFSCREEN_CONTEXT_CALL, this.canvas[TransferrableKeys.index], NumericBoolean.TRUE, 0, 0, 0];
+
+      for (let n of u16array) {
+        u16values.push(n);
+      }
+
+      transfer(this.canvas.ownerDocument as Document, u16values);
+    } else {
+      transfer(this.canvas.ownerDocument as Document, [
         TransferrableMutationType.OFFSCREEN_CONTEXT_CALL,
         this.canvas[TransferrableKeys.index],
-        stringsIdForMethodName,
+        NumericBoolean.FALSE,
+        store(fnName),
         isSetter,
         stringArgIndex,
         argCount,
         ...args,
-      ],
-      floatNeeded ? Float32Array : Uint16Array,
-    );
+      ]);
+    }
   }
 
   clearRect(x: number, y: number, w: number, h: number): void {

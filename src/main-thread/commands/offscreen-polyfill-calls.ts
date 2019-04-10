@@ -7,23 +7,20 @@ import { Strings } from '../strings';
 export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: WorkerContext): CommandExecutor {
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      // TODO: find out if there's a way to know if this is necessary
-      const float32Mutations = new Float32Array(mutations.buffer);
+      const float32Needed = mutations[startPosition + OffscreenContextPolyfillMutationIndex.Float32Needed] === NumericBoolean.TRUE;
+      const mutationsArray = float32Needed ? new Float32Array(mutations.slice(startPosition).buffer) : mutations.slice(startPosition);
+      const methodCalled = strings.get(mutationsArray[OffscreenContextPolyfillMutationIndex.MethodCalled]);
+      const isSetter = mutationsArray[OffscreenContextPolyfillMutationIndex.IsSetter] === NumericBoolean.TRUE;
+      const stringArgIndex = mutationsArray[OffscreenContextPolyfillMutationIndex.StringArgIndex];
+      const argCount = mutationsArray[OffscreenContextPolyfillMutationIndex.ArgumentCount];
 
-      const methodCalled = strings.get(float32Mutations[startPosition + OffscreenContextPolyfillMutationIndex.MethodCalled]);
-      const isSetter = float32Mutations[startPosition + OffscreenContextPolyfillMutationIndex.IsSetter] === NumericBoolean.TRUE;
-      const stringArgIndex = float32Mutations[startPosition + OffscreenContextPolyfillMutationIndex.StringArgIndex];
-      const argCount = float32Mutations[startPosition + OffscreenContextPolyfillMutationIndex.ArgumentCount];
-
-      // since this case only runs with the polyfill, then this canvas
-      // should not have transferred its control to offscreen.
       const mainContext = (target as HTMLCanvasElement).getContext('2d');
       const args = [] as any[];
 
       if (argCount > 0) {
-        float32Mutations
-          .slice(startPosition + OffscreenContextPolyfillMutationIndex.Args, startPosition + OffscreenContextPolyfillMutationIndex.Args + argCount)
-          .forEach((arg, i) => {
+        mutationsArray
+          .slice(OffscreenContextPolyfillMutationIndex.Args, OffscreenContextPolyfillMutationIndex.Args + argCount)
+          .forEach((arg: any, i: number) => {
             if (stringArgIndex === i) {
               args.push(strings.get(arg));
             } else {
@@ -38,7 +35,9 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
         (mainContext as any)[methodCalled](...args);
       }
 
-      return startPosition + OffscreenContextPolyfillMutationIndex.End + argCount;
+      return float32Needed
+        ? startPosition + (OffscreenContextPolyfillMutationIndex.End + argCount) * 2
+        : startPosition + OffscreenContextPolyfillMutationIndex.End + argCount;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       return {
