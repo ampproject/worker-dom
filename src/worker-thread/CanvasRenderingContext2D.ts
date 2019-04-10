@@ -60,12 +60,9 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
     this.canvasElement = canvas;
 
     if (typeof OffscreenCanvas === 'undefined') {
-      console.log('Polyfill used.');
       this.implementation = new OffscreenCanvasPolyfill(canvas).getContext('2d');
       this.upgraded = true;
-      this.callQueuedCalls();
     } else {
-      console.log('Native OffscreenCanvas used.');
       this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
       this.goodOffscreenPromise = getOffscreenCanvasAsync(this.canvasElement).then(instance => {
         this.implementation = instance.getContext('2d');
