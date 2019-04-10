@@ -67,24 +67,19 @@ const fireResizeChange = (workerContext: WorkerContext, cachedWindowSize: [numbe
 
 /**
  * Convert a TouchList into a TransferrableTouchList
- * @param touches
+ * @param touchList
  */
-const createTransferrableTouch = (
-  event: Event | KeyboardEvent | MouseEvent | TouchEvent,
-  key: 'touches' | 'changedTouches',
-): TransferrableTouchList | undefined =>
-  key in event
-    ? Object.values((event as TouchEvent)[key]).map(touch => [
-        touch.identifier,
-        touch.screenX,
-        touch.screenY,
-        touch.clientX,
-        touch.clientY,
-        touch.pageX,
-        touch.pageY,
-        (touch.target as RenderableElement)._index_,
-      ])
-    : undefined;
+const createTransferrableTouchList = (touchList: TouchList): TransferrableTouchList =>
+  Object.values(touchList).map(touch => [
+    touch.identifier,
+    touch.screenX,
+    touch.screenY,
+    touch.clientX,
+    touch.clientY,
+    touch.pageX,
+    touch.pageY,
+    (touch.target as RenderableElement)._index_,
+  ]);
 
 export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext): CommandExecutor {
   const knownListeners: Array<(event: Event) => any> = [];
@@ -126,8 +121,8 @@ export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeCo
         [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
         [TransferrableKeys.pageX]: 'pageX' in event ? event.pageX : undefined,
         [TransferrableKeys.pageY]: 'pageY' in event ? event.pageY : undefined,
-        [TransferrableKeys.touches]: createTransferrableTouch(event, 'touches'),
-        [TransferrableKeys.changedTouches]: createTransferrableTouch(event, 'changedTouches'),
+        [TransferrableKeys.touches]: 'touches' in event ? createTransferrableTouchList(event.touches) : undefined,
+        [TransferrableKeys.changedTouches]: 'changedTouches' in event ? createTransferrableTouchList(event.changedTouches) : undefined,
       },
     });
   };

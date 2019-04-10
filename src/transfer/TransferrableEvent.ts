@@ -19,14 +19,16 @@ import { TransferrableKeys } from './TransferrableKeys';
 
 interface TransferrableTouch {
   [key: number]: number;
-  // identifier
-  // screenX
-  // screenY
-  // clientX
-  // clientY
-  // pageX
-  // pageY
-  // target._index_
+}
+export const enum TransferrableTouchIndex {
+  Identifier = 0,
+  ScreenX = 1,
+  ScreenY = 2,
+  ClientX = 3,
+  ClientY = 4,
+  PageX = 5,
+  PageY = 6,
+  Target = 7,
 }
 export interface TransferrableTouchList {
   [key: number]: TransferrableTouch;
