@@ -45,3 +45,5 @@ span.appendChild(document.createTextNode('spaner'));
 div.appendChild(span);
 div.appendChild(input);
 document.body.appendChild(div);
+
+div.addEventListener('touchmove', e => console.log('touchmove event', e, e.touches.item(0), e.touches.item(1)));

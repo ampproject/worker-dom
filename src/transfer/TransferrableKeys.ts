@@ -77,4 +77,6 @@ export const enum TransferrableKeys {
   observe = 59,
   pageX = 60,
   pageY = 61,
+  touches = 62,
+  changedTouches = 63,
 }

@@ -1,6 +1,6 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/index",
   "module": "dist/index.mjs",
@@ -62,14 +62,14 @@
     "polka": "0.5.2",
     "prettier": "1.16.4",
     "rimraf": "2.6.3",
-    "rollup": "1.9.0",
+    "rollup": "1.9.3",
     "rollup-plugin-babel": "4.3.2",
-    "rollup-plugin-node-resolve": "4.2.1",
-    "rollup-plugin-replace": "2.1.1",
+    "rollup-plugin-node-resolve": "4.2.2",
+    "rollup-plugin-replace": "2.2.0",
     "rollup-plugin-terser": "4.0.4",
-    "serve-static": "1.13.2",
+    "sirv": "0.2.4",
     "tslint": "5.15.0",
-    "typescript": "3.4.2"
+    "typescript": "3.4.3"
   },
   "lint-staged": {
     "*.ts": [
@@ -91,12 +91,12 @@
     {
       "path": "./dist/worker.mjs",
       "compression": "brotli",
-      "maxSize": "8.3 kB"
+      "maxSize": "8.4 kB"
     },
     {
       "path": "./dist/worker.safe.mjs",
       "compression": "brotli",
-      "maxSize": "8.8 kB"
+      "maxSize": "8.9 kB"
     },
     {
       "path": "./dist/index.mjs",
