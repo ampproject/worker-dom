@@ -25,6 +25,8 @@ existingCanvasBtn.addEventListener('click', async () => {
   const ctx = otherCanvas.getContext('2d');
 
   ctx.lineWidth = 5;
+  ctx.fillStyle = 'yellow';
+  ctx.strokeStyle = 'yellow';
   ctx.strokeRect(37.5, 70, 75, 55);
   ctx.fillRect(65, 95, 20, 30);
   ctx.moveTo(25, 70);
@@ -42,6 +44,8 @@ newCanvasBtn.addEventListener('click', async () => {
   const ctx = canvas.getContext('2d');
 
   ctx.lineWidth = 5;
+  ctx.fillStyle = 'blue';
+  ctx.strokeStyle = 'blue';
   ctx.strokeRect(37.5, 70, 75, 55);
   ctx.fillRect(65, 95, 20, 30);
   ctx.moveTo(25, 70);
@@ -65,6 +69,8 @@ doubleCanvasBtn.addEventListener('click', async () => {
   const ctxTwo = canvasTwo.getContext('2d');
 
   ctxOne.lineWidth = 5;
+  ctxOne.fillStyle = 'red';
+  ctxOne.strokeStyle = 'red';
   ctxOne.strokeRect(37.5, 70, 75, 55);
   ctxOne.fillRect(65, 95, 20, 30);
   ctxOne.moveTo(25, 70);
@@ -74,6 +80,8 @@ doubleCanvasBtn.addEventListener('click', async () => {
   ctxOne.stroke();
 
   ctxTwo.lineWidth = 5;
+  ctxTwo.fillStyle = 'green';
+  ctxTwo.strokeStyle = 'green';
   ctxTwo.strokeRect(37.5, 70, 75, 55);
   ctxTwo.fillRect(65, 95, 20, 30);
   ctxTwo.moveTo(25, 70);
