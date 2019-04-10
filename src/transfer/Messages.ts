@@ -44,7 +44,6 @@ export interface MutationFromWorker {
   readonly [TransferrableKeys.strings]: Array<string>;
   readonly [TransferrableKeys.nodes]: ArrayBuffer;
   readonly [TransferrableKeys.mutations]: ArrayBuffer;
-  readonly [TransferrableKeys.extra]: any;
 }
 export type MessageFromWorker = {
   data: MutationFromWorker;
