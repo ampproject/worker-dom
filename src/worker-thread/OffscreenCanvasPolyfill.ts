@@ -21,7 +21,6 @@ export class OffscreenCanvasPolyfill {
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-    this.context = new OffscreenCanvasRenderingContext2DPolyfill(canvas);
   }
 
   getContext(contextType: string): CanvasRenderingContext2D {
