@@ -20,7 +20,6 @@ import { TransferrableKeys } from './TransferrableKeys';
 import { HydrateableNode, TransferredNode } from './TransferrableNodes';
 import { TransferrableBoundingClientRect } from './TransferrableBoundClientRect';
 import { Phase } from './Phase';
-import { NumericBoolean } from '../utils';
 
 export const enum MessageType {
   // INIT = 0,
@@ -73,7 +72,6 @@ export interface OffscreenCanvasToWorker {
   [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE;
   [TransferrableKeys.target]: TransferredNode;
   [TransferrableKeys.data]: Object; // This will be an OffscreenCanvas
-  [TransferrableKeys.extra]?: NumericBoolean;
 }
 export interface ResizeSyncToWorker {
   [TransferrableKeys.type]: MessageType.RESIZE;

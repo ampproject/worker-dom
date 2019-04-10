@@ -17,17 +17,9 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { transfer } from './MutationTransfer';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { OffscreenCanvasPolyfill } from './OffscreenCanvasPolyfill';
-import { NumericBoolean } from '../utils';
 import { Document } from './dom/Document';
 
-//declare var OffscreenCanvas: any;
-class OffscreenCanvasTemp {
-  constructor() {}
-  getContext(c: string): CanvasRenderingContext2D {
-    return {} as CanvasRenderingContext2D;
-  }
-}
-//(global as any).OffscreenCanvas = OffscreenCanvasTemp;
+declare var OffscreenCanvas: any;
 
 export const deferredUpgrades = new WeakMap();
 
@@ -39,15 +31,8 @@ export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{ ge
         data[TransferrableKeys.target][0] === canvas[TransferrableKeys.index]
       ) {
         removeEventListener('message', messageHandler);
-        const isOffscreenSupported = data[TransferrableKeys.extra];
-        if (isOffscreenSupported === NumericBoolean.TRUE) {
-          console.log('Native Offscreen used.');
-          const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
-          resolve(transferredOffscreenCanvas as { getContext(c: '2d'): CanvasRenderingContext2D });
-        } else {
-          console.log('Polyfill used.');
-          resolve(new OffscreenCanvasPolyfill(canvas));
-        }
+        const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
+        resolve(transferredOffscreenCanvas as { getContext(c: '2d'): CanvasRenderingContext2D });
       }
     };
 
@@ -64,7 +49,7 @@ export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{ ge
 
 export class CanvasRenderingContext2DImplementation implements CanvasRenderingContext2D {
   private calls = [] as { fnName: string; args: any[]; setter: boolean }[];
-  private implementation = new OffscreenCanvasTemp().getContext('2d');
+  private implementation: CanvasRenderingContext2D;
   private upgraded = false;
   private canvasElement: HTMLCanvasElement;
 
@@ -74,33 +59,44 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
   constructor(canvas: HTMLCanvasElement) {
     this.canvasElement = canvas;
 
-    this.goodOffscreenPromise = getOffscreenCanvasAsync(this.canvasElement).then(instance => {
-      this.implementation = instance.getContext('2d');
+    if (typeof OffscreenCanvas === 'undefined') {
+      console.log('Polyfill used.');
+      this.implementation = new OffscreenCanvasPolyfill(canvas).getContext('2d');
       this.upgraded = true;
+      this.callQueuedCalls();
+    } else {
+      console.log('Native OffscreenCanvas used.');
+      this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
+      this.goodOffscreenPromise = getOffscreenCanvasAsync(this.canvasElement).then(instance => {
+        this.implementation = instance.getContext('2d');
+        this.upgraded = true;
+        this.callQueuedCalls();
+      });
+    }
+  }
 
-      for (const call of this.calls) {
-        if (call.setter) {
-          if (call.args.length != 1) {
-            throw new Error('Attempting to set property with wrong number of arguments.');
-          }
-          (this.implementation as any)[call.fnName] = call.args[0];
-        } else {
-          (this.implementation as any)[call.fnName](...call.args);
+  private callQueuedCalls() {
+    for (const call of this.calls) {
+      if (call.setter) {
+        if (call.args.length != 1) {
+          throw new Error('Attempting to set property with wrong number of arguments.');
         }
+        (this.implementation as any)[call.fnName] = call.args[0];
+      } else {
+        (this.implementation as any)[call.fnName](...call.args);
       }
-    });
+    }
   }
 
   private delegate(fnName: string, fnArgs: any[], isSetter: boolean) {
-    if (!this.upgraded) {
-      this.calls.push({ fnName, args: fnArgs, setter: isSetter });
-      return;
-    }
     let returnValue;
     if (isSetter) {
       (this.implementation as any)[fnName] = fnArgs[0];
     } else {
       returnValue = (this.implementation as any)[fnName](...fnArgs);
+    }
+    if (!this.upgraded) {
+      this.calls.push({ fnName, args: fnArgs, setter: isSetter });
     }
     return returnValue;
   }
