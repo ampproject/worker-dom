@@ -17,7 +17,7 @@
 import { MessageType } from '../../transfer/Messages';
 import { Strings } from '../strings';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { EVENT_SUBSCRIPTION_LENGTH, EventSubscriptionMutationIndex } from '../../transfer/TransferrableEvent';
+import { EVENT_SUBSCRIPTION_LENGTH, EventSubscriptionMutationIndex, TransferrableTouchList } from '../../transfer/TransferrableEvent';
 import { WorkerContext } from '../worker';
 import { CommandExecutor } from './interface';
 import { NodeContext } from '../nodes';
@@ -65,6 +65,22 @@ const fireResizeChange = (workerContext: WorkerContext, cachedWindowSize: [numbe
     [TransferrableKeys.sync]: cachedWindowSize,
   });
 
+/**
+ * Convert a TouchList into a TransferrableTouchList
+ * @param touchList
+ */
+const createTransferrableTouchList = (touchList: TouchList): TransferrableTouchList =>
+  Object.values(touchList).map(touch => [
+    touch.identifier,
+    touch.screenX,
+    touch.screenY,
+    touch.clientX,
+    touch.clientY,
+    touch.pageX,
+    touch.pageY,
+    (touch.target as RenderableElement)._index_,
+  ]);
+
 export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext): CommandExecutor {
   const knownListeners: Array<(event: Event) => any> = [];
   let cachedWindowSize: [number, number] = [window.innerWidth, window.innerHeight];
@@ -75,7 +91,7 @@ export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeCo
    * @param index node index the event comes from (used to dispatchEvent in worker thread).
    * @return eventHandler function consuming event and dispatching to worker thread
    */
-  const eventHandler = (index: number) => (event: Event | KeyboardEvent | MouseEvent): void => {
+  const eventHandler = (index: number) => (event: Event | KeyboardEvent | MouseEvent | TouchEvent): void => {
     if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
       fireValueChange(workerContext, event.currentTarget as RenderableElement);
     } else if (event.type === 'resize') {
@@ -105,6 +121,8 @@ export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeCo
         [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
         [TransferrableKeys.pageX]: 'pageX' in event ? event.pageX : undefined,
         [TransferrableKeys.pageY]: 'pageY' in event ? event.pageY : undefined,
+        [TransferrableKeys.touches]: 'touches' in event ? createTransferrableTouchList(event.touches) : undefined,
+        [TransferrableKeys.changedTouches]: 'changedTouches' in event ? createTransferrableTouchList(event.changedTouches) : undefined,
       },
     });
   };
