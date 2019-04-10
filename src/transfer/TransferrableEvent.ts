@@ -17,6 +17,21 @@
 import { TransferredNode } from './TransferrableNodes';
 import { TransferrableKeys } from './TransferrableKeys';
 
+interface TransferrableTouch {
+  [key: number]: number;
+  // identifier
+  // screenX
+  // screenY
+  // clientX
+  // clientY
+  // pageX
+  // pageY
+  // target._index_
+}
+export interface TransferrableTouchList {
+  [key: number]: TransferrableTouch;
+}
+
 export interface TransferrableEvent {
   readonly [TransferrableKeys.index]: number;
   readonly [TransferrableKeys.bubbles]?: boolean;
@@ -35,6 +50,8 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.keyCode]?: number;
   readonly [TransferrableKeys.pageX]?: number;
   readonly [TransferrableKeys.pageY]?: number;
+  readonly [TransferrableKeys.touches]?: TransferrableTouchList;
+  readonly [TransferrableKeys.changedTouches]?: TransferrableTouchList;
 }
 
 /**

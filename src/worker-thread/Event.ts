@@ -17,7 +17,7 @@
 import { Node } from './dom/Node';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { EventToWorker, MessageType } from '../transfer/Messages';
-import { TransferrableEvent } from '../transfer/TransferrableEvent';
+import { TransferrableEvent, TransferrableTouchList } from '../transfer/TransferrableEvent';
 import { get } from './nodes';
 import { Document } from './dom/Document';
 import { TransferredNode } from '../transfer/TransferrableNodes';
@@ -29,6 +29,21 @@ interface EventOptions {
 }
 
 export type EventHandler = (event: Event) => any;
+
+interface Touch {
+  readonly identifier: number;
+  readonly screenX: number;
+  readonly screenY: number;
+  readonly clientX: number;
+  readonly clientY: number;
+  readonly pageX: number;
+  readonly pageY: number;
+  readonly target: Node | null;
+}
+interface TouchList {
+  [key: number]: Touch;
+  length: number;
+}
 
 export class Event {
   public bubbles: boolean;
@@ -49,6 +64,8 @@ export class Event {
   public [TransferrableKeys.end]: boolean = false;
   public pageX?: number;
   public pageY?: number;
+  public touches?: TouchList;
+  public changedTouches?: TouchList;
 
   constructor(type: string, opts: EventOptions) {
     this.type = type;
@@ -78,6 +95,40 @@ const targetFromTransfer = (document: Document, event: TransferrableEvent): Node
     return get(index !== 0 ? index : document[TransferrableKeys.index]);
   }
   return null;
+};
+
+/**
+ *
+ * @param document
+ * @param event
+ */
+const touchListFromTransfer = (
+  document: Document,
+  event: TransferrableEvent,
+  key: TransferrableKeys.touches | TransferrableKeys.changedTouches,
+): TouchList | undefined => {
+  if (event[key] !== undefined) {
+    const touchListKeys = Object.keys(event[key] as TransferrableTouchList);
+    const list: TouchList = { length: touchListKeys.length };
+
+    touchListKeys.forEach(touchListKey => {
+      const numericKey = Number(touchListKey);
+      const transferredTouch = (event[key] as TransferrableTouchList)[numericKey];
+      list[numericKey] = {
+        identifier: transferredTouch[0],
+        screenX: transferredTouch[1],
+        screenY: transferredTouch[2],
+        clientX: transferredTouch[3],
+        clientY: transferredTouch[4],
+        pageX: transferredTouch[5],
+        pageY: transferredTouch[6],
+        target: get(transferredTouch[7] !== 0 ? transferredTouch[7] : document[TransferrableKeys.index]),
+      };
+    });
+
+    return list;
+  }
+  return undefined;
 };
 
 /**
@@ -112,6 +163,8 @@ export function propagate(global: WorkerDOMGlobalScope): void {
             keyCode: event[TransferrableKeys.keyCode],
             pageX: event[TransferrableKeys.pageX],
             pageY: event[TransferrableKeys.pageY],
+            touches: touchListFromTransfer(global.document, event, TransferrableKeys.touches),
+            changedTouches: touchListFromTransfer(global.document, event, TransferrableKeys.changedTouches),
           },
         ),
       );
