@@ -30,7 +30,7 @@
   <!-- <script src="./dist/index.js" defer></script> -->
 </head>
 <body>
-  <div src="author.js" id="upgrade-me"></div>
+  <div src="/empty/author.js" id="upgrade-me"></div>
   <script type="module">
     import {upgradeElement} from '/dist/index.mjs';
     upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.mjs');

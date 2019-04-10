@@ -17,6 +17,23 @@
 import { TransferredNode } from './TransferrableNodes';
 import { TransferrableKeys } from './TransferrableKeys';
 
+interface TransferrableTouch {
+  [key: number]: number;
+}
+export const enum TransferrableTouchIndex {
+  Identifier = 0,
+  ScreenX = 1,
+  ScreenY = 2,
+  ClientX = 3,
+  ClientY = 4,
+  PageX = 5,
+  PageY = 6,
+  Target = 7,
+}
+export interface TransferrableTouchList {
+  [key: number]: TransferrableTouch;
+}
+
 export interface TransferrableEvent {
   readonly [TransferrableKeys.index]: number;
   readonly [TransferrableKeys.bubbles]?: boolean;
@@ -35,6 +52,8 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.keyCode]?: number;
   readonly [TransferrableKeys.pageX]?: number;
   readonly [TransferrableKeys.pageY]?: number;
+  readonly [TransferrableKeys.touches]?: TransferrableTouchList;
+  readonly [TransferrableKeys.changedTouches]?: TransferrableTouchList;
 }
 
 /**
