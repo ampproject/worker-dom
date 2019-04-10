@@ -60,13 +60,11 @@ export function install(fetchPromise: Promise<[string, string]>, baseElement: HT
           return;
         }
 
-        const mutations = new Uint16Array(data[TransferrableKeys.mutations]);
-
         mutatorContext.mutate(
           (data as MutationFromWorker)[TransferrableKeys.phase],
           (data as MutationFromWorker)[TransferrableKeys.nodes],
           (data as MutationFromWorker)[TransferrableKeys.strings],
-          mutations,
+          new Uint16Array(data[TransferrableKeys.mutations]),
         );
 
         if (config.onReceiveMessage) {
