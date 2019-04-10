@@ -98,29 +98,22 @@ export class MutatorProcessor {
       console.group('Mutations');
     }
     this.mutationQueue.forEach(mutationArray => {
-      let arr = mutationArray as Uint16Array | Float32Array;
       let operationStart: number = 0;
       let length: number = mutationArray.length;
 
       while (operationStart < length) {
-        const u16target = this.nodeContext.getNode(mutationArray[operationStart + 1]);
-        let target;
-
-        if (!u16target) {
-          arr = new Float32Array(mutationArray.buffer);
-          target = this.nodeContext.getNode(arr[operationStart + 1]);
-        } else {
-          target = u16target;
-        }
-
+        const target = this.nodeContext.getNode(mutationArray[operationStart + 1]);
         if (!target) {
           console.error(`getNode() yields null – ${target}`);
           return;
         }
         if (DEBUG_ENABLED) {
-          console.log(ReadableMutationType[arr[operationStart]], this.executors[arr[operationStart]].print(mutationArray, operationStart, target));
+          console.log(
+            ReadableMutationType[mutationArray[operationStart]],
+            this.executors[mutationArray[operationStart]].print(mutationArray, operationStart, target),
+          );
         }
-        operationStart = this.executors[arr[operationStart]].execute(mutationArray, operationStart, target);
+        operationStart = this.executors[mutationArray[operationStart]].execute(mutationArray, operationStart, target);
       }
     });
     if (DEBUG_ENABLED) {
