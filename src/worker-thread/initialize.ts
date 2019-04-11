@@ -27,32 +27,3 @@ export function initialize(document: Document, strings: Array<string>, hydrateab
     document.body.appendChild(document[TransferrableKeys.hydrateNode](strings, child)),
   );
 }
-
-// function create(document: Document, strings: Array<string>, skeleton: HydrateableNode): RenderableElement {
-//   switch (skeleton[TransferrableKeys.nodeType]) {
-//     case NodeType.TEXT_NODE:
-//       const text = document.createTextNode(strings[skeleton[TransferrableKeys.textContent] as number]);
-//       storeNode(text, skeleton[TransferrableKeys.index]);
-//       return text;
-//     case NodeType.COMMENT_NODE:
-//       const comment = document.createComment(strings[skeleton[TransferrableKeys.textContent] as number]);
-//       storeNode(comment, skeleton[TransferrableKeys.index]);
-//       return comment;
-//     default:
-//       const namespace: string | undefined =
-//         skeleton[TransferrableKeys.namespaceURI] !== undefined ? strings[skeleton[TransferrableKeys.namespaceURI] as number] : undefined;
-//       const name = strings[skeleton[TransferrableKeys.localOrNodeName]];
-//       const node: HTMLElement | SVGElement = namespace ? (document.createElementNS(namespace, name) as SVGElement) : document.createElement(name);
-//       (skeleton[TransferrableKeys.attributes] || []).forEach(attribute => {
-//         const namespaceURI = strings[attribute[0]];
-//         if (namespaceURI !== 'null') {
-//           node.setAttributeNS(namespaceURI, strings[attribute[1]], strings[attribute[2]]);
-//         } else {
-//           node.setAttribute(strings[attribute[1]], strings[attribute[2]]);
-//         }
-//       });
-//       storeNode(node, skeleton[TransferrableKeys.index]);
-//       (skeleton[TransferrableKeys.childNodes] || []).forEach(child => node.appendChild(create(document, strings, child)));
-//       return node;
-//   }
-// }
