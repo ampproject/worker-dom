@@ -34,12 +34,6 @@ export function store(node: Node, override?: number): number {
     return node[TransferrableKeys.index];
   }
 
-  // let index = override || count;
-  // count = Math.max(count, override)
-  // if (override) {
-  //   count = Math.max(count, override);
-  //   // console.log('set count', count);
-  // }
   let index = override || ++count;
   count = index;
   mapping.set((node[TransferrableKeys.index] = index), node);
