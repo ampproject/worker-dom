@@ -40,9 +40,31 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
         : startPosition + OffscreenContextPolyfillMutationIndex.End + argCount;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+      const float32Needed = mutations[startPosition + OffscreenContextPolyfillMutationIndex.Float32Needed] === NumericBoolean.TRUE;
+      const argCount = mutations[startPosition + OffscreenContextPolyfillMutationIndex.ArgumentCount];
+      let mutationsArray: Uint16Array | Float32Array;
+      let endOffset = OffscreenContextPolyfillMutationIndex.End + argCount;
+
+      if (float32Needed) {
+        endOffset = endOffset * 2;
+        mutationsArray = new Float32Array(mutations.slice(startPosition, startPosition + endOffset).buffer);
+      } else {
+        mutationsArray = mutations.slice(startPosition, startPosition + endOffset);
+      }
+
+      const methodCalled = strings.get(mutationsArray[OffscreenContextPolyfillMutationIndex.MethodCalled]);
+      const isSetter = mutationsArray[OffscreenContextPolyfillMutationIndex.IsSetter] === NumericBoolean.TRUE;
+      const stringArgIndex = mutationsArray[OffscreenContextPolyfillMutationIndex.StringArgIndex];
+
       return {
         type: 'OFFSCREEN_POLYFILL',
         target,
+        IsFloat32ArrayNeeded: float32Needed,
+        MethodName: methodCalled,
+        IsSetter: isSetter,
+        StringArgIndex: stringArgIndex,
+        ArgCount: argCount,
+        End: endOffset,
       };
     },
   };
