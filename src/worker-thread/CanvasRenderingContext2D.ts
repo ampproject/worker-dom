@@ -103,12 +103,12 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
   }
 
   /* DRAWING TEXT */
-  fillText(text: string, x: number, y: number): void {
-    this.delegate('fillText', [text, x, y], false);
+  fillText(text: string, x: number, y: number, maxWidth?: number): void {
+    this.delegate('fillText', [text, x, y, maxWidth], false);
   }
 
-  strokeText(text: string, x: number, y: number): void {
-    this.delegate('strokeText', [text, x, y], false);
+  strokeText(text: string, x: number, y: number, maxWidth?: number): void {
+    this.delegate('strokeText', [text, x, y, maxWidth], false);
   }
 
   measureText(text: string): TextMetrics {
@@ -226,8 +226,8 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
   }
 
   // OPTIONAL ARGUMENT ATICLOCKWISE
-  arc(x: number, y: number, radius: number, startAngle: number, endAngle: number): void {
-    this.delegate('arc', [x, y, radius, startAngle, endAngle], false);
+  arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, antiClockwise?: boolean): void {
+    this.delegate('arc', [x, y, radius, startAngle, endAngle, antiClockwise], false);
   }
 
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void {
@@ -235,8 +235,17 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
   }
 
   // OPTIONAL ARGUMENT ATICLOCKWISE
-  ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number): void {
-    this.delegate('ellipse', [x, y, radiusX, radiusY, rotation, startAngle, endAngle], false);
+  ellipse(
+    x: number,
+    y: number,
+    radiusX: number,
+    radiusY: number,
+    rotation: number,
+    startAngle: number,
+    endAngle: number,
+    antiClockwise?: boolean,
+  ): void {
+    this.delegate('ellipse', [x, y, radiusX, radiusY, rotation, startAngle, endAngle, antiClockwise], false);
   }
 
   rect(x: number, y: number, width: number, height: number): void {
@@ -320,7 +329,7 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
   }
 
   /* PIXEL MANIPULATION */
-  createImageData(imagedataOrWidth: ImageData | number, widthOrHeight?: number): ImageData {
+  createImageData(imagedataOrWidth: ImageData | number, height?: number): ImageData {
     const args = [...arguments] as [ImageData] | [number, number];
     return this.delegate('createImageData', args, false);
   }
@@ -329,8 +338,8 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
     return this.delegate('getImageData', [sx, sy, sw, sh], false);
   }
 
-  putImageData(imageData: ImageData, dx: number, dy: number): void {
-    this.delegate('putImageData', [imageData, dx, dy], false);
+  putImageData(imageData: ImageData, dx: number, dy: number, dirtyX?: number, dirtyY?: number, dirtyWidth?: number, dirtyHeight?: number): void {
+    this.delegate('putImageData', [imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight], false);
   }
 
   /* IMAGE SMOOTHING */
