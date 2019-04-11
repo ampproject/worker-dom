@@ -48,14 +48,26 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     }
 
     if (float32Needed) {
-      const mutation = [store(fnName), isSetter, stringArgIndex, argCount, ...args];
+      const mutation = [store(fnName), isSetter, stringArgIndex, ...args];
       const floatArray = new Float32Array(mutation);
       const u16array = new Uint16Array(floatArray.buffer);
 
-      // the first two values must be correct in the Uint16Array version, since they're accessed
-      // by mutator.ts.
-      // Third value is necessary to know whether to convert to Float32, before doing so.
-      const u16values = [TransferrableMutationType.OFFSCREEN_POLYFILL, this.canvas[TransferrableKeys.index], NumericBoolean.TRUE, 0, 0, 0];
+      // The following values are needed to be correct in the Uint16Array representation:
+      // - MutationType since it's accessed by mutator.ts
+      // - target, since it's accessed by mutator.ts
+      // - floatNeeded, to know whether or not to convert to a Float32Array
+      // - argCount, since the mutation array size is needed before converting
+      // These values are followed by filler zeroes to maintain index consistency.
+      const u16values = [
+        TransferrableMutationType.OFFSCREEN_POLYFILL,
+        this.canvas[TransferrableKeys.index],
+        NumericBoolean.TRUE,
+        argCount,
+        0,
+        0,
+        0,
+        0,
+      ];
 
       for (let n of u16array) {
         u16values.push(n);
@@ -67,10 +79,10 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
         TransferrableMutationType.OFFSCREEN_POLYFILL,
         this.canvas[TransferrableKeys.index],
         NumericBoolean.FALSE,
+        argCount,
         store(fnName),
         isSetter,
         stringArgIndex,
-        argCount,
         ...args,
       ]);
     }
@@ -244,6 +256,15 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     this.postToMainThread('quadraticCurveTo', NumericBoolean.FALSE, -1, 4, [...arguments], true);
   }
 
+  // TODO this will actually set the value to 1 or 0. Not sure if this is OK
+  set imageSmoothingEnabled(value: boolean) {
+    const numericValue = value ? NumericBoolean.TRUE : NumericBoolean.FALSE;
+    this.postToMainThread('imageSmoothingEnabled', NumericBoolean.TRUE, -1, 1, [numericValue], false);
+  }
+
+  clip() {}
+  fill() {}
+
   ////////////////////////////////////////
   // The following methods require more to our transfer process:
   createLinearGradient(): CanvasGradient {
@@ -255,24 +276,24 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
   createRadialGradient(): CanvasGradient {
     return {} as CanvasGradient;
   }
-  set imageSmoothingEnabled(value: boolean) {}
-  setTransform() {}
 
-  clip() {}
-  fill() {}
+  setTransform() {}
 
   // issue: has more than one signature, one with a Path2D arg
   isPointInPath(): boolean {
     return true;
   }
+
   // issue: has more than one signature, one with a Path2D arg
   isPointInStroke(): boolean {
     return true;
   }
+
   // issue: has a return value
   measureText(): TextMetrics {
     return {} as TextMetrics;
   }
+
   // issue: has four signatures, all of them with a CanvasImageSource arg
   drawImage() {}
 
