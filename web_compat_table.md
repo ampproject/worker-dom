@@ -196,7 +196,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Element.getAttributeNode()                          | ✖️     |                                                  | 
 | Element.getAttributeNodeNS()                        | ✖️     |                                                  | 
 | Element.getAttributeNS()                            | ✔️     |                                                  | 
-| Element.getBoundingClientRect()                     | ✔️     |                                                  | 
+| Element.getBoundingClientRect()                     | ✔️(Async)| Implemented as Element.getBoundingClientRectAsync()                                                 | 
 | Element.getClientRects()                            | ✖️     |                                                  | 
 | Element.getElementsByClassName()                    | ✔️     |                                                  | 
 | Element.getElementsByTagName()                      | ✔️     |                                                  | 
