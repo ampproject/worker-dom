@@ -28,7 +28,7 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
 
       if (argCount > 0) {
         mutationsArray.slice(OffscreenContextPolyfillMutationIndex.Args, endOffset).forEach((arg: any, i: number) => {
-          if (stringArgIndex === i) {
+          if (stringArgIndex - 1 === i) {
             args.push(strings.get(arg));
           } else {
             args.push(arg);
