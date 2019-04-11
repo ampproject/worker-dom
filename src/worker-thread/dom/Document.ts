@@ -46,13 +46,13 @@ import './HTMLTableRowElement';
 import './HTMLTableSectionElement';
 import './HTMLTimeElement';
 import { matchChildElement } from './matchElements';
-import { NamespaceURI } from './Node';
+import { NamespaceURI, Node } from './Node';
 import { Text } from './Text';
 import { Comment } from './Comment';
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
 import { PostMessage } from '../worker-thread';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE, HydrateableNode } from '../../transfer/TransferrableNodes';
 import { Phase } from '../../transfer/Phase';
 import { propagate as propagateEvents } from '../Event';
 import { propagate as propagateSyncValues } from '../SyncValuePropagation';
@@ -89,12 +89,42 @@ export class Document extends Element {
    *
    * Each mutation needs to be transferred, synced values need to propagate.
    */
-  public [TransferrableKeys.observe] = (): void => {
+  public [TransferrableKeys.observe](): void {
     setPhase(Phase.Hydrating);
     propagateEvents(this.defaultView);
     propagateSyncValues();
     propagateResize(this.defaultView);
-  };
+  }
+
+  /**
+   * Hydrate
+   * @param strings
+   * @param skeleton
+   */
+  public [TransferrableKeys.hydrateNode](strings: Array<string>, skeleton: HydrateableNode): Node {
+    switch (skeleton[TransferrableKeys.nodeType]) {
+      case NodeType.TEXT_NODE:
+        return new Text(strings[skeleton[TransferrableKeys.textContent] as number], this, skeleton[TransferrableKeys.index]);
+      case NodeType.COMMENT_NODE:
+        return new Comment(strings[skeleton[TransferrableKeys.textContent] as number], this, skeleton[TransferrableKeys.index]);
+      default:
+        const namespaceURI: string = strings[skeleton[TransferrableKeys.namespaceURI] as number] || HTML_NAMESPACE;
+        const localName: string = strings[skeleton[TransferrableKeys.localOrNodeName]];
+        const constructor = NS_NAME_TO_CLASS[`${namespaceURI}:${localName}`] || HTMLElement;
+        const node = new constructor(NodeType.ELEMENT_NODE, localName, namespaceURI, this, skeleton[TransferrableKeys.index]);
+
+        (skeleton[TransferrableKeys.attributes] || []).forEach(attribute =>
+          // AttributeNamespaceURI = strings[attribute[0]] !== 'null' ? strings[attribute[0]] : HTML_NAMESPACE
+          node.setAttributeNS(
+            strings[attribute[0]] !== 'null' ? strings[attribute[0]] : HTML_NAMESPACE,
+            strings[attribute[1]],
+            strings[attribute[2]],
+          ),
+        );
+        (skeleton[TransferrableKeys.childNodes] || []).forEach(child => node.appendChild(this[TransferrableKeys.hydrateNode](strings, child)));
+        return node;
+    }
+  }
 
   public createElement(name: string): Element {
     return this.createElementNS(HTML_NAMESPACE, toLower(name));

@@ -17,9 +17,23 @@
 import { DOMPurifySanitizer } from './DOMPurifySanitizer';
 import { fetchAndInstall, install } from './install';
 import { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
+import { toLower } from '../utils';
 
 /** Users can import this and configure the sanitizer with custom DOMPurify hooks, etc. */
 export const sanitizer = new DOMPurifySanitizer();
+
+/**
+ * AMP Element Children need to be filtered from Hydration, to avoid Author Code from manipulating it.
+ * TODO: In the future, this contract needs to be more defined.
+ * @param element
+ */
+const hydrateFilter = (element: RenderableElement) => {
+  if (element.parentNode !== null) {
+    const lowerName = toLower((element.parentNode as RenderableElement).localName || (element.parentNode as RenderableElement).nodeName);
+    return !/amp-/.test(lowerName) || lowerName === 'amp-script';
+  }
+  return true;
+};
 
 /**
  * @param baseElement
@@ -33,6 +47,7 @@ export function upgradeElement(baseElement: Element, domURL: string, longTask?: 
       authorURL,
       sanitizer,
       longTask,
+      hydrateFilter,
     });
   }
   return Promise.resolve(null);
@@ -45,5 +60,6 @@ export function upgradeElement(baseElement: Element, domURL: string, longTask?: 
  */
 export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string]>, config: WorkerDOMConfiguration): Promise<Worker | null> {
   config.sanitizer = sanitizer;
+  config.hydrateFilter = hydrateFilter;
   return install(fetchPromise, baseElement as HTMLElement, config);
 }

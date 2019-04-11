@@ -64,13 +64,17 @@ export abstract class Node {
     [index: string]: EventHandler[];
   } = {};
 
-  constructor(nodeType: NodeType, nodeName: NodeName, ownerDocument: Node | null) {
+  constructor(nodeType: NodeType, nodeName: NodeName, ownerDocument: Node | null, overrideIndex?: number) {
     this.nodeType = nodeType;
     this.nodeName = nodeName;
 
     this.ownerDocument = ownerDocument || this;
     this[TransferrableKeys.scopingRoot] = this;
 
+    // Here is where you are Kris.
+    // When creating a node during Phase.Initializing, how should we communicate the override of identifier?
+    // e.g this[TransferrableKeys.index] = storeNodeMapping(this, override);
+    // Where does override come from?
     this[TransferrableKeys.index] = storeNodeMapping(this);
     this[TransferrableKeys.transferredFormat] = [this[TransferrableKeys.index]];
   }

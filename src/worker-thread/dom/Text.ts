@@ -20,8 +20,8 @@ import { NodeType } from '../../transfer/TransferrableNodes';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
-  constructor(data: string, ownerDocument: Node) {
-    super(data, NodeType.TEXT_NODE, '#text', ownerDocument);
+  constructor(data: string, ownerDocument: Node, overrideIndex?: number) {
+    super(data, NodeType.TEXT_NODE, '#text', ownerDocument, overrideIndex);
   }
 
   // Unimplemented Properties

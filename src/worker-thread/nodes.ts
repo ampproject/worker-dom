@@ -26,14 +26,23 @@ const mapping: Map<number, Node> = new Map();
 /**
  * Stores a node in mapping, and makes the index available on the Node directly.
  * @param node Node to store and modify with index
+ * @param override number to override the counter with, only used during initialization.
  * @return index Node was stored with in mapping
  */
-export function store(node: Node): number {
+export function store(node: Node, override?: number): number {
   if (node[TransferrableKeys.index] !== undefined) {
     return node[TransferrableKeys.index];
   }
 
-  mapping.set((node[TransferrableKeys.index] = ++count), node);
+  // let index = override || count;
+  // count = Math.max(count, override)
+  // if (override) {
+  //   count = Math.max(count, override);
+  //   // console.log('set count', count);
+  // }
+  let index = override || ++count;
+  count = index;
+  mapping.set((node[TransferrableKeys.index] = index), node);
   if (phase > Phase.Initializing) {
     // After Initialization, include all future dom node creation into the list for next transfer.
     transfer.push(node);
