@@ -9,6 +9,7 @@ import {
   CanvasLineCap,
   CanvasLineJoin,
   CanvasDirection,
+  CanvasFillRule,
 } from './DOMTypes';
 import { transfer } from './MutationTransfer';
 import { Document } from './dom/Document';
@@ -286,8 +287,15 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     }
   }
 
-  clip() {}
-  fill() {}
+  clip(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule) {
+    const args = [...arguments] as [CanvasFillRule] | [];
+    this.postToMainThread('clip', NumericBoolean.FALSE, 1, args.length, args, false);
+  }
+
+  fill(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule) {
+    const args = [...arguments] as [CanvasFillRule] | [];
+    this.postToMainThread('fill', NumericBoolean.FALSE, 1, args.length, args, false);
+  }
 
   ////////////////////////////////////////
   // The following methods require more to our transfer process:
