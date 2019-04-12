@@ -37,18 +37,28 @@ export class OffscreenCanvasPolyfill {
 
 class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContext2D {
   canvas: HTMLCanvasElement;
+  lineDash: number[];
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
+    this.lineDash = [];
   }
 
-  private postToMainThread(fnName: string, isSetter: NumericBoolean, stringArgIndex: number, argCount: number, args: any[], float32Needed: boolean) {
+  private postToMainThread(
+    fnName: string,
+    isSetter: NumericBoolean,
+    stringArgIndex: number,
+    argCount: number,
+    args: any[],
+    float32Needed: boolean,
+    hasArrayArgument = NumericBoolean.FALSE,
+  ) {
     if (argCount !== args.length) {
       throw new Error('Passed argCount does not match length of args[]!');
     }
 
     if (float32Needed) {
-      const mutation = [store(fnName), isSetter, stringArgIndex, ...args];
+      const mutation = [store(fnName), isSetter, stringArgIndex, hasArrayArgument, ...args];
       const floatArray = new Float32Array(mutation);
       const u16array = new Uint16Array(floatArray.buffer);
 
@@ -83,6 +93,7 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
         store(fnName),
         isSetter,
         stringArgIndex,
+        hasArrayArgument,
         ...args,
       ]);
     }
@@ -256,10 +267,23 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     this.postToMainThread('quadraticCurveTo', NumericBoolean.FALSE, 0, 4, [...arguments], true);
   }
 
-  // TODO this will actually set the value to 1 or 0. Not sure if this is OK
   set imageSmoothingEnabled(value: boolean) {
     const numericValue = value ? NumericBoolean.TRUE : NumericBoolean.FALSE;
     this.postToMainThread('imageSmoothingEnabled', NumericBoolean.TRUE, 0, 1, [numericValue], false);
+  }
+
+  setLineDash(lineDash: number[]) {
+    this.lineDash = lineDash;
+    const arrLength = lineDash.length;
+    this.postToMainThread('setLineDash', NumericBoolean.FALSE, 0, arrLength, lineDash, true, NumericBoolean.TRUE);
+  }
+
+  getLineDash(): number[] {
+    if (this.lineDash.length % 2 === 0) {
+      return this.lineDash;
+    } else {
+      return this.lineDash.concat(this.lineDash);
+    }
   }
 
   clip() {}

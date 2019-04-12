@@ -22,9 +22,10 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
       const methodCalled = strings.get(mutationsArray[OffscreenContextPolyfillMutationIndex.MethodCalled]);
       const isSetter = mutationsArray[OffscreenContextPolyfillMutationIndex.IsSetter] === NumericBoolean.TRUE;
       const stringArgIndex = mutationsArray[OffscreenContextPolyfillMutationIndex.StringArgIndex];
+      const hasArrayArgument = mutationsArray[OffscreenContextPolyfillMutationIndex.HasArrayArgument] === NumericBoolean.TRUE;
 
       const mainContext = (target as HTMLCanvasElement).getContext('2d');
-      const args = [] as any[];
+      let args = [] as any[];
 
       if (argCount > 0) {
         mutationsArray.slice(OffscreenContextPolyfillMutationIndex.Args, endOffset).forEach((arg: any, i: number) => {
@@ -34,6 +35,10 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
             args.push(arg);
           }
         });
+
+        if (hasArrayArgument) {
+          args = [args];
+        }
       }
 
       if (isSetter) {

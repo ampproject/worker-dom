@@ -143,7 +143,8 @@ export const enum OffscreenContextPolyfillMutationIndex {
   ArgumentCount = 3,
   MethodCalled = 4, // strings ID
   IsSetter = 5,
-  StringArgIndex = 6, // -1 if doesn't exist
-  Args = 7,
-  End = 7,
+  StringArgIndex = 6,
+  HasArrayArgument = 7,
+  Args = 8,
+  End = 8,
 }
