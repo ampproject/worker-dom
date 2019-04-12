@@ -240,8 +240,10 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     this.postToMainThread('miterLimit', NumericBoolean.TRUE, 0, 1, [value], true);
   }
 
-  arc(x: number, y: number, radius: number, startAngle: number, endAngle: number) {
-    this.postToMainThread('arc', NumericBoolean.FALSE, 0, 5, [...arguments], true);
+  arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: boolean) {
+    const args = [...arguments] as [number, number, number, number, number, boolean?];
+    const length = args[5] ? 6 : 5;
+    this.postToMainThread('arc', NumericBoolean.FALSE, 0, length, args, true);
   }
 
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number) {
@@ -256,8 +258,10 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     this.postToMainThread('font', NumericBoolean.TRUE, 1, 1, [store(value)], false);
   }
 
-  ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number) {
-    this.postToMainThread('ellipse', NumericBoolean.FALSE, 0, 7, [...arguments], true);
+  ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean) {
+    const args = [...arguments] as [number, number, number, number, number, number, number, boolean?];
+    const length = args[7] ? 8 : 7;
+    this.postToMainThread('ellipse', NumericBoolean.FALSE, 0, length, args, true);
   }
 
   bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number) {
