@@ -116,8 +116,10 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     this.postToMainThread('lineWidth', NumericBoolean.TRUE, 0, 1, [value], true);
   }
 
-  fillText(text: string, x: number, y: number) {
-    this.postToMainThread('fillText', NumericBoolean.FALSE, 1, 3, [store(text), x, y], true);
+  fillText(text: string, x: number, y: number, maxWidth?: number) {
+    const args = [...arguments] as [string, number, number, number?];
+    const numberArgs = args[3] ? args.slice(1) : args.slice(1, 3);
+    this.postToMainThread('fillText', NumericBoolean.FALSE, 1, numberArgs.length + 1, [store(text), ...numberArgs], true);
   }
 
   moveTo(x: number, y: number) {
@@ -208,8 +210,10 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     this.postToMainThread('beginPath', NumericBoolean.FALSE, 0, 0, [], false);
   }
 
-  strokeText(text: string, x: number, y: number) {
-    this.postToMainThread('strokeText', NumericBoolean.FALSE, 1, 3, [store(text), x, y], true);
+  strokeText(text: string, x: number, y: number, maxWidth?: number) {
+    const args = [...arguments] as [string, number, number, number?];
+    const numberArgs = args[3] ? args.slice(1) : args.slice(1, 3);
+    this.postToMainThread('strokeText', NumericBoolean.FALSE, 1, numberArgs.length + 1, [store(text), ...numberArgs], true);
   }
 
   set textAlign(value: CanvasTextAlign) {
