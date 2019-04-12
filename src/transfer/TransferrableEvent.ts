@@ -52,6 +52,8 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.keyCode]?: number;
   readonly [TransferrableKeys.pageX]?: number;
   readonly [TransferrableKeys.pageY]?: number;
+  readonly [TransferrableKeys.clientX]?: number;
+  readonly [TransferrableKeys.clientY]?: number;
   readonly [TransferrableKeys.touches]?: TransferrableTouchList;
   readonly [TransferrableKeys.changedTouches]?: TransferrableTouchList;
 }

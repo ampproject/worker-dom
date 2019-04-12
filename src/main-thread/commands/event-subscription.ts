@@ -121,6 +121,8 @@ export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeCo
         [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
         [TransferrableKeys.pageX]: 'pageX' in event ? event.pageX : undefined,
         [TransferrableKeys.pageY]: 'pageY' in event ? event.pageY : undefined,
+        [TransferrableKeys.pageX]: 'clientX' in event ? event.clientX : undefined,
+        [TransferrableKeys.pageY]: 'clientY' in event ? event.clientY : undefined,
         [TransferrableKeys.touches]: 'touches' in event ? createTransferrableTouchList(event.touches) : undefined,
         [TransferrableKeys.changedTouches]: 'changedTouches' in event ? createTransferrableTouchList(event.changedTouches) : undefined,
       },
