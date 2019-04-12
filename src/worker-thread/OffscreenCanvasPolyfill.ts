@@ -193,7 +193,7 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
   }
 
   beginPath() {
-    this.postToMainThread('beginPath', NumericBoolean.FALSE, 1, 1, [], false);
+    this.postToMainThread('beginPath', NumericBoolean.FALSE, 0, 0, [], false);
   }
 
   strokeText(text: string, x: number, y: number) {
