@@ -80,6 +80,6 @@ export const enum TransferrableKeys {
   touches = 62,
   changedTouches = 63,
   hydrateNode = 64,
-  clientX = 65,
-  clientY = 66,
+  offsetX = 65,
+  offsetY = 66,
 }
