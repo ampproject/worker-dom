@@ -27,8 +27,8 @@ import { TransferrableMutationType } from '../../transfer/TransferrableMutation'
 export abstract class CharacterData extends Node {
   private [TransferrableKeys.data]: string;
 
-  constructor(data: string, nodeType: NodeType, nodeName: NodeName, ownerDocument: Node) {
-    super(nodeType, nodeName, ownerDocument);
+  constructor(data: string, nodeType: NodeType, nodeName: NodeName, ownerDocument: Node, overrideIndex?: number) {
+    super(nodeType, nodeName, ownerDocument, overrideIndex);
     this[TransferrableKeys.data] = data;
 
     this[TransferrableKeys.creationFormat] = [this[TransferrableKeys.index], nodeType, storeString(nodeName), storeString(data), 0];

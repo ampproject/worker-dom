@@ -27,6 +27,8 @@ export type MutationPumpFunction = (flush: Function, phase: Phase) => void;
 
 export type LongTaskFunction = (promise: Promise<any>) => void;
 
+export type HydrationFilterPredicate = (node: RenderableElement) => boolean;
+
 export interface WorkerDOMConfiguration {
   // ---- Required Values.
   authorURL: string;
@@ -39,6 +41,8 @@ export interface WorkerDOMConfiguration {
   longTask?: LongTaskFunction;
   // Sanitizer for DOM Mutations
   sanitizer?: Sanitizer;
+  // Hydration Filter Predicate
+  hydrateFilter?: HydrationFilterPredicate;
 
   // ---- Optional Callbacks
   // Called when worker consumes the page's initial DOM state.

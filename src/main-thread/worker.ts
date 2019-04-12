@@ -39,7 +39,7 @@ export class WorkerContext {
 
     // TODO(KB): Minify this output during build process.
     const keys: Array<string> = [];
-    const { skeleton, strings } = createHydrateableRootNode(baseElement);
+    const { skeleton, strings } = createHydrateableRootNode(baseElement, config);
     for (const key in baseElement.style) {
       keys.push(key);
     }
@@ -76,7 +76,7 @@ export class WorkerContext {
   //# sourceURL=${encodeURI(config.authorURL)}`;
     this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
     if (DEBUG_ENABLED) {
-      console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement));
+      console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config));
     }
     if (config.onCreateWorker) {
       config.onCreateWorker(baseElement, strings, skeleton, keys);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { store as storeNodeMapping } from '../nodes';
+import { store as storeNodeMapping, storeOverride as storeOverrideNodeMapping } from '../nodes';
 import { Event, EventHandler } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
@@ -64,14 +64,14 @@ export abstract class Node {
     [index: string]: EventHandler[];
   } = {};
 
-  constructor(nodeType: NodeType, nodeName: NodeName, ownerDocument: Node | null) {
+  constructor(nodeType: NodeType, nodeName: NodeName, ownerDocument: Node | null, overrideIndex?: number) {
     this.nodeType = nodeType;
     this.nodeName = nodeName;
 
     this.ownerDocument = ownerDocument || this;
     this[TransferrableKeys.scopingRoot] = this;
 
-    this[TransferrableKeys.index] = storeNodeMapping(this);
+    this[TransferrableKeys.index] = overrideIndex ? storeOverrideNodeMapping(this, overrideIndex) : storeNodeMapping(this);
     this[TransferrableKeys.transferredFormat] = [this[TransferrableKeys.index]];
   }
 
