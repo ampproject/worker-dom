@@ -266,17 +266,25 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
   }
 
   clip(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule) {
+    if (typeof pathOrFillRule === 'object') {
+      throw new Error('clip(Path2D) is currently not supported!');
+    }
     this.postToMainThread('clip', NumericBoolean.FALSE, 1, [...arguments], false);
   }
 
   fill(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule) {
+    if (typeof pathOrFillRule === 'object') {
+      throw new Error('fill(Path2D) is currently not supported!');
+    }
     this.postToMainThread('fill', NumericBoolean.FALSE, 1, [...arguments], false);
   }
 
   // Method has a different signature in MDN than it does in HTML spec
   setTransform(transformOrA?: DOMMatrix2DInit | number, bOrC?: number, cOrD?: number, dOrE?: number, eOrF?: number, f?: number) {
-    const args = [...arguments] as [number, number, number, number, number, number];
-    this.postToMainThread('setTransform', NumericBoolean.FALSE, 0, args, true);
+    if (typeof transformOrA === 'object') {
+      throw new Error('setTransform(DOMMatrix2DInit) is currently not supported!');
+    }
+    this.postToMainThread('setTransform', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   ////////////////////////////////////////
