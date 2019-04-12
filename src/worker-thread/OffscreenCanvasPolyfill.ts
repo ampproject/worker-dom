@@ -46,33 +46,18 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
   }
 
   private postToMainThread(fnName: string, isSetter: NumericBoolean, stringArgIndex: number, args: any[], float32Needed: boolean) {
-    if (float32Needed) {
-      const u16ArgsArray = new Uint16Array(new Float32Array(args).buffer);
+    const u16ArgsArray = float32Needed ? new Uint16Array(new Float32Array(args).buffer) : args;
 
-      const mutation = [
-        TransferrableMutationType.OFFSCREEN_POLYFILL,
-        this.canvas[TransferrableKeys.index],
-        NumericBoolean.TRUE,
-        args.length,
-        store(fnName),
-        isSetter,
-        stringArgIndex,
-        ...u16ArgsArray,
-      ];
-
-      transfer(this.canvas.ownerDocument as Document, mutation);
-    } else {
-      transfer(this.canvas.ownerDocument as Document, [
-        TransferrableMutationType.OFFSCREEN_POLYFILL,
-        this.canvas[TransferrableKeys.index],
-        NumericBoolean.FALSE,
-        args.length,
-        store(fnName),
-        isSetter,
-        stringArgIndex,
-        ...args,
-      ]);
-    }
+    transfer(this.canvas.ownerDocument as Document, [
+      TransferrableMutationType.OFFSCREEN_POLYFILL,
+      this.canvas[TransferrableKeys.index],
+      NumericBoolean.TRUE,
+      args.length,
+      store(fnName),
+      isSetter,
+      stringArgIndex,
+      ...u16ArgsArray,
+    ]);
   }
 
   clearRect(x: number, y: number, w: number, h: number): void {
@@ -105,23 +90,23 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
   }
 
   closePath() {
-    this.postToMainThread('closePath', NumericBoolean.FALSE, 0, [...arguments], false);
+    this.postToMainThread('closePath', NumericBoolean.FALSE, 0, [], false);
   }
 
   stroke() {
-    this.postToMainThread('stroke', NumericBoolean.FALSE, 0, [...arguments], false);
+    this.postToMainThread('stroke', NumericBoolean.FALSE, 0, [], false);
   }
 
   restore() {
-    this.postToMainThread('restore', NumericBoolean.FALSE, 0, [...arguments], false);
+    this.postToMainThread('restore', NumericBoolean.FALSE, 0, [], false);
   }
 
   save() {
-    this.postToMainThread('save', NumericBoolean.FALSE, 0, [...arguments], false);
+    this.postToMainThread('save', NumericBoolean.FALSE, 0, [], false);
   }
 
   resetTransform() {
-    this.postToMainThread('resetTransform', NumericBoolean.FALSE, 0, [...arguments], false);
+    this.postToMainThread('resetTransform', NumericBoolean.FALSE, 0, [], false);
   }
 
   rotate(angle: number) {
@@ -181,7 +166,7 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
   }
 
   beginPath() {
-    this.postToMainThread('beginPath', NumericBoolean.FALSE, 0, [...arguments], false);
+    this.postToMainThread('beginPath', NumericBoolean.FALSE, 0, [], false);
   }
 
   strokeText(text: string, x: number, y: number, maxWidth?: number) {
