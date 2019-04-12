@@ -46,18 +46,15 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
   }
 
   private postToMainThread(fnName: string, isSetter: NumericBoolean, stringArgIndex: number, args: any[], float32Needed: boolean) {
-    const u16ArgsArray = float32Needed ? new Uint16Array(new Float32Array(args).buffer) : args;
-    const float32NeededNumeric = float32Needed ? NumericBoolean.TRUE : NumericBoolean.FALSE;
-
     transfer(this.canvas.ownerDocument as Document, [
       TransferrableMutationType.OFFSCREEN_POLYFILL,
       this.canvas[TransferrableKeys.index],
-      float32NeededNumeric,
+      float32Needed ? NumericBoolean.TRUE : NumericBoolean.FALSE,
       args.length,
       store(fnName),
       isSetter,
       stringArgIndex,
-      ...u16ArgsArray,
+      ...(float32Needed ? new Uint16Array(new Float32Array(args).buffer) : args),
     ]);
   }
 
@@ -236,16 +233,16 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
   }
 
   setLineDash(lineDash: number[]) {
+    lineDash = [...lineDash];
+    if (lineDash.length % 2 !== 0) {
+      lineDash = lineDash.concat(lineDash);
+    }
     this.lineDash = lineDash;
     this.postToMainThread('setLineDash', NumericBoolean.FALSE, 0, lineDash, true);
   }
 
   getLineDash(): number[] {
-    if (this.lineDash.length % 2 === 0) {
-      return this.lineDash;
-    } else {
-      return this.lineDash.concat(this.lineDash);
-    }
+    return [...this.lineDash];
   }
 
   clip(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule) {
