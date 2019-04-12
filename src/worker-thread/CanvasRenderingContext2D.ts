@@ -100,147 +100,147 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
 
   /* DRAWING RECTANGLES */
   clearRect(x: number, y: number, width: number, height: number): void {
-    this.delegate('clearRect', [x, y, width, height], false);
+    this.delegate('clearRect', [...arguments], false);
   }
 
   fillRect(x: number, y: number, width: number, height: number): void {
-    this.delegate('fillRect', [x, y, width, height], false);
+    this.delegate('fillRect', [...arguments], false);
   }
 
   strokeRect(x: number, y: number, width: number, height: number): void {
-    this.delegate('strokeRect', [x, y, width, height], false);
+    this.delegate('strokeRect', [...arguments], false);
   }
 
   /* DRAWING TEXT */
   fillText(text: string, x: number, y: number, maxWidth?: number): void {
-    this.delegate('fillText', [text, x, y, maxWidth], false);
+    this.delegate('fillText', [...arguments], false);
   }
 
   strokeText(text: string, x: number, y: number, maxWidth?: number): void {
-    this.delegate('strokeText', [text, x, y, maxWidth], false);
+    this.delegate('strokeText', [...arguments], false);
   }
 
   measureText(text: string): TextMetrics {
-    return this.delegate('measureText', [text], false);
+    return this.delegate('measureText', [...arguments], false);
   }
 
   /* LINE STYLES */
   set lineWidth(value: number) {
-    this.delegate('lineWidth', [value], true);
+    this.delegate('lineWidth', [...arguments], true);
   }
 
   set lineCap(value: CanvasLineCap) {
-    this.delegate('lineCap', [value], true);
+    this.delegate('lineCap', [...arguments], true);
   }
 
   set lineJoin(value: CanvasLineJoin) {
-    this.delegate('lineJoin', [value], true);
+    this.delegate('lineJoin', [...arguments], true);
   }
 
   set miterLimit(value: number) {
-    this.delegate('miterLimit', [value], true);
+    this.delegate('miterLimit', [...arguments], true);
   }
 
   getLineDash(): number[] {
-    return this.delegate('getLineDash', [], false);
+    return this.delegate('getLineDash', [...arguments], false);
   }
 
   setLineDash(segments: number[]): void {
-    this.delegate('setLineDash', [segments], false);
+    this.delegate('setLineDash', [...arguments], false);
   }
 
   set lineDashOffset(value: number) {
-    this.delegate('lineDashOffset', [value], true);
+    this.delegate('lineDashOffset', [...arguments], true);
   }
 
   /* TEXT STYLES */
   set font(value: string) {
-    this.delegate('font', [value], true);
+    this.delegate('font', [...arguments], true);
   }
 
   set textAlign(value: CanvasTextAlign) {
-    this.delegate('textAlign', [value], true);
+    this.delegate('textAlign', [...arguments], true);
   }
 
   set textBaseline(value: CanvasTextBaseline) {
-    this.delegate('textBaseline', [value], true);
+    this.delegate('textBaseline', [...arguments], true);
   }
 
   set direction(value: CanvasDirection) {
-    this.delegate('direction', [value], true);
+    this.delegate('direction', [...arguments], true);
   }
 
   /* FILL AND STROKE STYLES */
   set fillStyle(value: string | CanvasGradient | CanvasPattern) {
-    this.delegate('fillStyle', [value], true);
+    this.delegate('fillStyle', [...arguments], true);
   }
 
   set strokeStyle(value: string | CanvasGradient | CanvasPattern) {
-    this.delegate('strokeStyle', [value], true);
+    this.delegate('strokeStyle', [...arguments], true);
   }
 
   /* GRADIENTS AND PATTERNS */
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
-    return this.delegate('createLinearGradient', [x0, y0, x1, y1], false);
+    return this.delegate('createLinearGradient', [...arguments], false);
   }
 
   createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
-    return this.delegate('createRadialGradient', [x0, y0, r0, x1, y1, r1], false);
+    return this.delegate('createRadialGradient', [...arguments], false);
   }
 
   createPattern(image: CanvasImageSource, repetition: string): CanvasPattern | null {
-    return this.delegate('createPattern', [image, repetition], false);
+    return this.delegate('createPattern', [...arguments], false);
   }
 
   /* SHADOWS */
   set shadowBlur(value: number) {
-    this.delegate('shadowBlur', [value], true);
+    this.delegate('shadowBlur', [...arguments], true);
   }
 
   set shadowColor(value: string) {
-    this.delegate('shadowColor', [value], true);
+    this.delegate('shadowColor', [...arguments], true);
   }
 
   set shadowOffsetX(value: number) {
-    this.delegate('shadowOffsetX', [value], true);
+    this.delegate('shadowOffsetX', [...arguments], true);
   }
 
   set shadowOffsetY(value: number) {
-    this.delegate('shadowOffsetY', [value], true);
+    this.delegate('shadowOffsetY', [...arguments], true);
   }
 
   /* PATHS */
   beginPath(): void {
-    this.delegate('beginPath', [], false);
+    this.delegate('beginPath', [...arguments], false);
   }
 
   closePath(): void {
-    this.delegate('closePath', [], false);
+    this.delegate('closePath', [...arguments], false);
   }
 
   moveTo(x: number, y: number): void {
-    this.delegate('moveTo', [x, y], false);
+    this.delegate('moveTo', [...arguments], false);
   }
 
   lineTo(x: number, y: number): void {
-    this.delegate('lineTo', [x, y], false);
+    this.delegate('lineTo', [...arguments], false);
   }
 
   bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void {
-    this.delegate('bezierCurveTo', [cp1x, cp1y, cp2x, cp2y, x, y], false);
+    this.delegate('bezierCurveTo', [...arguments], false);
   }
 
   quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void {
-    this.delegate('quadraticCurveTo', [cpx, cpy, x, y], false);
+    this.delegate('quadraticCurveTo', [...arguments], false);
   }
 
   // OPTIONAL ARGUMENT ATICLOCKWISE
   arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, antiClockwise?: boolean): void {
-    this.delegate('arc', [x, y, radius, startAngle, endAngle, antiClockwise], false);
+    this.delegate('arc', [...arguments], false);
   }
 
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void {
-    this.delegate('arcTo', [x1, y1, x2, y2, radius], false);
+    this.delegate('arcTo', [...arguments], false);
   }
 
   // OPTIONAL ARGUMENT ATICLOCKWISE
@@ -254,11 +254,11 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
     endAngle: number,
     antiClockwise?: boolean,
   ): void {
-    this.delegate('ellipse', [x, y, radiusX, radiusY, rotation, startAngle, endAngle, antiClockwise], false);
+    this.delegate('ellipse', [...arguments], false);
   }
 
   rect(x: number, y: number, width: number, height: number): void {
-    this.delegate('rect', [x, y, width, height], false);
+    this.delegate('rect', [...arguments], false);
   }
 
   /* DRAWING PATHS */
@@ -298,43 +298,42 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
     */
 
   rotate(angle: number): void {
-    this.delegate('rotate', [angle], false);
+    this.delegate('rotate', [...arguments], false);
   }
 
   scale(x: number, y: number): void {
-    this.delegate('scale', [x, y], false);
+    this.delegate('scale', [...arguments], false);
   }
 
   translate(x: number, y: number): void {
-    this.delegate('translate', [x, y], false);
+    this.delegate('translate', [...arguments], false);
   }
 
   transform(a: number, b: number, c: number, d: number, e: number, f: number): void {
-    this.delegate('transform', [a, b, c, d, e, f], false);
+    this.delegate('transform', [...arguments], false);
   }
 
   setTransform(transformOrA?: DOMMatrix2DInit | number, bOrC?: number, cOrD?: number, dOrE?: number, eOrF?: number, f?: number): void {
     const args = [...arguments] as [] | [DOMMatrix2DInit] | [number, number, number, number, number, number];
-
     this.delegate('setTransform', args, false);
   }
 
   /* experimental */ resetTransform(): void {
-    this.delegate('resetTransform', [], false);
+    this.delegate('resetTransform', [...arguments], false);
   }
 
   /* COMPOSITING */
   set globalAlpha(value: number) {
-    this.delegate('globalAlpha', [value], true);
+    this.delegate('globalAlpha', [...arguments], true);
   }
 
   set globalCompositeOperation(value: string) {
-    this.delegate('globalCompositeOperation', [value], true);
+    this.delegate('globalCompositeOperation', [...arguments], true);
   }
 
   /* DRAWING IMAGES */
   drawImage(image: CanvasImageSource, dx: number, dy: number): void {
-    this.delegate('drawImage', [image, dx, dy], false);
+    this.delegate('drawImage', [...arguments], false);
   }
 
   /* PIXEL MANIPULATION */
@@ -344,29 +343,29 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
   }
 
   getImageData(sx: number, sy: number, sw: number, sh: number): ImageData {
-    return this.delegate('getImageData', [sx, sy, sw, sh], false);
+    return this.delegate('getImageData', [...arguments], false);
   }
 
   putImageData(imageData: ImageData, dx: number, dy: number, dirtyX?: number, dirtyY?: number, dirtyWidth?: number, dirtyHeight?: number): void {
-    this.delegate('putImageData', [imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight], false);
+    this.delegate('putImageData', [...arguments], false);
   }
 
   /* IMAGE SMOOTHING */
   /* experimental */ set imageSmoothingEnabled(value: boolean) {
-    this.delegate('imageSmoothingEnabled', [value], true);
+    this.delegate('imageSmoothingEnabled', [...arguments], true);
   }
 
   /* experimental */ set imageSmoothingQuality(value: ImageSmoothingQuality) {
-    this.delegate('imageSmoothingQuality', [value], true);
+    this.delegate('imageSmoothingQuality', [...arguments], true);
   }
 
   /* THE CANVAS STATE */
   save(): void {
-    this.delegate('save', [], false);
+    this.delegate('save', [...arguments], false);
   }
 
   restore(): void {
-    this.delegate('restore', [], false);
+    this.delegate('restore', [...arguments], false);
   }
 
   // canvas property is readonly. We don't want to implement getters, but this must be here
@@ -377,6 +376,6 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
 
   /* FILTERS */
   /* experimental */ set filter(value: string) {
-    this.delegate('filter', [value], true);
+    this.delegate('filter', [...arguments], true);
   }
 }
