@@ -144,7 +144,6 @@ export const enum OffscreenContextPolyfillMutationIndex {
   MethodCalled = 4, // strings ID
   IsSetter = 5,
   StringArgIndex = 6,
-  HasArrayArgument = 7,
-  Args = 8,
-  End = 8,
+  Args = 7,
+  End = 7,
 }

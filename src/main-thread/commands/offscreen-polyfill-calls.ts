@@ -9,26 +9,26 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
       const float32Needed = mutations[startPosition + OffscreenContextPolyfillMutationIndex.Float32Needed] === NumericBoolean.TRUE;
       const argCount = mutations[startPosition + OffscreenContextPolyfillMutationIndex.ArgumentCount];
-      let mutationsArray: Uint16Array | Float32Array;
-      let endOffset = OffscreenContextPolyfillMutationIndex.End + argCount;
+      const methodCalled = strings.get(mutations[startPosition + OffscreenContextPolyfillMutationIndex.MethodCalled]);
+      const isSetter = mutations[startPosition + OffscreenContextPolyfillMutationIndex.IsSetter] === NumericBoolean.TRUE;
+      const stringArgIndex = mutations[startPosition + OffscreenContextPolyfillMutationIndex.StringArgIndex];
+      const argsStart = startPosition + OffscreenContextPolyfillMutationIndex.Args;
+
+      let argsTypedArray: Uint16Array | Float32Array;
+      let argOffset = argCount;
 
       if (float32Needed) {
-        endOffset = endOffset * 2;
-        mutationsArray = new Float32Array(mutations.slice(startPosition, startPosition + endOffset).buffer);
+        argOffset *= 2;
+        argsTypedArray = new Float32Array(mutations.slice(argsStart, argsStart + argOffset).buffer);
       } else {
-        mutationsArray = mutations.slice(startPosition, startPosition + endOffset);
+        argsTypedArray = mutations.slice(argsStart, argsStart + argOffset);
       }
-
-      const methodCalled = strings.get(mutationsArray[OffscreenContextPolyfillMutationIndex.MethodCalled]);
-      const isSetter = mutationsArray[OffscreenContextPolyfillMutationIndex.IsSetter] === NumericBoolean.TRUE;
-      const stringArgIndex = mutationsArray[OffscreenContextPolyfillMutationIndex.StringArgIndex];
-      const hasArrayArgument = mutationsArray[OffscreenContextPolyfillMutationIndex.HasArrayArgument] === NumericBoolean.TRUE;
 
       const mainContext = (target as HTMLCanvasElement).getContext('2d');
       let args = [] as any[];
 
       if (argCount > 0) {
-        mutationsArray.slice(OffscreenContextPolyfillMutationIndex.Args, endOffset).forEach((arg: any, i: number) => {
+        argsTypedArray.forEach((arg: any, i: number) => {
           if (stringArgIndex - 1 === i) {
             args.push(strings.get(arg));
           } else {
@@ -36,7 +36,7 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
           }
         });
 
-        if (hasArrayArgument) {
+        if (methodCalled === 'setLineDash') {
           args = [args];
         }
       }
@@ -47,7 +47,7 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
         (mainContext as any)[methodCalled](...args);
       }
 
-      return startPosition + endOffset;
+      return startPosition + OffscreenContextPolyfillMutationIndex.End + argOffset;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       const float32Needed = mutations[startPosition + OffscreenContextPolyfillMutationIndex.Float32Needed] === NumericBoolean.TRUE;
