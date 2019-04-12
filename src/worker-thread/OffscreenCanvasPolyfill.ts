@@ -297,6 +297,12 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     this.postToMainThread('fill', NumericBoolean.FALSE, 1, args.length, args, false);
   }
 
+  // Method has a different signature in MDN than it does in HTML spec
+  setTransform(transformOrA?: DOMMatrix2DInit | number, bOrC?: number, cOrD?: number, dOrE?: number, eOrF?: number, f?: number) {
+    const args = [...arguments] as [number, number, number, number, number, number];
+    this.postToMainThread('setTransform', NumericBoolean.FALSE, 0, 6, args, true);
+  }
+
   ////////////////////////////////////////
   // The following methods require more to our transfer process:
   createLinearGradient(): CanvasGradient {
@@ -308,8 +314,6 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
   createRadialGradient(): CanvasGradient {
     return {} as CanvasGradient;
   }
-
-  setTransform() {}
 
   // issue: has more than one signature, one with a Path2D arg
   isPointInPath(): boolean {
@@ -326,9 +330,6 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     return {} as TextMetrics;
   }
 
-  // issue: has four signatures, all of them with a CanvasImageSource arg
-  drawImage() {}
-
   createImageData(): ImageData {
     return {} as ImageData;
   }
@@ -336,10 +337,7 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
     return {} as ImageData;
   }
   putImageData() {}
-  getLineDash(): number[] {
-    return [];
-  }
 
-  // this one takes an array of numbers. Should be straightforward.
-  setLineDash(lineDash: number[]) {}
+  // issue: has four signatures, all of them with a CanvasImageSource arg
+  drawImage() {}
 }
