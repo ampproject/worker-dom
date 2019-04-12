@@ -47,11 +47,12 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
 
   private postToMainThread(fnName: string, isSetter: NumericBoolean, stringArgIndex: number, args: any[], float32Needed: boolean) {
     const u16ArgsArray = float32Needed ? new Uint16Array(new Float32Array(args).buffer) : args;
+    const float32NeededNumeric = float32Needed ? NumericBoolean.TRUE : NumericBoolean.FALSE;
 
     transfer(this.canvas.ownerDocument as Document, [
       TransferrableMutationType.OFFSCREEN_POLYFILL,
       this.canvas[TransferrableKeys.index],
-      NumericBoolean.TRUE,
+      float32NeededNumeric,
       args.length,
       store(fnName),
       isSetter,
