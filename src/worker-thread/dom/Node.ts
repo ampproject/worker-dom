@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { store as storeNodeMapping } from '../nodes';
+import { store as storeNodeMapping, storeOverride as storeOverrideNodeMapping } from '../nodes';
 import { Event, EventHandler } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
@@ -71,11 +71,7 @@ export abstract class Node {
     this.ownerDocument = ownerDocument || this;
     this[TransferrableKeys.scopingRoot] = this;
 
-    // Here is where you are Kris.
-    // When creating a node during Phase.Initializing, how should we communicate the override of identifier?
-    // e.g this[TransferrableKeys.index] = storeNodeMapping(this, override);
-    // Where does override come from?
-    this[TransferrableKeys.index] = storeNodeMapping(this);
+    this[TransferrableKeys.index] = overrideIndex ? storeOverrideNodeMapping(this, overrideIndex) : storeNodeMapping(this);
     this[TransferrableKeys.transferredFormat] = [this[TransferrableKeys.index]];
   }
 
