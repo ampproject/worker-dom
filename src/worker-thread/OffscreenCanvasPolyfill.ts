@@ -47,7 +47,7 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
 
   private postToMainThread(fnName: string, isSetter: NumericBoolean, stringArgIndex: number, args: any[], float32Needed: boolean) {
     if (float32Needed) {
-      const u16argsArray = new Uint16Array(new Float32Array(args).buffer);
+      const u16ArgsArray = new Uint16Array(new Float32Array(args).buffer);
 
       const mutation = [
         TransferrableMutationType.OFFSCREEN_POLYFILL,
@@ -57,11 +57,8 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
         store(fnName),
         isSetter,
         stringArgIndex,
+        ...u16ArgsArray,
       ];
-
-      for (let n of u16argsArray) {
-        mutation.push(n);
-      }
 
       transfer(this.canvas.ownerDocument as Document, mutation);
     } else {
@@ -254,7 +251,7 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
 
   setLineDash(lineDash: number[]) {
     this.lineDash = lineDash;
-    this.postToMainThread('setLineDash', NumericBoolean.FALSE, 0, [...arguments], true);
+    this.postToMainThread('setLineDash', NumericBoolean.FALSE, 0, lineDash, true);
   }
 
   getLineDash(): number[] {

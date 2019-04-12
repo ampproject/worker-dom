@@ -12,16 +12,16 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
       const methodCalled = strings.get(mutations[startPosition + OffscreenContextPolyfillMutationIndex.MethodCalled]);
       const isSetter = mutations[startPosition + OffscreenContextPolyfillMutationIndex.IsSetter] === NumericBoolean.TRUE;
       const stringArgIndex = mutations[startPosition + OffscreenContextPolyfillMutationIndex.StringArgIndex];
-      const argsStart = startPosition + OffscreenContextPolyfillMutationIndex.Args;
 
+      const argsStart = startPosition + OffscreenContextPolyfillMutationIndex.Args;
       let argsTypedArray: Uint16Array | Float32Array;
-      let argOffset = argCount;
+      let argEnd = argCount;
 
       if (float32Needed) {
-        argOffset *= 2;
-        argsTypedArray = new Float32Array(mutations.slice(argsStart, argsStart + argOffset).buffer);
+        argEnd *= 2;
+        argsTypedArray = new Float32Array(mutations.slice(argsStart, argsStart + argEnd).buffer);
       } else {
-        argsTypedArray = mutations.slice(argsStart, argsStart + argOffset);
+        argsTypedArray = mutations.slice(argsStart, argsStart + argEnd);
       }
 
       const mainContext = (target as HTMLCanvasElement).getContext('2d');
@@ -36,6 +36,8 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
           }
         });
 
+        // setLineDash has a single argument: number[]
+        // values from the array argument are transferred independently, so we must do this
         if (methodCalled === 'setLineDash') {
           args = [args];
         }
@@ -47,7 +49,7 @@ export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: 
         (mainContext as any)[methodCalled](...args);
       }
 
-      return startPosition + OffscreenContextPolyfillMutationIndex.End + argOffset;
+      return startPosition + OffscreenContextPolyfillMutationIndex.End + argEnd;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       const float32Needed = mutations[startPosition + OffscreenContextPolyfillMutationIndex.Float32Needed] === NumericBoolean.TRUE;
