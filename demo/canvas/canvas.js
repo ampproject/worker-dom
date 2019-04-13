@@ -18,22 +18,42 @@ const existingCanvasBtn = document.getElementById('existingCanvasBtn');
 const newCanvasBtn = document.getElementById('newCanvasBtn');
 const doubleCanvasBtn = document.getElementById('doubleCanvasBtn');
 
+const myCanvas = document.getElementById('myCanvas');
+const myCtx = myCanvas.getContext('2d');
+
+function draw(e) {
+  myCtx.lineTo(e.offsetX, e.offsetY);
+  myCtx.stroke();
+}
+
+myCanvas.addEventListener('mousedown', e => {
+  myCtx.strokeStyle = 'red';
+  myCtx.lineWidth = 3;
+  myCtx.setLineDash([10, 10]);
+  myCtx.beginPath();
+  myCtx.moveTo(e.offsetX, e.offsetY);
+  myCanvas.addEventListener('mousemove', draw);
+});
+
+myCanvas.addEventListener('mouseup', e => {
+  myCanvas.removeEventListener('mousemove', draw);
+});
+
 existingCanvasBtn.addEventListener('click', async () => {
   // Scenario #1:
   // Canvas is already on the page, retrieve using getElementById
-  const otherCanvas = document.getElementById('myCanvas');
-  const ctx = otherCanvas.getContext('2d');
-
-  ctx.lineWidth = 5;
-  ctx.fillStyle = 'yellow';
-  ctx.strokeStyle = 'yellow';
-  ctx.strokeRect(37.5, 70, 75, 55);
-  ctx.fillRect(65, 95, 20, 30);
-  ctx.moveTo(25, 70);
-  ctx.lineTo(75, 30);
-  ctx.lineTo(125, 70);
-  ctx.closePath();
-  ctx.stroke();
+  myCtx.fillStyle = 'blue';
+  myCtx.strokeStyle = 'blue';
+  myCtx.lineWidth = 5;
+  myCtx.setLineDash([1, 0]);
+  myCtx.beginPath();
+  myCtx.strokeRect(37.5, 70, 75, 55);
+  myCtx.fillRect(65, 95, 20, 30);
+  myCtx.moveTo(25, 70);
+  myCtx.lineTo(75, 30);
+  myCtx.lineTo(125, 70);
+  myCtx.closePath();
+  myCtx.stroke();
 });
 
 newCanvasBtn.addEventListener('click', async () => {
@@ -44,8 +64,8 @@ newCanvasBtn.addEventListener('click', async () => {
   const ctx = canvas.getContext('2d');
 
   ctx.lineWidth = 5;
-  ctx.fillStyle = 'blue';
-  ctx.strokeStyle = 'blue';
+  ctx.fillStyle = 'orange';
+  ctx.strokeStyle = 'orange';
   ctx.strokeRect(37.5, 70, 75, 55);
   ctx.fillRect(65, 95, 20, 30);
   ctx.moveTo(25, 70);
