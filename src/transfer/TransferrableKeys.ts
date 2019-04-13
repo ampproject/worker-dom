@@ -75,4 +75,9 @@ export const enum TransferrableKeys {
   removedNode = 57,
   allowTransfer = 58,
   observe = 59,
+  pageX = 60,
+  pageY = 61,
+  touches = 62,
+  changedTouches = 63,
+  hydrateNode = 64,
 }

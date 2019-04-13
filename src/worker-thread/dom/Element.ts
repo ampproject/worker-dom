@@ -88,8 +88,8 @@ export class Element extends ParentNode {
    */
   private kind: ElementKind;
 
-  constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null) {
-    super(nodeType, toUpper(localName), ownerDocument);
+  constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null, overrideIndex?: number) {
+    super(nodeType, toUpper(localName), ownerDocument, overrideIndex);
     this.namespaceURI = namespaceURI || HTML_NAMESPACE;
     this.localName = localName;
     this.kind = VOID_ELEMENTS.includes(this.tagName) ? ElementKind.VOID : ElementKind.NORMAL;
