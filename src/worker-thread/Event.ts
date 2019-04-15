@@ -65,6 +65,8 @@ export class Event {
   public [TransferrableKeys.end]: boolean = false;
   public pageX?: number;
   public pageY?: number;
+  public offsetX?: number;
+  public offsetY?: number;
   public touches?: TouchList;
   public changedTouches?: TouchList;
 
@@ -169,6 +171,8 @@ export function propagate(global: WorkerDOMGlobalScope): void {
             keyCode: event[TransferrableKeys.keyCode],
             pageX: event[TransferrableKeys.pageX],
             pageY: event[TransferrableKeys.pageY],
+            offsetX: event[TransferrableKeys.offsetX],
+            offsetY: event[TransferrableKeys.offsetY],
             touches: touchListFromTransfer(global.document, event, TransferrableKeys.touches),
             changedTouches: touchListFromTransfer(global.document, event, TransferrableKeys.changedTouches),
           },
