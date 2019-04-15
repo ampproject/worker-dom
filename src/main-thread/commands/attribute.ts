@@ -30,14 +30,14 @@ export function AttributeProcessor(strings: Strings, config: WorkerDOMConfigurat
         null;
 
       if (attributeName != null) {
-        if (value == null) {
-          target.removeAttribute(attributeName);
-        } else {
-          if (!config.sanitizer || config.sanitizer.validAttribute(target.nodeName, attributeName, value)) {
-            target.setAttribute(attributeName, value);
+        if (!config.sanitizer || config.sanitizer.validAttribute(target.nodeName, attributeName, value)) {
+          if (value == null) {
+            target.removeAttribute(attributeName);
           } else {
-            // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
+            target.setAttribute(attributeName, value);
           }
+        } else {
+          // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
         }
       }
       return startPosition + AttributeMutationIndex.End;
