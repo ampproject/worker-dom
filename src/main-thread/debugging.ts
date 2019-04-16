@@ -29,12 +29,13 @@ import { TransferrableEvent } from '../transfer/TransferrableEvent';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
 import { createReadableHydrateableRootNode } from './serialize';
+import { WorkerDOMConfiguration } from './configuration';
 
 /**
  * @param element
  */
-export const readableHydrateableRootNode = (element: RenderableElement): Object =>
-  readableHydrateableNode(createReadableHydrateableRootNode(element));
+export const readableHydrateableRootNode = (element: RenderableElement, config: WorkerDOMConfiguration): Object =>
+  readableHydrateableNode(createReadableHydrateableRootNode(element, config));
 /**
  * @param nodeContext {NodeContext}
  * @param node {TransferredNode}

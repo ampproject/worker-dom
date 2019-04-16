@@ -20,6 +20,20 @@
 
 import { fetchAndInstall, install } from './install';
 import { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
+import { toLower } from '../utils';
+
+/**
+ * AMP Element Children need to be filtered from Hydration, to avoid Author Code from manipulating it.
+ * TODO: In the future, this contract needs to be more defined.
+ * @param element
+ */
+const hydrateFilter = (element: RenderableElement) => {
+  if (element.parentNode !== null) {
+    const lowerName = toLower((element.parentNode as RenderableElement).localName || (element.parentNode as RenderableElement).nodeName);
+    return !/amp-/.test(lowerName) || lowerName === 'amp-script';
+  }
+  return true;
+};
 
 /**
  * @param baseElement
@@ -32,6 +46,7 @@ export function upgradeElement(baseElement: Element, domURL: string, longTask?: 
       domURL,
       authorURL,
       longTask,
+      hydrateFilter,
       sanitizer,
     });
   }
@@ -43,5 +58,6 @@ export function upgradeElement(baseElement: Element, domURL: string, longTask?: 
  * @param fetchPromise Promise that resolves containing worker script, and author script.
  */
 export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string]>, config: WorkerDOMConfiguration): Promise<Worker | null> {
+  config.hydrateFilter = hydrateFilter;
   return install(fetchPromise, baseElement as HTMLElement, config);
 }
