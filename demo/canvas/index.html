@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="background: #e6e9e9;">
 <head>
   <meta charset="utf-8" />
   <title>Hello World</title>
@@ -11,14 +11,18 @@
   <!-- Comment either block to enable module/nomodule or disable it. -->
   <!-- <script src="/dist/index.js" defer></script> -->  
 </head>
-<body>
+<body style="background: #e6e9e9;">
   <div src="canvas.js" id="upgrade-me">
-    <div>
+    <div id="canvasButtonsDiv">
+
       <button id="existingCanvasBtn">Draw on already existing canvas</button>
       <button id="newCanvasBtn">Create new canvas and draw on it</button>
       <button id="doubleCanvasBtn">Create two new canvases and draw on them</button>
     </div>
-    <canvas id="myCanvas"></canvas>
+    <div>
+      <canvas width="500" height="500" id="myCanvas"></canvas>
+      <div id="newCanvasDiv"></div>
+    </div>
   </div>
   <script type="module">
     import {upgradeElement} from '/dist/index.mjs';

@@ -8,18 +8,24 @@ export function OffscreenCanvasProcessor(workerContext: WorkerContext): CommandE
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
       if (target) {
-        const offscreen = (target as HTMLCanvasElement).transferControlToOffscreen();
-        workerContext.messageToWorker({
-          [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE,
-          [TransferrableKeys.target]: [target._index_],
-          [TransferrableKeys.data]: offscreen, // Object, an OffscreenCanvas
-        }, [offscreen]);
+        const canvas = target as HTMLCanvasElement;
+        const offscreen = canvas.transferControlToOffscreen();
+        workerContext.messageToWorker(
+          {
+            [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE,
+            [TransferrableKeys.target]: [target._index_],
+            [TransferrableKeys.data]: offscreen, // Object, an OffscreenCanvas
+          },
+          [offscreen],
+        );
       } else {
         console.error(`getNode() yields null – ${target}`);
       }
-    
+
       return startPosition + OffscreenCanvasMutationIndex.End;
-    }, print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+    },
+    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+
       return {
         type: 'OFFSCREEN_CANVAS_INSTANCE',
         target,

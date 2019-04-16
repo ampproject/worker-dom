@@ -18,35 +18,64 @@ const existingCanvasBtn = document.getElementById('existingCanvasBtn');
 const newCanvasBtn = document.getElementById('newCanvasBtn');
 const doubleCanvasBtn = document.getElementById('doubleCanvasBtn');
 
+const myCanvas = document.getElementById('myCanvas');
+const myCtx = myCanvas.getContext('2d');
+
+function draw(e) {
+  myCtx.lineTo(e.offsetX, e.offsetY);
+  myCtx.stroke();
+}
+
+myCanvas.addEventListener('mousedown', e => {
+  myCtx.strokeStyle = 'red';
+  myCtx.lineWidth = 2;
+  myCtx.setLineDash([10, 10]);
+  myCtx.beginPath();
+  myCtx.moveTo(e.offsetX, e.offsetY);
+  myCanvas.addEventListener('mousemove', draw);
+});
+
+myCanvas.addEventListener('mouseup', e => {
+  myCanvas.removeEventListener('mousemove', draw);
+});
+
 existingCanvasBtn.addEventListener('click', async () => {
   // Scenario #1:
-  // Canvas is already on the page, retrieve using getElementById
-  const canvas = document.getElementById('myCanvas');
-  const ctx = canvas.getContext('2d');
+  // Canvas is already on the page
+  myCtx.fillStyle = 'blue';
+  myCtx.strokeStyle = 'blue';
+  myCtx.lineWidth = 5;
+  myCtx.setLineDash([1, 0]);
+  myCtx.beginPath();
+  myCtx.strokeRect(212.5, 222.5, 75, 55);
+  myCtx.fillRect(240, 247.5, 20, 30);
+  myCtx.moveTo(200, 222.5);
+  myCtx.lineTo(250, 182.5);
+  myCtx.lineTo(300, 222.5);
+  myCtx.closePath();
+  myCtx.stroke();
 
-  ctx.lineWidth = 1;
-  ctx.strokeRect(7.5, 14.0, 15.0, 11.0);
-  ctx.fillRect(13.0, 19.0, 4.0, 6.0);
-  ctx.moveTo(5.0, 14.0);
-  ctx.lineTo(15.0, 6.0);
-  ctx.lineTo(25.0, 14.0);
-  ctx.closePath();
-  ctx.stroke();
 });
 
 newCanvasBtn.addEventListener('click', async () => {
   // Scenario #2:
   // Create a canvas element using document.createElement()
   const canvas = document.createElement('canvas');
-  document.body.appendChild(canvas);
+  const newCanvasDiv = document.getElementById('newCanvasDiv');
+  canvas.width = 250;
+  canvas.height = 250;
+  newCanvasDiv.appendChild(canvas);
   const ctx = canvas.getContext('2d');
 
-  ctx.lineWidth = 1;
-  ctx.strokeRect(7.5, 14.0, 15.0, 11.0);
-  ctx.fillRect(13.0, 19.0, 4.0, 6.0);
-  ctx.moveTo(5.0, 14.0);
-  ctx.lineTo(15.0, 6.0);
-  ctx.lineTo(25.0, 14.0);
+  ctx.lineWidth = 5;
+  ctx.fillStyle = 'orange';
+  ctx.strokeStyle = 'orange';
+  ctx.strokeRect(87.5, 97.5, 75, 55);
+  ctx.fillRect(115, 122.5, 20, 30);
+  ctx.moveTo(75, 97.5);
+  ctx.lineTo(125, 57.5);
+  ctx.lineTo(175, 97.5);
+
   ctx.closePath();
   ctx.stroke();
 });
@@ -58,27 +87,40 @@ doubleCanvasBtn.addEventListener('click', async () => {
   const canvasOne = document.createElement('canvas');
   const canvasTwo = document.createElement('canvas');
 
-  document.body.appendChild(canvasOne);
-  document.body.appendChild(canvasTwo);
+  canvasOne.width = 250;
+  canvasOne.height = 250;
+  canvasTwo.width = 250;
+  canvasTwo.height = 250;
+
+  const newCanvasDiv = document.getElementById('newCanvasDiv');
+
+  newCanvasDiv.appendChild(canvasOne);
+  newCanvasDiv.appendChild(canvasTwo);
+
 
   const ctxOne = canvasOne.getContext('2d');
   const ctxTwo = canvasTwo.getContext('2d');
 
-  ctxOne.lineWidth = 1;
-  ctxOne.strokeRect(7.5, 14.0, 15.0, 11.0);
-  ctxOne.fillRect(13.0, 19.0, 4.0, 6.0);
-  ctxOne.moveTo(5.0, 14.0);
-  ctxOne.lineTo(15.0, 6.0);
-  ctxOne.lineTo(25.0, 14.0);
+  ctxOne.lineWidth = 5;
+  ctxOne.fillStyle = 'red';
+  ctxOne.strokeStyle = 'red';
+  ctxOne.strokeRect(87.5, 97.5, 75, 55);
+  ctxOne.fillRect(115, 122.5, 20, 30);
+  ctxOne.moveTo(75, 97.5);
+  ctxOne.lineTo(125, 57.5);
+  ctxOne.lineTo(175, 97.5);
   ctxOne.closePath();
   ctxOne.stroke();
 
-  ctxTwo.lineWidth = 1;
-  ctxTwo.strokeRect(7.5, 14.0, 15.0, 11.0);
-  ctxTwo.fillRect(13.0, 19.0, 4.0, 6.0);
-  ctxTwo.moveTo(5.0, 14.0);
-  ctxTwo.lineTo(15.0, 6.0);
-  ctxTwo.lineTo(25.0, 14.0);
+  ctxTwo.lineWidth = 5;
+  ctxTwo.fillStyle = 'green';
+  ctxTwo.strokeStyle = 'green';
+  ctxTwo.strokeRect(87.5, 97.5, 75, 55);
+  ctxTwo.fillRect(115, 122.5, 20, 30);
+  ctxTwo.moveTo(75, 97.5);
+  ctxTwo.lineTo(125, 57.5);
+  ctxTwo.lineTo(175, 97.5);
+
   ctxTwo.closePath();
   ctxTwo.stroke();
 });

@@ -29,6 +29,7 @@ import { LongTaskExecutor } from './commands/long-task';
 import { CommandExecutor } from './commands/interface';
 import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
 import { Phase } from '../transfer/Phase';
+import { OffscreenPolyfillCallProcessor } from './commands/offscreen-polyfill-calls';
 
 export class MutatorProcessor {
   private strings: Strings;
@@ -65,6 +66,7 @@ export class MutatorProcessor {
       [TransferrableMutationType.LONG_TASK_START]: LongTaskExecutorInstance,
       [TransferrableMutationType.LONG_TASK_END]: LongTaskExecutorInstance,
       [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(workerContext),
+      [TransferrableMutationType.OFFSCREEN_POLYFILL]: OffscreenPolyfillCallProcessor(strings, workerContext),
     };
   }
 

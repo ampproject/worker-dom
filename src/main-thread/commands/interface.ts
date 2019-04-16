@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 export interface CommandExecutor {
   execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number;
   print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object;
