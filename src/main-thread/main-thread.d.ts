@@ -16,8 +16,8 @@
 
 declare interface Sanitizer {
   sanitize(node: Node): boolean;
-  validAttribute(tag: string, attr: string, value: string | null): boolean;
-  validProperty(tag: string, prop: string, value: string): boolean;
+  validAttribute(node: Node, attr: string, value: string | null): boolean;
+  validProperty(node: Node, prop: string, value: string): boolean;
 }
 
 interface Node {

@@ -31,7 +31,7 @@ export function PropertyProcessor(strings: Strings, config: WorkerDOMConfigurati
           null;
 
       if (name && value != null) {
-        if (!config.sanitizer || config.sanitizer.validProperty(target.nodeName, name, String(value))) {
+        if (!config.sanitizer || config.sanitizer.validProperty(target, name, String(value))) {
           target[name] = value;
         } else {
           // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
