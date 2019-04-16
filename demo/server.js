@@ -24,13 +24,13 @@ const { PORT = 3001 } = process.env;
 polka()
   .use(
     sirv(path.resolve(__dirname, '..'), {
-      maxAge: 1,
+      dev: true,
       setHeaders: res => res.setHeader('AMP-Access-Control-Allow-Source-Origin', `http://localhost:${PORT}`),
     }),
   )
   .use(
     sirv(path.resolve(__dirname), {
-      maxAge: 1,
+      dev: true,
       setHeaders: res => res.setHeader('AMP-Access-Control-Allow-Source-Origin', `http://localhost:${PORT}`),
     }),
   )
