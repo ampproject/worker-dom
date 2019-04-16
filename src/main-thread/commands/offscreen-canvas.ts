@@ -25,6 +25,7 @@ export function OffscreenCanvasProcessor(workerContext: WorkerContext): CommandE
       return startPosition + OffscreenCanvasMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+
       return {
         type: 'OFFSCREEN_CANVAS_INSTANCE',
         target,

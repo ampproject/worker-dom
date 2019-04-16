@@ -54,6 +54,7 @@ existingCanvasBtn.addEventListener('click', async () => {
   myCtx.lineTo(300, 222.5);
   myCtx.closePath();
   myCtx.stroke();
+
 });
 
 newCanvasBtn.addEventListener('click', async () => {
@@ -74,6 +75,7 @@ newCanvasBtn.addEventListener('click', async () => {
   ctx.moveTo(75, 97.5);
   ctx.lineTo(125, 57.5);
   ctx.lineTo(175, 97.5);
+
   ctx.closePath();
   ctx.stroke();
 });
@@ -94,6 +96,7 @@ doubleCanvasBtn.addEventListener('click', async () => {
 
   newCanvasDiv.appendChild(canvasOne);
   newCanvasDiv.appendChild(canvasTwo);
+
 
   const ctxOne = canvasOne.getContext('2d');
   const ctxTwo = canvasTwo.getContext('2d');
@@ -117,6 +120,7 @@ doubleCanvasBtn.addEventListener('click', async () => {
   ctxTwo.moveTo(75, 97.5);
   ctxTwo.lineTo(125, 57.5);
   ctxTwo.lineTo(175, 97.5);
+
   ctxTwo.closePath();
   ctxTwo.stroke();
 });
