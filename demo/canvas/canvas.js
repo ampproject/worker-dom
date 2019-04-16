@@ -28,7 +28,7 @@ function draw(e) {
 
 myCanvas.addEventListener('mousedown', e => {
   myCtx.strokeStyle = 'red';
-  myCtx.lineWidth = 3;
+  myCtx.lineWidth = 2;
   myCtx.setLineDash([10, 10]);
   myCtx.beginPath();
   myCtx.moveTo(e.offsetX, e.offsetY);
@@ -41,17 +41,17 @@ myCanvas.addEventListener('mouseup', e => {
 
 existingCanvasBtn.addEventListener('click', async () => {
   // Scenario #1:
-  // Canvas is already on the page, retrieve using getElementById
+  // Canvas is already on the page
   myCtx.fillStyle = 'blue';
   myCtx.strokeStyle = 'blue';
   myCtx.lineWidth = 5;
   myCtx.setLineDash([1, 0]);
   myCtx.beginPath();
-  myCtx.strokeRect(37.5, 70, 75, 55);
-  myCtx.fillRect(65, 95, 20, 30);
-  myCtx.moveTo(25, 70);
-  myCtx.lineTo(75, 30);
-  myCtx.lineTo(125, 70);
+  myCtx.strokeRect(212.5, 222.5, 75, 55);
+  myCtx.fillRect(240, 247.5, 20, 30);
+  myCtx.moveTo(200, 222.5);
+  myCtx.lineTo(250, 182.5);
+  myCtx.lineTo(300, 222.5);
   myCtx.closePath();
   myCtx.stroke();
 });
@@ -60,17 +60,20 @@ newCanvasBtn.addEventListener('click', async () => {
   // Scenario #2:
   // Create a canvas element using document.createElement()
   const canvas = document.createElement('canvas');
-  document.body.appendChild(canvas);
+  const newCanvasDiv = document.getElementById('newCanvasDiv');
+  canvas.width = 250;
+  canvas.height = 250;
+  newCanvasDiv.appendChild(canvas);
   const ctx = canvas.getContext('2d');
 
   ctx.lineWidth = 5;
   ctx.fillStyle = 'orange';
   ctx.strokeStyle = 'orange';
-  ctx.strokeRect(37.5, 70, 75, 55);
-  ctx.fillRect(65, 95, 20, 30);
-  ctx.moveTo(25, 70);
-  ctx.lineTo(75, 30);
-  ctx.lineTo(125, 70);
+  ctx.strokeRect(87.5, 97.5, 75, 55);
+  ctx.fillRect(115, 122.5, 20, 30);
+  ctx.moveTo(75, 97.5);
+  ctx.lineTo(125, 57.5);
+  ctx.lineTo(175, 97.5);
   ctx.closePath();
   ctx.stroke();
 });
@@ -82,8 +85,15 @@ doubleCanvasBtn.addEventListener('click', async () => {
   const canvasOne = document.createElement('canvas');
   const canvasTwo = document.createElement('canvas');
 
-  document.body.appendChild(canvasOne);
-  document.body.appendChild(canvasTwo);
+  canvasOne.width = 250;
+  canvasOne.height = 250;
+  canvasTwo.width = 250;
+  canvasTwo.height = 250;
+
+  const newCanvasDiv = document.getElementById('newCanvasDiv');
+
+  newCanvasDiv.appendChild(canvasOne);
+  newCanvasDiv.appendChild(canvasTwo);
 
   const ctxOne = canvasOne.getContext('2d');
   const ctxTwo = canvasTwo.getContext('2d');
@@ -91,22 +101,22 @@ doubleCanvasBtn.addEventListener('click', async () => {
   ctxOne.lineWidth = 5;
   ctxOne.fillStyle = 'red';
   ctxOne.strokeStyle = 'red';
-  ctxOne.strokeRect(37.5, 70, 75, 55);
-  ctxOne.fillRect(65, 95, 20, 30);
-  ctxOne.moveTo(25, 70);
-  ctxOne.lineTo(75, 30);
-  ctxOne.lineTo(125, 70);
+  ctxOne.strokeRect(87.5, 97.5, 75, 55);
+  ctxOne.fillRect(115, 122.5, 20, 30);
+  ctxOne.moveTo(75, 97.5);
+  ctxOne.lineTo(125, 57.5);
+  ctxOne.lineTo(175, 97.5);
   ctxOne.closePath();
   ctxOne.stroke();
 
   ctxTwo.lineWidth = 5;
   ctxTwo.fillStyle = 'green';
   ctxTwo.strokeStyle = 'green';
-  ctxTwo.strokeRect(37.5, 70, 75, 55);
-  ctxTwo.fillRect(65, 95, 20, 30);
-  ctxTwo.moveTo(25, 70);
-  ctxTwo.lineTo(75, 30);
-  ctxTwo.lineTo(125, 70);
+  ctxTwo.strokeRect(87.5, 97.5, 75, 55);
+  ctxTwo.fillRect(115, 122.5, 20, 30);
+  ctxTwo.moveTo(75, 97.5);
+  ctxTwo.lineTo(125, 57.5);
+  ctxTwo.lineTo(175, 97.5);
   ctxTwo.closePath();
   ctxTwo.stroke();
 });
