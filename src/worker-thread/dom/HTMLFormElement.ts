@@ -47,7 +47,7 @@ reflectProperties(
     { target: [''] },
     { action: [''] },
     { enctype: ['application/x-www-form-urlencoded'] },
-    { acceptCharset: ['', 'accept-charset'] },
+    { acceptCharset: ['', /* attr */ 'accept-charset'] },
     { autocomplete: ['on'] },
     { autocapitalize: ['sentences'] },
   ],

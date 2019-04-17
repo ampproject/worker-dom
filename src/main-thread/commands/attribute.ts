@@ -30,13 +30,16 @@ export function AttributeProcessor(strings: Strings, config: WorkerDOMConfigurat
         null;
 
       if (attributeName != null) {
-        if (value == null) {
-          target.removeAttribute(attributeName);
-        } else {
-          if (!config.sanitizer || config.sanitizer.validAttribute(target.nodeName, attributeName, value)) {
-            target.setAttribute(attributeName, value);
-          } else {
+        if (config.sanitizer) {
+          const mutated = config.sanitizer.mutateAttribute(target, attributeName, value);
+          if (!mutated) {
             // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
+          }
+        } else {
+          if (value == null) {
+            target.removeAttribute(attributeName);
+          } else {
+            target.setAttribute(attributeName, value);
           }
         }
       }

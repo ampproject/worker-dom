@@ -124,7 +124,7 @@ registerSubclass('option', HTMLOptionElement);
 // HTMLOptionElement.defaultSelected => boolean, reflected attribute
 // HTMLOptionElement.disabled => boolean, reflected attribute
 // HTMLOptionElement.type => string, reflected attribute
-reflectProperties([{ defaultSelected: [false, 'selected'] }, { disabled: [false] }, { type: [''] }], HTMLOptionElement);
+reflectProperties([{ defaultSelected: [false, /* attr */ 'selected'] }, { disabled: [false] }, { type: [''] }], HTMLOptionElement);
 
 // Implemented at HTMLElement
 // HTMLOptionElement.form, Read only	=> HTMLFormElement

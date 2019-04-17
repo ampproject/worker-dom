@@ -112,7 +112,7 @@ const WHITELISTED_GLOBALS = [
   'encodeURIComponent',
   'escape',
   'eval',
-  'fetch', // TODO(choumx): Wrap this for origin whitelisting.
+  'fetch',
   'indexedDB',
   'isFinite',
   'isNaN',
@@ -131,7 +131,7 @@ const WHITELISTED_GLOBALS = [
 const globalScope: GlobalScope = {
   navigator: (self as WorkerGlobalScope).navigator,
   localStorage: {},
-  location: {},
+  location: self.location,
   url: '/',
   innerWidth: 0,
   innerHeight: 0,
@@ -186,6 +186,7 @@ function updateLongTask(global: WorkerGlobalScope) {
   const originalFetch = global['fetch'];
   if (originalFetch) {
     try {
+      // TODO(choumx): Add origin whitelisting.
       Object.defineProperty(global, 'fetch', {
         enumerable: true,
         writable: true,
