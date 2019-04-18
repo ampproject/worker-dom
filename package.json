@@ -57,7 +57,7 @@
     "jsdom": "14.0.0",
     "lint-staged": "8.1.5",
     "magic-string": "0.25.2",
-    "np": "4.0.2",
+    "np": "5.0.0",
     "npm-run-all": "4.1.5",
     "polka": "0.5.2",
     "prettier": "1.17.0",
