@@ -79,7 +79,6 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Document.fonts                                      | ✖️     |                                                  | 
 | Document.forms                                      | ✖️     |                                                  | 
 | Document.fullscreenElement                          | ✖️     |                                                  | 
-| Document.fullscreenElement                          | ✖️     |                                                  | 
 | Document.getAnimations()                            | ✖️     |                                                  | 
 | document.getElementById(String id)                  | ✔️     |                                                  | 
 | Document.getElementsByClassName()                   | ✖️     |                                                  | 
@@ -147,8 +146,6 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | DocumentOrShadowRoot.elementsFromPoint()            | ✖️     |                                                  | 
 | DocumentOrShadowRoot.getSelection()                 | ✖️     |                                                  | 
 | DocumentOrShadowRoot.pointerLockElement             | ✖️     |                                                  | 
-| DocumentOrShadowRoot.pointerLockElement             | ✖️     |                                                  | 
-| DocumentOrShadowRoot.styleSheets                    | ✖️     |                                                  | 
 | DocumentOrShadowRoot.styleSheets                    | ✖️     |                                                  | 
 | DocumentType.name                                   | ✖️     |                                                  | 
 | DocumentType.publicId                               | ✖️     |                                                  | 
@@ -458,33 +455,21 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | HTMLFieldSetElement.validity                        | ✖️     |                                                  | 
 | HTMLFieldSetElement.willValidate                    | ✖️     |                                                  | 
 | HTMLFormElement.acceptCharset                       | ✔️     |                                                  | 
-| HTMLFormElement.acceptCharset                       | ✔️     |                                                  | 
-| HTMLFormElement.action                              | ✔️     |                                                  | 
 | HTMLFormElement.action                              | ✔️     |                                                  | 
 | HTMLFormElement.autocapitalize                      | ✔️     |                                                  | 
 | HTMLFormElement.autocomplete                        | ✔️     |                                                  | 
-| HTMLFormElement.autocomplete                        | ✔️     |                                                  | 
 | HTMLFormElement.checkValidity()                     | ✖️     |                                                  | 
-| HTMLFormElement.checkValidity()                     | ✖️     |                                                  | 
-| HTMLFormElement.elements                            | ✔️     |                                                  | 
 | HTMLFormElement.elements                            | ✔️     |                                                  | 
 | HTMLFormElement.encoding or HTMLFormElement.enctype | ✖️     |                                                  | 
 | HTMLFormElement.encoding or HTMLFormElement.enctype | ✔️     |                                                  | 
 | HTMLFormElement.length                              | ✔️     |                                                  | 
 | HTMLFormElement.length                              | ✖️     |                                                  | 
 | HTMLFormElement.method                              | ✔️     |                                                  | 
-| HTMLFormElement.method                              | ✔️     |                                                  | 
-| HTMLFormElement.name                                | ✔️     |                                                  | 
 | HTMLFormElement.name                                | ✔️     |                                                  | 
 | HTMLFormElement.noValidate                          | ✖️     |                                                  | 
-| HTMLFormElement.noValidate                          | ✖️     |                                                  | 
-| HTMLFormElement.reportValidity()                    | ✖️     |                                                  | 
 | HTMLFormElement.reportValidity()                    | ✖️     |                                                  | 
 | HTMLFormElement.reset()                             | ✖️     |                                                  | 
-| HTMLFormElement.reset()                             | ✖️     |                                                  | 
 | HTMLFormElement.submit()                            | ✖️     |                                                  | 
-| HTMLFormElement.submit()                            | ✖️     |                                                  | 
-| HTMLFormElement.target                              | ✔️     |                                                  | 
 | HTMLFormElement.target                              | ✔️     |                                                  | 
 | HTMLHyperlinkElementUtils.hash                      | ✖️     |                                                  | 
 | HTMLHyperlinkElementUtils.host                      | ✖️     |                                                  | 
@@ -545,7 +530,6 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | HTMLInputElement.defaultValue                       | ✔️     |                                                  | 
 | HTMLInputElement.dirName                            | ✔️     |                                                  | 
 | HTMLInputElement.disabled                           | ✔️     |                                                  | 
-| HTMLInputElement.files                              | ✖️     |                                                  | 
 | HTMLInputElement.files                              | ✖️     |                                                  | 
 | HTMLInputElement.focus()                            | ✔️     |                                                  | 
 | HTMLInputElement.form                               | ✔️     |                                                  | 

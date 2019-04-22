@@ -31,10 +31,13 @@ export function PropertyProcessor(strings: Strings, config: WorkerDOMConfigurati
           null;
 
       if (name && value != null) {
-        if (!config.sanitizer || config.sanitizer.validProperty(target.nodeName, name, String(value))) {
-          target[name] = value;
+        if (config.sanitizer) {
+          const mutated = config.sanitizer.mutateProperty(target, name, String(value));
+          if (!mutated) {
+            // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
+          }
         } else {
-          // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
+          target[name] = value;
         }
       }
       return startPosition + PropertyMutationIndex.End;

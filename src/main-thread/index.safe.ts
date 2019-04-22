@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { DOMPurifySanitizer } from './DOMPurifySanitizer';
+/**
+ * @fileoverview This entry point API in active development and unstable.
+ */
+
 import { fetchAndInstall, install } from './install';
 import { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
 import { toLower } from '../utils';
-
-/** Users can import this and configure the sanitizer with custom DOMPurify hooks, etc. */
-export const sanitizer = new DOMPurifySanitizer();
 
 /**
  * AMP Element Children need to be filtered from Hydration, to avoid Author Code from manipulating it.
@@ -39,27 +39,25 @@ const hydrateFilter = (element: RenderableElement) => {
  * @param baseElement
  * @param domURL
  */
-export function upgradeElement(baseElement: Element, domURL: string, longTask?: LongTaskFunction): Promise<Worker | null> {
+export function upgradeElement(baseElement: Element, domURL: string, longTask?: LongTaskFunction, sanitizer?: Sanitizer): Promise<Worker | null> {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
     return fetchAndInstall(baseElement as HTMLElement, {
       domURL,
       authorURL,
-      sanitizer,
       longTask,
       hydrateFilter,
+      sanitizer,
     });
   }
   return Promise.resolve(null);
 }
 
 /**
- * This function's API will likely change frequently. Use at your own risk!
  * @param baseElement
  * @param fetchPromise Promise that resolves containing worker script, and author script.
  */
 export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string]>, config: WorkerDOMConfiguration): Promise<Worker | null> {
-  config.sanitizer = sanitizer;
   config.hydrateFilter = hydrateFilter;
   return install(fetchPromise, baseElement as HTMLElement, config);
 }

@@ -171,7 +171,7 @@ reflectProperties(
     { autocomplete: [''] },
     { autofocus: [false] },
     { defaultChecked: [false, /* attr */ 'checked'] },
-    { defaultValue: ['', 'value'] },
+    { defaultValue: ['', /* attr */ 'value'] },
     { dirName: [''] },
     { disabled: [false] },
     { formAction: [''] },
