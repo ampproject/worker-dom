@@ -1,5 +1,4 @@
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
-import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import {
   CanvasRenderingContext2D,
@@ -15,19 +14,20 @@ import { transfer } from './MutationTransfer';
 import { Document } from './dom/Document';
 import { NumericBoolean } from '../utils';
 import { store } from './strings';
+import { HTMLElement } from './dom/HTMLElement';
 
-export class OffscreenCanvasPolyfill {
-  canvas: HTMLCanvasElement;
-  context: OffscreenCanvasRenderingContext2DPolyfill;
+export class OffscreenCanvasPolyfill<ElementType extends HTMLElement> {
+  canvas: ElementType;
+  context: OffscreenCanvasRenderingContext2DPolyfill<ElementType>;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: ElementType) {
     this.canvas = canvas;
   }
 
   getContext(contextType: string): CanvasRenderingContext2D {
     if (!this.context) {
       if (contextType === '2D' || contextType === '2d') {
-        this.context = new OffscreenCanvasRenderingContext2DPolyfill(this.canvas);
+        this.context = new OffscreenCanvasRenderingContext2DPolyfill<ElementType>(this.canvas);
       } else {
         throw new Error('Context type not supported.');
       }
@@ -36,19 +36,19 @@ export class OffscreenCanvasPolyfill {
   }
 }
 
-class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContext2D {
-  canvas: HTMLCanvasElement;
-  lineDash: number[];
+class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
+  private canvasElement: ElementType;
+  private lineDash: number[];
 
-  constructor(canvas: HTMLCanvasElement) {
-    this.canvas = canvas;
+  constructor(canvas: ElementType) {
+    this.canvasElement = canvas;
     this.lineDash = [];
   }
 
   private postToMainThread(fnName: string, isSetter: NumericBoolean, stringArgIndex: number, args: any[], float32Needed: boolean) {
-    transfer(this.canvas.ownerDocument as Document, [
+    transfer(this.canvasElement.ownerDocument as Document, [
       TransferrableMutationType.OFFSCREEN_POLYFILL,
-      this.canvas[TransferrableKeys.index],
+      this.canvasElement[TransferrableKeys.index],
       float32Needed ? NumericBoolean.TRUE : NumericBoolean.FALSE,
       args.length,
       store(fnName),
@@ -56,6 +56,10 @@ class OffscreenCanvasRenderingContext2DPolyfill implements CanvasRenderingContex
       stringArgIndex,
       ...(float32Needed ? new Uint16Array(new Float32Array(args).buffer) : args),
     ]);
+  }
+
+  get canvas(): ElementType {
+    return this.canvasElement;
   }
 
   clearRect(x: number, y: number, w: number, h: number): void {

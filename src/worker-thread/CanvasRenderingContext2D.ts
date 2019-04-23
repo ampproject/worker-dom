@@ -11,19 +11,21 @@ import {
   CanvasGradient,
   CanvasPattern,
 } from './DOMTypes';
-import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { MessageType, OffscreenCanvasToWorker } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { transfer } from './MutationTransfer';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { OffscreenCanvasPolyfill } from './OffscreenCanvasPolyfill';
 import { Document } from './dom/Document';
+import { HTMLElement } from './dom/HTMLElement';
 
 declare var OffscreenCanvas: any;
 
 export const deferredUpgrades = new WeakMap();
 
-export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{ getContext(c: '2d'): CanvasRenderingContext2D }> {
+export function getOffscreenCanvasAsync<ElementType extends HTMLElement>(
+  canvas: ElementType,
+): Promise<{ getContext(c: '2d'): CanvasRenderingContext2D }> {
   return new Promise((resolve, reject) => {
     const messageHandler = ({ data }: { data: OffscreenCanvasToWorker }) => {
       if (
@@ -47,20 +49,20 @@ export function getOffscreenCanvasAsync(canvas: HTMLCanvasElement): Promise<{ ge
   });
 }
 
-export class CanvasRenderingContext2DImplementation implements CanvasRenderingContext2D {
+export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
   private calls = [] as { fnName: string; args: any[]; setter: boolean }[];
   private implementation: CanvasRenderingContext2D;
   private upgraded = false;
-  private canvasElement: HTMLCanvasElement;
+  private canvasElement: ElementType;
 
   // TODO: This should only exist in testing environment
   public goodOffscreenPromise: Promise<void>;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: ElementType) {
     this.canvasElement = canvas;
 
     if (typeof OffscreenCanvas === 'undefined') {
-      this.implementation = new OffscreenCanvasPolyfill(canvas).getContext('2d');
+      this.implementation = new OffscreenCanvasPolyfill<ElementType>(canvas).getContext('2d');
       this.upgraded = true;
     } else {
       this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
@@ -370,7 +372,7 @@ export class CanvasRenderingContext2DImplementation implements CanvasRenderingCo
 
   // canvas property is readonly. We don't want to implement getters, but this must be here
   // in order for TypeScript to not complain (for now)
-  get canvas(): HTMLCanvasElement {
+  get canvas(): ElementType {
     return this.canvasElement;
   }
 

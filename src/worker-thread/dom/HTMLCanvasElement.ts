@@ -20,19 +20,18 @@ import { reflectProperties } from './enhanceElement';
 import { CanvasRenderingContext2DImplementation } from '../CanvasRenderingContext2D';
 
 export class HTMLCanvasElement extends HTMLElement {
+  private context: CanvasRenderingContext2DImplementation<HTMLCanvasElement>;
 
-    private context: CanvasRenderingContext2DImplementation;
-
-    getContext(contextType: string): CanvasRenderingContext2DImplementation {
-        if (!this.context) {
-            if (contextType === '2D' || contextType === '2d') {
-                this.context = new CanvasRenderingContext2DImplementation(this);
-            } else {
-                throw new Error('Context type not supported.');
-            }
-        }
-        return this.context;
+  getContext(contextType: string): CanvasRenderingContext2DImplementation<HTMLCanvasElement> {
+    if (!this.context) {
+      if (contextType === '2D' || contextType === '2d') {
+        this.context = new CanvasRenderingContext2DImplementation<HTMLCanvasElement>(this);
+      } else {
+        throw new Error('Context type not supported.');
+      }
     }
+    return this.context;
+  }
 }
 registerSubclass('canvas', HTMLCanvasElement);
 
