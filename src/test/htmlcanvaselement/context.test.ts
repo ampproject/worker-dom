@@ -23,7 +23,7 @@ import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   canvas: HTMLCanvasElement;
-  context2d: CanvasRenderingContext2DImplementation;
+  context2d: CanvasRenderingContext2DImplementation<HTMLCanvasElement>;
   deferredUpgrade: { resolve: (instance: OffscreenCanvas) => void; reject: (errorMsg: string) => void };
   implementation: CanvasRenderingContext2D;
 }>;
