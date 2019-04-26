@@ -77,14 +77,12 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
   private callQueuedCalls() {
     for (const call of this.calls) {
       if (call.setter) {
-        if (call.args.length != 1) {
-          throw new Error('Attempting to set property with wrong number of arguments.');
-        }
         (this.implementation as any)[call.fnName] = call.args[0];
       } else {
         (this.implementation as any)[call.fnName](...call.args);
       }
     }
+    this.calls.length = 0;
   }
 
   private delegate(fnName: string, fnArgs: any[], isSetter: boolean) {
