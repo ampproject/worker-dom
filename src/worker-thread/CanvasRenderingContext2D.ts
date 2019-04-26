@@ -234,7 +234,6 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
     this.delegate('quadraticCurveTo', [...arguments], false);
   }
 
-  // OPTIONAL ARGUMENT ATICLOCKWISE
   arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, antiClockwise?: boolean): void {
     this.delegate('arc', [...arguments], false);
   }
@@ -243,7 +242,6 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
     this.delegate('arcTo', [...arguments], false);
   }
 
-  // OPTIONAL ARGUMENT ATICLOCKWISE
   ellipse(
     x: number,
     y: number,
@@ -289,14 +287,6 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
   }
 
   /* TRANSFORMATIONS */
-  /* Experimental *** set currentTransform(value: DOMMatrix) {
-        this.implementation.currentTransform = value;
-        if (!this.upgraded) {
-            this.calls.push({fnName: 'currentTransform', args: [value], setter: true});
-        }
-    }
-    */
-
   rotate(angle: number): void {
     this.delegate('rotate', [...arguments], false);
   }
