@@ -36,7 +36,7 @@ export function BoundingClientRectProcessor(workerContext: WorkerContext): Comma
             boundingRect.width,
             boundingRect.height,
           ],
-        }, []);
+        });
       } else {
         console.error(`getNode() yields null – ${target}`);
       }

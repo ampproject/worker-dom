@@ -46,16 +46,13 @@ const applyDefaultChangeListener = (workerContext: WorkerContext, node: Renderab
  * @param node where to get the value from.
  */
 const fireValueChange = (workerContext: WorkerContext, node: RenderableElement): void =>
-  workerContext.messageToWorker(
-    {
-      [TransferrableKeys.type]: MessageType.SYNC,
-      [TransferrableKeys.sync]: {
-        [TransferrableKeys.index]: node._index_,
-        [TransferrableKeys.value]: node.value,
-      },
+  workerContext.messageToWorker({
+    [TransferrableKeys.type]: MessageType.SYNC,
+    [TransferrableKeys.sync]: {
+      [TransferrableKeys.index]: node._index_,
+      [TransferrableKeys.value]: node.value,
     },
-    [],
-  );
+  });
 
 /**
  * Tell WorkerDOM what the window dimensions are.
@@ -63,13 +60,10 @@ const fireValueChange = (workerContext: WorkerContext, node: RenderableElement):
  * @param cachedWindowSize
  */
 const fireResizeChange = (workerContext: WorkerContext, cachedWindowSize: [number, number]): void =>
-  workerContext.messageToWorker(
-    {
-      [TransferrableKeys.type]: MessageType.RESIZE,
-      [TransferrableKeys.sync]: cachedWindowSize,
-    },
-    [],
-  );
+  workerContext.messageToWorker({
+    [TransferrableKeys.type]: MessageType.RESIZE,
+    [TransferrableKeys.sync]: cachedWindowSize,
+  });
 
 /**
  * Convert a TouchList into a TransferrableTouchList
@@ -109,33 +103,30 @@ export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeCo
       fireResizeChange(workerContext, cachedWindowSize);
     }
 
-    workerContext.messageToWorker(
-      {
-        [TransferrableKeys.type]: MessageType.EVENT,
-        [TransferrableKeys.event]: {
-          [TransferrableKeys.index]: index,
-          [TransferrableKeys.bubbles]: event.bubbles,
-          [TransferrableKeys.cancelable]: event.cancelable,
-          [TransferrableKeys.cancelBubble]: event.cancelBubble,
-          [TransferrableKeys.currentTarget]: [(event.currentTarget as RenderableElement)._index_ || 0],
-          [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
-          [TransferrableKeys.eventPhase]: event.eventPhase,
-          [TransferrableKeys.isTrusted]: event.isTrusted,
-          [TransferrableKeys.returnValue]: event.returnValue,
-          [TransferrableKeys.target]: [(event.target as RenderableElement)._index_ || 0],
-          [TransferrableKeys.timeStamp]: event.timeStamp,
-          [TransferrableKeys.type]: event.type,
-          [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
-          [TransferrableKeys.pageX]: 'pageX' in event ? event.pageX : undefined,
-          [TransferrableKeys.pageY]: 'pageY' in event ? event.pageY : undefined,
-          [TransferrableKeys.offsetX]: 'offsetX' in event ? event.offsetX : undefined,
-          [TransferrableKeys.offsetY]: 'offsetY' in event ? event.offsetY : undefined,
-          [TransferrableKeys.touches]: 'touches' in event ? createTransferrableTouchList(event.touches) : undefined,
-          [TransferrableKeys.changedTouches]: 'changedTouches' in event ? createTransferrableTouchList(event.changedTouches) : undefined,
-        },
+    workerContext.messageToWorker({
+      [TransferrableKeys.type]: MessageType.EVENT,
+      [TransferrableKeys.event]: {
+        [TransferrableKeys.index]: index,
+        [TransferrableKeys.bubbles]: event.bubbles,
+        [TransferrableKeys.cancelable]: event.cancelable,
+        [TransferrableKeys.cancelBubble]: event.cancelBubble,
+        [TransferrableKeys.currentTarget]: [(event.currentTarget as RenderableElement)._index_ || 0],
+        [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
+        [TransferrableKeys.eventPhase]: event.eventPhase,
+        [TransferrableKeys.isTrusted]: event.isTrusted,
+        [TransferrableKeys.returnValue]: event.returnValue,
+        [TransferrableKeys.target]: [(event.target as RenderableElement)._index_ || 0],
+        [TransferrableKeys.timeStamp]: event.timeStamp,
+        [TransferrableKeys.type]: event.type,
+        [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
+        [TransferrableKeys.pageX]: 'pageX' in event ? event.pageX : undefined,
+        [TransferrableKeys.pageY]: 'pageY' in event ? event.pageY : undefined,
+        [TransferrableKeys.offsetX]: 'offsetX' in event ? event.offsetX : undefined,
+        [TransferrableKeys.offsetY]: 'offsetY' in event ? event.offsetY : undefined,
+        [TransferrableKeys.touches]: 'touches' in event ? createTransferrableTouchList(event.touches) : undefined,
+        [TransferrableKeys.changedTouches]: 'changedTouches' in event ? createTransferrableTouchList(event.changedTouches) : undefined,
       },
-      [],
-    );
+    });
   };
 
   /**
