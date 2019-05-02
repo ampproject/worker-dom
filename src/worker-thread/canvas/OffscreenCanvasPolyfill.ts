@@ -1,5 +1,5 @@
-import { TransferrableMutationType } from '../transfer/TransferrableMutation';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import {
   CanvasRenderingContext2D,
   ImageSmoothingQuality,
@@ -9,12 +9,12 @@ import {
   CanvasLineJoin,
   CanvasDirection,
   CanvasFillRule,
-} from './DOMTypes';
-import { transfer } from './MutationTransfer';
-import { Document } from './dom/Document';
-import { NumericBoolean } from '../utils';
-import { store } from './strings';
-import { HTMLElement } from './dom/HTMLElement';
+} from './CanvasTypes';
+import { transfer } from '../MutationTransfer';
+import { Document } from '../dom/Document';
+import { NumericBoolean } from '../../utils';
+import { store } from '../strings';
+import { HTMLElement } from '../dom/HTMLElement';
 
 export class OffscreenCanvasPolyfill<ElementType extends HTMLElement> {
   canvas: ElementType;

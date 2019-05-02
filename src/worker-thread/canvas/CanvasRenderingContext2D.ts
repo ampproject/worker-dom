@@ -10,14 +10,14 @@ import {
   ImageSmoothingQuality,
   CanvasGradient,
   CanvasPattern,
-} from './DOMTypes';
-import { MessageType, OffscreenCanvasToWorker } from '../transfer/Messages';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { transfer } from './MutationTransfer';
-import { TransferrableMutationType } from '../transfer/TransferrableMutation';
+} from './CanvasTypes';
+import { MessageType, OffscreenCanvasToWorker } from '../../transfer/Messages';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { transfer } from '../MutationTransfer';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { OffscreenCanvasPolyfill } from './OffscreenCanvasPolyfill';
-import { Document } from './dom/Document';
-import { HTMLElement } from './dom/HTMLElement';
+import { Document } from '../dom/Document';
+import { HTMLElement } from '../dom/HTMLElement';
 
 declare var OffscreenCanvas: any;
 

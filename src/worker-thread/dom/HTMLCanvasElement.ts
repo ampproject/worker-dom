@@ -17,7 +17,7 @@
 import { HTMLElement } from './HTMLElement';
 import { registerSubclass } from './Element';
 import { reflectProperties } from './enhanceElement';
-import { CanvasRenderingContext2DImplementation } from '../CanvasRenderingContext2D';
+import { CanvasRenderingContext2DImplementation } from '../canvas/CanvasRenderingContext2D';
 
 export class HTMLCanvasElement extends HTMLElement {
   private context: CanvasRenderingContext2DImplementation<HTMLCanvasElement>;

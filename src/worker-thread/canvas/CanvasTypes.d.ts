@@ -1,4 +1,4 @@
-import { HTMLElement } from './dom/HTMLElement';
+import { HTMLElement } from '../dom/HTMLElement';
 
 /** The CanvasRenderingContext2D interface, part of the Canvas API, provides the 2D rendering context for the drawing surface of a <canvas> element. It is used for drawing shapes, text, images, and other objects. */
 export interface CanvasRenderingContext2D

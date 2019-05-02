@@ -16,9 +16,9 @@
 
 import anyTest, { TestInterface, afterEach } from 'ava';
 import * as sinon from 'sinon';
-import { CanvasRenderingContext2DImplementation, deferredUpgrades } from '../../worker-thread/CanvasRenderingContext2D';
+import { CanvasRenderingContext2DImplementation, deferredUpgrades } from '../../worker-thread/canvas/CanvasRenderingContext2D';
 import { HTMLCanvasElement } from '../../worker-thread/dom/HTMLCanvasElement';
-import { CanvasRenderingContext2D } from '../../worker-thread/DOMTypes';
+import { CanvasRenderingContext2D } from '../../worker-thread/canvas/CanvasTypes';
 import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
