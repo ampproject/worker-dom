@@ -1,0 +1,6 @@
+{
+  "main": "worker.js",
+  "syntax": {
+    "esmodules": "worker.mjs"
+  }
+}
