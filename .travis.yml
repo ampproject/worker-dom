@@ -1,6 +1,7 @@
 os: 
   - osx
   - linux
+dist: xenial
 language: node_js
 sudo: required
 node_js:
