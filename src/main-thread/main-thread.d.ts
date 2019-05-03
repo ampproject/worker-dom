@@ -27,5 +27,3 @@ interface Node {
 type RenderableElement = (HTMLElement | SVGElement | Text | Comment) & { [index: string]: any };
 
 declare const DEBUG_ENABLED: boolean;
-
-declare var global: any;
