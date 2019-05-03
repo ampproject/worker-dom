@@ -16,8 +16,6 @@
 
 import { JSDOM } from 'jsdom';
 
-declare var global: any;
-
 export class Env {
   jsdom: JSDOM;
   document: Document;
