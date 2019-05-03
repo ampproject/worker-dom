@@ -16,6 +16,8 @@
 
 import { JSDOM } from 'jsdom';
 
+declare var global: any;
+
 export class Env {
   jsdom: JSDOM;
   document: Document;
@@ -29,7 +31,7 @@ export class Env {
     this.window = this.jsdom.window;
 
     const workers: Array<WorkerImpl> = (this.workers = []);
-    Object.defineProperty(globalThis, 'Worker', {
+    Object.defineProperty(global, 'Worker', {
       configurable: true,
       value: function(url: string, options: any = {}) {
         const worker = new WorkerImpl(url, options);
@@ -38,18 +40,18 @@ export class Env {
       },
     });
 
-    Object.defineProperty(globalThis, 'Blob', {
+    Object.defineProperty(global, 'Blob', {
       configurable: true,
       value: BlobImpl,
     });
-    if (!(globalThis as any)['URL']) {
+    if (!(global as any)['URL']) {
       const URL = function() {};
-      Object.defineProperty(globalThis, 'URL', {
+      Object.defineProperty(global, 'URL', {
         configurable: true,
         value: URL,
       });
     }
-    Object.defineProperty((globalThis as any)['URL'], 'createObjectURL', {
+    Object.defineProperty((global as any)['URL'], 'createObjectURL', {
       configurable: true,
       value: function(obj: any) {
         return obj.toString();
@@ -61,36 +63,36 @@ export class Env {
       rafTasks.push(callback);
       return 1;
     };
-    Object.defineProperty(globalThis, 'requestAnimationFrame', {
+    Object.defineProperty(global, 'requestAnimationFrame', {
       configurable: true,
       value: requestAnimationFrame,
     });
 
-    Object.defineProperty(globalThis, 'DEBUG_ENABLED', {
+    Object.defineProperty(global, 'DEBUG_ENABLED', {
       configurable: true,
       value: false,
     });
 
-    Object.defineProperty(globalThis, 'window', {
+    Object.defineProperty(global, 'window', {
       configurable: true,
       value: this.window,
     });
   }
 
   dispose() {
-    Object.defineProperty(globalThis, 'Worker', {
+    Object.defineProperty(global, 'Worker', {
       configurable: true,
       value: null,
     });
-    Object.defineProperty(globalThis, 'Blob', {
+    Object.defineProperty(global, 'Blob', {
       configurable: true,
       value: null,
     });
-    Object.defineProperty((globalThis as any)['URL'], 'createObjectURL', {
+    Object.defineProperty((global as any)['URL'], 'createObjectURL', {
       configurable: true,
       value: null,
     });
-    Object.defineProperty(globalThis, 'requestAnimationFrame', {
+    Object.defineProperty(global, 'requestAnimationFrame', {
       configurable: true,
       value: null,
     });
