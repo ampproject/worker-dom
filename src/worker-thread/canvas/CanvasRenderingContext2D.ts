@@ -429,8 +429,16 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
     this.delegate('imageSmoothingEnabled', [...arguments], context2DMethodType.SETTER);
   }
 
+  /* experimental */ get imageSmoothingEnabled(): boolean {
+    return this.delegate('imageSmoothingEnabled', [...arguments], context2DMethodType.GETTER);
+  }
+
   /* experimental */ set imageSmoothingQuality(value: ImageSmoothingQuality) {
     this.delegate('imageSmoothingQuality', [...arguments], context2DMethodType.SETTER);
+  }
+
+  /* experimental */ get imageSmoothingQuality(): ImageSmoothingQuality {
+    return this.delegate('imageSmoothingQuality', [...arguments], context2DMethodType.GETTER);
   }
 
   /* THE CANVAS STATE */
@@ -451,5 +459,9 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
   /* FILTERS */
   /* experimental */ set filter(value: string) {
     this.delegate('filter', [...arguments], context2DMethodType.SETTER);
+  }
+
+  /* experimental */ get filter(): string {
+    return this.delegate('filter', [...arguments], context2DMethodType.GETTER);
   }
 }
