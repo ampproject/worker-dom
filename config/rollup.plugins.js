@@ -40,9 +40,6 @@ export function babelPlugin({ transpileToES5, allowConsole = false, allowPostMes
           targets,
           loose: transpileToES5 ? false : true,
           modules: false,
-          // Excluding 'transform-template-literals'... this library doesn't need caching for template literals.
-          // As a result, the Safari bug causing transforms here isn't material.
-          exclude: transpileToES5 ? [] : ['transform-template-literals'],
         },
       ],
     ],
