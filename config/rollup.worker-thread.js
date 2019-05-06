@@ -73,7 +73,7 @@ const ESModules = [
     ],
   },
   {
-    input: 'output/worker-thread/index.safe.js',
+    input: 'output/worker-thread/index.amp.js',
     output: {
       file: 'dist/amp/worker/worker.mjs',
       format: 'iife',

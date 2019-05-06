@@ -65,7 +65,7 @@ const ESModules = [
     ],
   },
   {
-    input: 'output/main-thread/index.safe.js',
+    input: 'output/main-thread/index.amp.js',
     output: {
       file: 'dist/amp/main.mjs',
       format: 'es',
