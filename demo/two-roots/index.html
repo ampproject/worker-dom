@@ -5,11 +5,11 @@
   <title>Two Roots</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="/demo.css" rel="stylesheet">
-  <script src="/dist/index.mjs" type="module"></script>
-  <script src="/dist/index.js" nomodule defer></script>
+  <script src="/dist/main.mjs" type="module"></script>
+  <script src="/dist/main.js" nomodule defer></script>
   <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
   <!-- Comment either block to enable module/nomodule or disable it. -->
-  <!-- <script src="/dist/index.js" defer></script> -->
+  <!-- <script src="/dist/main.js" defer></script> -->
   <style>
     .upgrade-me {
       margin: 8px;
@@ -36,15 +36,15 @@
     </div>
   </div>
   <script type="module">
-    import {upgradeElement} from '/dist/index.mjs';
+    import {upgradeElement} from '/dist/main.mjs';
     document.querySelectorAll('.upgrade-me').forEach(function(element) {
-      upgradeElement(element, '/dist/worker.mjs');
+      upgradeElement(element, '/dist/worker/worker.mjs');
     });
   </script>
   <script nomodule async=false defer>
     document.addEventListener('DOMContentLoaded', function() {
       document.querySelectorAll('.upgrade-me').forEach(function(element) {
-        MainThread.upgradeElement(element, '/dist/worker.js');
+        MainThread.upgradeElement(element, '/dist/worker/worker.js');
       });
     }, false);
   </script>
@@ -52,7 +52,7 @@
   <!-- Comment either block to enable module/nomodule or disable it. -->
   <!-- <script async=false defer>
     document.addEventListener('DOMContentLoaded', function() {
-      MainThread.upgradeElement(document.getElementById('upgrade-me-1'), './dist/worker.js');
+      MainThread.upgradeElement(document.getElementById('upgrade-me-1'), './dist/worker/worker.js');
     }, false);
   </script> -->
 </body>
