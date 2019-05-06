@@ -99,7 +99,7 @@
     {
       "path": "./dist/worker.js",
       "compression": "brotli",
-      "maxSize": "10.0 kB"
+      "maxSize": "11.4 kB"
     },
     {
       "path": "./dist/worker.safe.mjs",
@@ -109,7 +109,7 @@
     {
       "path": "./dist/worker.safe.js",
       "compression": "brotli",
-      "maxSize": "10.0 kB"
+      "maxSize": "11.8 kB"
     },
     {
       "path": "./dist/index.mjs",
@@ -119,7 +119,7 @@
     {
       "path": "./dist/index.js",
       "compression": "brotli",
-      "maxSize": "3.1 kB"
+      "maxSize": "3.25 kB"
     },
     {
       "path": "./dist/index.safe.mjs",
@@ -129,7 +129,7 @@
     {
       "path": "./dist/index.safe.js",
       "compression": "brotli",
-      "maxSize": "3.1 kB"
+      "maxSize": "3.3 kB"
     }
   ],
   "esm": {
