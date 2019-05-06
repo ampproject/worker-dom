@@ -3060,14 +3060,14 @@ function createStub(obj: any, method: string) {
   return obj[method];
 }
 
-function createSetterStub(obj: any, property: string, spy: () => {}) {
+function createSetterStub(obj: any, property: string, setter: () => {}) {
   obj[property] = 'existent';
-  sandbox.stub(obj, property).set(spy);
+  sandbox.stub(obj, property).set(setter);
 }
 
-function createGetterStub(obj: any, property: string, spy: () => {}) {
+function createGetterStub(obj: any, property: string, getter: () => {}) {
   obj[property] = 'existent';
-  sandbox.stub(obj, property).get(spy);
+  sandbox.stub(obj, property).get(getter);
 }
 
 afterEach(t => {
