@@ -1,10 +1,9 @@
 import { CommandExecutor } from './interface';
-import { WorkerContext } from '../worker';
 import { OffscreenContextPolyfillMutationIndex } from '../../transfer/TransferrableMutation';
 import { NumericBoolean } from '../../utils';
 import { Strings } from '../strings';
 
-export function OffscreenPolyfillCallProcessor(strings: Strings, workerContext: WorkerContext): CommandExecutor {
+export function OffscreenPolyfillCallProcessor(strings: Strings): CommandExecutor {
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
       const float32Needed = mutations[startPosition + OffscreenContextPolyfillMutationIndex.Float32Needed] === NumericBoolean.TRUE;
