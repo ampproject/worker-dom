@@ -56,7 +56,7 @@ export function getOffscreenCanvasAsync<ElementType extends HTMLElement>(
 }
 
 export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
-  private calls = [] as { fnName: string; args: any[]; methodType: context2DMethodType }[];
+  private queue = [] as { fnName: string; args: any[]; methodType: context2DMethodType }[];
   private implementation: CanvasRenderingContext2D;
   private upgraded = false;
   private canvasElement: ElementType;
@@ -75,13 +75,13 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
       this.goodOffscreenPromise = getOffscreenCanvasAsync(this.canvasElement).then(instance => {
         this.implementation = instance.getContext('2d');
         this.upgraded = true;
-        this.callQueuedCalls();
+        this.flushQueue();
       });
     }
   }
 
-  private callQueuedCalls() {
-    for (const call of this.calls) {
+  private flushQueue() {
+    for (const call of this.queue) {
       switch (call.methodType) {
         case context2DMethodType.SETTER:
           (this.implementation as any)[call.fnName] = call.args[0];
@@ -91,7 +91,7 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
           break;
       }
     }
-    this.calls.length = 0;
+    this.queue.length = 0;
   }
 
   private delegate(fnName: string, fnArgs: any[], methodType: context2DMethodType) {
@@ -109,7 +109,7 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
         break;
     }
     if (!this.upgraded) {
-      this.calls.push({ fnName, args: fnArgs, methodType });
+      this.queue.push({ fnName, args: fnArgs, methodType });
     }
     return returnValue;
   }
