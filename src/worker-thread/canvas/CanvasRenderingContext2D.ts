@@ -29,32 +29,6 @@ const enum context2DMethodType {
   SETTER = 3,
 }
 
-export function getOffscreenCanvasAsync<ElementType extends HTMLElement>(
-  canvas: ElementType,
-): Promise<{ getContext(c: '2d'): CanvasRenderingContext2D }> {
-  return new Promise((resolve, reject) => {
-    const messageHandler = ({ data }: { data: OffscreenCanvasToWorker }) => {
-      if (
-        data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE &&
-        data[TransferrableKeys.target][0] === canvas[TransferrableKeys.index]
-      ) {
-        removeEventListener('message', messageHandler);
-        const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
-        resolve(transferredOffscreenCanvas as { getContext(c: '2d'): CanvasRenderingContext2D });
-      }
-    };
-
-    // TODO: This should only happen in test environemnet. Otherwise, we should throw.
-    if (typeof addEventListener !== 'function') {
-      const deferred = { resolve, reject };
-      deferredUpgrades.set(canvas, deferred);
-    } else {
-      addEventListener('message', messageHandler);
-      transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
-    }
-  });
-}
-
 export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
   private queue = [] as { fnName: string; args: any[]; methodType: context2DMethodType }[];
   private implementation: CanvasRenderingContext2D;
@@ -72,12 +46,36 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
       this.upgraded = true;
     } else {
       this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
-      this.goodOffscreenPromise = getOffscreenCanvasAsync(this.canvasElement).then(instance => {
+      this.goodOffscreenPromise = this.getOffscreenCanvasAsync(this.canvasElement).then(instance => {
         this.implementation = instance.getContext('2d');
         this.upgraded = true;
         this.flushQueue();
       });
     }
+  }
+
+  private getOffscreenCanvasAsync(canvas: ElementType): Promise<{ getContext(c: '2d'): CanvasRenderingContext2D }> {
+    return new Promise((resolve, reject) => {
+      const messageHandler = ({ data }: { data: OffscreenCanvasToWorker }) => {
+        if (
+          data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE &&
+          data[TransferrableKeys.target][0] === canvas[TransferrableKeys.index]
+        ) {
+          removeEventListener('message', messageHandler);
+          const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
+          resolve(transferredOffscreenCanvas as { getContext(c: '2d'): CanvasRenderingContext2D });
+        }
+      };
+
+      // TODO: This should only happen in test environemnet. Otherwise, we should throw.
+      if (typeof addEventListener !== 'function') {
+        const deferred = { resolve, reject };
+        deferredUpgrades.set(canvas, deferred);
+      } else {
+        addEventListener('message', messageHandler);
+        transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
+      }
+    });
   }
 
   private flushQueue() {
