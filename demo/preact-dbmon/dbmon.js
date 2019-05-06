@@ -1191,7 +1191,7 @@
               elapsedClassName: '',
             });
             data.push({
-              dbname: 'cluster' + i + ' slave',
+              dbname: 'cluster' + i + ' replica',
               query: '',
               formatElapsed: '',
               elapsedClassName: '',
@@ -1208,7 +1208,7 @@
               dbname: 'cluster' + i,
             });
             data.push({
-              dbname: 'cluster' + i + ' slave',
+              dbname: 'cluster' + i + ' replica',
             });
           }
 
