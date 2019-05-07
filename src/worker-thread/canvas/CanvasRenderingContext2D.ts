@@ -23,14 +23,8 @@ declare var OffscreenCanvas: any;
 
 export const deferredUpgrades = new WeakMap();
 
-const enum context2DMethodType {
-  FUNCTION = 1,
-  GETTER = 2,
-  SETTER = 3,
-}
-
 export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
-  private queue = [] as { fnName: string; args: any[]; methodType: context2DMethodType }[];
+  private queue = [] as { fnName: string; args: any[]; isSetter: boolean }[];
   private implementation: CanvasRenderingContext2D;
   private upgraded = false;
   private canvasElement: ElementType;
@@ -80,240 +74,236 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
 
   private flushQueue() {
     for (const call of this.queue) {
-      switch (call.methodType) {
-        case context2DMethodType.SETTER:
-          (this.implementation as any)[call.fnName] = call.args[0];
-          break;
-        case context2DMethodType.FUNCTION:
-          (this.implementation as any)[call.fnName](...call.args);
-          break;
+      if (call.isSetter) {
+        (this.implementation as any)[call.fnName] = call.args[0];
+      } else {
+        (this.implementation as any)[call.fnName](...call.args);
       }
     }
     this.queue.length = 0;
   }
 
-  private delegate(fnName: string, fnArgs: any[], methodType: context2DMethodType) {
-    let returnValue;
-
-    switch (methodType) {
-      case context2DMethodType.FUNCTION:
-        returnValue = (this.implementation as any)[fnName](...fnArgs);
-        break;
-      case context2DMethodType.SETTER:
-        (this.implementation as any)[fnName] = fnArgs[0];
-        break;
-      case context2DMethodType.GETTER:
-        returnValue = (this.implementation as any)[fnName];
-        break;
-    }
+  private delegateFunc(name: string, args: any[]) {
+    const returnValue = (this.implementation as any)[name](...args);
     if (!this.upgraded) {
-      this.queue.push({ fnName, args: fnArgs, methodType });
+      this.queue.push({ fnName: name, args, isSetter: false });
     }
     return returnValue;
   }
 
+  private delegateSetter(name: string, args: any[]) {
+    (this.implementation as any)[name] = args[0];
+    if (!this.upgraded) {
+      this.queue.push({ fnName: name, args: args, isSetter: true });
+    }
+  }
+
+  private delegateGetter(name: string) {
+    return (this.implementation as any)[name];
+  }
+
   /* DRAWING RECTANGLES */
   clearRect(x: number, y: number, width: number, height: number): void {
-    this.delegate('clearRect', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('clearRect', [...arguments]);
   }
 
   fillRect(x: number, y: number, width: number, height: number): void {
-    this.delegate('fillRect', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('fillRect', [...arguments]);
   }
 
   strokeRect(x: number, y: number, width: number, height: number): void {
-    this.delegate('strokeRect', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('strokeRect', [...arguments]);
   }
 
   /* DRAWING TEXT */
   fillText(text: string, x: number, y: number, maxWidth?: number): void {
-    this.delegate('fillText', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('fillText', [...arguments]);
   }
 
   strokeText(text: string, x: number, y: number, maxWidth?: number): void {
-    this.delegate('strokeText', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('strokeText', [...arguments]);
   }
 
   measureText(text: string): TextMetrics {
-    return this.delegate('measureText', [...arguments], context2DMethodType.FUNCTION);
+    return this.delegateFunc('measureText', [...arguments]);
   }
 
   /* LINE STYLES */
   set lineWidth(value: number) {
-    this.delegate('lineWidth', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('lineWidth', [...arguments]);
   }
 
   get lineWidth(): number {
-    return this.delegate('lineWidth', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('lineWidth');
   }
 
   set lineCap(value: CanvasLineCap) {
-    this.delegate('lineCap', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('lineCap', [...arguments]);
   }
 
   get lineCap(): CanvasLineCap {
-    return this.delegate('lineCap', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('lineCap');
   }
 
   set lineJoin(value: CanvasLineJoin) {
-    this.delegate('lineJoin', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('lineJoin', [...arguments]);
   }
 
   get lineJoin(): CanvasLineJoin {
-    return this.delegate('lineJoin', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('lineJoin');
   }
 
   set miterLimit(value: number) {
-    this.delegate('miterLimit', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('miterLimit', [...arguments]);
   }
 
   get miterLimit(): number {
-    return this.delegate('miterLimit', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('miterLimit');
   }
 
   getLineDash(): number[] {
-    return this.delegate('getLineDash', [...arguments], context2DMethodType.FUNCTION);
+    return this.delegateFunc('getLineDash', [...arguments]);
   }
 
   setLineDash(segments: number[]): void {
-    this.delegate('setLineDash', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('setLineDash', [...arguments]);
   }
 
   set lineDashOffset(value: number) {
-    this.delegate('lineDashOffset', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('lineDashOffset', [...arguments]);
   }
 
   get lineDashOffset(): number {
-    return this.delegate('lineDashOffset', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('lineDashOffset');
   }
 
   /* TEXT STYLES */
   set font(value: string) {
-    this.delegate('font', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('font', [...arguments]);
   }
 
   get font(): string {
-    return this.delegate('font', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('font');
   }
 
   set textAlign(value: CanvasTextAlign) {
-    this.delegate('textAlign', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('textAlign', [...arguments]);
   }
 
   get textAlign(): CanvasTextAlign {
-    return this.delegate('textAlign', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('textAlign');
   }
 
   set textBaseline(value: CanvasTextBaseline) {
-    this.delegate('textBaseline', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('textBaseline', [...arguments]);
   }
 
   get textBaseline(): CanvasTextBaseline {
-    return this.delegate('textBaseline', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('textBaseline');
   }
 
   set direction(value: CanvasDirection) {
-    this.delegate('direction', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('direction', [...arguments]);
   }
 
   get direction(): CanvasDirection {
-    return this.delegate('direction', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('direction');
   }
 
   /* FILL AND STROKE STYLES */
   set fillStyle(value: string | CanvasGradient | CanvasPattern) {
-    this.delegate('fillStyle', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('fillStyle', [...arguments]);
   }
 
   get fillStyle(): string | CanvasGradient | CanvasPattern {
-    return this.delegate('fillStyle', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('fillStyle');
   }
 
   set strokeStyle(value: string | CanvasGradient | CanvasPattern) {
-    this.delegate('strokeStyle', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('strokeStyle', [...arguments]);
   }
 
   get strokeStyle(): string | CanvasGradient | CanvasPattern {
-    return this.delegate('strokeStyle', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('strokeStyle');
   }
 
   /* GRADIENTS AND PATTERNS */
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
-    return this.delegate('createLinearGradient', [...arguments], context2DMethodType.FUNCTION);
+    return this.delegateFunc('createLinearGradient', [...arguments]);
   }
 
   createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
-    return this.delegate('createRadialGradient', [...arguments], context2DMethodType.FUNCTION);
+    return this.delegateFunc('createRadialGradient', [...arguments]);
   }
 
   createPattern(image: CanvasImageSource, repetition: string): CanvasPattern | null {
-    return this.delegate('createPattern', [...arguments], context2DMethodType.FUNCTION);
+    return this.delegateFunc('createPattern', [...arguments]);
   }
 
   /* SHADOWS */
   set shadowBlur(value: number) {
-    this.delegate('shadowBlur', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('shadowBlur', [...arguments]);
   }
 
   get shadowBlur(): number {
-    return this.delegate('shadowBlur', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('shadowBlur');
   }
 
   set shadowColor(value: string) {
-    this.delegate('shadowColor', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('shadowColor', [...arguments]);
   }
 
   get shadowColor(): string {
-    return this.delegate('shadowColor', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('shadowColor');
   }
 
   set shadowOffsetX(value: number) {
-    this.delegate('shadowOffsetX', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('shadowOffsetX', [...arguments]);
   }
 
   get shadowOffsetX(): number {
-    return this.delegate('shadowOffsetX', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('shadowOffsetX');
   }
 
   set shadowOffsetY(value: number) {
-    this.delegate('shadowOffsetY', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('shadowOffsetY', [...arguments]);
   }
 
   get shadowOffsetY(): number {
-    return this.delegate('shadowOffsetY', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('shadowOffsetY');
   }
 
   /* PATHS */
   beginPath(): void {
-    this.delegate('beginPath', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('beginPath', [...arguments]);
   }
 
   closePath(): void {
-    this.delegate('closePath', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('closePath', [...arguments]);
   }
 
   moveTo(x: number, y: number): void {
-    this.delegate('moveTo', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('moveTo', [...arguments]);
   }
 
   lineTo(x: number, y: number): void {
-    this.delegate('lineTo', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('lineTo', [...arguments]);
   }
 
   bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void {
-    this.delegate('bezierCurveTo', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('bezierCurveTo', [...arguments]);
   }
 
   quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void {
-    this.delegate('quadraticCurveTo', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('quadraticCurveTo', [...arguments]);
   }
 
   arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, antiClockwise?: boolean): void {
-    this.delegate('arc', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('arc', [...arguments]);
   }
 
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void {
-    this.delegate('arcTo', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('arcTo', [...arguments]);
   }
 
   ellipse(
@@ -326,126 +316,126 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
     endAngle: number,
     antiClockwise?: boolean,
   ): void {
-    this.delegate('ellipse', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('ellipse', [...arguments]);
   }
 
   rect(x: number, y: number, width: number, height: number): void {
-    this.delegate('rect', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('rect', [...arguments]);
   }
 
   /* DRAWING PATHS */
   fill(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule): void {
     const args = [...arguments] as [Path2D, CanvasFillRule | undefined] | [CanvasFillRule | undefined];
-    this.delegate('fill', args, context2DMethodType.FUNCTION);
+    this.delegateFunc('fill', args);
   }
 
   stroke(path?: Path2D): void {
     const args = [...arguments] as [Path2D] | [];
-    this.delegate('stroke', args, context2DMethodType.FUNCTION);
+    this.delegateFunc('stroke', args);
   }
 
   clip(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule): void {
     const args = [...arguments] as [Path2D, CanvasFillRule | undefined] | [CanvasFillRule | undefined];
-    this.delegate('clip', args, context2DMethodType.FUNCTION);
+    this.delegateFunc('clip', args);
   }
 
   isPointInPath(pathOrX: Path2D | number, xOrY: number, yOrFillRule?: number | CanvasFillRule, fillRule?: CanvasFillRule): boolean {
     const args = [...arguments] as [number, number, CanvasFillRule | undefined] | [Path2D, number, number, CanvasFillRule | undefined];
 
-    return this.delegate('isPointInPath', args, context2DMethodType.FUNCTION);
+    return this.delegateFunc('isPointInPath', args);
   }
 
   isPointInStroke(pathOrX: Path2D | number, xOrY: number, y?: number): boolean {
     const args = [...arguments] as [number, number] | [Path2D, number, number];
-    return this.delegate('isPointInStroke', args, context2DMethodType.FUNCTION);
+    return this.delegateFunc('isPointInStroke', args);
   }
 
   /* TRANSFORMATIONS */
   rotate(angle: number): void {
-    this.delegate('rotate', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('rotate', [...arguments]);
   }
 
   scale(x: number, y: number): void {
-    this.delegate('scale', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('scale', [...arguments]);
   }
 
   translate(x: number, y: number): void {
-    this.delegate('translate', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('translate', [...arguments]);
   }
 
   transform(a: number, b: number, c: number, d: number, e: number, f: number): void {
-    this.delegate('transform', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('transform', [...arguments]);
   }
 
   setTransform(transformOrA?: DOMMatrix2DInit | number, bOrC?: number, cOrD?: number, dOrE?: number, eOrF?: number, f?: number): void {
     const args = [...arguments] as [] | [DOMMatrix2DInit] | [number, number, number, number, number, number];
-    this.delegate('setTransform', args, context2DMethodType.FUNCTION);
+    this.delegateFunc('setTransform', args);
   }
 
   /* experimental */ resetTransform(): void {
-    this.delegate('resetTransform', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('resetTransform', [...arguments]);
   }
 
   /* COMPOSITING */
   set globalAlpha(value: number) {
-    this.delegate('globalAlpha', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('globalAlpha', [...arguments]);
   }
 
   get globalAlpha(): number {
-    return this.delegate('globalAlpha', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('globalAlpha');
   }
 
   set globalCompositeOperation(value: string) {
-    this.delegate('globalCompositeOperation', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('globalCompositeOperation', [...arguments]);
   }
 
   get globalCompositeOperation(): string {
-    return this.delegate('globalCompositeOperation', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('globalCompositeOperation');
   }
 
   /* DRAWING IMAGES */
   drawImage(image: CanvasImageSource, dx: number, dy: number): void {
-    this.delegate('drawImage', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('drawImage', [...arguments]);
   }
 
   /* PIXEL MANIPULATION */
   createImageData(imagedataOrWidth: ImageData | number, height?: number): ImageData {
     const args = [...arguments] as [ImageData] | [number, number];
-    return this.delegate('createImageData', args, context2DMethodType.FUNCTION);
+    return this.delegateFunc('createImageData', args);
   }
 
   getImageData(sx: number, sy: number, sw: number, sh: number): ImageData {
-    return this.delegate('getImageData', [...arguments], context2DMethodType.FUNCTION);
+    return this.delegateFunc('getImageData', [...arguments]);
   }
 
   putImageData(imageData: ImageData, dx: number, dy: number, dirtyX?: number, dirtyY?: number, dirtyWidth?: number, dirtyHeight?: number): void {
-    this.delegate('putImageData', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('putImageData', [...arguments]);
   }
 
   /* IMAGE SMOOTHING */
   /* experimental */ set imageSmoothingEnabled(value: boolean) {
-    this.delegate('imageSmoothingEnabled', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('imageSmoothingEnabled', [...arguments]);
   }
 
   /* experimental */ get imageSmoothingEnabled(): boolean {
-    return this.delegate('imageSmoothingEnabled', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('imageSmoothingEnabled');
   }
 
   /* experimental */ set imageSmoothingQuality(value: ImageSmoothingQuality) {
-    this.delegate('imageSmoothingQuality', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('imageSmoothingQuality', [...arguments]);
   }
 
   /* experimental */ get imageSmoothingQuality(): ImageSmoothingQuality {
-    return this.delegate('imageSmoothingQuality', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('imageSmoothingQuality');
   }
 
   /* THE CANVAS STATE */
   save(): void {
-    this.delegate('save', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('save', [...arguments]);
   }
 
   restore(): void {
-    this.delegate('restore', [...arguments], context2DMethodType.FUNCTION);
+    this.delegateFunc('restore', [...arguments]);
   }
 
   // canvas property is readonly. We don't want to implement getters, but this must be here
@@ -456,10 +446,10 @@ export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElem
 
   /* FILTERS */
   /* experimental */ set filter(value: string) {
-    this.delegate('filter', [...arguments], context2DMethodType.SETTER);
+    this.delegateSetter('filter', [...arguments]);
   }
 
   /* experimental */ get filter(): string {
-    return this.delegate('filter', [...arguments], context2DMethodType.GETTER);
+    return this.delegateGetter('filter');
   }
 }

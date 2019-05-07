@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import anyTest, { TestInterface, afterEach } from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import * as sinon from 'sinon';
 import { CanvasRenderingContext2DImplementation, deferredUpgrades } from '../../worker-thread/canvas/CanvasRenderingContext2D';
 import { HTMLCanvasElement } from '../../worker-thread/dom/HTMLCanvasElement';
@@ -1307,7 +1307,7 @@ test('context only calls upgraded createPattern if available', async t => {
 });
 
 test('context calls both versions of createPattern when called before upgrade', async t => {
-  const { context2d, deferredUpgrade, implementation } = t.context;
+  const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new OffscreenCanvas();
 
   const instanceStub = createStub(sandbox, instance.getContext('2d'), 'createPattern');
