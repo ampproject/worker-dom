@@ -14,91 +14,77 @@
  * limitations under the License.
  */
 
-import resolve from 'rollup-plugin-node-resolve';
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
 import replace from 'rollup-plugin-replace';
-import { babelPlugin, removeDebugCommandExecutors } from './rollup.plugins.js';
-import { MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE } from './rollup.utils.js';
+import copy from 'rollup-plugin-copy';
+import { babelPlugin, removeDebugCommandExecutors, removeWorkerWhitespace } from './rollup.plugins.js';
 
 const ESModules = [
   {
     input: 'output/main-thread/index.js',
     output: {
-      file: 'dist/index.mjs',
+      file: 'dist/main.mjs',
       format: 'es',
       sourcemap: true,
     },
     plugins: [
+      removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
       }),
       babelPlugin({
         transpileToES5: false,
-        allowConsole: DEBUG_BUNDLE_VALUE,
+        allowConsole: false,
       }),
-      MINIFY_BUNDLE_VALUE ? compiler() : null,
-      MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean),
+      compiler(),
+      terser(),
+    ],
   },
   {
     input: 'output/main-thread/index.js',
     output: {
-      file: 'dist/unminified.index.mjs',
+      file: 'dist/debug/main.mjs',
       format: 'es',
       sourcemap: true,
     },
     plugins: [
-      removeDebugCommandExecutors(),
+      removeWorkerWhitespace(),
+      copy({
+        targets: ['config/dist-packaging/debug/package.json'],
+        outputFolder: 'dist/debug',
+      }),
       replace({
-        DEBUG_ENABLED: false,
+        DEBUG_ENABLED: true,
       }),
       babelPlugin({
         transpileToES5: false,
-        allowConsole: DEBUG_BUNDLE_VALUE,
+        allowConsole: true,
       }),
-    ].filter(Boolean),
+    ],
   },
   {
-    input: 'output/main-thread/index.safe.js',
+    input: 'output/main-thread/index.amp.js',
     output: {
-      file: 'dist/index.safe.mjs',
+      file: 'dist/amp/main.mjs',
       format: 'es',
       sourcemap: true,
     },
     plugins: [
-      resolve(),
-      removeDebugCommandExecutors(),
+      removeWorkerWhitespace(),
+      copy({
+        targets: ['config/dist-packaging/amp/package.json'],
+        outputFolder: 'dist/amp',
+      }),
       replace({
-        DEBUG_ENABLED: false,
+        DEBUG_ENABLED: true,
       }),
       babelPlugin({
         transpileToES5: false,
-        allowConsole: DEBUG_BUNDLE_VALUE,
+        allowConsole: true,
       }),
-      MINIFY_BUNDLE_VALUE ? compiler() : null,
-      MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean),
-  },
-  {
-    input: 'output/main-thread/index.safe.js',
-    output: {
-      file: 'dist/unminified.index.safe.mjs',
-      format: 'es',
-      sourcemap: true,
-    },
-    plugins: [
-      resolve(),
-      removeDebugCommandExecutors(),
-      replace({
-        DEBUG_ENABLED: false,
-      }),
-      babelPlugin({
-        transpileToES5: false,
-        allowConsole: DEBUG_BUNDLE_VALUE,
-      }),
-    ].filter(Boolean),
+    ],
   },
 ];
 
@@ -106,110 +92,46 @@ const IIFEModules = [
   {
     input: 'output/main-thread/index.js',
     output: {
-      file: 'dist/index.js',
+      file: 'dist/main.js',
       format: 'iife',
       name: 'MainThread',
       sourcemap: true,
     },
     plugins: [
+      removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
       replace({
         DEBUG_ENABLED: false,
       }),
       babelPlugin({
         transpileToES5: true,
-        allowConsole: DEBUG_BUNDLE_VALUE,
+        allowConsole: false,
       }),
-      MINIFY_BUNDLE_VALUE ? compiler() : null,
-      MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean),
+      compiler(),
+      terser(),
+    ],
   },
   {
     input: 'output/main-thread/index.js',
     output: {
-      file: 'dist/unminified.index.js',
+      file: 'dist/debug/main.js',
       format: 'iife',
       name: 'MainThread',
       sourcemap: true,
     },
     plugins: [
-      removeDebugCommandExecutors(),
+      removeWorkerWhitespace(),
       replace({
-        DEBUG_ENABLED: false,
+        DEBUG_ENABLED: true,
       }),
       babelPlugin({
         transpileToES5: true,
-        allowConsole: DEBUG_BUNDLE_VALUE,
+        allowConsole: true,
       }),
-    ].filter(Boolean),
-  },
-  {
-    input: 'output/main-thread/index.safe.js',
-    output: {
-      file: 'dist/index.safe.js',
-      format: 'iife',
-      name: 'MainThread',
-      sourcemap: true,
-    },
-    plugins: [
-      resolve(),
-      removeDebugCommandExecutors(),
-      replace({
-        DEBUG_ENABLED: false,
-      }),
-      babelPlugin({
-        transpileToES5: true,
-        allowConsole: DEBUG_BUNDLE_VALUE,
-      }),
-      MINIFY_BUNDLE_VALUE ? compiler() : null,
-      MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean),
-  },
-  {
-    input: 'output/main-thread/index.safe.js',
-    output: {
-      file: 'dist/unminified.index.safe.js',
-      format: 'iife',
-      name: 'MainThread',
-      sourcemap: true,
-    },
-    plugins: [
-      resolve(),
-      removeDebugCommandExecutors(),
-      replace({
-        DEBUG_ENABLED: false,
-      }),
-      babelPlugin({
-        transpileToES5: true,
-        allowConsole: DEBUG_BUNDLE_VALUE,
-      }),
-    ].filter(Boolean),
+      compiler(),
+      terser(),
+    ],
   },
 ];
 
-const debugModules = DEBUG_BUNDLE_VALUE
-  ? [
-      {
-        input: 'output/main-thread/index.js',
-        output: {
-          file: 'dist/debug.index.js',
-          format: 'iife',
-          name: 'MainThread',
-          sourcemap: true,
-        },
-        plugins: [
-          replace({
-            DEBUG_ENABLED: true,
-          }),
-          babelPlugin({
-            transpileToES5: false,
-            allowConsole: true,
-          }),
-          MINIFY_BUNDLE_VALUE ? compiler() : null,
-          MINIFY_BUNDLE_VALUE ? terser() : null,
-        ].filter(Boolean),
-      },
-    ]
-  : [];
-
-export default [...ESModules, ...IIFEModules, ...debugModules];
+export default [...ESModules, ...IIFEModules];

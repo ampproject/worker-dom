@@ -90,7 +90,7 @@ export function removeDebugCommandExecutors() {
         .readdirSync(path.join(path.dirname(options.input), 'commands'))
         .filter(file => path.extname(file) !== '.map' && path.basename(file, '.js') !== 'interface').length;
     },
-    async renderChunk(code) {
+    renderChunk(code) {
       const source = new MagicString(code);
       const program = context.parse(code, { ranges: true });
 
@@ -118,6 +118,35 @@ export function removeDebugCommandExecutors() {
       if (toDiscover > 0) {
         context.warn(`${toDiscover} CommandExecutors were not found during compilation.`);
       }
+
+      return {
+        code: source.toString(),
+        map: source.generateMap(),
+      };
+    },
+  };
+}
+
+export function removeWorkerWhitespace() {
+  return {
+    name: 'remove-worker-whitespace',
+    transform(code) {
+      const source = new MagicString(code);
+      const program = this.parse(code, { ranges: true });
+
+      walk.simple(program, {
+        TemplateLiteral(node) {
+          let literalValue = code.substring(node.range[0], node.range[1]);
+          literalValue = literalValue
+            .replace(/\) \{/g, '){')
+            .replace(/, /g, ',')
+            .replace(/ = /g, '=')
+            .replace(/\t/g, '')
+            .replace(/[ ]{2,}/g, '')
+            .replace(/\n/g, '');
+          source.overwrite(node.range[0], node.range[1], literalValue);
+        },
+      });
 
       return {
         code: source.toString(),
