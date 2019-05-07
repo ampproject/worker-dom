@@ -17,7 +17,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperty } from '../reflectPropertiesHelper';
 import { HTMLCanvasElement } from '../../worker-thread/dom/HTMLCanvasElement';
-import { CanvasRenderingContext2DImplementation } from '../../worker-thread/canvas/CanvasRenderingContext2D';
+import { CanvasRenderingContext2DShim } from '../../worker-thread/canvas/CanvasRenderingContext2D';
 import { CanvasRenderingContext2D } from '../../worker-thread/canvas/CanvasTypes';
 import { createTestingDocument } from '../DocumentCreation';
 
@@ -53,7 +53,7 @@ test('getContext throws for unsupported types of context', t => {
 test('getContext retrieves 2D context', t => {
   const { element } = t.context;
   const ctx = element.getContext('2d');
-  t.true(ctx instanceof CanvasRenderingContext2DImplementation);
+  t.true(ctx instanceof CanvasRenderingContext2DShim);
 });
 
 test('getContext will retrieve same instance always', t => {

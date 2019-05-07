@@ -23,7 +23,7 @@ declare var OffscreenCanvas: any;
 
 export const deferredUpgrades = new WeakMap();
 
-export class CanvasRenderingContext2DImplementation<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
+export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
   private queue = [] as { fnName: string; args: any[]; isSetter: boolean }[];
   private implementation: CanvasRenderingContext2D;
   private upgraded = false;
