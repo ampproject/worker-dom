@@ -19,8 +19,6 @@ import { OffscreenCanvasPolyfill } from './OffscreenCanvasPolyfill';
 import { Document } from '../dom/Document';
 import { HTMLElement } from '../dom/HTMLElement';
 
-declare var OffscreenCanvas: any;
-
 export const deferredUpgrades = new WeakMap();
 
 export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
@@ -34,6 +32,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   constructor(canvas: ElementType) {
     this.canvasElement = canvas;
+    const OffscreenCanvas = canvas.ownerDocument.defaultView.OffscreenCanvas;
 
     if (typeof OffscreenCanvas === 'undefined') {
       this.implementation = new OffscreenCanvasPolyfill<ElementType>(canvas).getContext('2d');

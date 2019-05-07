@@ -119,8 +119,9 @@ const GlobalScope: GlobalScope = {
   HTMLTimeElement,
 };
 
-export function createTestingDocument(): Document {
-  const document = new Document(GlobalScope);
+export function createTestingDocument(additional: {} | null = null): Document {
+  const customGlobal = Object.assign({}, GlobalScope, additional);
+  const document = new Document(customGlobal);
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
 

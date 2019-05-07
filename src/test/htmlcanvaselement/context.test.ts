@@ -45,11 +45,10 @@ class FakeOffscreenCanvas {
     return this.implementation;
   }
 }
-(global as any).OffscreenCanvas = FakeOffscreenCanvas;
 
 test.beforeEach(t => {
   const sandbox = sinon.createSandbox();
-  const document = createTestingDocument();
+  const document = createTestingDocument({ OffscreenCanvas: FakeOffscreenCanvas });
   const canvas = document.createElement('canvas') as HTMLCanvasElement;
 
   t.context = {
