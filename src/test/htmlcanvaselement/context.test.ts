@@ -70,7 +70,7 @@ test.afterEach(t => {
 // describe clearRect
 test('context calls clearRect', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'clearRect');
+  const stub = (implementation['clearRect'] = sandbox.stub());
   context2d.clearRect(1, 2, 3, 4);
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
 });
@@ -79,8 +79,8 @@ test('context only calls upgraded clearRect if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'clearRect');
-  const implStub = createStub(sandbox, implementation, 'clearRect');
+  const stub = (instance.getContext('2d')['clearRect'] = sandbox.stub());
+  const implStub = (implementation['clearRect'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -95,8 +95,8 @@ test('context calls both versions of clearRect when called before upgrade', asyn
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'clearRect');
-  const implStub = createStub(sandbox, implementation, 'clearRect');
+  const instanceStub = (instance.getContext('2d')['clearRect'] = sandbox.stub());
+  const implStub = (implementation['clearRect'] = sandbox.stub());
 
   context2d.clearRect(10, 9, 8, 7);
   t.true(implStub.withArgs(10, 9, 8, 7).calledOnce);
@@ -111,7 +111,7 @@ test('context calls both versions of clearRect when called before upgrade', asyn
 // describe fillRect
 test('context calls fillRect', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'fillRect');
+  const stub = (implementation['fillRect'] = sandbox.stub());
   context2d.fillRect(1, 2, 3, 4);
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
 });
@@ -120,8 +120,8 @@ test('context only calls upgraded fillRect if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'fillRect');
-  const implStub = createStub(sandbox, implementation, 'fillRect');
+  const stub = (instance.getContext('2d')['fillRect'] = sandbox.stub());
+  const implStub = (implementation['fillRect'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -136,8 +136,8 @@ test('context calls both versions of fillRect when called before upgrade', async
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'fillRect');
-  const implStub = createStub(sandbox, implementation, 'fillRect');
+  const instanceStub = (instance.getContext('2d')['fillRect'] = sandbox.stub());
+  const implStub = (implementation['fillRect'] = sandbox.stub());
 
   context2d.fillRect(10, 9, 8, 7);
   t.true(implStub.withArgs(10, 9, 8, 7).calledOnce);
@@ -152,7 +152,7 @@ test('context calls both versions of fillRect when called before upgrade', async
 // describe strokeRect
 test('context calls strokeRect', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'strokeRect');
+  const stub = (implementation['strokeRect'] = sandbox.stub());
   context2d.strokeRect(1, 2, 3, 4);
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
 });
@@ -161,8 +161,8 @@ test('context only calls upgraded strokeRect if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'strokeRect');
-  const implStub = createStub(sandbox, implementation, 'strokeRect');
+  const stub = (instance.getContext('2d')['strokeRect'] = sandbox.stub());
+  const implStub = (implementation['strokeRect'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -177,8 +177,8 @@ test('context calls both versions of strokeRect when called before upgrade', asy
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'strokeRect');
-  const implStub = createStub(sandbox, implementation, 'strokeRect');
+  const instanceStub = (instance.getContext('2d')['strokeRect'] = sandbox.stub());
+  const implStub = (implementation['strokeRect'] = sandbox.stub());
 
   context2d.strokeRect(10, 9, 8, 7);
   t.true(implStub.withArgs(10, 9, 8, 7).calledOnce);
@@ -193,7 +193,7 @@ test('context calls both versions of strokeRect when called before upgrade', asy
 // describe fillText
 test('context calls fillText', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'fillText');
+  const stub = (implementation['fillText'] = sandbox.stub());
   context2d.fillText('hello, world', 1, 2);
   t.true(stub.withArgs('hello, world', 1, 2).calledOnce);
 });
@@ -202,8 +202,8 @@ test('context only calls upgraded fillText if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'fillText');
-  const implStub = createStub(sandbox, implementation, 'fillText');
+  const stub = (instance.getContext('2d')['fillText'] = sandbox.stub());
+  const implStub = (implementation['fillText'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -218,8 +218,8 @@ test('context calls both versions of fillText when called before upgrade', async
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'fillText');
-  const implStub = createStub(sandbox, implementation, 'fillText');
+  const instanceStub = (instance.getContext('2d')['fillText'] = sandbox.stub());
+  const implStub = (implementation['fillText'] = sandbox.stub());
 
   context2d.fillText('hello, world', 1, 2);
   t.true(implStub.withArgs('hello, world', 1, 2).calledOnce);
@@ -234,7 +234,7 @@ test('context calls both versions of fillText when called before upgrade', async
 // describe strokeText
 test('context calls strokeText', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'strokeText');
+  const stub = (implementation['strokeText'] = sandbox.stub());
   context2d.strokeText('hello, world', 1, 2);
   t.true(stub.withArgs('hello, world', 1, 2).calledOnce);
 });
@@ -243,8 +243,8 @@ test('context only calls upgraded strokeText if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'strokeText');
-  const implStub = createStub(sandbox, implementation, 'strokeText');
+  const stub = (instance.getContext('2d')['strokeText'] = sandbox.stub());
+  const implStub = (implementation['strokeText'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -259,8 +259,8 @@ test('context calls both versions of strokeText when called before upgrade', asy
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'strokeText');
-  const implStub = createStub(sandbox, implementation, 'strokeText');
+  const instanceStub = (instance.getContext('2d')['strokeText'] = sandbox.stub());
+  const implStub = (implementation['strokeText'] = sandbox.stub());
 
   context2d.strokeText('hello, world', 1, 2);
   t.true(implStub.withArgs('hello, world', 1, 2).calledOnce);
@@ -275,7 +275,7 @@ test('context calls both versions of strokeText when called before upgrade', asy
 // describe measureText
 test('context calls measureText', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'measureText');
+  const stub = (implementation['measureText'] = sandbox.stub());
   context2d.measureText('hello, world');
   t.true(stub.withArgs('hello, world').calledOnce);
 });
@@ -284,8 +284,8 @@ test('context only calls upgraded measureText if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'measureText');
-  const implStub = createStub(sandbox, implementation, 'measureText');
+  const stub = (instance.getContext('2d')['measureText'] = sandbox.stub());
+  const implStub = (implementation['measureText'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -300,8 +300,8 @@ test('context calls both versions of measureText when called before upgrade', as
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'measureText');
-  const implStub = createStub(sandbox, implementation, 'measureText');
+  const instanceStub = (instance.getContext('2d')['measureText'] = sandbox.stub());
+  const implStub = (implementation['measureText'] = sandbox.stub());
 
   context2d.measureText('hello, world');
   t.true(implStub.withArgs('hello, world').calledOnce);
@@ -608,7 +608,7 @@ test('context calls both versions of set miterLimit when called before upgrade',
 // describe getLineDash
 test('context calls getLineDash', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'getLineDash');
+  const stub = (implementation['getLineDash'] = sandbox.stub());
   context2d.getLineDash();
   t.true(stub.calledOnce);
 });
@@ -617,8 +617,8 @@ test('context only calls upgraded getLineDash if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'getLineDash');
-  const implStub = createStub(sandbox, implementation, 'getLineDash');
+  const stub = (instance.getContext('2d')['getLineDash'] = sandbox.stub());
+  const implStub = (implementation['getLineDash'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -633,8 +633,8 @@ test('context calls both versions of getLineDash when called before upgrade', as
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'getLineDash');
-  const implStub = createStub(sandbox, implementation, 'getLineDash');
+  const instanceStub = (instance.getContext('2d')['getLineDash'] = sandbox.stub());
+  const implStub = (implementation['getLineDash'] = sandbox.stub());
 
   context2d.getLineDash();
   t.true(implStub.calledOnce);
@@ -649,7 +649,7 @@ test('context calls both versions of getLineDash when called before upgrade', as
 // describe setLineDash
 test('context calls setLineDash', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'setLineDash');
+  const stub = (implementation['setLineDash'] = sandbox.stub());
   context2d.setLineDash([1, 2, 3, 4]);
   t.true(stub.withArgs([1, 2, 3, 4]).calledOnce);
 });
@@ -658,8 +658,8 @@ test('context only calls upgraded setLineDash if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'setLineDash');
-  const implStub = createStub(sandbox, implementation, 'setLineDash');
+  const stub = (instance.getContext('2d')['setLineDash'] = sandbox.stub());
+  const implStub = (implementation['setLineDash'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -674,8 +674,8 @@ test('context calls both versions of setLineDash when called before upgrade', as
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'setLineDash');
-  const implStub = createStub(sandbox, implementation, 'setLineDash');
+  const instanceStub = (instance.getContext('2d')['setLineDash'] = sandbox.stub());
+  const implStub = (implementation['setLineDash'] = sandbox.stub());
 
   context2d.setLineDash([0, 1, 2]);
   t.true(implStub.withArgs([0, 1, 2]).calledOnce);
@@ -1201,7 +1201,7 @@ test('context calls both versions of set strokeStyle when called before upgrade'
 // describe createLinearGradient
 test('context calls createLinearGradient', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'createLinearGradient');
+  const stub = (implementation['createLinearGradient'] = sandbox.stub());
   context2d.createLinearGradient(1, 2, 3, 4);
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
 });
@@ -1210,8 +1210,8 @@ test('context only calls upgraded createLinearGradient if available', async t =>
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'createLinearGradient');
-  const implStub = createStub(sandbox, implementation, 'createLinearGradient');
+  const stub = (instance.getContext('2d')['createLinearGradient'] = sandbox.stub());
+  const implStub = (implementation['createLinearGradient'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -1226,8 +1226,8 @@ test('context calls both versions of createLinearGradient when called before upg
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'createLinearGradient');
-  const implStub = createStub(sandbox, implementation, 'createLinearGradient');
+  const instanceStub = (instance.getContext('2d')['createLinearGradient'] = sandbox.stub());
+  const implStub = (implementation['createLinearGradient'] = sandbox.stub());
 
   context2d.createLinearGradient(0, 1, 2, 3);
   t.true(implStub.withArgs(0, 1, 2, 3).calledOnce);
@@ -1242,7 +1242,7 @@ test('context calls both versions of createLinearGradient when called before upg
 // describe createRadialGradient
 test('context calls createRadialGradient', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'createRadialGradient');
+  const stub = (implementation['createRadialGradient'] = sandbox.stub());
   context2d.createRadialGradient(1, 2, 3, 4, 5, 6);
   t.true(stub.withArgs(1, 2, 3, 4, 5, 6).calledOnce);
 });
@@ -1251,8 +1251,8 @@ test('context only calls upgraded createRadialGradient if available', async t =>
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'createRadialGradient');
-  const implStub = createStub(sandbox, implementation, 'createRadialGradient');
+  const stub = (instance.getContext('2d')['createRadialGradient'] = sandbox.stub());
+  const implStub = (implementation['createRadialGradient'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -1267,8 +1267,8 @@ test('context calls both versions of createRadialGradient when called before upg
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'createRadialGradient');
-  const implStub = createStub(sandbox, implementation, 'createRadialGradient');
+  const instanceStub = (instance.getContext('2d')['createRadialGradient'] = sandbox.stub());
+  const implStub = (implementation['createRadialGradient'] = sandbox.stub());
 
   context2d.createRadialGradient(0, 1, 2, 3, 4, 5);
   t.true(implStub.withArgs(0, 1, 2, 3, 4, 5).calledOnce);
@@ -1283,7 +1283,7 @@ test('context calls both versions of createRadialGradient when called before upg
 // describe createPattern
 test('context calls createPattern', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'createPattern');
+  const stub = (implementation['createPattern'] = sandbox.stub());
 
   const imageBitmap = {} as ImageBitmap;
   context2d.createPattern(imageBitmap, 'repeat');
@@ -1294,8 +1294,8 @@ test('context only calls upgraded createPattern if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'createPattern');
-  const implStub = createStub(sandbox, implementation, 'createPattern');
+  const stub = (instance.getContext('2d')['createPattern'] = sandbox.stub());
+  const implStub = (implementation['createPattern'] = sandbox.stub());
   const imageBitmap = {} as ImageBitmap;
 
   deferredUpgrade.resolve(instance);
@@ -1311,8 +1311,8 @@ test('context calls both versions of createPattern when called before upgrade', 
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'createPattern');
-  const implStub = createStub(sandbox, implementation, 'createPattern');
+  const instanceStub = (instance.getContext('2d')['createPattern'] = sandbox.stub());
+  const implStub = (implementation['createPattern'] = sandbox.stub());
   const imageBitmap = {} as ImageBitmap;
 
   context2d.createPattern(imageBitmap, 'repeat');
@@ -1620,7 +1620,7 @@ test('context calls both versions of set shadowOffsetY when called before upgrad
 // describe beginPath
 test('context calls beginPath', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'beginPath');
+  const stub = (implementation['beginPath'] = sandbox.stub());
   context2d.beginPath();
   t.true(stub.calledOnce);
 });
@@ -1629,8 +1629,8 @@ test('context only calls upgraded beginPath if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'beginPath');
-  const implStub = createStub(sandbox, implementation, 'beginPath');
+  const stub = (instance.getContext('2d')['beginPath'] = sandbox.stub());
+  const implStub = (implementation['beginPath'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -1645,8 +1645,8 @@ test('context calls both versions of beginPath when called before upgrade', asyn
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'beginPath');
-  const implStub = createStub(sandbox, implementation, 'beginPath');
+  const instanceStub = (instance.getContext('2d')['beginPath'] = sandbox.stub());
+  const implStub = (implementation['beginPath'] = sandbox.stub());
 
   context2d.beginPath();
   t.true(implStub.calledOnce);
@@ -1661,7 +1661,7 @@ test('context calls both versions of beginPath when called before upgrade', asyn
 // describe closePath
 test('context calls closePath', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'closePath');
+  const stub = (implementation['closePath'] = sandbox.stub());
   context2d.closePath();
   t.true(stub.withArgs().calledOnce);
 });
@@ -1670,8 +1670,8 @@ test('context only calls upgraded closePath if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'closePath');
-  const implStub = createStub(sandbox, implementation, 'closePath');
+  const stub = (instance.getContext('2d')['closePath'] = sandbox.stub());
+  const implStub = (implementation['closePath'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -1686,8 +1686,8 @@ test('context calls both versions of closePath when called before upgrade', asyn
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'closePath');
-  const implStub = createStub(sandbox, implementation, 'closePath');
+  const instanceStub = (instance.getContext('2d')['closePath'] = sandbox.stub());
+  const implStub = (implementation['closePath'] = sandbox.stub());
 
   context2d.closePath();
   t.true(implStub.calledOnce);
@@ -1702,7 +1702,7 @@ test('context calls both versions of closePath when called before upgrade', asyn
 // describe moveTo
 test('context calls moveTo', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'moveTo');
+  const stub = (implementation['moveTo'] = sandbox.stub());
   context2d.moveTo(1, 1);
   t.true(stub.withArgs(1, 1).calledOnce);
 });
@@ -1711,8 +1711,8 @@ test('context only calls upgraded moveTo if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'moveTo');
-  const implStub = createStub(sandbox, implementation, 'moveTo');
+  const stub = (instance.getContext('2d')['moveTo'] = sandbox.stub());
+  const implStub = (implementation['moveTo'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -1727,8 +1727,8 @@ test('context calls both versions of moveTo when called before upgrade', async t
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'moveTo');
-  const implStub = createStub(sandbox, implementation, 'moveTo');
+  const instanceStub = (instance.getContext('2d')['moveTo'] = sandbox.stub());
+  const implStub = (implementation['moveTo'] = sandbox.stub());
 
   context2d.moveTo(0, 1);
   t.true(implStub.withArgs(0, 1).calledOnce);
@@ -1743,7 +1743,7 @@ test('context calls both versions of moveTo when called before upgrade', async t
 // describe lineTo
 test('context calls lineTo', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'lineTo');
+  const stub = (implementation['lineTo'] = sandbox.stub());
   context2d.lineTo(1, 1);
   t.true(stub.withArgs(1, 1).calledOnce);
 });
@@ -1752,8 +1752,8 @@ test('context only calls upgraded lineTo if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'lineTo');
-  const implStub = createStub(sandbox, implementation, 'lineTo');
+  const stub = (instance.getContext('2d')['lineTo'] = sandbox.stub());
+  const implStub = (implementation['lineTo'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -1768,8 +1768,8 @@ test('context calls both versions of lineTo when called before upgrade', async t
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'lineTo');
-  const implStub = createStub(sandbox, implementation, 'lineTo');
+  const instanceStub = (instance.getContext('2d')['lineTo'] = sandbox.stub());
+  const implStub = (implementation['lineTo'] = sandbox.stub());
 
   context2d.lineTo(0, 1);
   t.true(implStub.withArgs(0, 1).calledOnce);
@@ -1784,7 +1784,7 @@ test('context calls both versions of lineTo when called before upgrade', async t
 // describe bezierCurveTo
 test('context calls bezierCurveTo', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'bezierCurveTo');
+  const stub = (implementation['bezierCurveTo'] = sandbox.stub());
   context2d.bezierCurveTo(1, 2, 3, 4, 5, 6);
   t.true(stub.withArgs(1, 2, 3, 4, 5, 6).calledOnce);
 });
@@ -1793,8 +1793,8 @@ test('context only calls upgraded bezierCurveTo if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'bezierCurveTo');
-  const implStub = createStub(sandbox, implementation, 'bezierCurveTo');
+  const stub = (instance.getContext('2d')['bezierCurveTo'] = sandbox.stub());
+  const implStub = (implementation['bezierCurveTo'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -1809,8 +1809,8 @@ test('context calls both versions of bezierCurveTo when called before upgrade', 
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'bezierCurveTo');
-  const implStub = createStub(sandbox, implementation, 'bezierCurveTo');
+  const instanceStub = (instance.getContext('2d')['bezierCurveTo'] = sandbox.stub());
+  const implStub = (implementation['bezierCurveTo'] = sandbox.stub());
 
   context2d.bezierCurveTo(0, 1, 2, 3, 4, 5);
   t.true(implStub.withArgs(0, 1, 2, 3, 4, 5).calledOnce);
@@ -1825,7 +1825,7 @@ test('context calls both versions of bezierCurveTo when called before upgrade', 
 // describe quadraticCurveTo
 test('context calls quadraticCurveTo', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'quadraticCurveTo');
+  const stub = (implementation['quadraticCurveTo'] = sandbox.stub());
   context2d.quadraticCurveTo(1, 2, 3, 4);
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
 });
@@ -1834,8 +1834,8 @@ test('context only calls upgraded quadraticCurveTo if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'quadraticCurveTo');
-  const implStub = createStub(sandbox, implementation, 'quadraticCurveTo');
+  const stub = (instance.getContext('2d')['quadraticCurveTo'] = sandbox.stub());
+  const implStub = (implementation['quadraticCurveTo'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -1850,8 +1850,8 @@ test('context calls both versions of quadraticCurveTo when called before upgrade
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'quadraticCurveTo');
-  const implStub = createStub(sandbox, implementation, 'quadraticCurveTo');
+  const instanceStub = (instance.getContext('2d')['quadraticCurveTo'] = sandbox.stub());
+  const implStub = (implementation['quadraticCurveTo'] = sandbox.stub());
 
   context2d.quadraticCurveTo(0, 1, 2, 3);
   t.true(implStub.withArgs(0, 1, 2, 3).calledOnce);
@@ -1866,7 +1866,7 @@ test('context calls both versions of quadraticCurveTo when called before upgrade
 // describe arc
 test('context calls arc', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'arc');
+  const stub = (implementation['arc'] = sandbox.stub());
   context2d.arc(1, 2, 3, 4, 5);
   t.true(stub.withArgs(1, 2, 3, 4, 5).calledOnce);
 });
@@ -1875,8 +1875,8 @@ test('context only calls upgraded arc if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'arc');
-  const implStub = createStub(sandbox, implementation, 'arc');
+  const stub = (instance.getContext('2d')['arc'] = sandbox.stub());
+  const implStub = (implementation['arc'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -1891,8 +1891,8 @@ test('context calls both versions of arc when called before upgrade', async t =>
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'arc');
-  const implStub = createStub(sandbox, implementation, 'arc');
+  const instanceStub = (instance.getContext('2d')['arc'] = sandbox.stub());
+  const implStub = (implementation['arc'] = sandbox.stub());
 
   context2d.arc(0, 1, 2, 3, 4);
   t.true(implStub.withArgs(0, 1, 2, 3, 4).calledOnce);
@@ -1907,7 +1907,7 @@ test('context calls both versions of arc when called before upgrade', async t =>
 // describe arcTo
 test('context calls arcTo', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'arcTo');
+  const stub = (implementation['arcTo'] = sandbox.stub());
   context2d.arcTo(1, 2, 3, 4, 5);
   t.true(stub.withArgs(1, 2, 3, 4, 5).calledOnce);
 });
@@ -1916,8 +1916,8 @@ test('context only calls upgraded arcTo if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'arcTo');
-  const implStub = createStub(sandbox, implementation, 'arcTo');
+  const stub = (instance.getContext('2d')['arcTo'] = sandbox.stub());
+  const implStub = (implementation['arcTo'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -1932,8 +1932,8 @@ test('context calls both versions of arcTo when called before upgrade', async t 
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'arcTo');
-  const implStub = createStub(sandbox, implementation, 'arcTo');
+  const instanceStub = (instance.getContext('2d')['arcTo'] = sandbox.stub());
+  const implStub = (implementation['arcTo'] = sandbox.stub());
 
   context2d.arcTo(0, 1, 2, 3, 4);
   t.true(implStub.withArgs(0, 1, 2, 3, 4).calledOnce);
@@ -1948,7 +1948,7 @@ test('context calls both versions of arcTo when called before upgrade', async t 
 // describe ellipse
 test('context calls ellipse', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'ellipse');
+  const stub = (implementation['ellipse'] = sandbox.stub());
   context2d.ellipse(1, 2, 3, 4, 5, 6, 7);
   t.true(stub.withArgs(1, 2, 3, 4, 5, 6, 7).calledOnce);
 });
@@ -1957,8 +1957,8 @@ test('context only calls upgraded ellipse if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'ellipse');
-  const implStub = createStub(sandbox, implementation, 'ellipse');
+  const stub = (instance.getContext('2d')['ellipse'] = sandbox.stub());
+  const implStub = (implementation['ellipse'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -1973,8 +1973,8 @@ test('context calls both versions of ellipse when called before upgrade', async 
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'ellipse');
-  const implStub = createStub(sandbox, implementation, 'ellipse');
+  const instanceStub = (instance.getContext('2d')['ellipse'] = sandbox.stub());
+  const implStub = (implementation['ellipse'] = sandbox.stub());
 
   context2d.ellipse(0, 1, 2, 3, 4, 5, 6);
   t.true(implStub.withArgs(0, 1, 2, 3, 4, 5, 6).calledOnce);
@@ -1989,7 +1989,7 @@ test('context calls both versions of ellipse when called before upgrade', async 
 // describe rect
 test('context calls rect', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'rect');
+  const stub = (implementation['rect'] = sandbox.stub());
   context2d.rect(1, 2, 3, 4);
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
 });
@@ -1998,8 +1998,8 @@ test('context only calls upgraded rect if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'rect');
-  const implStub = createStub(sandbox, implementation, 'rect');
+  const stub = (instance.getContext('2d')['rect'] = sandbox.stub());
+  const implStub = (implementation['rect'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2014,8 +2014,8 @@ test('context calls both versions of rect when called before upgrade', async t =
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'rect');
-  const implStub = createStub(sandbox, implementation, 'rect');
+  const instanceStub = (instance.getContext('2d')['rect'] = sandbox.stub());
+  const implStub = (implementation['rect'] = sandbox.stub());
 
   context2d.rect(0, 1, 2, 3);
   t.true(implStub.withArgs(0, 1, 2, 3).calledOnce);
@@ -2031,7 +2031,7 @@ test('context calls both versions of rect when called before upgrade', async t =
 // describe fill
 test('context calls fill', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'fill');
+  const stub = ((implementation['fill'] as sinon.SinonStub) = sandbox.stub());
   context2d.fill('nonzero');
   t.true(stub.withArgs('nonzero').calledOnce);
 });
@@ -2040,8 +2040,8 @@ test('context only calls upgraded fill if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'fill');
-  const implStub = createStub(sandbox, implementation, 'fill');
+  const stub = ((instance.getContext('2d')['fill'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['fill'] as sinon.SinonStub) = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2056,8 +2056,8 @@ test('context calls both versions of fill when called before upgrade', async t =
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'fill');
-  const implStub = createStub(sandbox, implementation, 'fill');
+  const instanceStub = ((instance.getContext('2d')['fill'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['fill'] as sinon.SinonStub) = sandbox.stub());
 
   context2d.fill('nonzero');
   t.true(implStub.withArgs('nonzero').calledOnce);
@@ -2072,7 +2072,7 @@ test('context calls both versions of fill when called before upgrade', async t =
 // describe stroke
 test('context calls stroke', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'stroke');
+  const stub = ((implementation['stroke'] as sinon.SinonStub) = sandbox.stub());
   context2d.stroke();
   t.true(stub.withArgs().calledOnce);
 });
@@ -2081,8 +2081,8 @@ test('context only calls upgraded stroke if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'stroke');
-  const implStub = createStub(sandbox, implementation, 'stroke');
+  const stub = ((instance.getContext('2d')['stroke'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['stroke'] as sinon.SinonStub) = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2097,8 +2097,8 @@ test('context calls both versions of stroke when called before upgrade', async t
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'stroke');
-  const implStub = createStub(sandbox, implementation, 'stroke');
+  const instanceStub = ((instance.getContext('2d')['stroke'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['stroke'] as sinon.SinonStub) = sandbox.stub());
 
   context2d.stroke();
   t.true(implStub.calledOnce);
@@ -2113,7 +2113,7 @@ test('context calls both versions of stroke when called before upgrade', async t
 // describe clip
 test('context calls clip', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'clip');
+  const stub = ((implementation['clip'] as sinon.SinonStub) = sandbox.stub());
   context2d.clip();
   t.true(stub.calledOnce);
 });
@@ -2122,8 +2122,8 @@ test('context only calls upgraded clip if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'clip');
-  const implStub = createStub(sandbox, implementation, 'clip');
+  const stub = ((instance.getContext('2d')['clip'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['clip'] as sinon.SinonStub) = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2138,8 +2138,8 @@ test('context calls both versions of clip when called before upgrade', async t =
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'clip');
-  const implStub = createStub(sandbox, implementation, 'clip');
+  const instanceStub = ((instance.getContext('2d')['clip'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['clip'] as sinon.SinonStub) = sandbox.stub());
 
   context2d.clip();
   t.true(implStub.calledOnce);
@@ -2154,7 +2154,7 @@ test('context calls both versions of clip when called before upgrade', async t =
 // describe isPointInPath
 test('context calls isPointInPath', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'isPointInPath');
+  const stub = ((implementation['isPointInPath'] as sinon.SinonStub) = sandbox.stub());
   context2d.isPointInPath(1, 2);
   t.true(stub.withArgs(1, 2).calledOnce);
 });
@@ -2163,8 +2163,8 @@ test('context only calls upgraded isPointInPath if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'isPointInPath');
-  const implStub = createStub(sandbox, implementation, 'isPointInPath');
+  const stub = ((instance.getContext('2d')['isPointInPath'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['isPointInPath'] as sinon.SinonStub) = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2179,8 +2179,8 @@ test('context calls both versions of isPointInPath when called before upgrade', 
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'isPointInPath');
-  const implStub = createStub(sandbox, implementation, 'isPointInPath');
+  const instanceStub = ((instance.getContext('2d')['isPointInPath'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['isPointInPath'] as sinon.SinonStub) = sandbox.stub());
 
   context2d.isPointInPath(0, 1);
   t.true(implStub.withArgs(0, 1).calledOnce);
@@ -2195,7 +2195,7 @@ test('context calls both versions of isPointInPath when called before upgrade', 
 // describe isPointInStroke
 test('context calls isPointInStroke', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'isPointInStroke');
+  const stub = ((implementation['isPointInStroke'] as sinon.SinonStub) = sandbox.stub());
   context2d.isPointInStroke(1, 2);
   t.true(stub.withArgs(1, 2).calledOnce);
 });
@@ -2204,8 +2204,8 @@ test('context only calls upgraded isPointInStroke if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'isPointInStroke');
-  const implStub = createStub(sandbox, implementation, 'isPointInStroke');
+  const stub = ((instance.getContext('2d')['isPointInStroke'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['isPointInStroke'] as sinon.SinonStub) = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2220,8 +2220,8 @@ test('context calls both versions of isPointInStroke when called before upgrade'
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'isPointInStroke');
-  const implStub = createStub(sandbox, implementation, 'isPointInStroke');
+  const instanceStub = ((instance.getContext('2d')['isPointInStroke'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['isPointInStroke'] as sinon.SinonStub) = sandbox.stub());
 
   context2d.isPointInStroke(0, 1);
   t.true(implStub.withArgs(0, 1).calledOnce);
@@ -2236,7 +2236,7 @@ test('context calls both versions of isPointInStroke when called before upgrade'
 // describe rotate
 test('context calls rotate', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'rotate');
+  const stub = (implementation['rotate'] = sandbox.stub());
   context2d.rotate(6);
   t.true(stub.withArgs(6).calledOnce);
 });
@@ -2245,8 +2245,8 @@ test('context only calls upgraded rotate if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'rotate');
-  const implStub = createStub(sandbox, implementation, 'rotate');
+  const stub = (instance.getContext('2d')['rotate'] = sandbox.stub());
+  const implStub = (implementation['rotate'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2261,8 +2261,8 @@ test('context calls both versions of rotate when called before upgrade', async t
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'rotate');
-  const implStub = createStub(sandbox, implementation, 'rotate');
+  const instanceStub = (instance.getContext('2d')['rotate'] = sandbox.stub());
+  const implStub = (implementation['rotate'] = sandbox.stub());
 
   context2d.rotate(21);
   t.true(implStub.withArgs(21).calledOnce);
@@ -2277,7 +2277,7 @@ test('context calls both versions of rotate when called before upgrade', async t
 // describe scale
 test('context calls scale', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'scale');
+  const stub = (implementation['scale'] = sandbox.stub());
   context2d.scale(10, 10);
   t.true(stub.withArgs(10, 10).calledOnce);
 });
@@ -2286,8 +2286,8 @@ test('context only calls upgraded scale if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'scale');
-  const implStub = createStub(sandbox, implementation, 'scale');
+  const stub = (instance.getContext('2d')['scale'] = sandbox.stub());
+  const implStub = (implementation['scale'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2302,8 +2302,8 @@ test('context calls both versions of scale when called before upgrade', async t 
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'scale');
-  const implStub = createStub(sandbox, implementation, 'scale');
+  const instanceStub = (instance.getContext('2d')['scale'] = sandbox.stub());
+  const implStub = (implementation['scale'] = sandbox.stub());
 
   context2d.scale(0, 1);
   t.true(implStub.withArgs(0, 1).calledOnce);
@@ -2318,7 +2318,7 @@ test('context calls both versions of scale when called before upgrade', async t 
 // describe translate
 test('context calls translate', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'translate');
+  const stub = (implementation['translate'] = sandbox.stub());
   context2d.translate(15, 15);
   t.true(stub.withArgs(15, 15).calledOnce);
 });
@@ -2327,8 +2327,8 @@ test('context only calls upgraded translate if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'translate');
-  const implStub = createStub(sandbox, implementation, 'translate');
+  const stub = (instance.getContext('2d')['translate'] = sandbox.stub());
+  const implStub = (implementation['translate'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2343,8 +2343,8 @@ test('context calls both versions of translate when called before upgrade', asyn
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'translate');
-  const implStub = createStub(sandbox, implementation, 'translate');
+  const instanceStub = (instance.getContext('2d')['translate'] = sandbox.stub());
+  const implStub = (implementation['translate'] = sandbox.stub());
 
   context2d.translate(0, 1);
   t.true(implStub.withArgs(0, 1).calledOnce);
@@ -2359,7 +2359,7 @@ test('context calls both versions of translate when called before upgrade', asyn
 // describe transform
 test('context calls transform', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'transform');
+  const stub = (implementation['transform'] = sandbox.stub());
   context2d.transform(1, 2, 3, 4, 5, 6);
   t.true(stub.withArgs(1, 2, 3, 4, 5, 6).calledOnce);
 });
@@ -2368,8 +2368,8 @@ test('context only calls upgraded transform if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'transform');
-  const implStub = createStub(sandbox, implementation, 'transform');
+  const stub = (instance.getContext('2d')['transform'] = sandbox.stub());
+  const implStub = (implementation['transform'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2384,8 +2384,8 @@ test('context calls both versions of transform when called before upgrade', asyn
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'transform');
-  const implStub = createStub(sandbox, implementation, 'transform');
+  const instanceStub = (instance.getContext('2d')['transform'] = sandbox.stub());
+  const implStub = (implementation['transform'] = sandbox.stub());
 
   context2d.transform(0, 1, 0, 1, 0, 1);
   t.true(implStub.withArgs(0, 1, 0, 1, 0, 1).calledOnce);
@@ -2400,7 +2400,7 @@ test('context calls both versions of transform when called before upgrade', asyn
 // describe setTransform
 test('context calls setTransform', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'setTransform');
+  const stub = ((implementation['setTransform'] as sinon.SinonStub) = sandbox.stub());
   context2d.setTransform(1, 2, 3, 4, 5, 6);
   t.true(stub.withArgs(1, 2, 3, 4, 5, 6).calledOnce);
 });
@@ -2409,8 +2409,8 @@ test('context only calls upgraded setTransform if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'setTransform');
-  const implStub = createStub(sandbox, implementation, 'setTransform');
+  const stub = ((instance.getContext('2d')['setTransform'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['setTransform'] as sinon.SinonStub) = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2425,8 +2425,8 @@ test('context calls both versions of setTransform when called before upgrade', a
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'setTransform');
-  const implStub = createStub(sandbox, implementation, 'setTransform');
+  const instanceStub = ((instance.getContext('2d')['setTransform'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['setTransform'] as sinon.SinonStub) = sandbox.stub());
 
   context2d.setTransform(0, 1, 0, 1, 0, 1);
   t.true(implStub.withArgs(0, 1, 0, 1, 0, 1).calledOnce);
@@ -2587,7 +2587,7 @@ test('context calls both versions of set globalCompositeOperation when called be
 // describe drawImage
 test('context calls drawImage', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'drawImage');
+  const stub = ((implementation['drawImage'] as sinon.SinonStub) = sandbox.stub());
 
   const imageBitmap = {} as ImageBitmap;
 
@@ -2599,8 +2599,8 @@ test('context only calls upgraded drawImage if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'drawImage');
-  const implStub = createStub(sandbox, implementation, 'drawImage');
+  const stub = ((instance.getContext('2d')['drawImage'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['drawImage'] as sinon.SinonStub) = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
   const imageBitmap = {} as ImageBitmap;
@@ -2616,8 +2616,8 @@ test('context calls both versions of drawImage when called before upgrade', asyn
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'drawImage');
-  const implStub = createStub(sandbox, implementation, 'drawImage');
+  const instanceStub = ((instance.getContext('2d')['drawImage'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['drawImage'] as sinon.SinonStub) = sandbox.stub());
   const imageBitmap = {} as ImageBitmap;
 
   context2d.drawImage(imageBitmap, 0, 1);
@@ -2633,7 +2633,7 @@ test('context calls both versions of drawImage when called before upgrade', asyn
 // describe createImageData
 test('context calls createImageData', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'createImageData');
+  const stub = ((implementation['createImageData'] as sinon.SinonStub) = sandbox.stub());
   context2d.createImageData(100, 200);
   t.true(stub.withArgs(100, 200).calledOnce);
 });
@@ -2642,8 +2642,8 @@ test('context only calls upgraded createImageData if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'createImageData');
-  const implStub = createStub(sandbox, implementation, 'createImageData');
+  const stub = ((instance.getContext('2d')['createImageData'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['createImageData'] as sinon.SinonStub) = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2658,8 +2658,8 @@ test('context calls both versions of createImageData when called before upgrade'
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'createImageData');
-  const implStub = createStub(sandbox, implementation, 'createImageData');
+  const instanceStub = ((instance.getContext('2d')['createImageData'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['createImageData'] as sinon.SinonStub) = sandbox.stub());
 
   context2d.createImageData(0, 1);
   t.true(implStub.withArgs(0, 1).calledOnce);
@@ -2674,7 +2674,7 @@ test('context calls both versions of createImageData when called before upgrade'
 // describe getImageData
 test('context calls getImageData', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'getImageData');
+  const stub = (implementation['getImageData'] = sandbox.stub());
   context2d.getImageData(1, 2, 3, 4);
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
 });
@@ -2683,8 +2683,8 @@ test('context only calls upgraded getImageData if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'getImageData');
-  const implStub = createStub(sandbox, implementation, 'getImageData');
+  const stub = (instance.getContext('2d')['getImageData'] = sandbox.stub());
+  const implStub = (implementation['getImageData'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2699,8 +2699,8 @@ test('context calls both versions of getImageData when called before upgrade', a
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'getImageData');
-  const implStub = createStub(sandbox, implementation, 'getImageData');
+  const instanceStub = ((instance.getContext('2d')['getImageData'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['getImageData'] as sinon.SinonStub) = sandbox.stub());
 
   context2d.getImageData(0, 1, 2, 3);
   t.true(implStub.withArgs(0, 1, 2, 3).calledOnce);
@@ -2715,7 +2715,7 @@ test('context calls both versions of getImageData when called before upgrade', a
 // describe putImageData
 test('context calls putImageData', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'putImageData');
+  const stub = ((implementation['putImageData'] as sinon.SinonStub) = sandbox.stub());
   const imageData = {} as ImageData;
 
   context2d.putImageData(imageData, 10, 10);
@@ -2726,8 +2726,8 @@ test('context only calls upgraded putImageData if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'putImageData');
-  const implStub = createStub(sandbox, implementation, 'putImageData');
+  const stub = ((instance.getContext('2d')['putImageData'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['putImageData'] as sinon.SinonStub) = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
   const imageData = {} as ImageData;
@@ -2743,8 +2743,8 @@ test('context calls both versions of putImageData when called before upgrade', a
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'putImageData');
-  const implStub = createStub(sandbox, implementation, 'putImageData');
+  const instanceStub = ((instance.getContext('2d')['putImageData'] as sinon.SinonStub) = sandbox.stub());
+  const implStub = ((implementation['putImageData'] as sinon.SinonStub) = sandbox.stub());
   const imageData = {} as ImageData;
 
   context2d.putImageData(imageData, 0, 1);
@@ -2906,7 +2906,7 @@ test('context calls both versions of set imageSmoothingQuality when called befor
 // describe save
 test('context calls save', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'save');
+  const stub = (implementation['save'] = sandbox.stub());
   context2d.save();
   t.true(stub.calledOnce);
 });
@@ -2915,8 +2915,8 @@ test('context only calls upgraded save if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'save');
-  const implStub = createStub(sandbox, implementation, 'save');
+  const stub = (instance.getContext('2d')['save'] = sandbox.stub());
+  const implStub = (implementation['save'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2931,8 +2931,8 @@ test('context calls both versions of save when called before upgrade', async t =
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'save');
-  const implStub = createStub(sandbox, implementation, 'save');
+  const instanceStub = (instance.getContext('2d')['save'] = sandbox.stub());
+  const implStub = (implementation['save'] = sandbox.stub());
 
   context2d.save();
   t.true(implStub.calledOnce);
@@ -2947,7 +2947,7 @@ test('context calls both versions of save when called before upgrade', async t =
 // describe restore
 test('context calls restore', t => {
   const { context2d, implementation, sandbox } = t.context;
-  const stub = createStub(sandbox, implementation, 'restore');
+  const stub = (implementation['restore'] = sandbox.stub());
   context2d.restore();
   t.true(stub.calledOnce);
 });
@@ -2956,8 +2956,8 @@ test('context only calls upgraded restore if available', async t => {
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
 
   const instance = new FakeOffscreenCanvas();
-  const stub = createStub(sandbox, instance.getContext('2d'), 'restore');
-  const implStub = createStub(sandbox, implementation, 'restore');
+  const stub = (instance.getContext('2d')['restore'] = sandbox.stub());
+  const implStub = (implementation['restore'] = sandbox.stub());
 
   deferredUpgrade.resolve(instance);
 
@@ -2972,8 +2972,8 @@ test('context calls both versions of restore when called before upgrade', async 
   const { context2d, deferredUpgrade, implementation, sandbox } = t.context;
   const instance = new FakeOffscreenCanvas();
 
-  const instanceStub = createStub(sandbox, instance.getContext('2d'), 'restore');
-  const implStub = createStub(sandbox, implementation, 'restore');
+  const instanceStub = (instance.getContext('2d')['restore'] = sandbox.stub());
+  const implStub = (implementation['restore'] = sandbox.stub());
 
   context2d.restore();
   t.true(implStub.calledOnce);
@@ -3057,11 +3057,6 @@ test('context calls both versions of set filter when called before upgrade', asy
     t.true(instanceSpy.withArgs('none').calledOnce);
   });
 });
-
-function createStub(sandbox: sinon.SinonSandbox, obj: any, method: string) {
-  obj[method] = sandbox.stub();
-  return obj[method];
-}
 
 function createSetterStub(sandbox: sinon.SinonSandbox, obj: any, property: string, setter: () => {}) {
   obj[property] = 'existent';
