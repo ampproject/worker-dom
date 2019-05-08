@@ -1,6 +1,7 @@
 {
   "extends": "../src/worker-thread/tsconfig.json",
   "compilerOptions": {
-    "module": "esnext"
+    "module": "esnext",
+    "incremental": true
   }
 }
