@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { registerSubclass } from './Element';
+import { registerSubclass, definePropertyBackedAttributes } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { DOMTokenList } from './DOMTokenList';
@@ -23,6 +23,9 @@ export class HTMLLinkElement extends HTMLElement {
   public relList: DOMTokenList = new DOMTokenList(HTMLLinkElement, this, 'rel', 'relList', 'rel');
 }
 registerSubclass('link', HTMLLinkElement);
+definePropertyBackedAttributes(HTMLLinkElement, {
+  rel: [(el): string | null => el.relList.value, (el, value: string) => (el.relList.value = value)],
+});
 
 // Reflected Properties
 // HTMLLinkElement.as => string, reflected attribute

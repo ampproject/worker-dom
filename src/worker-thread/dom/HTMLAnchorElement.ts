@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { registerSubclass } from './Element';
+import { registerSubclass, definePropertyBackedAttributes } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { DOMTokenList } from './DOMTokenList';
 import { reflectProperties } from './enhanceElement';
@@ -50,6 +50,9 @@ export class HTMLAnchorElement extends HTMLElement {
   }
 }
 registerSubclass('a', HTMLAnchorElement);
+definePropertyBackedAttributes(HTMLAnchorElement, {
+  rel: [(el): string | null => el.relList.value, (el, value: string) => (el.relList.value = value)],
+});
 
 // Reflected properties, strings.
 // HTMLAnchorElement.href => string, reflected attribute
