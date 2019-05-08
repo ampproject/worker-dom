@@ -23,6 +23,25 @@ import { TransferrableMutationType } from '../../transfer/TransferrableMutation'
 import { store as storeString } from '../strings';
 import { Document } from './Document';
 
+/**
+ * Synchronizes the string getter/setter with the actual DOMTokenList instance.
+ * @param defineOn Element or class extension to define getter/setter pair for token list access.
+ * @param accessorKey Key used to access DOMTokenList directly from specific element.
+ * @param propertyName Key used to access DOMTokenList as string getter/setter.
+ */
+export function synchronizedAccessor(defineOn: typeof Element, accessorKey: string, propertyName: string) {
+  Object.defineProperty(defineOn.prototype, propertyName, {
+    enumerable: true,
+    configurable: true,
+    get(): string {
+      return (this as Element)[accessorKey].value;
+    },
+    set(value: string) {
+      (this as Element)[accessorKey].value = value;
+    },
+  });
+}
+
 export class DOMTokenList {
   private [TransferrableKeys.tokens]: Array<string> = [];
   private [TransferrableKeys.target]: Element;
@@ -33,29 +52,13 @@ export class DOMTokenList {
    * The DOMTokenList interface represents a set of space-separated tokens.
    * It is indexed beginning with 0 as with JavaScript Array objects and is case-sensitive.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList
-   * @param defineOn Element or class extension to define getter/setter pair for token list access.
    * @param target Specific Element instance to modify when value is changed.
    * @param attributeName Name of the attribute used by Element to access DOMTokenList.
-   * @param accessorKey Key used to access DOMTokenList directly from specific element.
-   * @param propertyName Key used to access DOMTokenList as string getter/setter.
    */
-  constructor(defineOn: typeof Element, target: Element, attributeName: string, accessorKey: string | null, propertyName: string | null) {
+  constructor(target: Element, attributeName: string) {
     this[TransferrableKeys.target] = target;
     this[TransferrableKeys.attributeName] = attributeName;
     this[TransferrableKeys.storeAttribute] = target[TransferrableKeys.storeAttribute].bind(target);
-
-    if (accessorKey && propertyName) {
-      Object.defineProperty(defineOn.prototype, propertyName, {
-        enumerable: true,
-        configurable: true,
-        get(): string {
-          return (this as Element)[accessorKey].value;
-        },
-        set(value: string) {
-          (this as Element)[accessorKey].value = value;
-        },
-      });
-    }
   }
 
   /**

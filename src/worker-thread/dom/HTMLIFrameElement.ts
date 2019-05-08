@@ -20,8 +20,12 @@ import { reflectProperties } from './enhanceElement';
 import { DOMTokenList } from './DOMTokenList';
 
 export class HTMLIFrameElement extends HTMLElement {
+  private _sandbox: DOMTokenList;
+
   // HTMLIFrameElement.sandbox, DOMTokenList, reflected attribute
-  public sandbox: DOMTokenList = new DOMTokenList(HTMLIFrameElement, this, 'sandbox', null, null);
+  public get sandbox(): DOMTokenList {
+    return this._sandbox || (this._sandbox = new DOMTokenList(this, 'sandbox'));
+  }
 }
 registerSubclass('iframe', HTMLIFrameElement);
 definePropertyBackedAttributes(HTMLIFrameElement, {

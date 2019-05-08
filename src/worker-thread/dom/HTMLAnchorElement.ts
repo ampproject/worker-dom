@@ -16,11 +16,15 @@
 
 import { registerSubclass, definePropertyBackedAttributes } from './Element';
 import { HTMLElement } from './HTMLElement';
-import { DOMTokenList } from './DOMTokenList';
+import { DOMTokenList, synchronizedAccessor } from './DOMTokenList';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLAnchorElement extends HTMLElement {
-  public relList: DOMTokenList = new DOMTokenList(HTMLAnchorElement, this, 'rel', 'relList', 'rel');
+  private _relList: DOMTokenList;
+
+  public get relList(): DOMTokenList {
+    return this._relList || (this._relList = new DOMTokenList(this, 'rel'));
+  }
 
   /**
    * Returns the href property/attribute value
@@ -53,6 +57,7 @@ registerSubclass('a', HTMLAnchorElement);
 definePropertyBackedAttributes(HTMLAnchorElement, {
   rel: [(el): string | null => el.relList.value, (el, value: string) => (el.relList.value = value)],
 });
+synchronizedAccessor(HTMLAnchorElement, 'relList', 'rel');
 
 // Reflected properties, strings.
 // HTMLAnchorElement.href => string, reflected attribute
