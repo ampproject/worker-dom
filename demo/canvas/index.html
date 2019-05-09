@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html style="background: #e6e9e9;">
+<head>
+  <meta charset="utf-8" />
+  <title>Hello World</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/demo.css" rel="stylesheet">
+  <script src="/dist/main.mjs" type="module"></script>
+  <script src="/dist/main.js" nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="/dist/main.js" defer></script> -->  
+</head>
+<body style="background: #e6e9e9;">
+  <div src="canvas.js" id="upgrade-me">
+    <div id="canvasButtonsDiv">
+
+      <button id="existingCanvasBtn">Draw on already existing canvas</button>
+      <button id="newCanvasBtn">Create new canvas and draw on it</button>
+      <button id="doubleCanvasBtn">Create two new canvases and draw on them</button>
+    </div>
+    <div>
+      <canvas width="500" height="500" id="myCanvas"></canvas>
+      <div id="newCanvasDiv"></div>
+    </div>
+  </div>
+  <script type="module">
+    import {upgradeElement} from '/dist/main.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
+  </script>
+  <script nomodule async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.js');
+    }, false);
+  </script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), './dist/worker.js');
+    }, false);
+  </script> -->
+</body>
+</html>

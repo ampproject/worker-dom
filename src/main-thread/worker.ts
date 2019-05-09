@@ -93,13 +93,13 @@ export class WorkerContext {
   /**
    * @param message
    */
-  messageToWorker(message: MessageToWorker) {
+  messageToWorker(message: MessageToWorker, transferables?: Transferable[]) {
     if (DEBUG_ENABLED) {
       console.info('debug', 'messageToWorker', readableMessageToWorker(this.nodeContext, message));
     }
     if (this.config.onSendMessage) {
       this.config.onSendMessage(message);
     }
-    this.worker.postMessage(message);
+    this.worker.postMessage(message, transferables);
   }
 }
