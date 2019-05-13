@@ -16,6 +16,7 @@
 
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
+import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { HTMLDataElement } from './dom/HTMLDataElement';
 import { HTMLEmbedElement } from './dom/HTMLEmbedElement';
 import { HTMLFieldSetElement } from './dom/HTMLFieldSetElement';
@@ -58,6 +59,7 @@ export interface GlobalScope {
   MutationObserver: typeof MutationObserver;
   HTMLAnchorElement: typeof HTMLAnchorElement;
   HTMLButtonElement: typeof HTMLButtonElement;
+  HTMLCanvasElement: typeof HTMLCanvasElement;
   HTMLDataElement: typeof HTMLDataElement;
   HTMLEmbedElement: typeof HTMLEmbedElement;
   HTMLFieldSetElement: typeof HTMLFieldSetElement;

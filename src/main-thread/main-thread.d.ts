@@ -20,6 +20,12 @@ declare interface Sanitizer {
   mutateProperty(node: Node, prop: string, value: string): boolean;
 }
 
+// OffscreenCanvas not yet available in TypeScript - 'transferControlToOffscreen' would not be
+// detected as a Canvas method unless this is here
+declare interface HTMLCanvasElement {
+  transferControlToOffscreen(): Transferable;
+}
+
 interface Node {
   _index_: number;
 }
