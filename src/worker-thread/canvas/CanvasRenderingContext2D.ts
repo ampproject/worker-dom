@@ -37,6 +37,10 @@ import { HTMLElement } from '../dom/HTMLElement';
 
 export const deferredUpgrades = new WeakMap();
 
+/**
+ * Delegates all CanvasRenderingContext2D calls, either to an OffscreenCanvas or a polyfill
+ * (depending on whether it is supported).
+ */
 export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
   private queue = [] as { fnName: string; args: any[]; isSetter: boolean }[];
   private implementation: CanvasRenderingContext2D;

@@ -19,6 +19,10 @@ import { OffscreenContextPolyfillMutationIndex } from '../../transfer/Transferra
 import { NumericBoolean } from '../../utils';
 import { Strings } from '../strings';
 
+/**
+ * Processes all calls to an OffscreenCanvas Polyfill on this thread (since manually synchronized).
+ * @param strings Transferred strings.
+ */
 export function OffscreenPolyfillCallProcessor(strings: Strings): CommandExecutor {
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {

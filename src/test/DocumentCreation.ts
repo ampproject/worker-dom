@@ -119,6 +119,10 @@ const GlobalScope: GlobalScope = {
   HTMLTimeElement,
 };
 
+/**
+ * Creates a Document object for testing environment.
+ * @param overrides Global variable declaration. Can add a new one or override an existing one, for testing purposes.
+ */
 export function createTestingDocument(overrides: {} | null = null): Document {
   const customGlobal = Object.assign({}, GlobalScope, overrides);
   const document = new Document(customGlobal);

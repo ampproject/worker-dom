@@ -20,6 +20,10 @@ import { MessageType } from '../../transfer/Messages';
 import { CommandExecutor } from './interface';
 import { OffscreenCanvasMutationIndex } from '../../transfer/TransferrableMutation';
 
+/**
+ * Processes the transfer of an auto-synchronized OffscreenCanvas to the worker thread.
+ * @param workerContext Used to message the worker referenced.
+ */
 export function OffscreenCanvasProcessor(workerContext: WorkerContext): CommandExecutor {
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
