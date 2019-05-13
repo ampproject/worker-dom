@@ -66,7 +66,7 @@ export class MutatorProcessor {
       [TransferrableMutationType.LONG_TASK_START]: LongTaskExecutorInstance,
       [TransferrableMutationType.LONG_TASK_END]: LongTaskExecutorInstance,
       [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(workerContext),
-      [TransferrableMutationType.OFFSCREEN_POLYFILL]: OffscreenPolyfillCallProcessor(strings, workerContext),
+      [TransferrableMutationType.OFFSCREEN_POLYFILL]: OffscreenPolyfillCallProcessor(strings),
     };
   }
 
