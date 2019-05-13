@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2019 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,6 @@ existingCanvasBtn.addEventListener('click', async () => {
   myCtx.lineTo(300, 222.5);
   myCtx.closePath();
   myCtx.stroke();
-
 });
 
 newCanvasBtn.addEventListener('click', async () => {
@@ -96,7 +95,6 @@ doubleCanvasBtn.addEventListener('click', async () => {
 
   newCanvasDiv.appendChild(canvasOne);
   newCanvasDiv.appendChild(canvasTwo);
-
 
   const ctxOne = canvasOne.getContext('2d');
   const ctxTwo = canvasTwo.getContext('2d');
