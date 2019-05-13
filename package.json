@@ -59,7 +59,7 @@
     "cross-var": "1.1.0",
     "esm": "3.2.22",
     "husky": "2.2.0",
-    "jsdom": "15.0.0",
+    "jsdom": "15.1.0",
     "lint-staged": "8.1.6",
     "magic-string": "0.25.2",
     "np": "5.0.1",
