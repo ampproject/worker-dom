@@ -63,7 +63,6 @@ test.beforeEach(t => {
 test.afterEach(t => {
   const { sandbox } = t.context;
   sandbox.restore();
-  sandbox.verify();
 });
 
 // describe clearRect

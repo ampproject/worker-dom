@@ -63,7 +63,7 @@ test('method with no arguments', t => {
   const methodName = 'stroke';
   const stub = createStub(context2d, methodName);
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, [], false, strings);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, [], false, strings);
   t.true(stub.withArgs().calledOnce);
 });
 
@@ -74,7 +74,7 @@ test('method with int arguments', t => {
   const stub = createStub(context2d, methodName);
   const args = [1, 2, 3, 4];
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, false, strings);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, false, strings);
   t.true(stub.withArgs(...args).calledOnce);
 });
 
@@ -85,7 +85,7 @@ test('method with float arguments', t => {
   const stub = createStub(context2d, methodName);
   const args = [1.2, 2.3, 3.4, 4.8];
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, true, strings);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, true, strings);
   t.true(stub.calledOnce);
   t.true(stub.calledWithMatch(...args.map(approx)));
 });
@@ -102,7 +102,7 @@ test('method with string argument', t => {
   const passedArgs = [textArgIndex, 1, 2];
   const stub = createStub(context2d, methodName);
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 1, passedArgs, false, strings, textArgIndex);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 1, passedArgs, false, strings, textArgIndex);
   t.true(stub.withArgs(...actualArgs).calledOnce);
 });
 
@@ -114,7 +114,7 @@ test('setter with int argument', t => {
   createSetterStub(context2d, methodName, spy);
 
   const arg = 5;
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, true, 0, [arg], false, strings);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, true, 0, [arg], false, strings);
   t.true(spy.withArgs(arg).calledOnce);
 });
 
@@ -126,7 +126,7 @@ test('setter with float argument', t => {
   createSetterStub(context2d, methodName, spy);
 
   const arg = 1.6;
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, true, 0, [arg], true, strings);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, true, 0, [arg], true, strings);
   t.true(spy.calledOnce);
   t.true(spy.calledWithMatch(approx(arg)));
 });
@@ -141,7 +141,7 @@ test('setter with string argument', t => {
   const arg = 'textArg';
   const textArgIndex = storeString(strings, arg);
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, true, 1, [arg], false, strings, textArgIndex);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, true, 1, [arg], false, strings, textArgIndex);
   t.true(spy.withArgs(arg).calledOnce);
 });
 
@@ -152,7 +152,7 @@ test('setLineDash case', t => {
   const stub = createStub(context2d, methodName);
   const lineDash = [10, 20];
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, lineDash, true, strings);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, lineDash, true, strings);
   t.true(stub.withArgs(lineDash).calledOnce);
 });
 
@@ -187,7 +187,7 @@ test('mutation returns correct end offset for int arguments', t => {
   createStub(context2d, methodName);
   const args = [100, 200, 300, 400];
 
-  const endOffset = exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, false, strings);
+  const endOffset = executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, false, strings);
 
   // end offset should be 7 + number of arguments
   t.is(endOffset, 11);
@@ -200,7 +200,7 @@ test('mutation returns correct end offset with float arguments', t => {
   createStub(context2d, methodName);
   const args = [1.11, 2.22, 3.33, 4.44];
 
-  const endOffset = exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, true, strings);
+  const endOffset = executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, true, strings);
 
   // end offset should be 7 + (number of arguments * 2)
   t.is(endOffset, 15);
@@ -213,7 +213,7 @@ function storeString(strings: Strings, text: string, currentIndex = -1) {
   return ++currentIndex;
 }
 
-function exectuteCall(
+function executeCall(
   offscreenCanvasProcessor: CommandExecutor,
   canvasElement: HTMLCanvasElement,
   fnName: string,
