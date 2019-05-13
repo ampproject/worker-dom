@@ -83,4 +83,7 @@ export const enum TransferrableKeys {
   offsetX = 65,
   offsetY = 66,
   mutated = 67,
+  implementation = 68,
+  set = 69,
+  function = 70,
 }

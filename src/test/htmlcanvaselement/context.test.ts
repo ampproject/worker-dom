@@ -317,7 +317,7 @@ test('context calls set lineWidth', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'lineWidth', spy);
-  context2d.lineWidth = 100;
+  ((context2d as unknown) as CanvasRenderingContext2D).lineWidth = 100;
   t.true(spy.withArgs(100).calledOnce);
 });
 
@@ -325,7 +325,7 @@ test('context calls get lineWidth', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'lineWidth', spy);
-  context2d.lineWidth;
+  ((context2d as unknown) as CanvasRenderingContext2D).lineWidth;
   t.true(spy.calledOnce);
 });
 
@@ -341,7 +341,7 @@ test('context only calls upgraded set lineWidth if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.lineWidth = 100;
+    ((context2d as unknown) as CanvasRenderingContext2D).lineWidth = 100;
     t.true(spy.withArgs(100).calledOnce);
     t.false(implSpy.called);
   });
@@ -359,7 +359,7 @@ test('context only calls upgraded get lineWidth if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.lineWidth;
+    ((context2d as unknown) as CanvasRenderingContext2D).lineWidth;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -375,7 +375,7 @@ test('context calls both versions of set lineWidth when called before upgrade', 
   createSetterStub(sandbox, instance.getContext('2d'), 'lineWidth', instanceSpy);
   createSetterStub(sandbox, implementation, 'lineWidth', implSpy);
 
-  context2d.lineWidth = 200;
+  ((context2d as unknown) as CanvasRenderingContext2D).lineWidth = 200;
   t.true(implSpy.withArgs(200).calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -390,7 +390,7 @@ test('context calls set lineCap', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'lineCap', spy);
-  context2d.lineCap = 'butt';
+  ((context2d as unknown) as CanvasRenderingContext2D).lineCap = 'butt';
   t.true(spy.withArgs('butt').calledOnce);
 });
 
@@ -398,7 +398,7 @@ test('context calls get lineCap', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'lineCap', spy);
-  context2d.lineCap;
+  ((context2d as unknown) as CanvasRenderingContext2D).lineCap;
   t.true(spy.calledOnce);
 });
 
@@ -414,7 +414,7 @@ test('context only calls upgraded set lineCap if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.lineCap = 'butt';
+    ((context2d as unknown) as CanvasRenderingContext2D).lineCap = 'butt';
     t.true(spy.withArgs('butt').calledOnce);
     t.false(implSpy.called);
   });
@@ -432,7 +432,7 @@ test('context only calls upgraded get lineCap if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.lineCap;
+    ((context2d as unknown) as CanvasRenderingContext2D).lineCap;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -448,7 +448,7 @@ test('context calls both versions of set lineCap when called before upgrade', as
   createSetterStub(sandbox, instance.getContext('2d'), 'lineCap', instanceSpy);
   createSetterStub(sandbox, implementation, 'lineCap', implSpy);
 
-  context2d.lineCap = 'round';
+  ((context2d as unknown) as CanvasRenderingContext2D).lineCap = 'round';
   t.true(implSpy.withArgs('round').calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -463,7 +463,7 @@ test('context calls set lineJoin', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'lineJoin', spy);
-  context2d.lineJoin = 'bevel';
+  ((context2d as unknown) as CanvasRenderingContext2D).lineJoin = 'bevel';
   t.true(spy.withArgs('bevel').calledOnce);
 });
 
@@ -471,7 +471,7 @@ test('context calls get lineJoin', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'lineJoin', spy);
-  context2d.lineJoin;
+  ((context2d as unknown) as CanvasRenderingContext2D).lineJoin;
   t.true(spy.calledOnce);
 });
 
@@ -487,7 +487,7 @@ test('context only calls upgraded set lineJoin if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.lineJoin = 'bevel';
+    ((context2d as unknown) as CanvasRenderingContext2D).lineJoin = 'bevel';
     t.true(spy.withArgs('bevel').calledOnce);
     t.false(implSpy.called);
   });
@@ -505,7 +505,7 @@ test('context only calls upgraded get lineJoin if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.lineJoin;
+    ((context2d as unknown) as CanvasRenderingContext2D).lineJoin;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -521,7 +521,7 @@ test('context calls both versions of set lineJoin when called before upgrade', a
   createSetterStub(sandbox, instance.getContext('2d'), 'lineJoin', instanceSpy);
   createSetterStub(sandbox, implementation, 'lineJoin', implSpy);
 
-  context2d.lineJoin = 'miter';
+  ((context2d as unknown) as CanvasRenderingContext2D).lineJoin = 'miter';
   t.true(implSpy.withArgs('miter').calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -536,7 +536,7 @@ test('context calls set miterLimit', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'miterLimit', spy);
-  context2d.miterLimit = 50;
+  ((context2d as unknown) as CanvasRenderingContext2D).miterLimit = 50;
   t.true(spy.withArgs(50).calledOnce);
 });
 
@@ -544,7 +544,7 @@ test('context calls get miterLimit', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'miterLimit', spy);
-  context2d.miterLimit;
+  ((context2d as unknown) as CanvasRenderingContext2D).miterLimit;
   t.true(spy.calledOnce);
 });
 
@@ -560,7 +560,7 @@ test('context only calls upgraded set miterLimit if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.miterLimit = 100;
+    ((context2d as unknown) as CanvasRenderingContext2D).miterLimit = 100;
     t.true(spy.withArgs(100).calledOnce);
     t.false(implSpy.called);
   });
@@ -578,7 +578,7 @@ test('context only calls upgraded get miterLimit if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.miterLimit;
+    ((context2d as unknown) as CanvasRenderingContext2D).miterLimit;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -594,7 +594,7 @@ test('context calls both versions of set miterLimit when called before upgrade',
   createSetterStub(sandbox, instance.getContext('2d'), 'miterLimit', instanceSpy);
   createSetterStub(sandbox, implementation, 'miterLimit', implSpy);
 
-  context2d.miterLimit = 200;
+  ((context2d as unknown) as CanvasRenderingContext2D).miterLimit = 200;
   t.true(implSpy.withArgs(200).calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -691,7 +691,7 @@ test('context calls set lineDashOffset', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'lineDashOffset', spy);
-  context2d.lineDashOffset = 150;
+  ((context2d as unknown) as CanvasRenderingContext2D).lineDashOffset = 150;
   t.true(spy.withArgs(150).calledOnce);
 });
 
@@ -699,7 +699,7 @@ test('context calls get lineDashOffset', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'lineDashOffset', spy);
-  context2d.lineDashOffset;
+  ((context2d as unknown) as CanvasRenderingContext2D).lineDashOffset;
   t.true(spy.calledOnce);
 });
 
@@ -715,7 +715,7 @@ test('context only calls upgraded set lineDashOffset if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.lineDashOffset = 200;
+    ((context2d as unknown) as CanvasRenderingContext2D).lineDashOffset = 200;
     t.true(spy.withArgs(200).calledOnce);
     t.false(implSpy.called);
   });
@@ -733,7 +733,7 @@ test('context only calls upgraded get lineDashOffset if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.lineDashOffset;
+    ((context2d as unknown) as CanvasRenderingContext2D).lineDashOffset;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -749,7 +749,7 @@ test('context calls both versions of set lineDashOffset when called before upgra
   createSetterStub(sandbox, instance.getContext('2d'), 'lineDashOffset', instanceSpy);
   createSetterStub(sandbox, implementation, 'lineDashOffset', implSpy);
 
-  context2d.lineDashOffset = 50;
+  ((context2d as unknown) as CanvasRenderingContext2D).lineDashOffset = 50;
   t.true(implSpy.withArgs(50).calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -764,7 +764,7 @@ test('context calls set font', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'font', spy);
-  context2d.font = 'Times';
+  ((context2d as unknown) as CanvasRenderingContext2D).font = 'Times';
   t.true(spy.withArgs('Times').calledOnce);
 });
 
@@ -772,7 +772,7 @@ test('context calls get font', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'font', spy);
-  context2d.font;
+  ((context2d as unknown) as CanvasRenderingContext2D).font;
   t.true(spy.calledOnce);
 });
 
@@ -788,7 +788,7 @@ test('context only calls upgraded set font if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.font = 'Arial';
+    ((context2d as unknown) as CanvasRenderingContext2D).font = 'Arial';
     t.true(spy.withArgs('Arial').calledOnce);
     t.false(implSpy.called);
   });
@@ -806,7 +806,7 @@ test('context only calls upgraded get font if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.font;
+    ((context2d as unknown) as CanvasRenderingContext2D).font;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -822,7 +822,7 @@ test('context calls both versions of set font when called before upgrade', async
   createSetterStub(sandbox, instance.getContext('2d'), 'font', instanceSpy);
   createSetterStub(sandbox, implementation, 'font', implSpy);
 
-  context2d.font = 'Courier';
+  ((context2d as unknown) as CanvasRenderingContext2D).font = 'Courier';
   t.true(implSpy.withArgs('Courier').calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -837,7 +837,7 @@ test('context calls set textAlign', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'textAlign', spy);
-  context2d.textAlign = 'center';
+  ((context2d as unknown) as CanvasRenderingContext2D).textAlign = 'center';
   t.true(spy.withArgs('center').calledOnce);
 });
 
@@ -845,7 +845,7 @@ test('context calls get textAlign', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'textAlign', spy);
-  context2d.textAlign;
+  ((context2d as unknown) as CanvasRenderingContext2D).textAlign;
   t.true(spy.calledOnce);
 });
 
@@ -861,7 +861,7 @@ test('context only calls upgraded set textAlign if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.textAlign = 'left';
+    ((context2d as unknown) as CanvasRenderingContext2D).textAlign = 'left';
     t.true(spy.withArgs('left').calledOnce);
     t.false(implSpy.called);
   });
@@ -879,7 +879,7 @@ test('context only calls upgraded get textAlign if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.textAlign;
+    ((context2d as unknown) as CanvasRenderingContext2D).textAlign;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -895,7 +895,7 @@ test('context calls both versions of set textAlign when called before upgrade', 
   createSetterStub(sandbox, instance.getContext('2d'), 'textAlign', instanceSpy);
   createSetterStub(sandbox, implementation, 'textAlign', implSpy);
 
-  context2d.textAlign = 'end';
+  ((context2d as unknown) as CanvasRenderingContext2D).textAlign = 'end';
   t.true(implSpy.withArgs('end').calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -910,7 +910,7 @@ test('context calls set textBaseline', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'textBaseline', spy);
-  context2d.textBaseline = 'alphabetic';
+  ((context2d as unknown) as CanvasRenderingContext2D).textBaseline = 'alphabetic';
   t.true(spy.withArgs('alphabetic').calledOnce);
 });
 
@@ -918,7 +918,7 @@ test('context calls get textBaseline', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'textBaseline', spy);
-  context2d.textBaseline;
+  ((context2d as unknown) as CanvasRenderingContext2D).textBaseline;
   t.true(spy.calledOnce);
 });
 
@@ -934,7 +934,7 @@ test('context only calls upgraded set textBaseline if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.textBaseline = 'middle';
+    ((context2d as unknown) as CanvasRenderingContext2D).textBaseline = 'middle';
     t.true(spy.withArgs('middle').calledOnce);
     t.false(implSpy.called);
   });
@@ -952,7 +952,7 @@ test('context only calls upgraded get textBaseline if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.textBaseline;
+    ((context2d as unknown) as CanvasRenderingContext2D).textBaseline;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -968,7 +968,7 @@ test('context calls both versions of set textBaseline when called before upgrade
   createSetterStub(sandbox, instance.getContext('2d'), 'textBaseline', instanceSpy);
   createSetterStub(sandbox, implementation, 'textBaseline', implSpy);
 
-  context2d.textBaseline = 'hanging';
+  ((context2d as unknown) as CanvasRenderingContext2D).textBaseline = 'hanging';
   t.true(implSpy.withArgs('hanging').calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -983,7 +983,7 @@ test('context calls set direction', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'direction', spy);
-  context2d.direction = 'rtl';
+  ((context2d as unknown) as CanvasRenderingContext2D).direction = 'rtl';
   t.true(spy.withArgs('rtl').calledOnce);
 });
 
@@ -991,7 +991,7 @@ test('context calls get direction', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'direction', spy);
-  context2d.direction;
+  ((context2d as unknown) as CanvasRenderingContext2D).direction;
   t.true(spy.calledOnce);
 });
 
@@ -1007,7 +1007,7 @@ test('context only calls upgraded set direction if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.direction = 'ltr';
+    ((context2d as unknown) as CanvasRenderingContext2D).direction = 'ltr';
     t.true(spy.withArgs('ltr').calledOnce);
     t.false(implSpy.called);
   });
@@ -1025,7 +1025,7 @@ test('context only calls upgraded get direction if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.direction;
+    ((context2d as unknown) as CanvasRenderingContext2D).direction;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -1041,7 +1041,7 @@ test('context calls both versions of set direction when called before upgrade', 
   createSetterStub(sandbox, instance.getContext('2d'), 'direction', instanceSpy);
   createSetterStub(sandbox, implementation, 'direction', implSpy);
 
-  context2d.direction = 'inherit';
+  ((context2d as unknown) as CanvasRenderingContext2D).direction = 'inherit';
   t.true(implSpy.withArgs('inherit').calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -1056,7 +1056,7 @@ test('context calls set fillStyle', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'fillStyle', spy);
-  context2d.fillStyle = 'red';
+  ((context2d as unknown) as CanvasRenderingContext2D).fillStyle = 'red';
   t.true(spy.withArgs('red').calledOnce);
 });
 
@@ -1064,7 +1064,7 @@ test('context calls get fillStyle', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'fillStyle', spy);
-  context2d.fillStyle;
+  ((context2d as unknown) as CanvasRenderingContext2D).fillStyle;
   t.true(spy.calledOnce);
 });
 
@@ -1080,7 +1080,7 @@ test('context only calls upgraded set fillStyle if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.fillStyle = 'yellow';
+    ((context2d as unknown) as CanvasRenderingContext2D).fillStyle = 'yellow';
     t.true(spy.withArgs('yellow').calledOnce);
     t.false(implSpy.called);
   });
@@ -1098,7 +1098,7 @@ test('context only calls upgraded get fillStyle if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.fillStyle;
+    ((context2d as unknown) as CanvasRenderingContext2D).fillStyle;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -1114,7 +1114,7 @@ test('context calls both versions of set fillStyle when called before upgrade', 
   createSetterStub(sandbox, instance.getContext('2d'), 'fillStyle', instanceSpy);
   createSetterStub(sandbox, implementation, 'fillStyle', implSpy);
 
-  context2d.fillStyle = 'black';
+  ((context2d as unknown) as CanvasRenderingContext2D).fillStyle = 'black';
   t.true(implSpy.withArgs('black').calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -1129,7 +1129,7 @@ test('context calls set strokeStyle', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'strokeStyle', spy);
-  context2d.strokeStyle = 'blue';
+  ((context2d as unknown) as CanvasRenderingContext2D).strokeStyle = 'blue';
   t.true(spy.withArgs('blue').calledOnce);
 });
 
@@ -1137,7 +1137,7 @@ test('context calls get strokeStyle', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'strokeStyle', spy);
-  context2d.strokeStyle;
+  ((context2d as unknown) as CanvasRenderingContext2D).strokeStyle;
   t.true(spy.calledOnce);
 });
 
@@ -1153,7 +1153,7 @@ test('context only calls upgraded set strokeStyle if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.strokeStyle = 'green';
+    ((context2d as unknown) as CanvasRenderingContext2D).strokeStyle = 'green';
     t.true(spy.withArgs('green').calledOnce);
     t.false(implSpy.called);
   });
@@ -1171,7 +1171,7 @@ test('context only calls upgraded get strokeStyle if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.strokeStyle;
+    ((context2d as unknown) as CanvasRenderingContext2D).strokeStyle;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -1187,7 +1187,7 @@ test('context calls both versions of set strokeStyle when called before upgrade'
   createSetterStub(sandbox, instance.getContext('2d'), 'strokeStyle', instanceSpy);
   createSetterStub(sandbox, implementation, 'strokeStyle', implSpy);
 
-  context2d.strokeStyle = 'black';
+  ((context2d as unknown) as CanvasRenderingContext2D).strokeStyle = 'black';
   t.true(implSpy.withArgs('black').calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -1329,7 +1329,7 @@ test('context calls set shadowBlur', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'shadowBlur', spy);
-  context2d.shadowBlur = 200;
+  ((context2d as unknown) as CanvasRenderingContext2D).shadowBlur = 200;
   t.true(spy.withArgs(200).calledOnce);
 });
 
@@ -1337,7 +1337,7 @@ test('context calls get shadowBlur', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'shadowBlur', spy);
-  context2d.shadowBlur;
+  ((context2d as unknown) as CanvasRenderingContext2D).shadowBlur;
   t.true(spy.calledOnce);
 });
 
@@ -1353,7 +1353,7 @@ test('context only calls upgraded set shadowBlur if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.shadowBlur = 500;
+    ((context2d as unknown) as CanvasRenderingContext2D).shadowBlur = 500;
     t.true(spy.withArgs(500).calledOnce);
     t.false(implSpy.called);
   });
@@ -1371,7 +1371,7 @@ test('context only calls upgraded get shadowBlur if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.shadowBlur;
+    ((context2d as unknown) as CanvasRenderingContext2D).shadowBlur;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -1387,7 +1387,7 @@ test('context calls both versions of set shadowBlur when called before upgrade',
   createSetterStub(sandbox, instance.getContext('2d'), 'shadowBlur', instanceSpy);
   createSetterStub(sandbox, implementation, 'shadowBlur', implSpy);
 
-  context2d.shadowBlur = 300;
+  ((context2d as unknown) as CanvasRenderingContext2D).shadowBlur = 300;
   t.true(implSpy.withArgs(300).calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -1402,7 +1402,7 @@ test('context calls set shadowColor', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'shadowColor', spy);
-  context2d.shadowColor = 'green';
+  ((context2d as unknown) as CanvasRenderingContext2D).shadowColor = 'green';
   t.true(spy.withArgs('green').calledOnce);
 });
 
@@ -1410,7 +1410,7 @@ test('context calls get shadowColor', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'shadowColor', spy);
-  context2d.shadowColor;
+  ((context2d as unknown) as CanvasRenderingContext2D).shadowColor;
   t.true(spy.calledOnce);
 });
 
@@ -1426,7 +1426,7 @@ test('context only calls upgraded set shadowColor if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.shadowColor = 'red';
+    ((context2d as unknown) as CanvasRenderingContext2D).shadowColor = 'red';
     t.true(spy.withArgs('red').calledOnce);
     t.false(implSpy.called);
   });
@@ -1444,7 +1444,7 @@ test('context only calls upgraded get shadowColor if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.shadowColor;
+    ((context2d as unknown) as CanvasRenderingContext2D).shadowColor;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -1460,7 +1460,7 @@ test('context calls both versions of set shadowColor when called before upgrade'
   createSetterStub(sandbox, instance.getContext('2d'), 'shadowColor', instanceSpy);
   createSetterStub(sandbox, implementation, 'shadowColor', implSpy);
 
-  context2d.shadowColor = 'blue';
+  ((context2d as unknown) as CanvasRenderingContext2D).shadowColor = 'blue';
   t.true(implSpy.withArgs('blue').calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -1475,7 +1475,7 @@ test('context calls set shadowOffsetX', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'shadowOffsetX', spy);
-  context2d.shadowOffsetX = 250;
+  ((context2d as unknown) as CanvasRenderingContext2D).shadowOffsetX = 250;
   t.true(spy.withArgs(250).calledOnce);
 });
 
@@ -1483,7 +1483,7 @@ test('context calls get shadowOffsetX', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'shadowOffsetX', spy);
-  context2d.shadowOffsetX;
+  ((context2d as unknown) as CanvasRenderingContext2D).shadowOffsetX;
   t.true(spy.calledOnce);
 });
 
@@ -1499,7 +1499,7 @@ test('context only calls upgraded set shadowOffsetX if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.shadowOffsetX = 200;
+    ((context2d as unknown) as CanvasRenderingContext2D).shadowOffsetX = 200;
     t.true(spy.withArgs(200).calledOnce);
     t.false(implSpy.called);
   });
@@ -1517,7 +1517,7 @@ test('context only calls upgraded get shadowOffsetX if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.shadowOffsetX;
+    ((context2d as unknown) as CanvasRenderingContext2D).shadowOffsetX;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -1533,7 +1533,7 @@ test('context calls both versions of set shadowOffsetX when called before upgrad
   createSetterStub(sandbox, instance.getContext('2d'), 'shadowOffsetX', instanceSpy);
   createSetterStub(sandbox, implementation, 'shadowOffsetX', implSpy);
 
-  context2d.shadowOffsetX = 20;
+  ((context2d as unknown) as CanvasRenderingContext2D).shadowOffsetX = 20;
   t.true(implSpy.withArgs(20).calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -1548,7 +1548,7 @@ test('context calls set shadowOffsetY', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'shadowOffsetY', spy);
-  context2d.shadowOffsetY = 300;
+  ((context2d as unknown) as CanvasRenderingContext2D).shadowOffsetY = 300;
   t.true(spy.withArgs(300).calledOnce);
 });
 
@@ -1556,7 +1556,7 @@ test('context calls get shadowOffsetY', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'shadowOffsetY', spy);
-  context2d.shadowOffsetY;
+  ((context2d as unknown) as CanvasRenderingContext2D).shadowOffsetY;
   t.true(spy.calledOnce);
 });
 
@@ -1572,7 +1572,7 @@ test('context only calls upgraded set shadowOffsetY if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.shadowOffsetY = 200;
+    ((context2d as unknown) as CanvasRenderingContext2D).shadowOffsetY = 200;
     t.true(spy.withArgs(200).calledOnce);
     t.false(implSpy.called);
   });
@@ -1590,7 +1590,7 @@ test('context only calls upgraded get shadowOffsetY if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.shadowOffsetY;
+    ((context2d as unknown) as CanvasRenderingContext2D).shadowOffsetY;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -1606,7 +1606,7 @@ test('context calls both versions of set shadowOffsetY when called before upgrad
   createSetterStub(sandbox, instance.getContext('2d'), 'shadowOffsetY', instanceSpy);
   createSetterStub(sandbox, implementation, 'shadowOffsetY', implSpy);
 
-  context2d.shadowOffsetY = 20;
+  ((context2d as unknown) as CanvasRenderingContext2D).shadowOffsetY = 20;
   t.true(implSpy.withArgs(20).calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -2442,7 +2442,7 @@ test('context calls set globalAlpha', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'globalAlpha', spy);
-  context2d.globalAlpha = 300;
+  ((context2d as unknown) as CanvasRenderingContext2D).globalAlpha = 300;
   t.true(spy.withArgs(300).calledOnce);
 });
 
@@ -2450,7 +2450,7 @@ test('context calls get globalAlpha', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'globalAlpha', spy);
-  context2d.globalAlpha;
+  ((context2d as unknown) as CanvasRenderingContext2D).globalAlpha;
   t.true(spy.calledOnce);
 });
 
@@ -2466,7 +2466,7 @@ test('context only calls upgraded set globalAlpha if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.globalAlpha = 200;
+    ((context2d as unknown) as CanvasRenderingContext2D).globalAlpha = 200;
     t.true(spy.withArgs(200).calledOnce);
     t.false(implSpy.called);
   });
@@ -2484,7 +2484,7 @@ test('context only calls upgraded get globalAlpha if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.globalAlpha;
+    ((context2d as unknown) as CanvasRenderingContext2D).globalAlpha;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -2500,7 +2500,7 @@ test('context calls both versions of set globalAlpha when called before upgrade'
   createSetterStub(sandbox, instance.getContext('2d'), 'globalAlpha', instanceSpy);
   createSetterStub(sandbox, implementation, 'globalAlpha', implSpy);
 
-  context2d.globalAlpha = 20;
+  ((context2d as unknown) as CanvasRenderingContext2D).globalAlpha = 20;
   t.true(implSpy.withArgs(20).calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -2515,7 +2515,7 @@ test('context calls set globalCompositeOperation', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'globalCompositeOperation', spy);
-  context2d.globalCompositeOperation = 'source-over';
+  ((context2d as unknown) as CanvasRenderingContext2D).globalCompositeOperation = 'source-over';
   t.true(spy.withArgs('source-over').calledOnce);
 });
 
@@ -2523,7 +2523,7 @@ test('context calls get globalCompositeOperation', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'globalCompositeOperation', spy);
-  context2d.globalCompositeOperation;
+  ((context2d as unknown) as CanvasRenderingContext2D).globalCompositeOperation;
   t.true(spy.calledOnce);
 });
 
@@ -2539,7 +2539,7 @@ test('context only calls upgraded set globalCompositeOperation if available', as
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.globalCompositeOperation = 'source-out';
+    ((context2d as unknown) as CanvasRenderingContext2D).globalCompositeOperation = 'source-out';
     t.true(spy.withArgs('source-out').calledOnce);
     t.false(implSpy.called);
   });
@@ -2557,7 +2557,7 @@ test('context only calls upgraded get globalCompositeOperation if available', as
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.globalCompositeOperation;
+    ((context2d as unknown) as CanvasRenderingContext2D).globalCompositeOperation;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -2573,7 +2573,7 @@ test('context calls both versions of set globalCompositeOperation when called be
   createSetterStub(sandbox, instance.getContext('2d'), 'globalCompositeOperation', instanceSpy);
   createSetterStub(sandbox, implementation, 'globalCompositeOperation', implSpy);
 
-  context2d.globalCompositeOperation = 'source-in';
+  ((context2d as unknown) as CanvasRenderingContext2D).globalCompositeOperation = 'source-in';
   t.true(implSpy.withArgs('source-in').calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -2761,7 +2761,7 @@ test('context calls set imageSmoothingEnabled', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'imageSmoothingEnabled', spy);
-  context2d.imageSmoothingEnabled = true;
+  ((context2d as unknown) as CanvasRenderingContext2D).imageSmoothingEnabled = true;
   t.true(spy.withArgs(true).calledOnce);
 });
 
@@ -2769,7 +2769,7 @@ test('context calls get imageSmoothingEnabled', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'imageSmoothingEnabled', spy);
-  context2d.imageSmoothingEnabled;
+  ((context2d as unknown) as CanvasRenderingContext2D).imageSmoothingEnabled;
   t.true(spy.calledOnce);
 });
 
@@ -2785,7 +2785,7 @@ test('context only calls upgraded set imageSmoothingEnabled if available', async
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.imageSmoothingEnabled = false;
+    ((context2d as unknown) as CanvasRenderingContext2D).imageSmoothingEnabled = false;
     t.true(spy.withArgs(false).calledOnce);
     t.false(implSpy.called);
   });
@@ -2803,7 +2803,7 @@ test('context only calls upgraded get imageSmoothingEnabled if available', async
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.imageSmoothingEnabled;
+    ((context2d as unknown) as CanvasRenderingContext2D).imageSmoothingEnabled;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -2819,7 +2819,7 @@ test('context calls both versions of set imageSmoothingEnabled when called befor
   createSetterStub(sandbox, instance.getContext('2d'), 'imageSmoothingEnabled', instanceSpy);
   createSetterStub(sandbox, implementation, 'imageSmoothingEnabled', implSpy);
 
-  context2d.imageSmoothingEnabled = true;
+  ((context2d as unknown) as CanvasRenderingContext2D).imageSmoothingEnabled = true;
   t.true(implSpy.withArgs(true).calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -2834,7 +2834,7 @@ test('context calls set imageSmoothingQuality', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'imageSmoothingQuality', spy);
-  context2d.imageSmoothingQuality = 'high';
+  ((context2d as unknown) as CanvasRenderingContext2D).imageSmoothingQuality = 'high';
   t.true(spy.withArgs('high').calledOnce);
 });
 
@@ -2842,7 +2842,7 @@ test('context calls get imageSmoothingQuality', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'imageSmoothingQuality', spy);
-  context2d.imageSmoothingQuality;
+  ((context2d as unknown) as CanvasRenderingContext2D).imageSmoothingQuality;
   t.true(spy.calledOnce);
 });
 
@@ -2858,7 +2858,7 @@ test('context only calls upgraded set imageSmoothingQuality if available', async
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.imageSmoothingQuality = 'medium';
+    ((context2d as unknown) as CanvasRenderingContext2D).imageSmoothingQuality = 'medium';
     t.true(spy.withArgs('medium').calledOnce);
     t.false(implSpy.called);
   });
@@ -2876,7 +2876,7 @@ test('context only calls upgraded get imageSmoothingQuality if available', async
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.imageSmoothingQuality;
+    ((context2d as unknown) as CanvasRenderingContext2D).imageSmoothingQuality;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -2892,7 +2892,7 @@ test('context calls both versions of set imageSmoothingQuality when called befor
   createSetterStub(sandbox, instance.getContext('2d'), 'imageSmoothingQuality', instanceSpy);
   createSetterStub(sandbox, implementation, 'imageSmoothingQuality', implSpy);
 
-  context2d.imageSmoothingQuality = 'low';
+  ((context2d as unknown) as CanvasRenderingContext2D).imageSmoothingQuality = 'low';
   t.true(implSpy.withArgs('low').calledOnce);
 
   deferredUpgrade.resolve(instance);
@@ -2989,7 +2989,7 @@ test('context calls set filter', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createSetterStub(sandbox, implementation, 'filter', spy);
-  context2d.filter = 'none';
+  ((context2d as unknown) as CanvasRenderingContext2D).filter = 'none';
   t.true(spy.withArgs('none').calledOnce);
 });
 
@@ -2997,7 +2997,7 @@ test('context calls get filter', t => {
   const { context2d, implementation, sandbox } = t.context;
   const spy = sandbox.spy();
   createGetterStub(sandbox, implementation, 'filter', spy);
-  context2d.filter;
+  ((context2d as unknown) as CanvasRenderingContext2D).filter;
   t.true(spy.calledOnce);
 });
 
@@ -3013,7 +3013,7 @@ test('context only calls upgraded set filter if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.filter = 'none';
+    ((context2d as unknown) as CanvasRenderingContext2D).filter = 'none';
     t.true(spy.withArgs('none').calledOnce);
     t.false(implSpy.called);
   });
@@ -3031,7 +3031,7 @@ test('context only calls upgraded get filter if available', async t => {
   deferredUpgrade.resolve(instance);
 
   await context2d.goodOffscreenPromise.then(() => {
-    context2d.filter;
+    ((context2d as unknown) as CanvasRenderingContext2D).filter;
     t.true(spy.calledOnce);
     t.false(implSpy.called);
   });
@@ -3047,7 +3047,7 @@ test('context calls both versions of set filter when called before upgrade', asy
   createSetterStub(sandbox, instance.getContext('2d'), 'filter', instanceSpy);
   createSetterStub(sandbox, implementation, 'filter', implSpy);
 
-  context2d.filter = 'none';
+  ((context2d as unknown) as CanvasRenderingContext2D).filter = 'none';
   t.true(implSpy.withArgs('none').calledOnce);
 
   deferredUpgrade.resolve(instance);

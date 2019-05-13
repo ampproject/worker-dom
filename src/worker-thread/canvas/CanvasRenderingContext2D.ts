@@ -14,19 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  CanvasRenderingContext2D,
-  CanvasDirection,
-  CanvasFillRule,
-  CanvasImageSource,
-  CanvasLineCap,
-  CanvasLineJoin,
-  CanvasTextAlign,
-  CanvasTextBaseline,
-  ImageSmoothingQuality,
-  CanvasGradient,
-  CanvasPattern,
-} from './CanvasTypes';
+import { CanvasRenderingContext2D, CanvasFillRule, CanvasImageSource, CanvasGradient, CanvasPattern } from './CanvasTypes';
 import { MessageType, OffscreenCanvasToWorker } from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { transfer } from '../MutationTransfer';
@@ -37,9 +25,9 @@ import { HTMLElement } from '../dom/HTMLElement';
 
 export const deferredUpgrades = new WeakMap();
 
-export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
+export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> {
   private queue = [] as { fnName: string; args: any[]; isSetter: boolean }[];
-  private implementation: CanvasRenderingContext2D;
+  public [TransferrableKeys.implementation]: CanvasRenderingContext2D;
   private upgraded = false;
   private canvasElement: ElementType;
 
@@ -51,12 +39,12 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     const OffscreenCanvas = canvas.ownerDocument.defaultView.OffscreenCanvas;
 
     if (typeof OffscreenCanvas === 'undefined') {
-      this.implementation = new OffscreenCanvasPolyfill<ElementType>(canvas).getContext('2d');
+      this[TransferrableKeys.implementation] = new OffscreenCanvasPolyfill<ElementType>(canvas).getContext('2d');
       this.upgraded = true;
     } else {
-      this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
+      this[TransferrableKeys.implementation] = new OffscreenCanvas(0, 0).getContext('2d');
       this.goodOffscreenPromise = this.getOffscreenCanvasAsync(this.canvasElement).then(instance => {
-        this.implementation = instance.getContext('2d');
+        this[TransferrableKeys.implementation] = instance.getContext('2d');
         this.upgraded = true;
         this.flushQueue();
       });
@@ -78,8 +66,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
       // TODO: This should only happen in test environemnet. Otherwise, we should throw.
       if (typeof addEventListener !== 'function') {
-        const deferred = { resolve, reject };
-        deferredUpgrades.set(canvas, deferred);
+        deferredUpgrades.set(canvas, { resolve, reject });
       } else {
         addEventListener('message', messageHandler);
         transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
@@ -90,31 +77,27 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   private flushQueue() {
     for (const call of this.queue) {
       if (call.isSetter) {
-        (this.implementation as any)[call.fnName] = call.args[0];
+        (this[TransferrableKeys.implementation] as any)[call.fnName] = call.args[0];
       } else {
-        (this.implementation as any)[call.fnName](...call.args);
+        (this[TransferrableKeys.implementation] as any)[call.fnName](...call.args);
       }
     }
     this.queue.length = 0;
   }
 
   private delegateFunc(name: string, args: any[]) {
-    const returnValue = (this.implementation as any)[name](...args);
+    const returnValue = (this[TransferrableKeys.implementation] as any)[name](...args);
     if (!this.upgraded) {
       this.queue.push({ fnName: name, args, isSetter: false });
     }
     return returnValue;
   }
 
-  private delegateSetter(name: string, args: any[]) {
-    (this.implementation as any)[name] = args[0];
+  public [TransferrableKeys.set](name: string, args: any[]) {
+    (this[TransferrableKeys.implementation] as any)[name] = args[0];
     if (!this.upgraded) {
       this.queue.push({ fnName: name, args: args, isSetter: true });
     }
-  }
-
-  private delegateGetter(name: string) {
-    return (this.implementation as any)[name];
   }
 
   /* DRAWING RECTANGLES */
@@ -143,103 +126,12 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     return this.delegateFunc('measureText', [...arguments]);
   }
 
-  /* LINE STYLES */
-  set lineWidth(value: number) {
-    this.delegateSetter('lineWidth', [...arguments]);
-  }
-
-  get lineWidth(): number {
-    return this.delegateGetter('lineWidth');
-  }
-
-  set lineCap(value: CanvasLineCap) {
-    this.delegateSetter('lineCap', [...arguments]);
-  }
-
-  get lineCap(): CanvasLineCap {
-    return this.delegateGetter('lineCap');
-  }
-
-  set lineJoin(value: CanvasLineJoin) {
-    this.delegateSetter('lineJoin', [...arguments]);
-  }
-
-  get lineJoin(): CanvasLineJoin {
-    return this.delegateGetter('lineJoin');
-  }
-
-  set miterLimit(value: number) {
-    this.delegateSetter('miterLimit', [...arguments]);
-  }
-
-  get miterLimit(): number {
-    return this.delegateGetter('miterLimit');
-  }
-
   getLineDash(): number[] {
     return this.delegateFunc('getLineDash', [...arguments]);
   }
 
   setLineDash(segments: number[]): void {
     this.delegateFunc('setLineDash', [...arguments]);
-  }
-
-  set lineDashOffset(value: number) {
-    this.delegateSetter('lineDashOffset', [...arguments]);
-  }
-
-  get lineDashOffset(): number {
-    return this.delegateGetter('lineDashOffset');
-  }
-
-  /* TEXT STYLES */
-  set font(value: string) {
-    this.delegateSetter('font', [...arguments]);
-  }
-
-  get font(): string {
-    return this.delegateGetter('font');
-  }
-
-  set textAlign(value: CanvasTextAlign) {
-    this.delegateSetter('textAlign', [...arguments]);
-  }
-
-  get textAlign(): CanvasTextAlign {
-    return this.delegateGetter('textAlign');
-  }
-
-  set textBaseline(value: CanvasTextBaseline) {
-    this.delegateSetter('textBaseline', [...arguments]);
-  }
-
-  get textBaseline(): CanvasTextBaseline {
-    return this.delegateGetter('textBaseline');
-  }
-
-  set direction(value: CanvasDirection) {
-    this.delegateSetter('direction', [...arguments]);
-  }
-
-  get direction(): CanvasDirection {
-    return this.delegateGetter('direction');
-  }
-
-  /* FILL AND STROKE STYLES */
-  set fillStyle(value: string | CanvasGradient | CanvasPattern) {
-    this.delegateSetter('fillStyle', [...arguments]);
-  }
-
-  get fillStyle(): string | CanvasGradient | CanvasPattern {
-    return this.delegateGetter('fillStyle');
-  }
-
-  set strokeStyle(value: string | CanvasGradient | CanvasPattern) {
-    this.delegateSetter('strokeStyle', [...arguments]);
-  }
-
-  get strokeStyle(): string | CanvasGradient | CanvasPattern {
-    return this.delegateGetter('strokeStyle');
   }
 
   /* GRADIENTS AND PATTERNS */
@@ -253,39 +145,6 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   createPattern(image: CanvasImageSource, repetition: string): CanvasPattern | null {
     return this.delegateFunc('createPattern', [...arguments]);
-  }
-
-  /* SHADOWS */
-  set shadowBlur(value: number) {
-    this.delegateSetter('shadowBlur', [...arguments]);
-  }
-
-  get shadowBlur(): number {
-    return this.delegateGetter('shadowBlur');
-  }
-
-  set shadowColor(value: string) {
-    this.delegateSetter('shadowColor', [...arguments]);
-  }
-
-  get shadowColor(): string {
-    return this.delegateGetter('shadowColor');
-  }
-
-  set shadowOffsetX(value: number) {
-    this.delegateSetter('shadowOffsetX', [...arguments]);
-  }
-
-  get shadowOffsetX(): number {
-    return this.delegateGetter('shadowOffsetX');
-  }
-
-  set shadowOffsetY(value: number) {
-    this.delegateSetter('shadowOffsetY', [...arguments]);
-  }
-
-  get shadowOffsetY(): number {
-    return this.delegateGetter('shadowOffsetY');
   }
 
   /* PATHS */
@@ -387,25 +246,10 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     this.delegateFunc('setTransform', args);
   }
 
-  /* experimental */ resetTransform(): void {
+  /* experimental */
+
+  resetTransform(): void {
     this.delegateFunc('resetTransform', [...arguments]);
-  }
-
-  /* COMPOSITING */
-  set globalAlpha(value: number) {
-    this.delegateSetter('globalAlpha', [...arguments]);
-  }
-
-  get globalAlpha(): number {
-    return this.delegateGetter('globalAlpha');
-  }
-
-  set globalCompositeOperation(value: string) {
-    this.delegateSetter('globalCompositeOperation', [...arguments]);
-  }
-
-  get globalCompositeOperation(): string {
-    return this.delegateGetter('globalCompositeOperation');
   }
 
   /* DRAWING IMAGES */
@@ -427,23 +271,6 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     this.delegateFunc('putImageData', [...arguments]);
   }
 
-  /* IMAGE SMOOTHING */
-  /* experimental */ set imageSmoothingEnabled(value: boolean) {
-    this.delegateSetter('imageSmoothingEnabled', [...arguments]);
-  }
-
-  /* experimental */ get imageSmoothingEnabled(): boolean {
-    return this.delegateGetter('imageSmoothingEnabled');
-  }
-
-  /* experimental */ set imageSmoothingQuality(value: ImageSmoothingQuality) {
-    this.delegateSetter('imageSmoothingQuality', [...arguments]);
-  }
-
-  /* experimental */ get imageSmoothingQuality(): ImageSmoothingQuality {
-    return this.delegateGetter('imageSmoothingQuality');
-  }
-
   /* THE CANVAS STATE */
   save(): void {
     this.delegateFunc('save', [...arguments]);
@@ -458,13 +285,38 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   get canvas(): ElementType {
     return this.canvasElement;
   }
-
-  /* FILTERS */
-  /* experimental */ set filter(value: string) {
-    this.delegateSetter('filter', [...arguments]);
-  }
-
-  /* experimental */ get filter(): string {
-    return this.delegateGetter('filter');
-  }
 }
+
+[
+  'lineWidth',
+  'lineCap',
+  'lineJoin',
+  'miterLimit',
+  'lineDashOffset',
+  'font',
+  'textAlign',
+  'textBaseline',
+  'direction',
+  'fillStyle',
+  'strokeStyle',
+  'shadowBlur',
+  'shadowColor',
+  'shadowOffsetX',
+  'shadowOffsetY',
+  'globalAlpha',
+  'globalCompositeOperation',
+  // Experimental
+  'imageSmoothingEnabled',
+  'imageSmoothingQuality',
+  'filter',
+].forEach(property => {
+  Object.defineProperty(CanvasRenderingContext2DShim.prototype, property, {
+    enumerable: true,
+    get(): string | number {
+      return this[TransferrableKeys.implementation][property];
+    },
+    set(): void {
+      this[TransferrableKeys.set](property, [...arguments]);
+    },
+  });
+});
