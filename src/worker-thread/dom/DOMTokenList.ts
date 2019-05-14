@@ -42,9 +42,7 @@ export class DOMTokenList {
   constructor(defineOn: typeof Element, target: Element, attributeName: string, accessorKey: string | null, propertyName: string | null) {
     this[TransferrableKeys.target] = target;
     this[TransferrableKeys.attributeName] = attributeName;
-
     this[TransferrableKeys.storeAttribute] = target[TransferrableKeys.storeAttribute].bind(target);
-    target[TransferrableKeys.propertyBackedAttributes][attributeName] = [(): string | null => this.value, (value: string) => (this.value = value)];
 
     if (accessorKey && propertyName) {
       Object.defineProperty(defineOn.prototype, propertyName, {

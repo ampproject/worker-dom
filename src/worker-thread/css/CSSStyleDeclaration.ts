@@ -96,10 +96,6 @@ export class CSSStyleDeclaration implements StyleDeclaration {
   constructor(target: Element) {
     this[TransferrableKeys.storeAttribute] = target[TransferrableKeys.storeAttribute].bind(target);
     this[TransferrableKeys.target] = target;
-
-    if (target && target[TransferrableKeys.propertyBackedAttributes]) {
-      target[TransferrableKeys.propertyBackedAttributes].style = [(): string | null => this.cssText, (value: string) => (this.cssText = value)];
-    }
   }
 
   /**
