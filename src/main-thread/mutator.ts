@@ -17,6 +17,7 @@
 import { NodeContext } from './nodes';
 import { Strings } from './strings';
 import { WorkerContext } from './worker';
+import { OffscreenCanvasProcessor } from './commands/offscreen-canvas';
 import { TransferrableMutationType, ReadableMutationType } from '../transfer/TransferrableMutation';
 import { EventSubscriptionProcessor } from './commands/event-subscription';
 import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
@@ -28,6 +29,7 @@ import { LongTaskExecutor } from './commands/long-task';
 import { CommandExecutor } from './commands/interface';
 import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
 import { Phase } from '../transfer/Phase';
+import { OffscreenPolyfillCallProcessor } from './commands/offscreen-polyfill-calls';
 
 export class MutatorProcessor {
   private strings: Strings;
@@ -53,6 +55,7 @@ export class MutatorProcessor {
     this.mutationPumpFunction = config.mutationPump || requestAnimationFrame.bind(null);
 
     const LongTaskExecutorInstance = LongTaskExecutor(config);
+
     this.executors = {
       [TransferrableMutationType.CHILD_LIST]: ChildListProcessor(nodeContext),
       [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor(strings, config),
@@ -62,6 +65,8 @@ export class MutatorProcessor {
       [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor(workerContext),
       [TransferrableMutationType.LONG_TASK_START]: LongTaskExecutorInstance,
       [TransferrableMutationType.LONG_TASK_END]: LongTaskExecutorInstance,
+      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(workerContext),
+      [TransferrableMutationType.OFFSCREEN_POLYFILL]: OffscreenPolyfillCallProcessor(strings),
     };
   }
 

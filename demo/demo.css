@@ -32,3 +32,19 @@ li {
 code {
   white-space: pre-wrap;
 }
+
+canvas {
+  background: #fff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+#myCanvas {
+  float: left;
+  margin-right: 5px;
+}
+
+#canvasButtonsDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

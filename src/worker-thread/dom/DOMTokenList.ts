@@ -84,7 +84,7 @@ export class DOMTokenList {
 
     // Replace current tokens with new tokens.
     this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...(newValue !== '' ? newValue.split(/\s+/) : ''));
-    this.mutated(oldValue, newValue);
+    this[TransferrableKeys.mutated](oldValue, newValue);
   }
 
   /**
@@ -115,7 +115,7 @@ export class DOMTokenList {
   public add(...tokens: string[]): void {
     const oldValue = this.value;
     this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...new Set(this[TransferrableKeys.tokens].concat(tokens)));
-    this.mutated(oldValue, this.value);
+    this[TransferrableKeys.mutated](oldValue, this.value);
   }
 
   /**
@@ -132,7 +132,7 @@ export class DOMTokenList {
       this[TransferrableKeys.tokens].length,
       ...new Set(this[TransferrableKeys.tokens].filter(token => !tokens.includes(token))),
     );
-    this.mutated(oldValue, this.value);
+    this[TransferrableKeys.mutated](oldValue, this.value);
   }
 
   /**
@@ -154,7 +154,7 @@ export class DOMTokenList {
       }
     }
     this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...set);
-    this.mutated(oldValue, this.value);
+    this[TransferrableKeys.mutated](oldValue, this.value);
   }
 
   /**
@@ -187,7 +187,7 @@ export class DOMTokenList {
    * @param value value after mutation
    * @private
    */
-  private mutated(oldValue: string, value: string): void {
+  private [TransferrableKeys.mutated](oldValue: string, value: string): void {
     this[TransferrableKeys.storeAttribute](this[TransferrableKeys.target].namespaceURI, this[TransferrableKeys.attributeName], value);
     mutate(
       this[TransferrableKeys.target].ownerDocument as Document,

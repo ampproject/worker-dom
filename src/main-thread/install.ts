@@ -59,6 +59,7 @@ export function install(fetchPromise: Promise<[string, string]>, baseElement: HT
         if (!ALLOWABLE_MESSAGE_TYPES.includes(data[TransferrableKeys.type])) {
           return;
         }
+
         mutatorContext.mutate(
           (data as MutationFromWorker)[TransferrableKeys.phase],
           (data as MutationFromWorker)[TransferrableKeys.nodes],

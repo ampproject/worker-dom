@@ -31,6 +31,8 @@ export const enum MessageType {
   GET_BOUNDING_CLIENT_RECT = 6,
   LONG_TASK_START = 7,
   LONG_TASK_END = 8,
+  OFFSCREEN_CANVAS_INSTANCE = 9,
+  OFFSCREEN_POLYFILL = 10,
   // NAVIGATION_PUSH_STATE = 8,
   // NAVIGATION_REPLACE_STATE = 9,
   // NAVIGATION_POP_STATE = 10,
@@ -65,8 +67,13 @@ export interface BoundingClientRectToWorker {
   [TransferrableKeys.target]: TransferredNode;
   [TransferrableKeys.data]: TransferrableBoundingClientRect;
 }
+export interface OffscreenCanvasToWorker {
+  [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE;
+  [TransferrableKeys.target]: TransferredNode;
+  [TransferrableKeys.data]: Object; // This will be an OffscreenCanvas
+}
 export interface ResizeSyncToWorker {
   [TransferrableKeys.type]: MessageType.RESIZE;
   [TransferrableKeys.sync]: [number, number];
 }
-export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker | ResizeSyncToWorker;
+export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker | ResizeSyncToWorker | OffscreenCanvasToWorker;

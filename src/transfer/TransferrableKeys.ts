@@ -82,4 +82,5 @@ export const enum TransferrableKeys {
   hydrateNode = 64,
   offsetX = 65,
   offsetY = 66,
+  mutated = 67,
 }

@@ -118,7 +118,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     const oldValue = this.getPropertyValue(key);
 
     this[TransferrableKeys.properties][key] = null;
-    this.mutated(this.cssText);
+    this[TransferrableKeys.mutated](this.cssText);
     return oldValue;
   }
 
@@ -130,7 +130,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
    */
   public setProperty(key: string, value: string): void {
     this[TransferrableKeys.properties][key] = value;
-    this.mutated(this.cssText);
+    this[TransferrableKeys.mutated](this.cssText);
   }
 
   /**
@@ -165,7 +165,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     for (let index = 0; index + 1 < length; index += 2) {
       this[TransferrableKeys.properties][toLower(values[index].trim())] = values[index + 1].trim();
     }
-    this.mutated(this.cssText);
+    this[TransferrableKeys.mutated](this.cssText);
   }
 
   /**
@@ -173,7 +173,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
    * @param value value after mutation
    * @private
    */
-  private mutated(value: string): void {
+  private [TransferrableKeys.mutated](value: string): void {
     const oldValue = this[TransferrableKeys.storeAttribute](this[TransferrableKeys.target].namespaceURI, 'style', value);
     mutate(
       this[TransferrableKeys.target].ownerDocument as Document,
