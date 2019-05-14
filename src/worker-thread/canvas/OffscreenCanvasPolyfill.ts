@@ -1,3 +1,19 @@
+/**
+ * Copyright 2019 The AMP HTML Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS-IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import {
@@ -12,7 +28,7 @@ import {
 } from './CanvasTypes';
 import { transfer } from '../MutationTransfer';
 import { Document } from '../dom/Document';
-import { NumericBoolean } from '../../utils';
+import { NumericBoolean, toLower } from '../../utils';
 import { store } from '../strings';
 import { HTMLElement } from '../dom/HTMLElement';
 
@@ -26,7 +42,7 @@ export class OffscreenCanvasPolyfill<ElementType extends HTMLElement> {
 
   getContext(contextType: string): CanvasRenderingContext2D {
     if (!this.context) {
-      if (contextType === '2D' || contextType === '2d') {
+      if (toLower(contextType) === '2d') {
         this.context = new OffscreenCanvasRenderingContext2DPolyfill<ElementType>(this.canvas);
       } else {
         throw new Error('Context type not supported.');
@@ -45,7 +61,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     this.lineDash = [];
   }
 
-  private postToMainThread(fnName: string, isSetter: NumericBoolean, stringArgIndex: number, args: any[], float32Needed: boolean) {
+  private [TransferrableKeys.mutated](fnName: string, isSetter: NumericBoolean, stringArgIndex: number, args: any[], float32Needed: boolean) {
     transfer(this.canvasElement.ownerDocument as Document, [
       TransferrableMutationType.OFFSCREEN_POLYFILL,
       this.canvasElement[TransferrableKeys.index],
@@ -63,177 +79,177 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   }
 
   clearRect(x: number, y: number, w: number, h: number): void {
-    this.postToMainThread('clearRect', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('clearRect', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   fillRect(x: number, y: number, w: number, h: number): void {
-    this.postToMainThread('fillRect', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('fillRect', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   strokeRect(x: number, y: number, w: number, h: number): void {
-    this.postToMainThread('strokeRect', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('strokeRect', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   set lineWidth(value: number) {
-    this.postToMainThread('lineWidth', NumericBoolean.TRUE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('lineWidth', NumericBoolean.TRUE, 0, [...arguments], true);
   }
 
   fillText(text: string, x: number, y: number, maxWidth?: number) {
     const numberArgs = [...arguments].slice(1);
-    this.postToMainThread('fillText', NumericBoolean.FALSE, 1, [store(text), ...numberArgs], true);
+    this[TransferrableKeys.mutated]('fillText', NumericBoolean.FALSE, 1, [store(text), ...numberArgs], true);
   }
 
   moveTo(x: number, y: number) {
-    this.postToMainThread('moveTo', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('moveTo', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   lineTo(x: number, y: number) {
-    this.postToMainThread('lineTo', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('lineTo', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   closePath() {
-    this.postToMainThread('closePath', NumericBoolean.FALSE, 0, [], false);
+    this[TransferrableKeys.mutated]('closePath', NumericBoolean.FALSE, 0, [], false);
   }
 
   stroke() {
-    this.postToMainThread('stroke', NumericBoolean.FALSE, 0, [], false);
+    this[TransferrableKeys.mutated]('stroke', NumericBoolean.FALSE, 0, [], false);
   }
 
   restore() {
-    this.postToMainThread('restore', NumericBoolean.FALSE, 0, [], false);
+    this[TransferrableKeys.mutated]('restore', NumericBoolean.FALSE, 0, [], false);
   }
 
   save() {
-    this.postToMainThread('save', NumericBoolean.FALSE, 0, [], false);
+    this[TransferrableKeys.mutated]('save', NumericBoolean.FALSE, 0, [], false);
   }
 
   resetTransform() {
-    this.postToMainThread('resetTransform', NumericBoolean.FALSE, 0, [], false);
+    this[TransferrableKeys.mutated]('resetTransform', NumericBoolean.FALSE, 0, [], false);
   }
 
   rotate(angle: number) {
-    this.postToMainThread('rotate', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('rotate', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   transform(a: number, b: number, c: number, d: number, e: number, f: number) {
-    this.postToMainThread('transform', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('transform', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   translate(x: number, y: number) {
-    this.postToMainThread('translate', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('translate', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   scale(x: number, y: number) {
-    this.postToMainThread('scale', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('scale', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   set globalAlpha(value: number) {
-    this.postToMainThread('globalAlpha', NumericBoolean.TRUE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('globalAlpha', NumericBoolean.TRUE, 0, [...arguments], true);
   }
 
   set globalCompositeOperation(value: string) {
-    this.postToMainThread('globalCompositeOperation', NumericBoolean.TRUE, 1, [store(value)], false);
+    this[TransferrableKeys.mutated]('globalCompositeOperation', NumericBoolean.TRUE, 1, [store(value)], false);
   }
 
   set imageSmoothingQuality(value: ImageSmoothingQuality) {
-    this.postToMainThread('imageSmoothingQuality', NumericBoolean.TRUE, 1, [store(value)], false);
+    this[TransferrableKeys.mutated]('imageSmoothingQuality', NumericBoolean.TRUE, 1, [store(value)], false);
   }
 
   set fillStyle(value: string) {
-    this.postToMainThread('fillStyle', NumericBoolean.TRUE, 1, [store(value)], false);
+    this[TransferrableKeys.mutated]('fillStyle', NumericBoolean.TRUE, 1, [store(value)], false);
   }
 
   set strokeStyle(value: string) {
-    this.postToMainThread('strokeStyle', NumericBoolean.TRUE, 1, [store(value)], false);
+    this[TransferrableKeys.mutated]('strokeStyle', NumericBoolean.TRUE, 1, [store(value)], false);
   }
 
   set shadowBlur(value: number) {
-    this.postToMainThread('shadowBlur', NumericBoolean.TRUE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('shadowBlur', NumericBoolean.TRUE, 0, [...arguments], true);
   }
 
   set shadowColor(value: string) {
-    this.postToMainThread('shadowColor', NumericBoolean.TRUE, 1, [store(value)], false);
+    this[TransferrableKeys.mutated]('shadowColor', NumericBoolean.TRUE, 1, [store(value)], false);
   }
 
   set shadowOffsetX(value: number) {
-    this.postToMainThread('shadowOffsetX', NumericBoolean.TRUE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('shadowOffsetX', NumericBoolean.TRUE, 0, [...arguments], true);
   }
 
   set shadowOffsetY(value: number) {
-    this.postToMainThread('shadowOffsetY', NumericBoolean.TRUE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('shadowOffsetY', NumericBoolean.TRUE, 0, [...arguments], true);
   }
 
   set filter(value: string) {
-    this.postToMainThread('filter', NumericBoolean.TRUE, 1, [store(value)], false);
+    this[TransferrableKeys.mutated]('filter', NumericBoolean.TRUE, 1, [store(value)], false);
   }
 
   beginPath() {
-    this.postToMainThread('beginPath', NumericBoolean.FALSE, 0, [], false);
+    this[TransferrableKeys.mutated]('beginPath', NumericBoolean.FALSE, 0, [], false);
   }
 
   strokeText(text: string, x: number, y: number, maxWidth?: number) {
     const numberArgs = [...arguments].slice(1);
-    this.postToMainThread('strokeText', NumericBoolean.FALSE, 1, [store(text), ...numberArgs], true);
+    this[TransferrableKeys.mutated]('strokeText', NumericBoolean.FALSE, 1, [store(text), ...numberArgs], true);
   }
 
   set textAlign(value: CanvasTextAlign) {
-    this.postToMainThread('textAlign', NumericBoolean.TRUE, 1, [store(value)], false);
+    this[TransferrableKeys.mutated]('textAlign', NumericBoolean.TRUE, 1, [store(value)], false);
   }
 
   set textBaseline(value: CanvasTextBaseline) {
-    this.postToMainThread('textBaseline', NumericBoolean.TRUE, 1, [store(value)], false);
+    this[TransferrableKeys.mutated]('textBaseline', NumericBoolean.TRUE, 1, [store(value)], false);
   }
 
   set lineCap(value: CanvasLineCap) {
-    this.postToMainThread('lineCap', NumericBoolean.TRUE, 1, [store(value)], false);
+    this[TransferrableKeys.mutated]('lineCap', NumericBoolean.TRUE, 1, [store(value)], false);
   }
 
   set lineDashOffset(value: number) {
-    this.postToMainThread('lineDashOffset', NumericBoolean.TRUE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('lineDashOffset', NumericBoolean.TRUE, 0, [...arguments], true);
   }
 
   set lineJoin(value: CanvasLineJoin) {
-    this.postToMainThread('lineJoin', NumericBoolean.TRUE, 1, [store(value)], false);
+    this[TransferrableKeys.mutated]('lineJoin', NumericBoolean.TRUE, 1, [store(value)], false);
   }
 
   set miterLimit(value: number) {
-    this.postToMainThread('miterLimit', NumericBoolean.TRUE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('miterLimit', NumericBoolean.TRUE, 0, [...arguments], true);
   }
 
   arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: boolean) {
-    this.postToMainThread('arc', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('arc', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number) {
-    this.postToMainThread('arcTo', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('arcTo', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   set direction(value: CanvasDirection) {
-    this.postToMainThread('direction', NumericBoolean.TRUE, 1, [store(value)], false);
+    this[TransferrableKeys.mutated]('direction', NumericBoolean.TRUE, 1, [store(value)], false);
   }
 
   set font(value: string) {
-    this.postToMainThread('font', NumericBoolean.TRUE, 1, [store(value)], false);
+    this[TransferrableKeys.mutated]('font', NumericBoolean.TRUE, 1, [store(value)], false);
   }
 
   ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean) {
-    this.postToMainThread('ellipse', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('ellipse', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number) {
-    this.postToMainThread('bezierCurveTo', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('bezierCurveTo', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   rect(x: number, y: number, width: number, height: number) {
-    this.postToMainThread('rect', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('rect', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   quadraticCurveTo(cpx: number, cpy: number, x: number, y: number) {
-    this.postToMainThread('quadraticCurveTo', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('quadraticCurveTo', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   set imageSmoothingEnabled(value: boolean) {
-    this.postToMainThread('imageSmoothingEnabled', NumericBoolean.TRUE, 0, [...arguments], false);
+    this[TransferrableKeys.mutated]('imageSmoothingEnabled', NumericBoolean.TRUE, 0, [...arguments], false);
   }
 
   setLineDash(lineDash: number[]) {
@@ -242,7 +258,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       lineDash = lineDash.concat(lineDash);
     }
     this.lineDash = lineDash;
-    this.postToMainThread('setLineDash', NumericBoolean.FALSE, 0, lineDash, true);
+    this[TransferrableKeys.mutated]('setLineDash', NumericBoolean.FALSE, 0, lineDash, true);
   }
 
   getLineDash(): number[] {
@@ -253,14 +269,14 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     if (typeof pathOrFillRule === 'object') {
       throw new Error('clip(Path2D) is currently not supported!');
     }
-    this.postToMainThread('clip', NumericBoolean.FALSE, 1, [...arguments], false);
+    this[TransferrableKeys.mutated]('clip', NumericBoolean.FALSE, 1, [...arguments], false);
   }
 
   fill(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule) {
     if (typeof pathOrFillRule === 'object') {
       throw new Error('fill(Path2D) is currently not supported!');
     }
-    this.postToMainThread('fill', NumericBoolean.FALSE, 1, [...arguments], false);
+    this[TransferrableKeys.mutated]('fill', NumericBoolean.FALSE, 1, [...arguments], false);
   }
 
   // Method has a different signature in MDN than it does in HTML spec
@@ -268,7 +284,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     if (typeof transformOrA === 'object') {
       throw new Error('setTransform(DOMMatrix2DInit) is currently not supported!');
     }
-    this.postToMainThread('setTransform', NumericBoolean.FALSE, 0, [...arguments], true);
+    this[TransferrableKeys.mutated]('setTransform', NumericBoolean.FALSE, 0, [...arguments], true);
   }
 
   ////////////////////////////////////////
