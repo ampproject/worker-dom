@@ -21,7 +21,11 @@ import { DOMTokenList } from './DOMTokenList';
 import { matchNearestParent, tagNameConditionPredicate, matchChildrenElements } from './matchElements';
 
 export class HTMLTableCellElement extends HTMLElement {
-  public headers: DOMTokenList = new DOMTokenList(HTMLTableCellElement, this, 'headers', null, null);
+  private _headers: DOMTokenList;
+
+  public get headers(): DOMTokenList {
+    return this._headers || (this._headers = new DOMTokenList(this, 'headers'));
+  }
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableCellElement

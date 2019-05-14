@@ -16,7 +16,7 @@
 
 import { Node, NodeName, NamespaceURI } from './Node';
 import { ParentNode } from './ParentNode';
-import { DOMTokenList } from './DOMTokenList';
+import { DOMTokenList, synchronizedAccessor } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
@@ -84,6 +84,8 @@ enum ElementKind {
 const VOID_ELEMENTS: string[] = ['AREA', 'BASE', 'BR', 'COL', 'EMBED', 'HR', 'IMG', 'INPUT', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'];
 
 export class Element extends ParentNode {
+  private _classList: DOMTokenList;
+
   public static [TransferrableKeys.propertyBackedAttributes]: PropertyBackedAttributes = {
     class: [(el): string | null => el.classList.value, (el, value: string) => (el.classList.value = value)],
     style: [(el): string | null => el.cssText, (el, value: string) => (el.cssText = value)],
@@ -91,7 +93,6 @@ export class Element extends ParentNode {
 
   public localName: NodeName;
   public attributes: Attr[] = [];
-  public classList: DOMTokenList = new DOMTokenList(Element, this, 'class', 'classList', 'className');
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
 
@@ -541,5 +542,10 @@ export class Element extends ParentNode {
       }
     });
   }
+
+  public get classList(): DOMTokenList {
+    return this._classList || (this._classList = new DOMTokenList(this, 'class'));
+  }
 }
+synchronizedAccessor(Element, 'classList', 'className');
 reflectProperties([{ id: [''] }], Element);

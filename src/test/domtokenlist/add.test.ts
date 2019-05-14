@@ -15,7 +15,6 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { Element } from '../../worker-thread/dom/Element';
 import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
 import { createTestingDocument } from '../DocumentCreation';
 
@@ -27,7 +26,7 @@ test.beforeEach(t => {
   const document = createTestingDocument();
 
   t.context = {
-    tokenList: new DOMTokenList(Element, document.createElement('div'), 'class', null, null),
+    tokenList: new DOMTokenList(document.createElement('div'), 'class'),
   };
 });
 
