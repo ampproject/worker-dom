@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
+import { WorkerDOMConfiguration } from '../configuration';
+import { Strings } from '../strings';
+import { NodeContext } from '../nodes';
+import { WorkerContext } from '../worker';
+
 export interface CommandExecutor {
   execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number;
   print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object;
+}
+
+export interface CommandExecutorInterface {
+  (strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, config: WorkerDOMConfiguration): CommandExecutor;
 }

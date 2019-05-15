@@ -21,6 +21,9 @@ import { Strings } from '../../main-thread/strings';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { NumericBoolean } from '../../utils';
 import { CommandExecutor } from '../../main-thread/commands/interface';
+import { NodeContext } from '../../main-thread/nodes';
+import { WorkerContext } from '../../main-thread/worker';
+import { Env } from './helpers/env';
 
 let sandbox: sinon.SinonSandbox;
 
@@ -34,6 +37,9 @@ const test = anyTest as TestInterface<{
 test.beforeEach(t => {
   sandbox = sinon.createSandbox();
 
+  const env = new Env();
+  const { document } = env;
+  const baseElement = document.createElement('div');
   const ctx = {};
   const canvasElement = ({ _index_: 1, getContext: (c: string) => ctx } as unknown) as HTMLCanvasElement;
   const context2d = canvasElement.getContext('2d');
@@ -43,7 +49,15 @@ test.beforeEach(t => {
   }
 
   const strings = new Strings();
-  const offscreenCanvasProcessor = OffscreenPolyfillCallProcessor(strings);
+  const nodeContext = new NodeContext(strings, baseElement);
+  const workerContext = ({
+    getWorker() {},
+    messageToWorker() {},
+  } as unknown) as WorkerContext;
+  const offscreenCanvasProcessor = OffscreenPolyfillCallProcessor(strings, nodeContext, workerContext, {
+    domURL: 'domURL',
+    authorURL: 'authorURL',
+  });
 
   t.context = {
     canvasElement,

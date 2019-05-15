@@ -14,32 +14,35 @@
  * limitations under the License.
  */
 
-import { AttributeMutationIndex } from '../../transfer/TransferrableMutation';
-import { CommandExecutor } from './interface';
-import { Strings } from '../strings';
-import { WorkerDOMConfiguration } from '../configuration';
+import { AttributeMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { CommandExecutorInterface } from './interface';
 
-export function AttributeProcessor(strings: Strings, config: WorkerDOMConfiguration): CommandExecutor {
+export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, config) => {
+  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.ATTRIBUTES);
+
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);
-      // Value is sent as 0 when it's the default value or removal.
-      // Value is sent as index + 1 when it's a valid value.
-      const value =
-        (mutations[startPosition + AttributeMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + AttributeMutationIndex.Value] - 1)) ||
-        null;
+      if (allowedExecution) {
+        const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);
+        // Value is sent as 0 when it's the default value or removal.
+        // Value is sent as index + 1 when it's a valid value.
+        const value =
+          (mutations[startPosition + AttributeMutationIndex.Value] !== 0 &&
+            strings.get(mutations[startPosition + AttributeMutationIndex.Value] - 1)) ||
+          null;
 
-      if (attributeName != null) {
-        if (config.sanitizer) {
-          const mutated = config.sanitizer.mutateAttribute(target, attributeName, value);
-          if (!mutated) {
-            // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
-          }
-        } else {
-          if (value == null) {
-            target.removeAttribute(attributeName);
+        if (attributeName != null) {
+          if (config.sanitizer) {
+            const mutated = config.sanitizer.mutateAttribute(target, attributeName, value);
+            if (!mutated) {
+              // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
+            }
           } else {
-            target.setAttribute(attributeName, value);
+            if (value == null) {
+              target.removeAttribute(attributeName);
+            } else {
+              target.setAttribute(attributeName, value);
+            }
           }
         }
       }
@@ -55,10 +58,11 @@ export function AttributeProcessor(strings: Strings, config: WorkerDOMConfigurat
 
       return {
         target,
+        allowedExecution,
         attributeName,
         value,
         remove: value == null,
       };
     },
   };
-}
+};

@@ -14,32 +14,35 @@
  * limitations under the License.
  */
 
-import { PropertyMutationIndex } from '../../transfer/TransferrableMutation';
-import { CommandExecutor } from './interface';
-import { Strings } from '../strings';
-import { WorkerDOMConfiguration } from '../configuration';
+import { PropertyMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { CommandExecutorInterface } from './interface';
 import { NumericBoolean } from '../../utils';
 
-export function PropertyProcessor(strings: Strings, config: WorkerDOMConfiguration): CommandExecutor {
+export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config) => {
+  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.PROPERTIES);
+
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
-      const isBooleanProperty = mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE;
-      const value = isBooleanProperty
-        ? mutations[startPosition + PropertyMutationIndex.Value] === NumericBoolean.TRUE
-        : (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) ||
-          null;
+      if (allowedExecution) {
+        const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
+        const isBooleanProperty = mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE;
+        const value = isBooleanProperty
+          ? mutations[startPosition + PropertyMutationIndex.Value] === NumericBoolean.TRUE
+          : (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) ||
+            null;
 
-      if (name && value != null) {
-        if (config.sanitizer) {
-          const mutated = config.sanitizer.mutateProperty(target, name, String(value));
-          if (!mutated) {
-            // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
+        if (name && value != null) {
+          if (config.sanitizer) {
+            const mutated = config.sanitizer.mutateProperty(target, name, String(value));
+            if (!mutated) {
+              // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
+            }
+          } else {
+            target[name] = value;
           }
-        } else {
-          target[name] = value;
         }
       }
+
       return startPosition + PropertyMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
@@ -54,7 +57,8 @@ export function PropertyProcessor(strings: Strings, config: WorkerDOMConfigurati
         target,
         name,
         value,
+        allowedExecution,
       };
     },
   };
-}
+};

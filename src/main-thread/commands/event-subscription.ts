@@ -15,12 +15,11 @@
  */
 
 import { MessageType } from '../../transfer/Messages';
-import { Strings } from '../strings';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { EVENT_SUBSCRIPTION_LENGTH, EventSubscriptionMutationIndex, TransferrableTouchList } from '../../transfer/TransferrableEvent';
 import { WorkerContext } from '../worker';
-import { CommandExecutor } from './interface';
-import { NodeContext } from '../nodes';
+import { CommandExecutorInterface } from './interface';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
 /**
  * Instead of a whitelist of elements that need their value tracked, use the existence
@@ -81,8 +80,9 @@ const createTransferrableTouchList = (touchList: TouchList): TransferrableTouchL
     (touch.target as RenderableElement)._index_,
   ]);
 
-export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext): CommandExecutor {
+export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config) => {
   const knownListeners: Array<(event: Event) => any> = [];
+  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.EVENT_SUBSCRIPTION);
   let cachedWindowSize: [number, number] = [window.innerWidth, window.innerHeight];
 
   /**
@@ -178,12 +178,14 @@ export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeCo
       const endPosition =
         startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
 
-      if (target) {
-        for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
-          processListenerChange(target, iterator <= addEventListenersPosition, strings.get(mutations[iterator]), mutations[iterator + 1]);
+      if (allowedExecution) {
+        if (target) {
+          for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
+            processListenerChange(target, iterator <= addEventListenersPosition, strings.get(mutations[iterator]), mutations[iterator + 1]);
+          }
+        } else {
+          console.error(`getNode() yields null – ${target}`);
         }
-      } else {
-        console.error(`getNode() yields null – ${target}`);
       }
 
       return endPosition;
@@ -208,9 +210,10 @@ export function EventSubscriptionProcessor(strings: Strings, nodeContext: NodeCo
 
       return {
         target,
+        allowedExecution,
         removedEventListeners,
         addedEventListeners,
       };
     },
   };
-}
+};

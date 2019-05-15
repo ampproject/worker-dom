@@ -16,29 +16,33 @@
 
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { MessageType } from '../../transfer/Messages';
-import { WorkerContext } from '../worker';
-import { CommandExecutor } from './interface';
+import { CommandExecutorInterface } from './interface';
 import { BoundClientRectMutationIndex } from '../../transfer/TransferrableBoundClientRect';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
-export function BoundingClientRectProcessor(workerContext: WorkerContext): CommandExecutor {
+export const BoundingClientRectProcessor: CommandExecutorInterface = (strings, nodes, workerContext, config) => {
+  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.GET_BOUNDING_CLIENT_RECT);
+
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      if (target) {
-        const boundingRect = target.getBoundingClientRect();
-        workerContext.messageToWorker({
-          [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
-          [TransferrableKeys.target]: [target._index_],
-          [TransferrableKeys.data]: [
-            boundingRect.top,
-            boundingRect.right,
-            boundingRect.bottom,
-            boundingRect.left,
-            boundingRect.width,
-            boundingRect.height,
-          ],
-        });
-      } else {
-        console.error(`getNode() yields null – ${target}`);
+      if (allowedExecution) {
+        if (target) {
+          const boundingRect = target.getBoundingClientRect();
+          workerContext.messageToWorker({
+            [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
+            [TransferrableKeys.target]: [target._index_],
+            [TransferrableKeys.data]: [
+              boundingRect.top,
+              boundingRect.right,
+              boundingRect.bottom,
+              boundingRect.left,
+              boundingRect.width,
+              boundingRect.height,
+            ],
+          });
+        } else {
+          console.error(`getNode() yields null – ${target}`);
+        }
       }
 
       return startPosition + BoundClientRectMutationIndex.End;
@@ -47,7 +51,8 @@ export function BoundingClientRectProcessor(workerContext: WorkerContext): Comma
       return {
         type: 'GET_BOUNDING_CLIENT_RECT',
         target,
+        allowedExecution,
       };
     },
   };
-}
+};

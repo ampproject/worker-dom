@@ -14,42 +14,46 @@
  * limitations under the License.
  */
 
-import { ChildListMutationIndex } from '../../transfer/TransferrableMutation';
-import { CommandExecutor } from './interface';
+import { ChildListMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { CommandExecutorInterface } from './interface';
 import { NodeContext } from '../nodes';
 
-export function ChildListProcessor({ getNode }: NodeContext): CommandExecutor {
+export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode }: NodeContext, workerContext, config) => {
+  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.CHILD_LIST);
+
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
       const appendNodeCount = mutations[startPosition + ChildListMutationIndex.AppendedNodeCount];
       const removeNodeCount = mutations[startPosition + ChildListMutationIndex.RemovedNodeCount];
-      if (removeNodeCount > 0) {
-        mutations
-          .slice(
-            startPosition + ChildListMutationIndex.Nodes + appendNodeCount,
-            startPosition + ChildListMutationIndex.Nodes + appendNodeCount + removeNodeCount,
-          )
-          .forEach(removeId => {
-            const node = getNode(removeId);
-            if (!node) {
-              console.error(`getNode() yields null – ${removeId}`);
-              return;
-            }
-            node.remove();
-          });
-      }
-      if (appendNodeCount > 0) {
-        mutations
-          .slice(startPosition + ChildListMutationIndex.Nodes, startPosition + ChildListMutationIndex.Nodes + appendNodeCount)
-          .forEach(addId => {
-            const nextSibling = mutations[startPosition + ChildListMutationIndex.NextSibling];
-            const newNode = getNode(addId);
-            if (newNode) {
-              // TODO: Handle this case ---
-              // Transferred nodes that are not stored were previously removed by the sanitizer.
-              target.insertBefore(newNode, (nextSibling && getNode(nextSibling)) || null);
-            }
-          });
+      if (allowedExecution) {
+        if (removeNodeCount > 0) {
+          mutations
+            .slice(
+              startPosition + ChildListMutationIndex.Nodes + appendNodeCount,
+              startPosition + ChildListMutationIndex.Nodes + appendNodeCount + removeNodeCount,
+            )
+            .forEach(removeId => {
+              const node = getNode(removeId);
+              if (!node) {
+                console.error(`getNode() yields null – ${removeId}`);
+                return;
+              }
+              node.remove();
+            });
+        }
+        if (appendNodeCount > 0) {
+          mutations
+            .slice(startPosition + ChildListMutationIndex.Nodes, startPosition + ChildListMutationIndex.Nodes + appendNodeCount)
+            .forEach(addId => {
+              const nextSibling = mutations[startPosition + ChildListMutationIndex.NextSibling];
+              const newNode = getNode(addId);
+              if (newNode) {
+                // TODO: Handle this case ---
+                // Transferred nodes that are not stored were previously removed by the sanitizer.
+                target.insertBefore(newNode, (nextSibling && getNode(nextSibling)) || null);
+              }
+            });
+        }
       }
       return startPosition + ChildListMutationIndex.End + appendNodeCount + removeNodeCount;
     },
@@ -68,6 +72,7 @@ export function ChildListProcessor({ getNode }: NodeContext): CommandExecutor {
 
       return {
         target,
+        allowedExecution,
         nextSibling: getNode(mutations[startPosition + ChildListMutationIndex.NextSibling]) || null,
         previousSibling: getNode(mutations[startPosition + ChildListMutationIndex.PreviousSibling]) || null,
         addedNodes,
@@ -75,4 +80,4 @@ export function ChildListProcessor({ getNode }: NodeContext): CommandExecutor {
       };
     },
   };
-}
+};

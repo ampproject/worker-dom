@@ -43,6 +43,8 @@ export interface WorkerDOMConfiguration {
   sanitizer?: Sanitizer;
   // Hydration Filter Predicate
   hydrateFilter?: HydrationFilterPredicate;
+  // Executor Filter, disallow list
+  executorsDisallowed?: Array<number>;
 
   // ---- Optional Callbacks
   // Called when worker consumes the page's initial DOM state.
