@@ -49,6 +49,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   // TODO: This should only exist in testing environment
   public goodOffscreenPromise: Promise<void>;
+  public unUpgradedOffscreenCanvasContext: CanvasRenderingContext2D;
 
   constructor(canvas: ElementType) {
     this.canvasElement = canvas;
@@ -66,7 +67,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     // 2. Retrieve an auto-synchronized OffscreenCanvas from the main-thread and call all methods
     // in the queue.
     else {
-      this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
+      this.implementation = this.unUpgradedOffscreenCanvasContext = new OffscreenCanvas(0, 0).getContext('2d');
       this.goodOffscreenPromise = this.getOffscreenCanvasAsync(this.canvasElement).then(instance => {
         this.implementation = instance.getContext('2d');
         this.upgraded = true;
