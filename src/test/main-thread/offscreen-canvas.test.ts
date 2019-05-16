@@ -72,6 +72,7 @@ test('method with int arguments', t => {
 
   const methodName = 'fillRect';
   const stub = ((context2d[methodName] as sinon.SinonStub) = sandbox.stub());
+
   const args = [1, 2, 3, 4];
 
   executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, false, strings);
@@ -83,6 +84,7 @@ test('method with float arguments', t => {
 
   const methodName = 'fillRect';
   const stub = ((context2d[methodName] as sinon.SinonStub) = sandbox.stub());
+
   const args = [1.2, 2.3, 3.4, 4.8];
 
   executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, true, strings);
@@ -95,12 +97,11 @@ test('method with string argument', t => {
   const methodName = 'strokeText';
 
   const textArg = 'textArg';
-  const textArgIndex = storeString(strings, textArg);
-  console.log('textArgIndex: ' + textArgIndex);
+  const stub = ((context2d[methodName] as sinon.SinonStub) = sandbox.stub());
 
+  const textArgIndex = storeString(strings, textArg);
   const actualArgs = [textArg, 1, 2];
   const passedArgs = [textArgIndex, 1, 2];
-  const stub = ((context2d[methodName] as sinon.SinonStub) = sandbox.stub());
 
   executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 1, passedArgs, false, strings, textArgIndex);
   t.true(stub.withArgs(...actualArgs).calledOnce);
@@ -110,39 +111,50 @@ test('setter with int argument', t => {
   const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'lineWidth';
-  const spy = sandbox.spy();
-  createSetterStub(sandbox, context2d, methodName, spy);
+  const setter = sandbox.spy();
+
+  // must declare property before sinon lets us stub a setter
+  (context2d[methodName] as any) = 'existent';
+  sandbox.stub(context2d, methodName).set(setter);
 
   const arg = 5;
+
   executeCall(offscreenCanvasProcessor, canvasElement, methodName, true, 0, [arg], false, strings);
-  t.true(spy.withArgs(arg).calledOnce);
+  t.true(setter.withArgs(arg).calledOnce);
 });
 
 test('setter with float argument', t => {
   const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'lineWidth';
-  const spy = sandbox.spy();
-  createSetterStub(sandbox, context2d, methodName, spy);
+  const setter = sandbox.spy();
+
+  // must declare property before sinon lets us stub a setter
+  (context2d[methodName] as any) = 'existent';
+  sandbox.stub(context2d, methodName).set(setter);
 
   const arg = 1.6;
+
   executeCall(offscreenCanvasProcessor, canvasElement, methodName, true, 0, [arg], true, strings);
-  t.true(spy.calledOnce);
-  t.true(spy.calledWithMatch(approx(arg)));
+  t.true(setter.calledOnce);
+  t.true(setter.calledWithMatch(approx(arg)));
 });
 
 test('setter with string argument', t => {
   const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'fillStyle';
-  const spy = sandbox.spy();
-  createSetterStub(sandbox, context2d, methodName, spy);
+  const setter = sandbox.spy();
+
+  // must declare property before sinon lets us stub a setter
+  (context2d[methodName] as any) = 'existent';
+  sandbox.stub(context2d, methodName).set(setter);
 
   const arg = 'textArg';
   const textArgIndex = storeString(strings, arg);
 
   executeCall(offscreenCanvasProcessor, canvasElement, methodName, true, 1, [arg], false, strings, textArgIndex);
-  t.true(spy.withArgs(arg).calledOnce);
+  t.true(setter.withArgs(arg).calledOnce);
 });
 
 test('setLineDash case', t => {
@@ -150,6 +162,7 @@ test('setLineDash case', t => {
 
   const methodName = 'setLineDash';
   const stub = ((context2d[methodName] as sinon.SinonStub) = sandbox.stub());
+
   const lineDash = [10, 20];
 
   executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, lineDash, true, strings);
@@ -161,6 +174,7 @@ test('mutation starts at non-zero offset', t => {
 
   const methodName = 'fillRect';
   const stub = ((context2d[methodName] as sinon.SinonStub) = sandbox.stub());
+
   const args = [1, 2, 3, 4];
 
   const mutation = [
@@ -175,8 +189,8 @@ test('mutation starts at non-zero offset', t => {
   ];
 
   const mutationsArray = new Uint16Array([1, 2, 3].concat(mutation));
-  offscreenCanvasProcessor.execute(mutationsArray, 3, canvasElement);
 
+  offscreenCanvasProcessor.execute(mutationsArray, 3, canvasElement);
   t.true(stub.withArgs(...args).calledOnce);
 });
 
@@ -185,6 +199,7 @@ test('mutation returns correct end offset for int arguments', t => {
 
   const methodName = 'strokeRect';
   (context2d[methodName] as sinon.SinonStub) = sandbox.stub();
+
   const args = [100, 200, 300, 400];
 
   const endOffset = executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, false, strings);
@@ -240,11 +255,10 @@ function executeCall(
   );
 }
 
-function createSetterStub(sandbox: sinon.SinonSandbox, obj: any, property: string, spy: () => {}) {
-  obj[property] = 'existent';
-  sandbox.stub(obj, property).set(spy);
-}
-
+/**
+ * Used to compare float value similarity in tests.
+ * @param expected
+ */
 function approx(expected: number): sinon.SinonMatcher {
   return sinon.match(function(actual: number) {
     const diff = Math.abs(expected - actual);
