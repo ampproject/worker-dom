@@ -121,7 +121,7 @@ const GlobalScope: GlobalScope = {
 
 /**
  * Creates a Document object for testing environment.
- * @param overrides Global variable declaration. Can add a new one or override an existing one, for testing purposes.
+ * @param overrides Can add a new variable to Global or override an existing one.
  */
 export function createTestingDocument(overrides: {} | null = null): Document {
   const customGlobal = Object.assign({}, GlobalScope, overrides);
