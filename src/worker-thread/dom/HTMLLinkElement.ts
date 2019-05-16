@@ -17,15 +17,20 @@
 import { registerSubclass, definePropertyBackedAttributes } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
-import { DOMTokenList } from './DOMTokenList';
+import { DOMTokenList, synchronizedAccessor } from './DOMTokenList';
 
 export class HTMLLinkElement extends HTMLElement {
-  public relList: DOMTokenList = new DOMTokenList(HTMLLinkElement, this, 'rel', 'relList', 'rel');
+  private _relList: DOMTokenList;
+
+  public get relList(): DOMTokenList {
+    return this._relList || (this._relList = new DOMTokenList(this, 'rel'));
+  }
 }
 registerSubclass('link', HTMLLinkElement);
 definePropertyBackedAttributes(HTMLLinkElement, {
   rel: [(el): string | null => el.relList.value, (el, value: string) => (el.relList.value = value)],
 });
+synchronizedAccessor(HTMLLinkElement, 'relList', 'rel');
 
 // Reflected Properties
 // HTMLLinkElement.as => string, reflected attribute
