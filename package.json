@@ -57,7 +57,7 @@
     "bundlesize": "0.17.1",
     "cross-env": "5.2.0",
     "cross-var": "1.1.0",
-    "esm": "3.2.23",
+    "esm": "3.2.25",
     "husky": "2.3.0",
     "jsdom": "15.1.0",
     "lint-staged": "8.1.7",
