@@ -34,7 +34,7 @@ export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
   workerContext: WorkerContext,
   config: WorkerDOMConfiguration,
 ) => {
-  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.LONG_TASK_START);
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.LONG_TASK_START);
   let index: number = 0;
   let currentResolver: Function | null;
 

@@ -21,7 +21,7 @@ import { BoundClientRectMutationIndex } from '../../transfer/TransferrableBoundC
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
 export const BoundingClientRectProcessor: CommandExecutorInterface = (strings, nodes, workerContext, config) => {
-  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.GET_BOUNDING_CLIENT_RECT);
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.GET_BOUNDING_CLIENT_RECT);
 
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {

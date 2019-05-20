@@ -21,6 +21,7 @@ import { TransferrableMutationType } from '../../transfer/TransferrableMutation'
 import { Strings } from '../../main-thread/strings';
 import { NodeContext } from '../../main-thread/nodes';
 import { WorkerContext } from '../../main-thread/worker';
+import { normalizeConfiguration } from '../../main-thread/configuration';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -43,13 +44,18 @@ test.beforeEach(t => {
     getWorker() {},
     messageToWorker() {},
   } as unknown) as WorkerContext;
-  const executor = LongTaskExecutor(strings, nodeContext, workerContext, {
-    authorURL: 'authorURL',
-    domURL: 'domURL',
-    longTask: (promise: Promise<any>) => {
-      longTasks.push(promise);
-    },
-  });
+  const executor = LongTaskExecutor(
+    strings,
+    nodeContext,
+    workerContext,
+    normalizeConfiguration({
+      authorURL: 'authorURL',
+      domURL: 'domURL',
+      longTask: (promise: Promise<any>) => {
+        longTasks.push(promise);
+      },
+    }),
+  );
 
   baseElement._index_ = 1;
   document.body.appendChild(baseElement);
@@ -72,10 +78,15 @@ test.afterEach(t => {
 
 test.serial('should tolerate no callback', t => {
   const { longTasks, baseElement, strings, nodeContext, workerContext } = t.context;
-  const executor = LongTaskExecutor(strings, nodeContext, workerContext, {
-    authorURL: 'authorURL',
-    domURL: 'domURL',
-  });
+  const executor = LongTaskExecutor(
+    strings,
+    nodeContext,
+    workerContext,
+    normalizeConfiguration({
+      authorURL: 'authorURL',
+      domURL: 'domURL',
+    }),
+  );
 
   executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, baseElement);
   executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, baseElement);

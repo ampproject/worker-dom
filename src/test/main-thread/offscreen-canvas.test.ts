@@ -24,6 +24,7 @@ import { CommandExecutor } from '../../main-thread/commands/interface';
 import { NodeContext } from '../../main-thread/nodes';
 import { WorkerContext } from '../../main-thread/worker';
 import { Env } from './helpers/env';
+import { normalizeConfiguration } from '../../main-thread/configuration';
 
 let sandbox: sinon.SinonSandbox;
 
@@ -54,10 +55,15 @@ test.beforeEach(t => {
     getWorker() {},
     messageToWorker() {},
   } as unknown) as WorkerContext;
-  const offscreenCanvasProcessor = OffscreenPolyfillCallProcessor(strings, nodeContext, workerContext, {
-    domURL: 'domURL',
-    authorURL: 'authorURL',
-  });
+  const offscreenCanvasProcessor = OffscreenPolyfillCallProcessor(
+    strings,
+    nodeContext,
+    workerContext,
+    normalizeConfiguration({
+      domURL: 'domURL',
+      authorURL: 'authorURL',
+    }),
+  );
 
   t.context = {
     canvasElement,

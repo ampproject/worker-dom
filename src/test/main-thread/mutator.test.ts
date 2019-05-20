@@ -22,6 +22,7 @@ import { Strings } from '../../main-thread/strings';
 import { WorkerContext } from '../../main-thread/worker';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { Phase } from '../../transfer/Phase';
+import { normalizeConfiguration } from '../../main-thread/configuration';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -63,10 +64,15 @@ test.afterEach(t => {
 test.serial('batch mutations', t => {
   const { env, baseElement, strings, nodeContext, workerContext } = t.context;
   const { rafTasks } = env;
-  const mutator = new MutatorProcessor(strings, nodeContext, workerContext, {
-    domURL: 'domURL',
-    authorURL: 'authorURL',
-  });
+  const mutator = new MutatorProcessor(
+    strings,
+    nodeContext,
+    workerContext,
+    normalizeConfiguration({
+      domURL: 'domURL',
+      authorURL: 'authorURL',
+    }),
+  );
 
   mutator.mutate(
     Phase.Mutating,
@@ -124,13 +130,18 @@ test.serial('batch mutations with custom pump', t => {
   const { rafTasks } = env;
 
   const tasks: Array<{ phase: Phase; flush: Function }> = [];
-  const mutator = new MutatorProcessor(strings, nodeContext, workerContext, {
-    domURL: 'domURL',
-    authorURL: 'authorURL',
-    mutationPump: (flush: Function, phase: Phase) => {
-      tasks.push({ phase, flush });
-    },
-  });
+  const mutator = new MutatorProcessor(
+    strings,
+    nodeContext,
+    workerContext,
+    normalizeConfiguration({
+      domURL: 'domURL',
+      authorURL: 'authorURL',
+      mutationPump: (flush: Function, phase: Phase) => {
+        tasks.push({ phase, flush });
+      },
+    }),
+  );
 
   mutator.mutate(
     Phase.Mutating,
@@ -186,14 +197,19 @@ test.serial('batch mutations with custom pump', t => {
   t.is(baseElement.getAttribute('data-two'), 'data-two');
 });
 
-test.serial('leverage denylist to exclude mutation type', t => {
+test.serial('leverage allowlist to exclude mutation type', t => {
   const { env, baseElement, strings, nodeContext, workerContext } = t.context;
   const { rafTasks } = env;
-  const mutator = new MutatorProcessor(strings, nodeContext, workerContext, {
-    domURL: 'domURL',
-    authorURL: 'authorURL',
-    executorsDisallowed: [TransferrableMutationType.ATTRIBUTES],
-  });
+  const mutator = new MutatorProcessor(
+    strings,
+    nodeContext,
+    workerContext,
+    normalizeConfiguration({
+      domURL: 'domURL',
+      authorURL: 'authorURL',
+      executorsAllowed: [TransferrableMutationType.CHILD_LIST],
+    }),
+  );
 
   mutator.mutate(
     Phase.Mutating,
@@ -231,10 +247,15 @@ test.serial('leverage denylist to exclude mutation type', t => {
 test.serial('split strings from mutations', t => {
   const { env, baseElement, strings, nodeContext, workerContext } = t.context;
   const { rafTasks } = env;
-  const mutator = new MutatorProcessor(strings, nodeContext, workerContext, {
-    domURL: 'domURL',
-    authorURL: 'authorURL',
-  });
+  const mutator = new MutatorProcessor(
+    strings,
+    nodeContext,
+    workerContext,
+    normalizeConfiguration({
+      domURL: 'domURL',
+      authorURL: 'authorURL',
+    }),
+  );
 
   mutator.mutate(Phase.Mutating, new ArrayBuffer(0), ['hidden'], new Uint16Array([]));
   mutator.mutate(

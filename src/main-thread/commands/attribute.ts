@@ -18,7 +18,7 @@ import { AttributeMutationIndex, TransferrableMutationType } from '../../transfe
 import { CommandExecutorInterface } from './interface';
 
 export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, config) => {
-  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.ATTRIBUTES);
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.ATTRIBUTES);
 
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {

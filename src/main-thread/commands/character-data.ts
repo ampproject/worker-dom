@@ -18,7 +18,7 @@ import { CharacterDataMutationIndex, TransferrableMutationType } from '../../tra
 import { CommandExecutorInterface } from './interface';
 
 export const CharacterDataProcessor: CommandExecutorInterface = (strings, nodes, workerContext, config) => {
-  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.CHARACTER_DATA);
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHARACTER_DATA);
 
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {

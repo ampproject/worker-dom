@@ -82,7 +82,7 @@ const createTransferrableTouchList = (touchList: TouchList): TransferrableTouchL
 
 export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config) => {
   const knownListeners: Array<(event: Event) => any> = [];
-  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.EVENT_SUBSCRIPTION);
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.EVENT_SUBSCRIPTION);
   let cachedWindowSize: [number, number] = [window.innerWidth, window.innerHeight];
 
   /**

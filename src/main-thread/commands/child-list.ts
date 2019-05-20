@@ -19,7 +19,7 @@ import { CommandExecutorInterface } from './interface';
 import { NodeContext } from '../nodes';
 
 export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode }: NodeContext, workerContext, config) => {
-  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.CHILD_LIST);
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHILD_LIST);
 
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {

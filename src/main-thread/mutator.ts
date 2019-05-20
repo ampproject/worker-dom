@@ -52,7 +52,7 @@ export class MutatorProcessor {
     this.strings = strings;
     this.nodeContext = nodeContext;
     this.sanitizer = config.sanitizer;
-    this.mutationPumpFunction = config.mutationPump || requestAnimationFrame.bind(null);
+    this.mutationPumpFunction = config.mutationPump;
 
     const LongTaskExecutorInstance = LongTaskExecutor(strings, nodeContext, workerContext, config);
 

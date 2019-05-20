@@ -19,7 +19,7 @@ import { CommandExecutorInterface } from './interface';
 import { NumericBoolean } from '../../utils';
 
 export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config) => {
-  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.PROPERTIES);
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.PROPERTIES);
 
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {

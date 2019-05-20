@@ -20,7 +20,7 @@ import { CommandExecutorInterface } from './interface';
 import { OffscreenCanvasMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
 export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config) => {
-  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE);
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE);
 
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {

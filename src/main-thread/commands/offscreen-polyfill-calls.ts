@@ -19,7 +19,7 @@ import { OffscreenContextPolyfillMutationIndex, TransferrableMutationType } from
 import { NumericBoolean } from '../../utils';
 
 export const OffscreenPolyfillCallProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config) => {
-  const allowedExecution = !(config.executorsDisallowed || []).includes(TransferrableMutationType.OFFSCREEN_POLYFILL);
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OFFSCREEN_POLYFILL);
 
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
