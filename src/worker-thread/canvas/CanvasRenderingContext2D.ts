@@ -36,6 +36,7 @@ import { Document } from '../dom/Document';
 import { HTMLElement } from '../dom/HTMLElement';
 
 export const deferredUpgrades = new WeakMap();
+export const deferredPromises = new WeakMap();
 
 /**
  * Delegates all CanvasRenderingContext2D calls, either to an OffscreenCanvas or a polyfill
@@ -46,9 +47,6 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   private implementation: CanvasRenderingContext2D;
   private upgraded = false;
   private canvasElement: ElementType;
-
-  // TODO: This should only exist in testing environment
-  public goodOffscreenPromise: Promise<void>;
 
   constructor(canvas: ElementType) {
     this.canvasElement = canvas;
@@ -67,11 +65,12 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     // in the queue.
     else {
       this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
-      this.goodOffscreenPromise = this.getOffscreenCanvasAsync(this.canvasElement).then(instance => {
+      const goodOffscreenPromise = this.getOffscreenCanvasAsync(this.canvasElement).then(instance => {
         this.implementation = instance.getContext('2d');
         this.upgraded = true;
         this.flushQueue();
       });
+      deferredPromises.set(canvas, goodOffscreenPromise);
     }
   }
 

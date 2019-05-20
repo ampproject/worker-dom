@@ -16,7 +16,7 @@
 
 import anyTest, { TestInterface } from 'ava';
 import * as sinon from 'sinon';
-import { CanvasRenderingContext2DShim, deferredUpgrades } from '../../worker-thread/canvas/CanvasRenderingContext2D';
+import { CanvasRenderingContext2DShim, deferredUpgrades, deferredPromises } from '../../worker-thread/canvas/CanvasRenderingContext2D';
 import { HTMLCanvasElement } from '../../worker-thread/dom/HTMLCanvasElement';
 import { CanvasRenderingContext2D } from '../../worker-thread/canvas/CanvasTypes';
 import { createTestingDocument } from '../DocumentCreation';
@@ -25,6 +25,7 @@ const test = anyTest as TestInterface<{
   canvas: HTMLCanvasElement;
   context2d: CanvasRenderingContext2DShim<HTMLCanvasElement>;
   deferredUpgrade: { resolve: (instance: FakeOffscreenCanvas) => void; reject: (errorMsg: string) => void };
+  upgradePromise: Promise<void>;
   sandbox: sinon.SinonSandbox;
   unUpgradedOffscreenContext: CanvasRenderingContext2D;
 }>;
@@ -58,6 +59,7 @@ test.beforeEach(t => {
     canvas,
     context2d: canvas.getContext('2d'),
     deferredUpgrade: deferredUpgrades.get(canvas),
+    upgradePromise: deferredPromises.get(canvas),
     sandbox,
     unUpgradedOffscreenContext: unUpgradedOffscreen.getContext('2d'),
   };
@@ -80,7 +82,7 @@ test('context calls clearRect', t => {
 });
 
 test('context only calls upgraded clearRect if available', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   // stub out method in context of un-upgraded OffscreenCanvas
   const unUpgradedStub = (unUpgradedOffscreenContext['clearRect'] = sandbox.stub());
@@ -93,7 +95,7 @@ test('context only calls upgraded clearRect if available', async t => {
   // upgrade the context's OffscreenCanvas
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     context2d.clearRect(1, 2, 3, 4);
     t.true(upgradedStub.withArgs(1, 2, 3, 4).calledOnce);
     t.true(unUpgradedStub.notCalled);
@@ -101,7 +103,7 @@ test('context only calls upgraded clearRect if available', async t => {
 });
 
 test('context calls both versions of clearRect when called before upgrade', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   // stub out method in context of un-upgraded OffscreenCanvas
   const unUpgradedStub = (unUpgradedOffscreenContext['clearRect'] = sandbox.stub());
@@ -117,7 +119,7 @@ test('context calls both versions of clearRect when called before upgrade', asyn
   // upgrade the context's OffscreenCanvas
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     t.true(upgradedStub.withArgs(10, 9, 8, 7).calledOnce);
   });
 });
@@ -134,7 +136,7 @@ test('context calls fillText', t => {
 });
 
 test('context only calls upgraded fillText if available', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   const unUpgradedStub = (unUpgradedOffscreenContext['fillText'] = sandbox.stub());
 
@@ -143,7 +145,7 @@ test('context only calls upgraded fillText if available', async t => {
 
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     context2d.fillText('hello, world', 1, 2);
     t.true(upgradedStub.withArgs('hello, world', 1, 2).calledOnce);
     t.true(unUpgradedStub.notCalled);
@@ -151,7 +153,7 @@ test('context only calls upgraded fillText if available', async t => {
 });
 
 test('context calls both versions of fillText when called before upgrade', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   const unUpgradedStub = (unUpgradedOffscreenContext['fillText'] = sandbox.stub());
 
@@ -163,7 +165,7 @@ test('context calls both versions of fillText when called before upgrade', async
 
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     t.true(upgradedStub.withArgs('hello, world', 1, 2).calledOnce);
   });
 });
@@ -198,7 +200,7 @@ test('context calls get lineWidth', t => {
 });
 
 test('context only calls upgraded set lineWidth if available', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   const unUpgradedSetter = sandbox.spy();
   (unUpgradedOffscreenContext['lineWidth'] as any) = 'existent';
@@ -211,7 +213,7 @@ test('context only calls upgraded set lineWidth if available', async t => {
 
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     context2d.lineWidth = 100;
     t.true(upgradedSetter.withArgs(100).calledOnce);
     t.true(unUpgradedSetter.notCalled);
@@ -219,7 +221,7 @@ test('context only calls upgraded set lineWidth if available', async t => {
 });
 
 test('context only calls upgraded get lineWidth if available', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   const unUpgradedGetter = sandbox.spy();
   (unUpgradedOffscreenContext['lineWidth'] as any) = 'existent';
@@ -232,7 +234,7 @@ test('context only calls upgraded get lineWidth if available', async t => {
 
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     context2d.lineWidth;
     t.true(upgradedGetter.calledOnce);
     t.true(unUpgradedGetter.notCalled);
@@ -240,7 +242,7 @@ test('context only calls upgraded get lineWidth if available', async t => {
 });
 
 test('context calls both versions of set lineWidth when called before upgrade', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   const unUpgradedSetter = sandbox.spy();
   (unUpgradedOffscreenContext['lineWidth'] as any) = 'existent';
@@ -256,7 +258,7 @@ test('context calls both versions of set lineWidth when called before upgrade', 
 
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     t.true(upgradedSetter.withArgs(200).calledOnce);
   });
 });
@@ -287,7 +289,7 @@ test('context calls get lineCap', t => {
 });
 
 test('context only calls upgraded set lineCap if available', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   const unUpgradedSetter = sandbox.spy();
   (unUpgradedOffscreenContext['lineCap'] as any) = 'existent';
@@ -300,7 +302,7 @@ test('context only calls upgraded set lineCap if available', async t => {
 
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     context2d.lineCap = 'butt';
     t.true(upgradedSetter.withArgs('butt').calledOnce);
     t.true(unUpgradedSetter.notCalled);
@@ -308,7 +310,7 @@ test('context only calls upgraded set lineCap if available', async t => {
 });
 
 test('context only calls upgraded get lineCap if available', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   const unUpgradedGetter = sandbox.spy();
   (unUpgradedOffscreenContext['lineCap'] as any) = 'existent';
@@ -321,7 +323,7 @@ test('context only calls upgraded get lineCap if available', async t => {
 
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     context2d.lineCap;
     t.true(upgradedGetter.calledOnce);
     t.true(unUpgradedGetter.notCalled);
@@ -329,7 +331,7 @@ test('context only calls upgraded get lineCap if available', async t => {
 });
 
 test('context calls both versions of set lineCap when called before upgrade', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   const unUpgradedSetter = sandbox.spy();
   (unUpgradedOffscreenContext['lineCap'] as any) = 'existent';
@@ -345,7 +347,7 @@ test('context calls both versions of set lineCap when called before upgrade', as
 
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     t.true(upgradedSetter.withArgs('round').calledOnce);
   });
 });
@@ -362,7 +364,7 @@ test('context calls setLineDash', t => {
 });
 
 test('context only calls upgraded setLineDash if available', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   const unUpgradedStub = (unUpgradedOffscreenContext['setLineDash'] = sandbox.stub());
 
@@ -371,7 +373,7 @@ test('context only calls upgraded setLineDash if available', async t => {
 
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     context2d.setLineDash([1, 2, 3, 4]);
     t.true(upgradedStub.withArgs([1, 2, 3, 4]).calledOnce);
     t.true(unUpgradedStub.notCalled);
@@ -379,7 +381,7 @@ test('context only calls upgraded setLineDash if available', async t => {
 });
 
 test('context calls both versions of setLineDash when called before upgrade', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   const unUpgradedStub = (unUpgradedOffscreenContext['setLineDash'] = sandbox.stub());
 
@@ -391,7 +393,7 @@ test('context calls both versions of setLineDash when called before upgrade', as
 
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     t.true(upgradedStub.withArgs([0, 1, 2]).calledOnce);
   });
 });
@@ -411,7 +413,7 @@ test('context calls drawImage', t => {
 });
 
 test('context only calls upgraded drawImage if available', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   const unUpgradedStub = ((unUpgradedOffscreenContext['drawImage'] as sinon.SinonStub) = sandbox.stub());
 
@@ -420,7 +422,7 @@ test('context only calls upgraded drawImage if available', async t => {
 
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     const imageBitmap = {} as ImageBitmap;
     context2d.drawImage(imageBitmap, 200, 100);
     t.true(upgradedStub.withArgs(imageBitmap, 200, 100).calledOnce);
@@ -429,7 +431,7 @@ test('context only calls upgraded drawImage if available', async t => {
 });
 
 test('context calls both versions of drawImage when called before upgrade', async t => {
-  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext, upgradePromise } = t.context;
 
   const unUpgradedStub = ((unUpgradedOffscreenContext['drawImage'] as sinon.SinonStub) = sandbox.stub());
 
@@ -443,7 +445,7 @@ test('context calls both versions of drawImage when called before upgrade', asyn
 
   deferredUpgrade.resolve(upgradedInstance);
 
-  await context2d.goodOffscreenPromise.then(() => {
+  await upgradePromise.then(() => {
     t.true(upgradedStub.withArgs(imageBitmap, 0, 1).calledOnce);
   });
 });
