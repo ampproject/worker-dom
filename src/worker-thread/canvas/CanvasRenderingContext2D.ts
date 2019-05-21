@@ -36,7 +36,6 @@ import { Document } from '../dom/Document';
 import { HTMLElement } from '../dom/HTMLElement';
 
 export const deferredUpgrades = new WeakMap();
-export const deferredPromises = new WeakMap();
 
 /**
  * Delegates all CanvasRenderingContext2D calls, either to an OffscreenCanvas or a polyfill
@@ -65,12 +64,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     // in the queue.
     else {
       this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
-      const goodOffscreenPromise = this.getOffscreenCanvasAsync(this.canvasElement).then(instance => {
-        this.implementation = instance.getContext('2d');
-        this.upgraded = true;
-        this.flushQueue();
-      });
-      deferredPromises.set(canvas, goodOffscreenPromise);
+      this.getOffscreenCanvasAsync(this.canvasElement);
     }
   }
 
@@ -78,8 +72,9 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
    * Retrieves auto-synchronized version of an OffscreenCanvas from the main-thread.
    * @param canvas HTMLCanvasElement associated with this context.
    */
-  private getOffscreenCanvasAsync(canvas: ElementType): Promise<{ getContext(c: '2d'): CanvasRenderingContext2D }> {
-    return new Promise((resolve, reject) => {
+  private getOffscreenCanvasAsync(canvas: ElementType): Promise<void> {
+    let deferred: { resolve?: (value?: {} | PromiseLike<{}> | undefined) => void; upgradePromise?: Promise<void> } = {};
+    const upgradePromise = new Promise(resolve => {
       const messageHandler = ({ data }: { data: OffscreenCanvasToWorker }) => {
         if (
           data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE &&
@@ -91,15 +86,21 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
         }
       };
 
-      // TODO: This should only happen in test environemnet. Otherwise, we should throw.
+      // TODO: This should only happen in test environment. Otherwise, we should throw.
       if (typeof addEventListener !== 'function') {
-        const deferred = { resolve, reject };
-        deferredUpgrades.set(canvas, deferred);
+        deferred.resolve = resolve;
       } else {
         addEventListener('message', messageHandler);
         transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
       }
+    }).then((instance: { getContext(c: '2d'): CanvasRenderingContext2D }) => {
+      this.implementation = instance.getContext('2d');
+      this.upgraded = true;
+      this.flushQueue();
     });
+    deferred.upgradePromise = upgradePromise;
+    deferredUpgrades.set(canvas, deferred);
+    return upgradePromise;
   }
 
   private flushQueue() {
