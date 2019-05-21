@@ -74,6 +74,8 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
    */
   private getOffscreenCanvasAsync(canvas: ElementType): Promise<void> {
     let deferred: { resolve?: (value?: {} | PromiseLike<{}> | undefined) => void; upgradePromise?: Promise<void> } = {};
+    let testMode = false; // whether in testing environment
+
     const upgradePromise = new Promise(resolve => {
       const messageHandler = ({ data }: { data: OffscreenCanvasToWorker }) => {
         if (
@@ -88,6 +90,8 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
       // TODO: This should only happen in test environment. Otherwise, we should throw.
       if (typeof addEventListener !== 'function') {
+        // The condition above should only pass in testing environment. Set flag to 'true'.
+        testMode = true;
         deferred.resolve = resolve;
       } else {
         addEventListener('message', messageHandler);
@@ -98,8 +102,12 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
       this.upgraded = true;
       this.flushQueue();
     });
-    deferred.upgradePromise = upgradePromise;
-    deferredUpgrades.set(canvas, deferred);
+
+    if (testMode) {
+      deferred.upgradePromise = upgradePromise;
+      deferredUpgrades.set(canvas, deferred);
+    }
+
     return upgradePromise;
   }
 
