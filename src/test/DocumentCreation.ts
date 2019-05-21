@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { SVGElement } from '../worker-thread/dom/SVGElement';
 import { HTMLAnchorElement } from '../worker-thread/dom/HTMLAnchorElement';
 import { HTMLButtonElement } from '../worker-thread/dom/HTMLButtonElement';
 import { HTMLDataElement } from '../worker-thread/dom/HTMLDataElement';
@@ -88,6 +89,7 @@ const GlobalScope: GlobalScope = {
   innerHeight: 0,
   initialize: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>) => void 0,
   MutationObserver,
+  SVGElement,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLCanvasElement,

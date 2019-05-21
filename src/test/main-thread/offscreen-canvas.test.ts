@@ -116,8 +116,6 @@ test('method with string argument', t => {
 
   const textArg = 'textArg';
   const textArgIndex = storeString(strings, textArg);
-  console.log('textArgIndex: ' + textArgIndex);
-
   const actualArgs = [textArg, 1, 2];
   const passedArgs = [textArgIndex, 1, 2];
   const stub = createStub(context2d, methodName);
