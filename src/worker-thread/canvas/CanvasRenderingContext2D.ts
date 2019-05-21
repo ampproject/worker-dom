@@ -74,7 +74,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
    */
   private getOffscreenCanvasAsync(canvas: ElementType): Promise<void> {
     let deferred: { resolve?: (value?: {} | PromiseLike<{}> | undefined) => void; upgradePromise?: Promise<void> } = {};
-    let testMode = false; // whether in testing environment
+    let testMode = typeof addEventListener !== 'function'; // whether in testing environment
 
     const upgradePromise = new Promise(resolve => {
       const messageHandler = ({ data }: { data: OffscreenCanvasToWorker }) => {
@@ -88,10 +88,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
         }
       };
 
-      // TODO: This should only happen in test environment. Otherwise, we should throw.
-      if (typeof addEventListener !== 'function') {
-        // The condition above should only pass in testing environment. Set flag to 'true'.
-        testMode = true;
+      if (testMode) {
         deferred.resolve = resolve;
       } else {
         addEventListener('message', messageHandler);
