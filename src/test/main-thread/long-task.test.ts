@@ -18,11 +18,18 @@ import anyTest, { TestInterface } from 'ava';
 import { Env } from './helpers/env';
 import { LongTaskCommandExecutor, LongTaskExecutor } from '../../main-thread/commands/long-task';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { Strings } from '../../main-thread/strings';
+import { NodeContext } from '../../main-thread/nodes';
+import { WorkerContext } from '../../main-thread/worker';
+import { normalizeConfiguration } from '../../main-thread/configuration';
 
 const test = anyTest as TestInterface<{
   env: Env;
   executor: LongTaskCommandExecutor;
   longTasks: Array<Promise<any>>;
+  strings: Strings;
+  nodeContext: NodeContext;
+  workerContext: WorkerContext;
   baseElement: HTMLElement;
 }>;
 
@@ -30,15 +37,26 @@ test.beforeEach(t => {
   const env = new Env();
   const { document } = env;
   const longTasks: Array<Promise<any>> = [];
-  const executor = LongTaskExecutor({
-    authorURL: 'authorURL',
-    domURL: 'domURL',
-    longTask: (promise: Promise<any>) => {
-      longTasks.push(promise);
-    },
-  });
-
   const baseElement = document.createElement('div');
+  const strings = new Strings();
+  const nodeContext = new NodeContext(strings, baseElement);
+  const workerContext = ({
+    getWorker() {},
+    messageToWorker() {},
+  } as unknown) as WorkerContext;
+  const executor = LongTaskExecutor(
+    strings,
+    nodeContext,
+    workerContext,
+    normalizeConfiguration({
+      authorURL: 'authorURL',
+      domURL: 'domURL',
+      longTask: (promise: Promise<any>) => {
+        longTasks.push(promise);
+      },
+    }),
+  );
+
   baseElement._index_ = 1;
   document.body.appendChild(baseElement);
 
@@ -47,6 +65,9 @@ test.beforeEach(t => {
     executor,
     longTasks,
     baseElement,
+    strings,
+    nodeContext,
+    workerContext,
   };
 });
 
@@ -56,11 +77,16 @@ test.afterEach(t => {
 });
 
 test.serial('should tolerate no callback', t => {
-  const { longTasks, baseElement } = t.context;
-  const executor = LongTaskExecutor({
-    authorURL: 'authorURL',
-    domURL: 'domURL',
-  });
+  const { longTasks, baseElement, strings, nodeContext, workerContext } = t.context;
+  const executor = LongTaskExecutor(
+    strings,
+    nodeContext,
+    workerContext,
+    normalizeConfiguration({
+      authorURL: 'authorURL',
+      domURL: 'domURL',
+    }),
+  );
 
   executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, baseElement);
   executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, baseElement);

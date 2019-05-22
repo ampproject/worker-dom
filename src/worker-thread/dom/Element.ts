@@ -36,10 +36,8 @@ import { parse } from '../../third_party/html-parser/html-parser';
 import { propagate } from './Node';
 
 export const NS_NAME_TO_CLASS: { [key: string]: typeof Element } = {};
-export function registerSubclass(localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): void {
-  const key = `${namespace}:${localName}`;
-  NS_NAME_TO_CLASS[key] = subclass;
-}
+export const registerSubclass = (localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): any =>
+  (NS_NAME_TO_CLASS[`${namespace}:${localName}`] = subclass);
 
 interface PropertyBackedAttributes {
   [key: string]: [(el: Element) => string | null, (el: Element, value: string) => string | boolean];
@@ -483,7 +481,7 @@ export class Element extends ParentNode {
    * @return Element containing all current attributes and potentially childNode clones of the Element requested to be cloned.
    */
   public cloneNode(deep: boolean = false): Element {
-    const clone: Element = this.ownerDocument.createElement(this.nodeName);
+    const clone: Element = this.ownerDocument.createElementNS(this.namespaceURI, this.nodeName);
     this.attributes.forEach(attr => clone.setAttribute(attr.name, attr.value));
     if (deep) {
       this.childNodes.forEach((child: Node) => clone.appendChild(child.cloneNode(deep)));

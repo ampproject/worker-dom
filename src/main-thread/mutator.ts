@@ -52,21 +52,21 @@ export class MutatorProcessor {
     this.strings = strings;
     this.nodeContext = nodeContext;
     this.sanitizer = config.sanitizer;
-    this.mutationPumpFunction = config.mutationPump || requestAnimationFrame.bind(null);
+    this.mutationPumpFunction = config.mutationPump;
 
-    const LongTaskExecutorInstance = LongTaskExecutor(config);
+    const LongTaskExecutorInstance = LongTaskExecutor(strings, nodeContext, workerContext, config);
 
     this.executors = {
-      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor(nodeContext),
-      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor(strings, config),
-      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor(strings),
-      [TransferrableMutationType.PROPERTIES]: PropertyProcessor(strings, config),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor(strings, nodeContext, workerContext),
-      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor(workerContext),
+      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor(strings, nodeContext, workerContext, config),
+      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor(strings, nodeContext, workerContext, config),
+      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor(strings, nodeContext, workerContext, config),
+      [TransferrableMutationType.PROPERTIES]: PropertyProcessor(strings, nodeContext, workerContext, config),
+      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor(strings, nodeContext, workerContext, config),
+      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor(strings, nodeContext, workerContext, config),
       [TransferrableMutationType.LONG_TASK_START]: LongTaskExecutorInstance,
       [TransferrableMutationType.LONG_TASK_END]: LongTaskExecutorInstance,
-      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(workerContext),
-      [TransferrableMutationType.OFFSCREEN_POLYFILL]: OffscreenPolyfillCallProcessor(strings),
+      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(strings, nodeContext, workerContext, config),
+      [TransferrableMutationType.OFFSCREEN_POLYFILL]: OffscreenPolyfillCallProcessor(strings, nodeContext, workerContext, config),
     };
   }
 
