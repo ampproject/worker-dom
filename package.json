@@ -1,10 +1,10 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/main",
   "syntax": {
-    "esmodules": "dist/index.mjs"
+    "esmodules": "dist/main.mjs"
   },
   "repository": {
     "type": "git",
