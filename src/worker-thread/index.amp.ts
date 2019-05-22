@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { HTMLElement } from './dom/HTMLElement';
 import { SVGElement } from './dom/SVGElement';
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
@@ -140,6 +141,7 @@ const globalScope: GlobalScope = {
   initialize,
   MutationObserver,
   SVGElement,
+  HTMLElement,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLCanvasElement,
