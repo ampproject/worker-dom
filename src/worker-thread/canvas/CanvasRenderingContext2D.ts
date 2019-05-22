@@ -73,7 +73,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
    * @param canvas HTMLCanvasElement associated with this context.
    */
   private getOffscreenCanvasAsync(canvas: ElementType): Promise<void> {
-    let deferred: { resolve?: (value?: {} | PromiseLike<{}> | undefined) => void; upgradePromise?: Promise<void> } = {};
+    const deferred: { resolve?: (value?: {} | PromiseLike<{}>) => void; upgradePromise?: Promise<void> } = {};
     let testMode = typeof addEventListener !== 'function'; // whether in testing environment
 
     const upgradePromise = new Promise(resolve => {
