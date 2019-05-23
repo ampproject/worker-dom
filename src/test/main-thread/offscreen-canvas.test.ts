@@ -25,6 +25,7 @@ import { NodeContext } from '../../main-thread/nodes';
 import { WorkerContext } from '../../main-thread/worker';
 import { Env } from './helpers/env';
 import { normalizeConfiguration } from '../../main-thread/configuration';
+import { serialize } from '../../worker-thread/global-id';
 
 let sandbox: sinon.SinonSandbox;
 
@@ -83,7 +84,7 @@ test('method with no arguments', t => {
   const methodName = 'stroke';
   const stub = createStub(context2d, methodName);
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, [], false, strings);
+  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, [], strings);
   t.true(stub.withArgs().calledOnce);
 });
 
@@ -94,7 +95,7 @@ test('method with int arguments', t => {
   const stub = createStub(context2d, methodName);
   const args = [1, 2, 3, 4];
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, false, strings);
+  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, args, strings);
   t.true(stub.withArgs(...args).calledOnce);
 });
 
@@ -105,7 +106,7 @@ test('method with float arguments', t => {
   const stub = createStub(context2d, methodName);
   const args = [1.2, 2.3, 3.4, 4.8];
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, true, strings);
+  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, args, strings);
   t.true(stub.calledOnce);
   t.true(stub.calledWithMatch(...args.map(approx)));
 });
@@ -116,12 +117,12 @@ test('method with string argument', t => {
 
   const textArg = 'textArg';
   const textArgIndex = storeString(strings, textArg);
-  const actualArgs = [textArg, 1, 2];
-  const passedArgs = [textArgIndex, 1, 2];
+
+  const args = [textArg, 1, 2];
   const stub = createStub(context2d, methodName);
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 1, passedArgs, false, strings, textArgIndex);
-  t.true(stub.withArgs(...actualArgs).calledOnce);
+  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, args, strings, textArgIndex);
+  t.true(stub.withArgs(...args).calledOnce);
 });
 
 test('setter with int argument', t => {
@@ -132,7 +133,7 @@ test('setter with int argument', t => {
   createSetterStub(context2d, methodName, spy);
 
   const arg = 5;
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, true, 0, [arg], false, strings);
+  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, true, [arg], strings);
   t.true(spy.withArgs(arg).calledOnce);
 });
 
@@ -144,7 +145,7 @@ test('setter with float argument', t => {
   createSetterStub(context2d, methodName, spy);
 
   const arg = 1.6;
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, true, 0, [arg], true, strings);
+  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, true, [arg], strings);
   t.true(spy.calledOnce);
   t.true(spy.calledWithMatch(approx(arg)));
 });
@@ -159,7 +160,7 @@ test('setter with string argument', t => {
   const arg = 'textArg';
   const textArgIndex = storeString(strings, arg);
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, true, 1, [arg], false, strings, textArgIndex);
+  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, true, [arg], strings, textArgIndex);
   t.true(spy.withArgs(arg).calledOnce);
 });
 
@@ -168,10 +169,10 @@ test('setLineDash case', t => {
 
   const methodName = 'setLineDash';
   const stub = createStub(context2d, methodName);
-  const lineDash = [10, 20];
+  const args = [[10, 20]];
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, lineDash, true, strings);
-  t.true(stub.withArgs(lineDash).calledOnce);
+  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, args, strings);
+  t.true(stub.withArgs(...args).calledOnce);
 });
 
 test('mutation starts at non-zero offset', t => {
@@ -184,12 +185,10 @@ test('mutation starts at non-zero offset', t => {
   const mutation = [
     TransferrableMutationType.OFFSCREEN_POLYFILL,
     canvasElement._index_,
-    NumericBoolean.FALSE,
     args.length,
     storeString(strings, methodName),
     NumericBoolean.FALSE,
-    0,
-    ...args,
+    ...serialize(args),
   ];
 
   const mutationsArray = new Uint16Array([1, 2, 3].concat(mutation));
@@ -205,10 +204,10 @@ test('mutation returns correct end offset for int arguments', t => {
   createStub(context2d, methodName);
   const args = [100, 200, 300, 400];
 
-  const endOffset = exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, false, strings);
+  const endOffset = exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, args, strings);
 
-  // end offset should be 7 + number of arguments
-  t.is(endOffset, 11);
+  // end offset should be 5 + (number of arguments * 2)
+  t.is(endOffset, 13);
 });
 
 test('mutation returns correct end offset with float arguments', t => {
@@ -218,10 +217,10 @@ test('mutation returns correct end offset with float arguments', t => {
   createStub(context2d, methodName);
   const args = [1.11, 2.22, 3.33, 4.44];
 
-  const endOffset = exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, true, strings);
+  const endOffset = exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, args, strings);
 
-  // end offset should be 7 + (number of arguments * 2)
-  t.is(endOffset, 15);
+  // end offset should be 5 + (number of arguments * 3)
+  t.is(endOffset, 17);
 });
 
 // main-thread's strings API does not return an ID when storing a string
@@ -236,9 +235,7 @@ function exectuteCall(
   canvasElement: HTMLCanvasElement,
   fnName: string,
   isSetter: boolean,
-  stringArgIndex: number,
   args: any[],
-  float32Needed: boolean,
   strings: Strings,
   stringsIndex?: number,
 ): number {
@@ -246,12 +243,10 @@ function exectuteCall(
     new Uint16Array([
       TransferrableMutationType.OFFSCREEN_POLYFILL,
       canvasElement._index_,
-      float32Needed ? NumericBoolean.TRUE : NumericBoolean.FALSE,
       args.length,
       storeString(strings, fnName, stringsIndex),
       isSetter ? NumericBoolean.TRUE : NumericBoolean.FALSE,
-      stringArgIndex,
-      ...(float32Needed ? new Uint16Array(new Float32Array(args).buffer) : args),
+      ...serialize(args),
     ]),
     0,
     canvasElement,

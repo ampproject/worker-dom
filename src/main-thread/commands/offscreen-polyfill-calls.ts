@@ -17,49 +17,22 @@
 import { CommandExecutorInterface } from './interface';
 import { OffscreenContextPolyfillMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { NumericBoolean } from '../../utils';
+import { deserialize } from '../global-id';
 
 export const OffscreenPolyfillCallProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OFFSCREEN_POLYFILL);
 
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      const float32Needed = mutations[startPosition + OffscreenContextPolyfillMutationIndex.Float32Needed] === NumericBoolean.TRUE;
       const argCount = mutations[startPosition + OffscreenContextPolyfillMutationIndex.ArgumentCount];
       const methodCalled = strings.get(mutations[startPosition + OffscreenContextPolyfillMutationIndex.MethodCalled]);
       const isSetter = mutations[startPosition + OffscreenContextPolyfillMutationIndex.IsSetter] === NumericBoolean.TRUE;
-      const stringArgIndex = mutations[startPosition + OffscreenContextPolyfillMutationIndex.StringArgIndex];
 
       const argsStart = startPosition + OffscreenContextPolyfillMutationIndex.Args;
-      let argsTypedArray: Uint16Array | Float32Array;
-      let argEnd = argCount;
-
-      if (float32Needed) {
-        argEnd *= 2;
-        argsTypedArray = new Float32Array(mutations.slice(argsStart, argsStart + argEnd).buffer);
-      } else {
-        argsTypedArray = mutations.slice(argsStart, argsStart + argEnd);
-      }
+      let { offset, args } = deserialize(mutations, argsStart, argCount, strings);
 
       if (allowedExecution) {
         const mainContext = (target as HTMLCanvasElement).getContext('2d');
-        let args = [] as any[];
-
-        if (argCount > 0) {
-          argsTypedArray.forEach((arg: any, i: number) => {
-            if (stringArgIndex - 1 === i) {
-              args.push(strings.get(arg));
-            } else {
-              args.push(arg);
-            }
-          });
-
-          // setLineDash has a single argument: number[]
-          // values from the array argument are transferred independently, so we must do this
-          if (methodCalled === 'setLineDash') {
-            args = [args];
-          }
-        }
-
         if (isSetter) {
           (mainContext as any)[methodCalled] = args[0];
         } else {
@@ -67,55 +40,25 @@ export const OffscreenPolyfillCallProcessor: CommandExecutorInterface = (strings
         }
       }
 
-      return startPosition + OffscreenContextPolyfillMutationIndex.End + argEnd;
+      return offset;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
-      const float32Needed = mutations[startPosition + OffscreenContextPolyfillMutationIndex.Float32Needed] === NumericBoolean.TRUE;
       const argCount = mutations[startPosition + OffscreenContextPolyfillMutationIndex.ArgumentCount];
       const methodCalled = strings.get(mutations[startPosition + OffscreenContextPolyfillMutationIndex.MethodCalled]);
       const isSetter = mutations[startPosition + OffscreenContextPolyfillMutationIndex.IsSetter] === NumericBoolean.TRUE;
-      const stringArgIndex = mutations[startPosition + OffscreenContextPolyfillMutationIndex.StringArgIndex];
 
       const argsStart = startPosition + OffscreenContextPolyfillMutationIndex.Args;
-      let argsTypedArray: Uint16Array | Float32Array;
-      let argEnd = argCount;
-
-      if (float32Needed) {
-        argEnd *= 2;
-        argsTypedArray = new Float32Array(mutations.slice(argsStart, argsStart + argEnd).buffer);
-      } else {
-        argsTypedArray = mutations.slice(argsStart, argsStart + argEnd);
-      }
-
-      let args = [] as any[];
-
-      if (argCount > 0) {
-        argsTypedArray.forEach((arg: any, i: number) => {
-          if (stringArgIndex - 1 === i) {
-            args.push(strings.get(arg));
-          } else {
-            args.push(arg);
-          }
-        });
-
-        // setLineDash has a single argument: number[]
-        // values from the array argument are transferred independently, so we must do this
-        if (methodCalled === 'setLineDash') {
-          args = [args];
-        }
-      }
+      let { offset, args } = deserialize(mutations, argsStart, argCount, strings);
 
       return {
         type: 'OFFSCREEN_POLYFILL',
         allowedExecution,
         target,
-        Float32Needed: float32Needed,
         ArgumentCount: argCount,
         MethodCalled: methodCalled,
         IsSetter: isSetter,
-        StringArgIndex: stringArgIndex,
         Args: args,
-        End: startPosition + OffscreenContextPolyfillMutationIndex.End + argEnd,
+        End: offset,
       };
     },
   };
