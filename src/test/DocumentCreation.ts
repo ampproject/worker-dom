@@ -131,7 +131,7 @@ const GlobalScope: GlobalScope = {
  * @param overrides Can add a new variable to Global or override an existing one.
  */
 export function createTestingDocument(overrides: {} | null = null): Document {
-  const customGlobal = Object.assign({}, GlobalScope, overrides, { TEST_ENABLED: true });
+  const customGlobal = Object.assign({}, GlobalScope, overrides);
   const document = new Document(customGlobal);
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
