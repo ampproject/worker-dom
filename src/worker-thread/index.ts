@@ -52,6 +52,7 @@ import { MutationObserver } from './MutationObserver';
 
 const globalScope: GlobalScope = {
   navigator: (self as WorkerGlobalScope).navigator,
+  WebAssembly: (self as WorkerGlobalScope).WebAssembly,
   localStorage: {},
   location: {},
   url: '/',
