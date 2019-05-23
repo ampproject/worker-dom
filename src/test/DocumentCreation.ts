@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { HTMLElement } from '../worker-thread/dom/HTMLElement';
+import { SVGElement } from '../worker-thread/dom/SVGElement';
 import { HTMLAnchorElement } from '../worker-thread/dom/HTMLAnchorElement';
 import { HTMLButtonElement } from '../worker-thread/dom/HTMLButtonElement';
 import { HTMLDataElement } from '../worker-thread/dom/HTMLDataElement';
@@ -62,6 +64,8 @@ Object.defineProperty(global, 'StorageManager', {
   },
 });
 
+declare var OffscreenCanvas: any;
+
 const GlobalScope: GlobalScope = {
   navigator: {
     appCodeName: 'Mozilla',
@@ -88,6 +92,8 @@ const GlobalScope: GlobalScope = {
   innerHeight: 0,
   initialize: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>) => void 0,
   MutationObserver,
+  SVGElement,
+  HTMLElement,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLCanvasElement,
@@ -117,6 +123,7 @@ const GlobalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
+  OffscreenCanvas: typeof OffscreenCanvas === 'undefined' ? undefined : OffscreenCanvas,
 };
 
 /**
@@ -124,7 +131,7 @@ const GlobalScope: GlobalScope = {
  * @param overrides Can add a new variable to Global or override an existing one.
  */
 export function createTestingDocument(overrides: {} | null = null): Document {
-  const customGlobal = Object.assign({}, GlobalScope, overrides);
+  const customGlobal = Object.assign({}, GlobalScope, overrides, { TEST_ENABLED: true });
   const document = new Document(customGlobal);
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));

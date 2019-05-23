@@ -73,8 +73,8 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
    * @param canvas HTMLCanvasElement associated with this context.
    */
   private getOffscreenCanvasAsync(canvas: ElementType): Promise<void> {
+    const TEST_ENABLED = canvas.ownerDocument.defaultView.TEST_ENABLED;
     const deferred: { resolve?: (value?: {} | PromiseLike<{}>) => void; upgradePromise?: Promise<void> } = {};
-    let testMode = typeof addEventListener !== 'function'; // whether in testing environment
 
     const upgradePromise = new Promise(resolve => {
       const messageHandler = ({ data }: { data: OffscreenCanvasToWorker }) => {
@@ -88,8 +88,12 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
         }
       };
 
-      if (testMode) {
-        deferred.resolve = resolve;
+      if (typeof addEventListener !== 'function') {
+        if (TEST_ENABLED) {
+          deferred.resolve = resolve;
+        } else {
+          throw new Error('addEventListener not a function!');
+        }
       } else {
         addEventListener('message', messageHandler);
         transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
@@ -100,7 +104,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
       this.flushQueue();
     });
 
-    if (testMode) {
+    if (TEST_ENABLED) {
       deferred.upgradePromise = upgradePromise;
       deferredUpgrades.set(canvas, deferred);
     }

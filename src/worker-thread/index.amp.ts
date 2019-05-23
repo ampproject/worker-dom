@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { HTMLElement } from './dom/HTMLElement';
+import { SVGElement } from './dom/SVGElement';
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
 import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
@@ -129,6 +131,8 @@ const WHITELISTED_GLOBALS = [
   'unescape',
 ];
 
+declare var OffscreenCanvas: any;
+
 const globalScope: GlobalScope = {
   navigator: (self as WorkerGlobalScope).navigator,
   localStorage: {},
@@ -138,6 +142,8 @@ const globalScope: GlobalScope = {
   innerHeight: 0,
   initialize,
   MutationObserver,
+  SVGElement,
+  HTMLElement,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLCanvasElement,
@@ -167,6 +173,7 @@ const globalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
+  OffscreenCanvas: typeof OffscreenCanvas === 'undefined' ? undefined : OffscreenCanvas,
 };
 
 // WorkerDOM.Document.defaultView ends up being the window object.
