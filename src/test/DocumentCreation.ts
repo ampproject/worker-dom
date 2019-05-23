@@ -49,6 +49,7 @@ import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { MutationObserver } from '../worker-thread/MutationObserver';
 import { GlobalScope } from '../worker-thread/WorkerDOMGlobalScope';
 import { HTMLCanvasElement } from '../worker-thread/dom/HTMLCanvasElement';
+import { CanvasRenderingContext2D } from '../worker-thread/canvas/CanvasTypes';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -64,7 +65,14 @@ Object.defineProperty(global, 'StorageManager', {
   },
 });
 
-declare var OffscreenCanvas: any;
+interface OffscreenCanvas {
+  getContext(c: string): CanvasRenderingContext2D;
+}
+
+declare var OffscreenCanvas: {
+  prototype: OffscreenCanvas;
+  new (): OffscreenCanvas;
+};
 
 const GlobalScope: GlobalScope = {
   navigator: {

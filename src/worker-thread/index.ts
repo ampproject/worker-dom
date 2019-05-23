@@ -49,8 +49,16 @@ import { Document } from './dom/Document';
 import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
+import { CanvasRenderingContext2D } from './canvas/CanvasTypes';
 
-declare var OffscreenCanvas: any;
+interface OffscreenCanvas {
+  getContext(c: string): CanvasRenderingContext2D;
+}
+
+declare var OffscreenCanvas: {
+  prototype: OffscreenCanvas;
+  new (): OffscreenCanvas;
+};
 
 const globalScope: GlobalScope = {
   navigator: (self as WorkerGlobalScope).navigator,
