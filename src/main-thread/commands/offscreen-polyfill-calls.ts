@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-import { CommandExecutor } from './interface';
-import { OffscreenContextPolyfillMutationIndex } from '../../transfer/TransferrableMutation';
+import { CommandExecutorInterface } from './interface';
+import { OffscreenContextPolyfillMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { NumericBoolean } from '../../utils';
-import { Strings } from '../strings';
 
-/**
- * Processes all calls to an OffscreenCanvas Polyfill on this thread (since manually synchronized).
- * @param strings Transferred strings.
- */
-export function OffscreenPolyfillCallProcessor(strings: Strings): CommandExecutor {
+export const OffscreenPolyfillCallProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config) => {
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OFFSCREEN_POLYFILL);
+
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
       const float32Needed = mutations[startPosition + OffscreenContextPolyfillMutationIndex.Float32Needed] === NumericBoolean.TRUE;
@@ -43,29 +40,31 @@ export function OffscreenPolyfillCallProcessor(strings: Strings): CommandExecuto
         argsTypedArray = mutations.slice(argsStart, argsStart + argEnd);
       }
 
-      const mainContext = (target as HTMLCanvasElement).getContext('2d');
-      let args = [] as any[];
+      if (allowedExecution) {
+        const mainContext = (target as HTMLCanvasElement).getContext('2d');
+        let args = [] as any[];
 
-      if (argCount > 0) {
-        argsTypedArray.forEach((arg: any, i: number) => {
-          if (stringArgIndex - 1 === i) {
-            args.push(strings.get(arg));
-          } else {
-            args.push(arg);
+        if (argCount > 0) {
+          argsTypedArray.forEach((arg: any, i: number) => {
+            if (stringArgIndex - 1 === i) {
+              args.push(strings.get(arg));
+            } else {
+              args.push(arg);
+            }
+          });
+
+          // setLineDash has a single argument: number[]
+          // values from the array argument are transferred independently, so we must do this
+          if (methodCalled === 'setLineDash') {
+            args = [args];
           }
-        });
-
-        // setLineDash has a single argument: number[]
-        // values from the array argument are transferred independently, so we must do this
-        if (methodCalled === 'setLineDash') {
-          args = [args];
         }
-      }
 
-      if (isSetter) {
-        (mainContext as any)[methodCalled] = args[0];
-      } else {
-        (mainContext as any)[methodCalled](...args);
+        if (isSetter) {
+          (mainContext as any)[methodCalled] = args[0];
+        } else {
+          (mainContext as any)[methodCalled](...args);
+        }
       }
 
       return startPosition + OffscreenContextPolyfillMutationIndex.End + argEnd;
@@ -108,6 +107,7 @@ export function OffscreenPolyfillCallProcessor(strings: Strings): CommandExecuto
 
       return {
         type: 'OFFSCREEN_POLYFILL',
+        allowedExecution,
         target,
         Float32Needed: float32Needed,
         ArgumentCount: argCount,
@@ -119,4 +119,4 @@ export function OffscreenPolyfillCallProcessor(strings: Strings): CommandExecuto
       };
     },
   };
-}
+};

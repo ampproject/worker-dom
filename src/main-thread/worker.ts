@@ -56,6 +56,7 @@ export class WorkerContext {
         var Node = defaultView.Node;
         var Text = defaultView.Text;
         var Element = defaultView.Element;
+        var HTMLElement = defaultView.HTMLElement;
         var SVGElement = defaultView.SVGElement;
         var Document = defaultView.Document;
         var Event = defaultView.Event;

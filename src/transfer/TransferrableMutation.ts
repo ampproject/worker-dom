@@ -26,6 +26,18 @@ export const enum TransferrableMutationType {
   OFFSCREEN_CANVAS_INSTANCE = 8,
   OFFSCREEN_POLYFILL = 9,
 }
+export const DefaultAllowedMutations = [
+  TransferrableMutationType.ATTRIBUTES,
+  TransferrableMutationType.CHARACTER_DATA,
+  TransferrableMutationType.CHILD_LIST,
+  TransferrableMutationType.PROPERTIES,
+  TransferrableMutationType.EVENT_SUBSCRIPTION,
+  TransferrableMutationType.GET_BOUNDING_CLIENT_RECT,
+  TransferrableMutationType.LONG_TASK_START,
+  TransferrableMutationType.LONG_TASK_END,
+  TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE,
+  TransferrableMutationType.OFFSCREEN_POLYFILL,
+];
 
 export const ReadableMutationType: { [key: number]: string } = {
   0: 'ATTRIBUTES',

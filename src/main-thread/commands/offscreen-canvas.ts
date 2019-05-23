@@ -14,31 +14,30 @@
  * limitations under the License.
  */
 
-import { WorkerContext } from '../worker';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { MessageType } from '../../transfer/Messages';
-import { CommandExecutor } from './interface';
-import { OffscreenCanvasMutationIndex } from '../../transfer/TransferrableMutation';
+import { CommandExecutorInterface } from './interface';
+import { OffscreenCanvasMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
-/**
- * Processes the transfer of an auto-synchronized OffscreenCanvas to the worker thread.
- * @param workerContext Used to message the worker referenced.
- */
-export function OffscreenCanvasProcessor(workerContext: WorkerContext): CommandExecutor {
+export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config) => {
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE);
+
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      if (target) {
-        const offscreen = (target as HTMLCanvasElement).transferControlToOffscreen();
-        workerContext.messageToWorker(
-          {
-            [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE,
-            [TransferrableKeys.target]: [target._index_],
-            [TransferrableKeys.data]: offscreen, // Object, an OffscreenCanvas
-          },
-          [offscreen],
-        );
-      } else {
-        console.error(`getNode() yields null – ${target}`);
+      if (allowedExecution) {
+        if (target) {
+          const offscreen = (target as HTMLCanvasElement).transferControlToOffscreen();
+          workerContext.messageToWorker(
+            {
+              [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE,
+              [TransferrableKeys.target]: [target._index_],
+              [TransferrableKeys.data]: offscreen, // Object, an OffscreenCanvas
+            },
+            [offscreen],
+          );
+        } else {
+          console.error(`getNode() yields null – ${target}`);
+        }
       }
 
       return startPosition + OffscreenCanvasMutationIndex.End;
@@ -47,7 +46,8 @@ export function OffscreenCanvasProcessor(workerContext: WorkerContext): CommandE
       return {
         type: 'OFFSCREEN_CANVAS_INSTANCE',
         target,
+        allowedExecution,
       };
     },
   };
-}
+};
