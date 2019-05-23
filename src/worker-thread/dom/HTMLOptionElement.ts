@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import { registerSubclass } from './Element';
+import { registerSubclass, definePropertyBackedAttributes } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
-import { NodeName, NamespaceURI, Node } from './Node';
-import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { transfer } from '../MutationTransfer';
 import { Document } from './Document';
@@ -28,16 +26,6 @@ import { NumericBoolean } from '../../utils';
 
 export class HTMLOptionElement extends HTMLElement {
   private [TransferrableKeys.selected]: boolean = false;
-
-  constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node) {
-    super(nodeType, localName, namespaceURI, ownerDocument);
-
-    this[TransferrableKeys.propertyBackedAttributes].selected = [
-      (): string => String(this[TransferrableKeys.selected]),
-      (value: string): boolean => (this.selected = value === 'true'),
-    ];
-  }
-
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionElement
    * @return position of the option within the list of options it's within, or zero if there is no valid parent.
@@ -119,7 +107,9 @@ export class HTMLOptionElement extends HTMLElement {
   }
 }
 registerSubclass('option', HTMLOptionElement);
-
+definePropertyBackedAttributes(HTMLOptionElement, {
+  selected: [(el): string => String(el[TransferrableKeys.selected]), (el, value: string): boolean => (el.selected = value === 'true')],
+});
 // Reflected Properties
 // HTMLOptionElement.defaultSelected => boolean, reflected attribute
 // HTMLOptionElement.disabled => boolean, reflected attribute

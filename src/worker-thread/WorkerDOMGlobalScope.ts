@@ -47,6 +47,8 @@ import { Document } from './dom/Document';
 import { EventHandler } from './Event';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { MutationObserver } from './MutationObserver';
+import { SVGElement } from './dom/SVGElement';
+import { HTMLElement } from './dom/HTMLElement';
 
 export interface GlobalScope {
   initialize: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>) => void;
@@ -57,6 +59,8 @@ export interface GlobalScope {
   innerWidth: number;
   innerHeight: number;
   MutationObserver: typeof MutationObserver;
+  SVGElement: typeof SVGElement;
+  HTMLElement: typeof HTMLElement;
   HTMLAnchorElement: typeof HTMLAnchorElement;
   HTMLButtonElement: typeof HTMLButtonElement;
   HTMLCanvasElement: typeof HTMLCanvasElement;

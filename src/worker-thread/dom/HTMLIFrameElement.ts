@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-import { registerSubclass } from './Element';
+import { registerSubclass, definePropertyBackedAttributes } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { DOMTokenList } from './DOMTokenList';
 
 export class HTMLIFrameElement extends HTMLElement {
+  private _sandbox: DOMTokenList;
+
   // HTMLIFrameElement.sandbox, DOMTokenList, reflected attribute
-  public sandbox: DOMTokenList = new DOMTokenList(HTMLIFrameElement, this, 'sandbox', null, null);
+  public get sandbox(): DOMTokenList {
+    return this._sandbox || (this._sandbox = new DOMTokenList(this, 'sandbox'));
+  }
 }
 registerSubclass('iframe', HTMLIFrameElement);
-
+definePropertyBackedAttributes(HTMLIFrameElement, {
+  sandbox: [(el): string | null => el.sandbox.value, (el, value: string) => (el.sandbox.value = value)],
+});
 // Reflected properties
 // HTMLIFrameElement.allow => string, reflected attribute
 // HTMLIFrameElement.allowFullscreen => boolean, reflected attribute

@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-import { registerSubclass } from './Element';
+import { registerSubclass, definePropertyBackedAttributes } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { DOMTokenList } from './DOMTokenList';
 import { matchNearestParent, tagNameConditionPredicate, matchChildrenElements } from './matchElements';
 
 export class HTMLTableCellElement extends HTMLElement {
-  public headers: DOMTokenList = new DOMTokenList(HTMLTableCellElement, this, 'headers', null, null);
+  private _headers: DOMTokenList;
+
+  public get headers(): DOMTokenList {
+    return this._headers || (this._headers = new DOMTokenList(this, 'headers'));
+  }
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableCellElement
@@ -34,6 +38,9 @@ export class HTMLTableCellElement extends HTMLElement {
 }
 registerSubclass('th', HTMLTableCellElement);
 registerSubclass('td', HTMLTableCellElement);
+definePropertyBackedAttributes(HTMLTableCellElement, {
+  headers: [(el): string | null => el.headers.value, (el, value: string) => (el.headers.value = value)],
+});
 
 // Reflected Properties
 // HTMLTableCellElement.abbr => string, reflected attribute

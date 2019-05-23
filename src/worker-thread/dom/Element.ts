@@ -16,7 +16,7 @@
 
 import { Node, NodeName, NamespaceURI } from './Node';
 import { ParentNode } from './ParentNode';
-import { DOMTokenList } from './DOMTokenList';
+import { DOMTokenList, synchronizedAccessor } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
@@ -36,9 +36,16 @@ import { parse } from '../../third_party/html-parser/html-parser';
 import { propagate } from './Node';
 
 export const NS_NAME_TO_CLASS: { [key: string]: typeof Element } = {};
-export function registerSubclass(localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): void {
-  const key = `${namespace}:${localName}`;
-  NS_NAME_TO_CLASS[key] = subclass;
+export const registerSubclass = (localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): any =>
+  (NS_NAME_TO_CLASS[`${namespace}:${localName}`] = subclass);
+
+interface PropertyBackedAttributes {
+  [key: string]: [(el: Element) => string | null, (el: Element, value: string) => string | boolean];
+}
+
+export function definePropertyBackedAttributes(defineOn: typeof Element, attributes: PropertyBackedAttributes) {
+  const sub = Object.create(defineOn[TransferrableKeys.propertyBackedAttributes]);
+  defineOn[TransferrableKeys.propertyBackedAttributes] = Object.assign(sub, attributes);
 }
 
 interface ClientRect {
@@ -75,10 +82,15 @@ enum ElementKind {
 const VOID_ELEMENTS: string[] = ['AREA', 'BASE', 'BR', 'COL', 'EMBED', 'HR', 'IMG', 'INPUT', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'];
 
 export class Element extends ParentNode {
+  private _classList: DOMTokenList;
+
+  public static [TransferrableKeys.propertyBackedAttributes]: PropertyBackedAttributes = {
+    class: [(el): string | null => el.classList.value, (el, value: string) => (el.classList.value = value)],
+    style: [(el): string | null => el.cssText, (el, value: string) => (el.cssText = value)],
+  };
+
   public localName: NodeName;
   public attributes: Attr[] = [];
-  public [TransferrableKeys.propertyBackedAttributes]: { [key: string]: [() => string | null, (value: string) => string | boolean] } = {};
-  public classList: DOMTokenList = new DOMTokenList(Element, this, 'class', 'classList', 'className');
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
 
@@ -323,7 +335,8 @@ export class Element extends ParentNode {
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: unknown): void {
     const valueAsString = String(value);
-    if (this[TransferrableKeys.propertyBackedAttributes][name] !== undefined) {
+    const propertyBacked = (this.constructor as typeof Element)[TransferrableKeys.propertyBackedAttributes][name];
+    if (propertyBacked !== undefined) {
       if (!this.attributes.find(matchAttrPredicate(namespaceURI, name))) {
         this.attributes.push({
           namespaceURI,
@@ -331,7 +344,7 @@ export class Element extends ParentNode {
           value: valueAsString,
         });
       }
-      this[TransferrableKeys.propertyBackedAttributes][name][1](valueAsString);
+      propertyBacked[1](this, valueAsString);
       return;
     }
 
@@ -383,9 +396,8 @@ export class Element extends ParentNode {
   public getAttributeNS(namespaceURI: NamespaceURI, name: string): string | null {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     if (attr) {
-      return this[TransferrableKeys.propertyBackedAttributes][name] !== undefined
-        ? this[TransferrableKeys.propertyBackedAttributes][name][0]()
-        : attr.value;
+      const propertyBacked = (this.constructor as typeof Element)[TransferrableKeys.propertyBackedAttributes][name];
+      return propertyBacked !== undefined ? propertyBacked[0](this) : attr.value;
     }
     return null;
   }
@@ -469,7 +481,7 @@ export class Element extends ParentNode {
    * @return Element containing all current attributes and potentially childNode clones of the Element requested to be cloned.
    */
   public cloneNode(deep: boolean = false): Element {
-    const clone: Element = this.ownerDocument.createElement(this.nodeName);
+    const clone: Element = this.ownerDocument.createElementNS(this.namespaceURI, this.nodeName);
     this.attributes.forEach(attr => clone.setAttribute(attr.name, attr.value));
     if (deep) {
       this.childNodes.forEach((child: Node) => clone.appendChild(child.cloneNode(deep)));
@@ -528,5 +540,10 @@ export class Element extends ParentNode {
       }
     });
   }
+
+  public get classList(): DOMTokenList {
+    return this._classList || (this._classList = new DOMTokenList(this, 'class'));
+  }
 }
+synchronizedAccessor(Element, 'classList', 'className');
 reflectProperties([{ id: [''] }], Element);

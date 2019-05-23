@@ -1,10 +1,10 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.11.0",
+  "version": "0.12.1",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/main",
   "syntax": {
-    "esmodules": "dist/index.mjs"
+    "esmodules": "dist/main.mjs"
   },
   "repository": {
     "type": "git",
@@ -44,34 +44,34 @@
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.9.0",
     "@babel/cli": "7.4.4",
-    "@babel/core": "7.4.4",
+    "@babel/core": "7.4.5",
     "@babel/plugin-proposal-class-properties": "7.4.4",
     "@babel/plugin-proposal-object-rest-spread": "7.4.4",
-    "@babel/preset-env": "7.4.4",
-    "@types/node": "11.13.10",
+    "@babel/preset-env": "7.4.5",
+    "@types/node": "11.13.11",
     "acorn": "6.1.1",
     "acorn-walk": "6.1.1",
     "ava": "1.4.1",
     "babel-plugin-minify-replace": "0.5.0",
     "babel-plugin-transform-remove-console": "6.9.4",
-    "bundlesize": "0.17.1",
+    "bundlesize": "0.17.2",
     "cross-env": "5.2.0",
     "cross-var": "1.1.0",
-    "esm": "3.2.22",
-    "husky": "2.2.0",
+    "esm": "3.2.25",
+    "husky": "2.3.0",
     "jsdom": "15.1.0",
-    "lint-staged": "8.1.6",
+    "lint-staged": "8.1.7",
     "magic-string": "0.25.2",
-    "np": "5.0.1",
+    "np": "5.0.2",
     "npm-run-all": "4.1.5",
     "polka": "0.5.2",
     "prettier": "1.17.1",
     "rimraf": "2.6.3",
-    "rollup": "1.11.3",
+    "rollup": "1.12.3",
     "rollup-plugin-babel": "4.3.2",
     "rollup-plugin-copy": "2.0.1",
     "rollup-plugin-replace": "2.2.0",
-    "rollup-plugin-terser": "4.0.4",
+    "rollup-plugin-terser": "5.0.0",
     "sinon": "7.3.2",
     "sirv": "0.4.2",
     "tslint": "5.16.0",
@@ -86,14 +86,14 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "npm run test && npm run size"
+      "pre-push": "npm-run-all clean test clean size"
     }
   },
   "bundlesize": [
     {
       "path": "./dist/worker/worker.mjs",
       "compression": "brotli",
-      "maxSize": "10.3 kB"
+      "maxSize": "10.4 kB"
     },
     {
       "path": "./dist/worker/worker.js",

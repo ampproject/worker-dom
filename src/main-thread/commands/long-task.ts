@@ -14,21 +14,33 @@
  * limitations under the License.
  */
 
-import { WorkerDOMConfiguration } from '../configuration';
-import { CommandExecutor } from './interface';
+import { CommandExecutor, CommandExecutorInterface } from './interface';
 import { TransferrableMutationType, ReadableMutationType, LongTaskMutationIndex } from '../../transfer/TransferrableMutation';
+import { Strings } from '../strings';
+import { NodeContext } from '../nodes';
+import { WorkerContext } from '../worker';
+import { WorkerDOMConfiguration } from '../configuration';
 
+export interface LongTaskCommandExecutorInterface extends CommandExecutorInterface {
+  (strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, config: WorkerDOMConfiguration): LongTaskCommandExecutor;
+}
 export interface LongTaskCommandExecutor extends CommandExecutor {
   active: boolean;
 }
 
-export function LongTaskExecutor(config: WorkerDOMConfiguration): LongTaskCommandExecutor {
+export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
+  strings: Strings,
+  nodeContext: NodeContext,
+  workerContext: WorkerContext,
+  config: WorkerDOMConfiguration,
+) => {
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.LONG_TASK_START);
   let index: number = 0;
   let currentResolver: Function | null;
 
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      if (config.longTask) {
+      if (allowedExecution && config.longTask) {
         if (mutations[startPosition] === TransferrableMutationType.LONG_TASK_START) {
           index++;
           if (!currentResolver) {
@@ -48,10 +60,11 @@ export function LongTaskExecutor(config: WorkerDOMConfiguration): LongTaskComman
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       return {
         type: ReadableMutationType[mutations[startPosition]],
+        allowedExecution,
       };
     },
     get active(): boolean {
       return currentResolver !== null;
     },
   };
-}
+};
