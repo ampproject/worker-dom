@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2019 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-const btn = document.getElementsByTagName('button')[0];
-const aInput = document.getElementsByTagName('input')[0];
-const bInput = document.getElementsByTagName('input')[1];
-
-btn.addEventListener('click', async () => {
-  console.log(aInput.value + bInput.value);
-});
+export function add(x: i32, y: i32): i32 {
+  return x + y;
+}
