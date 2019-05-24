@@ -67,11 +67,6 @@ export function serialize(args: unknown[]): number[] {
       continue;
     }
 
-    // if (/* CanvasRnderingContext2D */ true) {
-    //   serialized.push(TransferrableArgs.CanvasRenderingContext2D, arg.canvas[TransferrableKeys.index]);
-
-    // }
-
     throw new Error('cannot serialize argument');
   }
 

@@ -16,6 +16,7 @@
 
 import { Strings } from './strings';
 import { TransferrableArgs } from '../transfer/TransferrableArgs';
+import { NodeContext } from './nodes';
 
 interface DeserializedArgs {
   args: unknown[];
@@ -25,7 +26,7 @@ interface DeserializedArgs {
 const f32 = new Float32Array(1);
 const u16 = new Uint16Array(f32.buffer);
 
-export function deserialize(buffer: Uint16Array, offset: number, count: number, strings: Strings): DeserializedArgs {
+export function deserialize(buffer: Uint16Array, offset: number, count: number, strings: Strings, nodeContext: NodeContext): DeserializedArgs {
   const args: unknown[] = [];
   for (let i = 0; i < count; i++) {
     switch (buffer[offset++] as TransferrableArgs) {
@@ -45,12 +46,14 @@ export function deserialize(buffer: Uint16Array, offset: number, count: number, 
 
       case TransferrableArgs.Array:
         const size = buffer[offset++];
-        const des = deserialize(buffer, offset, size, strings);
+        const des = deserialize(buffer, offset, size, strings, nodeContext);
         args.push(des.args);
         offset = des.offset;
         break;
 
       case TransferrableArgs.CanvasRenderingContext2D:
+        const canvas = nodeContext.getNode(buffer[offset++]) as HTMLCanvasElement;
+        args.push(canvas.getContext('2d'));
         break;
 
       default:
@@ -59,6 +62,6 @@ export function deserialize(buffer: Uint16Array, offset: number, count: number, 
   }
   return {
     args,
-    offset: offset,
+    offset,
   };
 }

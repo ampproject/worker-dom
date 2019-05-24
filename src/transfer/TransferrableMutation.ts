@@ -25,6 +25,7 @@ export const enum TransferrableMutationType {
   LONG_TASK_END = 7,
   OFFSCREEN_CANVAS_INSTANCE = 8,
   OFFSCREEN_POLYFILL = 9,
+  OBJECT_TRANSFER = 10,
 }
 export const DefaultAllowedMutations = [
   TransferrableMutationType.ATTRIBUTES,
@@ -37,6 +38,7 @@ export const DefaultAllowedMutations = [
   TransferrableMutationType.LONG_TASK_END,
   TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE,
   TransferrableMutationType.OFFSCREEN_POLYFILL,
+  TransferrableMutationType.OBJECT_TRANSFER,
 ];
 
 export const ReadableMutationType: { [key: number]: string } = {
@@ -50,6 +52,7 @@ export const ReadableMutationType: { [key: number]: string } = {
   7: 'LONG_TASK_END',
   8: 'OFFSCREEN_CANVAS_INSTANCE',
   9: 'OFFSCREEN_POLYFILL',
+  10: 'OBJECT_TRANSFER',
 };
 
 /**
@@ -156,4 +159,23 @@ export const enum OffscreenContextPolyfillMutationIndex {
   IsSetter = 4,
   Args = 5,
   End = 5,
+}
+
+export const enum ObjectTransferMutationIndex {
+  // FOR NOW: we don't use index 1 because the mutator extracts target from it
+  // we have a different mechanism for retrievieng the target element
+  // so we're using a filler number
+
+  // Target (0 ... N)
+  Target = 2,
+
+  // Function name (N)
+  FunctionName = 2,
+
+  // Arg count (N+1)
+  ArgumentCount = 3,
+
+  // Args (N + 2 ... L)
+  Args = 4,
+  End = 4,
 }

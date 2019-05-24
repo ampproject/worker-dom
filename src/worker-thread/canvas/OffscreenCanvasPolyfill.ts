@@ -28,10 +28,11 @@ import {
 } from './CanvasTypes';
 import { transfer } from '../MutationTransfer';
 import { Document } from '../dom/Document';
-import { NumericBoolean, toLower } from '../../utils';
+import { toLower } from '../../utils';
 import { store } from '../strings';
 import { HTMLElement } from '../dom/HTMLElement';
 import { serialize } from '../global-id';
+import { TransferrableArgs } from '../../transfer/TransferrableArgs';
 
 export class OffscreenCanvasPolyfill<ElementType extends HTMLElement> {
   canvas: ElementType;
@@ -62,13 +63,14 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     this.lineDash = [];
   }
 
-  private [TransferrableKeys.mutated](fnName: string, isSetter: NumericBoolean, args: any[]) {
+  private [TransferrableKeys.mutated](fnName: string, args: any[]) {
     transfer(this.canvasElement.ownerDocument as Document, [
-      TransferrableMutationType.OFFSCREEN_POLYFILL,
+      TransferrableMutationType.OBJECT_TRANSFER,
+      this.canvasElement[TransferrableKeys.index], // filler number since mutator.ts retrieves target differently
+      TransferrableArgs.CanvasRenderingContext2D,
       this.canvasElement[TransferrableKeys.index],
-      args.length,
       store(fnName),
-      isSetter,
+      args.length,
       ...serialize(args),
     ]);
   }
@@ -78,177 +80,175 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   }
 
   clearRect(x: number, y: number, w: number, h: number): void {
-    this[TransferrableKeys.mutated]('clearRect', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('clearRect', [...arguments]);
   }
 
   fillRect(x: number, y: number, w: number, h: number): void {
-    this[TransferrableKeys.mutated]('fillRect', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('fillRect', [...arguments]);
   }
 
   strokeRect(x: number, y: number, w: number, h: number): void {
-    this[TransferrableKeys.mutated]('strokeRect', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('strokeRect', [...arguments]);
   }
 
   set lineWidth(value: number) {
-    this[TransferrableKeys.mutated]('lineWidth', NumericBoolean.TRUE, [...arguments]);
+    this[TransferrableKeys.mutated]('lineWidth', [...arguments]);
   }
 
   fillText(text: string, x: number, y: number, maxWidth?: number) {
-    const numberArgs = [...arguments].slice(1);
-    this[TransferrableKeys.mutated]('fillText', NumericBoolean.FALSE, [store(text), ...numberArgs]);
+    this[TransferrableKeys.mutated]('fillText', [...arguments]);
   }
 
   moveTo(x: number, y: number) {
-    this[TransferrableKeys.mutated]('moveTo', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('moveTo', [...arguments]);
   }
 
   lineTo(x: number, y: number) {
-    this[TransferrableKeys.mutated]('lineTo', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('lineTo', [...arguments]);
   }
 
   closePath() {
-    this[TransferrableKeys.mutated]('closePath', NumericBoolean.FALSE, []);
+    this[TransferrableKeys.mutated]('closePath', []);
   }
 
   stroke() {
-    this[TransferrableKeys.mutated]('stroke', NumericBoolean.FALSE, []);
+    this[TransferrableKeys.mutated]('stroke', []);
   }
 
   restore() {
-    this[TransferrableKeys.mutated]('restore', NumericBoolean.FALSE, []);
+    this[TransferrableKeys.mutated]('restore', []);
   }
 
   save() {
-    this[TransferrableKeys.mutated]('save', NumericBoolean.FALSE, []);
+    this[TransferrableKeys.mutated]('save', []);
   }
 
   resetTransform() {
-    this[TransferrableKeys.mutated]('resetTransform', NumericBoolean.FALSE, []);
+    this[TransferrableKeys.mutated]('resetTransform', []);
   }
 
   rotate(angle: number) {
-    this[TransferrableKeys.mutated]('rotate', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('rotate', [...arguments]);
   }
 
   transform(a: number, b: number, c: number, d: number, e: number, f: number) {
-    this[TransferrableKeys.mutated]('transform', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('transform', [...arguments]);
   }
 
   translate(x: number, y: number) {
-    this[TransferrableKeys.mutated]('translate', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('translate', [...arguments]);
   }
 
   scale(x: number, y: number) {
-    this[TransferrableKeys.mutated]('scale', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('scale', [...arguments]);
   }
 
   set globalAlpha(value: number) {
-    this[TransferrableKeys.mutated]('globalAlpha', NumericBoolean.TRUE, [...arguments]);
+    this[TransferrableKeys.mutated]('globalAlpha', [...arguments]);
   }
 
   set globalCompositeOperation(value: string) {
-    this[TransferrableKeys.mutated]('globalCompositeOperation', NumericBoolean.TRUE, [store(value)]);
+    this[TransferrableKeys.mutated]('globalCompositeOperation', [...arguments]);
   }
 
   set imageSmoothingQuality(value: ImageSmoothingQuality) {
-    this[TransferrableKeys.mutated]('imageSmoothingQuality', NumericBoolean.TRUE, [store(value)]);
+    this[TransferrableKeys.mutated]('imageSmoothingQuality', [...arguments]);
   }
 
   set fillStyle(value: string) {
-    this[TransferrableKeys.mutated]('fillStyle', NumericBoolean.TRUE, [store(value)]);
+    this[TransferrableKeys.mutated]('fillStyle', [...arguments]);
   }
 
   set strokeStyle(value: string) {
-    this[TransferrableKeys.mutated]('strokeStyle', NumericBoolean.TRUE, [store(value)]);
+    this[TransferrableKeys.mutated]('strokeStyle', [...arguments]);
   }
 
   set shadowBlur(value: number) {
-    this[TransferrableKeys.mutated]('shadowBlur', NumericBoolean.TRUE, [...arguments]);
+    this[TransferrableKeys.mutated]('shadowBlur', [...arguments]);
   }
 
   set shadowColor(value: string) {
-    this[TransferrableKeys.mutated]('shadowColor', NumericBoolean.TRUE, [store(value)]);
+    this[TransferrableKeys.mutated]('shadowColor', [...arguments]);
   }
 
   set shadowOffsetX(value: number) {
-    this[TransferrableKeys.mutated]('shadowOffsetX', NumericBoolean.TRUE, [...arguments]);
+    this[TransferrableKeys.mutated]('shadowOffsetX', [...arguments]);
   }
 
   set shadowOffsetY(value: number) {
-    this[TransferrableKeys.mutated]('shadowOffsetY', NumericBoolean.TRUE, [...arguments]);
+    this[TransferrableKeys.mutated]('shadowOffsetY', [...arguments]);
   }
 
   set filter(value: string) {
-    this[TransferrableKeys.mutated]('filter', NumericBoolean.TRUE, [store(value)]);
+    this[TransferrableKeys.mutated]('filter', [...arguments]);
   }
 
   beginPath() {
-    this[TransferrableKeys.mutated]('beginPath', NumericBoolean.FALSE, []);
+    this[TransferrableKeys.mutated]('beginPath', []);
   }
 
   strokeText(text: string, x: number, y: number, maxWidth?: number) {
-    const numberArgs = [...arguments].slice(1);
-    this[TransferrableKeys.mutated]('strokeText', NumericBoolean.FALSE, [store(text), ...numberArgs]);
+    this[TransferrableKeys.mutated]('strokeText', [...arguments]);
   }
 
   set textAlign(value: CanvasTextAlign) {
-    this[TransferrableKeys.mutated]('textAlign', NumericBoolean.TRUE, [store(value)]);
+    this[TransferrableKeys.mutated]('textAlign', [...arguments]);
   }
 
   set textBaseline(value: CanvasTextBaseline) {
-    this[TransferrableKeys.mutated]('textBaseline', NumericBoolean.TRUE, [store(value)]);
+    this[TransferrableKeys.mutated]('textBaseline', [...arguments]);
   }
 
   set lineCap(value: CanvasLineCap) {
-    this[TransferrableKeys.mutated]('lineCap', NumericBoolean.TRUE, [store(value)]);
+    this[TransferrableKeys.mutated]('lineCap', [...arguments]);
   }
 
   set lineDashOffset(value: number) {
-    this[TransferrableKeys.mutated]('lineDashOffset', NumericBoolean.TRUE, [...arguments]);
+    this[TransferrableKeys.mutated]('lineDashOffset', [...arguments]);
   }
 
   set lineJoin(value: CanvasLineJoin) {
-    this[TransferrableKeys.mutated]('lineJoin', NumericBoolean.TRUE, [store(value)]);
+    this[TransferrableKeys.mutated]('lineJoin', [...arguments]);
   }
 
   set miterLimit(value: number) {
-    this[TransferrableKeys.mutated]('miterLimit', NumericBoolean.TRUE, [...arguments]);
+    this[TransferrableKeys.mutated]('miterLimit', [...arguments]);
   }
 
   arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: boolean) {
-    this[TransferrableKeys.mutated]('arc', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('arc', [...arguments]);
   }
 
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number) {
-    this[TransferrableKeys.mutated]('arcTo', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('arcTo', [...arguments]);
   }
 
   set direction(value: CanvasDirection) {
-    this[TransferrableKeys.mutated]('direction', NumericBoolean.TRUE, [store(value)]);
+    this[TransferrableKeys.mutated]('direction', [...arguments]);
   }
 
   set font(value: string) {
-    this[TransferrableKeys.mutated]('font', NumericBoolean.TRUE, [store(value)]);
+    this[TransferrableKeys.mutated]('font', [...arguments]);
   }
 
   ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean) {
-    this[TransferrableKeys.mutated]('ellipse', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('ellipse', [...arguments]);
   }
 
   bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number) {
-    this[TransferrableKeys.mutated]('bezierCurveTo', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('bezierCurveTo', [...arguments]);
   }
 
   rect(x: number, y: number, width: number, height: number) {
-    this[TransferrableKeys.mutated]('rect', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('rect', [...arguments]);
   }
 
   quadraticCurveTo(cpx: number, cpy: number, x: number, y: number) {
-    this[TransferrableKeys.mutated]('quadraticCurveTo', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('quadraticCurveTo', [...arguments]);
   }
 
   set imageSmoothingEnabled(value: boolean) {
-    this[TransferrableKeys.mutated]('imageSmoothingEnabled', NumericBoolean.TRUE, [...arguments]);
+    this[TransferrableKeys.mutated]('imageSmoothingEnabled', [...arguments]);
   }
 
   setLineDash(lineDash: number[]) {
@@ -257,7 +257,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       lineDash = lineDash.concat(lineDash);
     }
     this.lineDash = lineDash;
-    this[TransferrableKeys.mutated]('setLineDash', NumericBoolean.FALSE, lineDash);
+    this[TransferrableKeys.mutated]('setLineDash', [...arguments]);
   }
 
   getLineDash(): number[] {
@@ -268,14 +268,14 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     if (typeof pathOrFillRule === 'object') {
       throw new Error('clip(Path2D) is currently not supported!');
     }
-    this[TransferrableKeys.mutated]('clip', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('clip', [...arguments]);
   }
 
   fill(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule) {
     if (typeof pathOrFillRule === 'object') {
       throw new Error('fill(Path2D) is currently not supported!');
     }
-    this[TransferrableKeys.mutated]('fill', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('fill', [...arguments]);
   }
 
   // Method has a different signature in MDN than it does in HTML spec
@@ -283,7 +283,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     if (typeof transformOrA === 'object') {
       throw new Error('setTransform(DOMMatrix2DInit) is currently not supported!');
     }
-    this[TransferrableKeys.mutated]('setTransform', NumericBoolean.FALSE, [...arguments]);
+    this[TransferrableKeys.mutated]('setTransform', [...arguments]);
   }
 
   ////////////////////////////////////////
