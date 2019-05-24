@@ -50,6 +50,7 @@ import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
 import { MutationObserver } from './MutationObserver';
+import { OffscreenCanvas } from './canvas/CanvasTypes';
 
 const WHITELISTED_GLOBALS = [
   'Array',
@@ -171,6 +172,7 @@ const globalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
+  OffscreenCanvas: (self as any).OffscreenCanvas as OffscreenCanvas,
 };
 
 // WorkerDOM.Document.defaultView ends up being the window object.

@@ -49,6 +49,7 @@ import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { MutationObserver } from '../worker-thread/MutationObserver';
 import { GlobalScope } from '../worker-thread/WorkerDOMGlobalScope';
 import { HTMLCanvasElement } from '../worker-thread/dom/HTMLCanvasElement';
+import { CanvasRenderingContext2D } from '../worker-thread/canvas/CanvasTypes';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -63,6 +64,15 @@ Object.defineProperty(global, 'StorageManager', {
     return {};
   },
 });
+
+interface OffscreenCanvas {
+  getContext(c: string): CanvasRenderingContext2D;
+}
+
+declare var OffscreenCanvas: {
+  prototype: OffscreenCanvas;
+  new (): OffscreenCanvas;
+};
 
 const GlobalScope: GlobalScope = {
   navigator: {
@@ -121,10 +131,15 @@ const GlobalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
+  OffscreenCanvas: typeof OffscreenCanvas === 'undefined' ? undefined : OffscreenCanvas,
 };
 
-export function createTestingDocument(additional: {} | null = null): Document {
-  const customGlobal = Object.assign({}, GlobalScope, additional);
+/**
+ * Creates a Document object for testing environment.
+ * @param overrides Can add a new variable to Global or override an existing one.
+ */
+export function createTestingDocument(overrides: {} | null = null): Document {
+  const customGlobal = Object.assign({}, GlobalScope, overrides);
   const document = new Document(customGlobal);
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));

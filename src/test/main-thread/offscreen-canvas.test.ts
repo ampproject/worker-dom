@@ -26,17 +26,16 @@ import { WorkerContext } from '../../main-thread/worker';
 import { Env } from './helpers/env';
 import { normalizeConfiguration } from '../../main-thread/configuration';
 
-let sandbox: sinon.SinonSandbox;
-
 const test = anyTest as TestInterface<{
   canvasElement: HTMLCanvasElement;
   context2d: CanvasRenderingContext2D;
   strings: Strings;
   offscreenCanvasProcessor: CommandExecutor;
+  sandbox: sinon.SinonSandbox;
 }>;
 
 test.beforeEach(t => {
-  sandbox = sinon.createSandbox();
+  const sandbox = sinon.createSandbox();
 
   const env = new Env();
   const { document } = env;
@@ -70,115 +69,133 @@ test.beforeEach(t => {
     context2d,
     strings,
     offscreenCanvasProcessor,
+    sandbox,
   };
 });
 
 test.afterEach(t => {
+  const { sandbox } = t.context;
   sandbox.restore();
 });
 
 test('method with no arguments', t => {
-  const { strings, context2d, offscreenCanvasProcessor, canvasElement } = t.context;
+  const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'stroke';
-  const stub = createStub(context2d, methodName);
+  const stub = ((context2d[methodName] as sinon.SinonStub) = sandbox.stub());
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, [], false, strings);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, [], false, strings);
   t.true(stub.withArgs().calledOnce);
 });
 
 test('method with int arguments', t => {
-  const { strings, context2d, offscreenCanvasProcessor, canvasElement } = t.context;
+  const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'fillRect';
-  const stub = createStub(context2d, methodName);
+  const stub = ((context2d[methodName] as sinon.SinonStub) = sandbox.stub());
+
   const args = [1, 2, 3, 4];
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, false, strings);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, false, strings);
   t.true(stub.withArgs(...args).calledOnce);
 });
 
 test('method with float arguments', t => {
-  const { strings, context2d, offscreenCanvasProcessor, canvasElement } = t.context;
+  const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'fillRect';
-  const stub = createStub(context2d, methodName);
+  const stub = ((context2d[methodName] as sinon.SinonStub) = sandbox.stub());
+
   const args = [1.2, 2.3, 3.4, 4.8];
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, true, strings);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, true, strings);
   t.true(stub.calledOnce);
   t.true(stub.calledWithMatch(...args.map(approx)));
 });
 
 test('method with string argument', t => {
-  const { strings, context2d, offscreenCanvasProcessor, canvasElement } = t.context;
+  const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
   const methodName = 'strokeText';
 
   const textArg = 'textArg';
+  const stub = ((context2d[methodName] as sinon.SinonStub) = sandbox.stub());
+
   const textArgIndex = storeString(strings, textArg);
   const actualArgs = [textArg, 1, 2];
   const passedArgs = [textArgIndex, 1, 2];
-  const stub = createStub(context2d, methodName);
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 1, passedArgs, false, strings, textArgIndex);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 1, passedArgs, false, strings, textArgIndex);
   t.true(stub.withArgs(...actualArgs).calledOnce);
 });
 
 test('setter with int argument', t => {
-  const { strings, context2d, offscreenCanvasProcessor, canvasElement } = t.context;
+  const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'lineWidth';
-  const spy = sandbox.spy();
-  createSetterStub(context2d, methodName, spy);
+  const setter = sandbox.spy();
+
+  // must declare property before sinon lets us stub a setter
+  (context2d[methodName] as any) = 'existent';
+  sandbox.stub(context2d, methodName).set(setter);
 
   const arg = 5;
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, true, 0, [arg], false, strings);
-  t.true(spy.withArgs(arg).calledOnce);
+
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, true, 0, [arg], false, strings);
+  t.true(setter.withArgs(arg).calledOnce);
 });
 
 test('setter with float argument', t => {
-  const { strings, context2d, offscreenCanvasProcessor, canvasElement } = t.context;
+  const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'lineWidth';
-  const spy = sandbox.spy();
-  createSetterStub(context2d, methodName, spy);
+  const setter = sandbox.spy();
+
+  // must declare property before sinon lets us stub a setter
+  (context2d[methodName] as any) = 'existent';
+  sandbox.stub(context2d, methodName).set(setter);
 
   const arg = 1.6;
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, true, 0, [arg], true, strings);
-  t.true(spy.calledOnce);
-  t.true(spy.calledWithMatch(approx(arg)));
+
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, true, 0, [arg], true, strings);
+  t.true(setter.calledOnce);
+  t.true(setter.calledWithMatch(approx(arg)));
 });
 
 test('setter with string argument', t => {
-  const { strings, context2d, offscreenCanvasProcessor, canvasElement } = t.context;
+  const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'fillStyle';
-  const spy = sandbox.spy();
-  createSetterStub(context2d, methodName, spy);
+  const setter = sandbox.spy();
+
+  // must declare property before sinon lets us stub a setter
+  (context2d[methodName] as any) = 'existent';
+  sandbox.stub(context2d, methodName).set(setter);
 
   const arg = 'textArg';
   const textArgIndex = storeString(strings, arg);
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, true, 1, [arg], false, strings, textArgIndex);
-  t.true(spy.withArgs(arg).calledOnce);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, true, 1, [arg], false, strings, textArgIndex);
+  t.true(setter.withArgs(arg).calledOnce);
 });
 
 test('setLineDash case', t => {
-  const { strings, context2d, offscreenCanvasProcessor, canvasElement } = t.context;
+  const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'setLineDash';
-  const stub = createStub(context2d, methodName);
+  const stub = ((context2d[methodName] as sinon.SinonStub) = sandbox.stub());
+
   const lineDash = [10, 20];
 
-  exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, lineDash, true, strings);
+  executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, lineDash, true, strings);
   t.true(stub.withArgs(lineDash).calledOnce);
 });
 
 test('mutation starts at non-zero offset', t => {
-  const { strings, context2d, offscreenCanvasProcessor, canvasElement } = t.context;
+  const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'fillRect';
-  const stub = createStub(context2d, methodName);
+  const stub = ((context2d[methodName] as sinon.SinonStub) = sandbox.stub());
+
   const args = [1, 2, 3, 4];
 
   const mutation = [
@@ -193,32 +210,33 @@ test('mutation starts at non-zero offset', t => {
   ];
 
   const mutationsArray = new Uint16Array([1, 2, 3].concat(mutation));
-  offscreenCanvasProcessor.execute(mutationsArray, 3, canvasElement);
 
+  offscreenCanvasProcessor.execute(mutationsArray, 3, canvasElement);
   t.true(stub.withArgs(...args).calledOnce);
 });
 
 test('mutation returns correct end offset for int arguments', t => {
-  const { strings, context2d, offscreenCanvasProcessor, canvasElement } = t.context;
+  const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'strokeRect';
-  createStub(context2d, methodName);
+  (context2d[methodName] as sinon.SinonStub) = sandbox.stub();
+
   const args = [100, 200, 300, 400];
 
-  const endOffset = exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, false, strings);
+  const endOffset = executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, false, strings);
 
   // end offset should be 7 + number of arguments
   t.is(endOffset, 11);
 });
 
 test('mutation returns correct end offset with float arguments', t => {
-  const { strings, context2d, offscreenCanvasProcessor, canvasElement } = t.context;
+  const { strings, context2d, offscreenCanvasProcessor, canvasElement, sandbox } = t.context;
 
   const methodName = 'rect';
-  createStub(context2d, methodName);
+  (context2d[methodName] as sinon.SinonStub) = sandbox.stub();
   const args = [1.11, 2.22, 3.33, 4.44];
 
-  const endOffset = exectuteCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, true, strings);
+  const endOffset = executeCall(offscreenCanvasProcessor, canvasElement, methodName, false, 0, args, true, strings);
 
   // end offset should be 7 + (number of arguments * 2)
   t.is(endOffset, 15);
@@ -231,7 +249,7 @@ function storeString(strings: Strings, text: string, currentIndex = -1) {
   return ++currentIndex;
 }
 
-function exectuteCall(
+function executeCall(
   offscreenCanvasProcessor: CommandExecutor,
   canvasElement: HTMLCanvasElement,
   fnName: string,
@@ -258,16 +276,10 @@ function exectuteCall(
   );
 }
 
-function createStub(obj: any, method: string) {
-  obj[method] = sandbox.stub();
-  return obj[method];
-}
-
-function createSetterStub(obj: any, property: string, spy: () => {}) {
-  obj[property] = 'existent';
-  sandbox.stub(obj, property).set(spy);
-}
-
+/**
+ * Used to compare float value similarity in tests.
+ * @param expected
+ */
 function approx(expected: number): sinon.SinonMatcher {
   return sinon.match(function(actual: number) {
     const diff = Math.abs(expected - actual);
