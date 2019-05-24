@@ -83,4 +83,6 @@ export const enum TransferrableKeys {
   offsetX = 65,
   offsetY = 66,
   mutated = 67,
+  // This must always be the last numerically ordered Key, for testing purposes.
+  END = 68,
 }
