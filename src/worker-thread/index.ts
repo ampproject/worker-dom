@@ -49,16 +49,7 @@ import { Document } from './dom/Document';
 import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
-import { CanvasRenderingContext2D } from './canvas/CanvasTypes';
-
-interface OffscreenCanvas {
-  getContext(c: string): CanvasRenderingContext2D;
-}
-
-declare var OffscreenCanvas: {
-  prototype: OffscreenCanvas;
-  new (): OffscreenCanvas;
-};
+import { OffscreenCanvas } from './canvas/CanvasTypes';
 
 const globalScope: GlobalScope = {
   navigator: (self as WorkerGlobalScope).navigator,
@@ -100,7 +91,7 @@ const globalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
-  OffscreenCanvas: typeof OffscreenCanvas === 'undefined' ? undefined : OffscreenCanvas,
+  OffscreenCanvas: (self as any).OffscreenCanvas as OffscreenCanvas,
 };
 
 // WorkerDOM.Document.defaultView ends up being the window object.

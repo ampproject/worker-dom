@@ -219,3 +219,12 @@ declare var CanvasPattern: {
   prototype: CanvasPattern;
   new (): CanvasPattern;
 };
+
+export interface OffscreenCanvas {
+  getContext(c: string): CanvasRenderingContext2D;
+}
+
+declare var OffscreenCanvas: {
+  prototype: OffscreenCanvas;
+  new (): OffscreenCanvas;
+};
