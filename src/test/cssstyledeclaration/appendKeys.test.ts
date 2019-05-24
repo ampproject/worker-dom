@@ -18,6 +18,7 @@ import anyTest, { TestInterface } from 'ava';
 import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
 import { Element } from '../../worker-thread/dom/Element';
 import { createTestingDocument } from '../DocumentCreation';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 const test = anyTest as TestInterface<{
   node: Element;
@@ -71,4 +72,14 @@ test('reappending a key does not cause an error', t => {
   appendKeys(['width']);
 
   t.is(declaration.width, '');
+});
+
+test('appending as many keys as there are TransferrableKeys functions', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node);
+  appendKeys(['width']);
+  appendKeys(Array.from(Array(TransferrableKeys.END), (d, i) => i + 'key'));
+
+  t.is(declaration.width, '');
+  declaration.width = '40px';
+  t.is(declaration.width, '40px');
 });

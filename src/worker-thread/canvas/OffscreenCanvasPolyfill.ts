@@ -34,6 +34,10 @@ import { HTMLElement } from '../dom/HTMLElement';
 import { serialize } from '../global-id';
 import { TransferrableArgs } from '../../transfer/TransferrableArgs';
 
+/**
+ * Handles calls to a CanvasRenderingContext2D object in cases where the user's environment does not
+ * support native OffscreenCanvas.
+ */
 export class OffscreenCanvasPolyfill<ElementType extends HTMLElement> {
   canvas: ElementType;
   context: OffscreenCanvasRenderingContext2DPolyfill<ElementType>;
