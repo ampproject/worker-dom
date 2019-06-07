@@ -29,7 +29,9 @@ import { LongTaskExecutor } from './commands/long-task';
 import { CommandExecutor } from './commands/interface';
 import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
 import { Phase } from '../transfer/Phase';
-import { ObjectTransferProcessor } from './commands/object-transfer';
+import { ObjectMutationProcessor } from './commands/object-mutation';
+import { ObjectCreationProcessor } from './commands/object-creation';
+import { TransferObjects } from './transfer-objects';
 
 export class MutatorProcessor {
   private strings: Strings;
@@ -48,7 +50,13 @@ export class MutatorProcessor {
    * @param workerContext
    * @param sanitizer Sanitizer to apply to content if needed.
    */
-  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, config: WorkerDOMConfiguration) {
+  constructor(
+    strings: Strings,
+    nodeContext: NodeContext,
+    workerContext: WorkerContext,
+    config: WorkerDOMConfiguration,
+    transferObjects: TransferObjects,
+  ) {
     this.strings = strings;
     this.nodeContext = nodeContext;
     this.sanitizer = config.sanitizer;
@@ -66,7 +74,8 @@ export class MutatorProcessor {
       [TransferrableMutationType.LONG_TASK_START]: LongTaskExecutorInstance,
       [TransferrableMutationType.LONG_TASK_END]: LongTaskExecutorInstance,
       [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.OBJECT_TRANSFER]: ObjectTransferProcessor(strings, nodeContext, workerContext, config),
+      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor(strings, nodeContext, workerContext, config, transferObjects),
+      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor(strings, nodeContext, workerContext, config, transferObjects),
     };
   }
 

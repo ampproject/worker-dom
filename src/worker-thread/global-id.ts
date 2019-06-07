@@ -16,6 +16,7 @@
 
 import { store } from './strings';
 import { TransferrableArgs } from '../transfer/TransferrableArgs';
+import { Serializable, SerializableObject } from './worker-thread';
 
 const f32 = new Float32Array(1);
 const u16 = new Uint16Array(f32.buffer);
@@ -35,7 +36,7 @@ function isSmallInt(num: number): boolean {
  *
  * @param args The arguments to serialize
  */
-export function serialize(args: unknown[]): number[] {
+export function serialize(args: Serializable[]): number[] {
   const serialized: number[] = [];
 
   for (let i = 0; i < args.length; i++) {
@@ -58,16 +59,26 @@ export function serialize(args: unknown[]): number[] {
 
     if (Array.isArray(arg)) {
       serialized.push(TransferrableArgs.Array, arg.length);
-      const serializedArr = serialize(arg);
+      const serializedArray = serialize(arg);
 
-      for (let i = 0; i < serializedArr.length; i++) {
-        serialized.push(serializedArr[i]);
+      for (let i = 0; i < serializedArray.length; i++) {
+        serialized.push(serializedArray[i]);
       }
 
       continue;
     }
 
-    throw new Error('cannot serialize argument');
+    if (typeof arg === 'object') {
+      const serializedObject = (arg as SerializableObject).serialize();
+
+      for (let i = 0; i < serializedObject.length; i++) {
+        serialized.push(serializedObject[i]);
+      }
+
+      continue;
+    }
+
+    throw new Error('Cannot serialize argument.');
   }
 
   return serialized;

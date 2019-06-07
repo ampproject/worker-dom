@@ -33,6 +33,9 @@ import { store } from '../strings';
 import { HTMLElement } from '../dom/HTMLElement';
 import { serialize } from '../global-id';
 import { TransferrableArgs } from '../../transfer/TransferrableArgs';
+import { SerializableObject } from '../worker-thread';
+import { CanvasGradientFake } from './CanvasGradientFake';
+import { TransferObjectIdGenerator } from './TransferObjectIdGenerator';
 
 /**
  * Handles calls to a CanvasRenderingContext2D object in cases where the user's environment does not
@@ -58,9 +61,10 @@ export class OffscreenCanvasPolyfill<ElementType extends HTMLElement> {
   }
 }
 
-class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
+class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement> implements CanvasRenderingContext2D, SerializableObject {
   private canvasElement: ElementType;
   private lineDash: number[];
+  private idGenerator = new TransferObjectIdGenerator();
 
   constructor(canvas: ElementType) {
     this.canvasElement = canvas;
@@ -69,7 +73,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
 
   private [TransferrableKeys.mutated](fnName: string, args: any[]) {
     transfer(this.canvasElement.ownerDocument as Document, [
-      TransferrableMutationType.OBJECT_TRANSFER,
+      TransferrableMutationType.OBJECT_MUTATION,
       this.canvasElement[TransferrableKeys.index], // filler number since mutator.ts retrieves target differently
       TransferrableArgs.CanvasRenderingContext2D,
       this.canvasElement[TransferrableKeys.index],
@@ -77,6 +81,10 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       args.length,
       ...serialize(args),
     ]);
+  }
+
+  serialize(): number[] {
+    return [TransferrableArgs.CanvasRenderingContext2D, this.canvasElement[TransferrableKeys.index]];
   }
 
   get canvas(): ElementType {
@@ -159,11 +167,11 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     this[TransferrableKeys.mutated]('imageSmoothingQuality', [...arguments]);
   }
 
-  set fillStyle(value: string) {
+  set fillStyle(value: string | CanvasGradientFake) {
     this[TransferrableKeys.mutated]('fillStyle', [...arguments]);
   }
 
-  set strokeStyle(value: string) {
+  set strokeStyle(value: string | CanvasGradientFake) {
     this[TransferrableKeys.mutated]('strokeStyle', [...arguments]);
   }
 
@@ -291,40 +299,42 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   }
 
   ////////////////////////////////////////
-  // The following methods require more to our transfer process:
-  createLinearGradient(): CanvasGradient {
-    return {} as CanvasGradient;
-  }
-  createPattern(): CanvasPattern {
-    return {} as CanvasPattern;
-  }
-  createRadialGradient(): CanvasGradient {
-    return {} as CanvasGradient;
+  // createLinearGradient, createRadialGradient, createPattern can be done in the worker thread
+  createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
+    return new CanvasGradientFake(this.idGenerator.getNextId(), this.canvasElement.ownerDocument as Document, 'createLinearGradient', [...arguments]);
   }
 
-  // issue: has more than one signature, one with a Path2D arg
-  isPointInPath(): boolean {
-    return true;
+  createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
+    return new CanvasGradientFake(this.idGenerator.getNextId(), this.canvasElement.ownerDocument as Document, 'createRadialGradient', [...arguments]);
   }
 
-  // issue: has more than one signature, one with a Path2D arg
-  isPointInStroke(): boolean {
-    return true;
-  }
-
-  // issue: has a return value
-  measureText(): TextMetrics {
-    return {} as TextMetrics;
+  createPattern(image: CanvasImageSource, repetition: string): CanvasPattern {
+    return new CanvasPatternFake(this.idGenerator.getNextId(), this.canvasElement.ownerDocument as Document, [...arguments]);
   }
 
   createImageData(): ImageData {
     return {} as ImageData;
   }
+
   getImageData(): ImageData {
     return {} as ImageData;
   }
+
   putImageData() {}
 
   // issue: has four signatures, all of them with a CanvasImageSource arg
   drawImage() {}
+
+  // THROW and implement async versions
+  isPointInPath(): boolean {
+    throw new Error('No synchronous implementation for isPointInPath available.');
+  }
+
+  isPointInStroke(): boolean {
+    throw new Error('No synchronous implementation for isPointInStroke available.');
+  }
+
+  measureText(): TextMetrics {
+    throw new Error('No synchronous implementation for measureText available.');
+  }
 }

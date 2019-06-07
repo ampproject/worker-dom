@@ -17,6 +17,7 @@
 import { Strings } from './strings';
 import { TransferrableArgs } from '../transfer/TransferrableArgs';
 import { NodeContext } from './nodes';
+import { TransferObjects } from './transfer-objects';
 
 interface DeserializedArgs {
   args: unknown[];
@@ -26,7 +27,14 @@ interface DeserializedArgs {
 const f32 = new Float32Array(1);
 const u16 = new Uint16Array(f32.buffer);
 
-export function deserialize(buffer: Uint16Array, offset: number, count: number, strings: Strings, nodeContext: NodeContext): DeserializedArgs {
+export function deserialize(
+  buffer: Uint16Array,
+  offset: number,
+  count: number,
+  strings: Strings,
+  nodeContext: NodeContext,
+  transferObjects?: TransferObjects,
+): DeserializedArgs {
   const args: unknown[] = [];
   for (let i = 0; i < count; i++) {
     switch (buffer[offset++] as TransferrableArgs) {
@@ -46,9 +54,17 @@ export function deserialize(buffer: Uint16Array, offset: number, count: number, 
 
       case TransferrableArgs.Array:
         const size = buffer[offset++];
-        const des = deserialize(buffer, offset, size, strings, nodeContext);
+        const des = deserialize(buffer, offset, size, strings, nodeContext, transferObjects);
         args.push(des.args);
         offset = des.offset;
+        break;
+
+      case TransferrableArgs.TransferObject:
+        if (!transferObjects) {
+          throw new Error('Objects not provided.');
+        }
+
+        args.push(transferObjects.get(buffer[offset++]));
         break;
 
       case TransferrableArgs.CanvasRenderingContext2D:

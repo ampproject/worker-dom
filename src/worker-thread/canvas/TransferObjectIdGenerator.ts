@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-export const enum TransferrableArgs {
-  SmallInt = 1,
-  Float = 2,
-  String = 3,
-  Array = 4,
-  TransferObject = 5,
-  CanvasRenderingContext2D = 6,
+/**
+ * Generates ID's for TransferObjects.
+ */
+export class TransferObjectIdGenerator {
+  private currentId: number;
+
+  constuctor() {
+    this.currentId = 0;
+  }
+
+  getNextId(): number {
+    return ++this.currentId;
+  }
 }

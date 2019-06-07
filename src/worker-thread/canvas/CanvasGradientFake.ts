@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-export const enum TransferrableArgs {
-  SmallInt = 1,
-  Float = 2,
-  String = 3,
-  Array = 4,
-  TransferObject = 5,
-  CanvasRenderingContext2D = 6,
+import { Document } from '../dom/Document';
+import { TransferrableArgs } from '../../transfer/TransferrableArgs';
+import { TransferObject } from '../TransferObject';
+
+export class CanvasGradientFake extends TransferObject {
+  constructor(id: number, document: Document, method: string, args: number[]) {
+    super(id, document, method, TransferrableArgs.CanvasRenderingContext2D, args);
+  }
+
+  addColorStop(offset: number, color: string) {
+    this.mutateObject('addColorStop', [...arguments]);
+  }
 }

@@ -14,11 +14,26 @@
  * limitations under the License.
  */
 
-export const enum TransferrableArgs {
-  SmallInt = 1,
-  Float = 2,
-  String = 3,
-  Array = 4,
-  TransferObject = 5,
-  CanvasRenderingContext2D = 6,
+declare type TransferObject = CanvasGradient | CanvasPattern;
+
+export class TransferObjects {
+  private transferObjects: Map<number, TransferObject>;
+
+  constructor() {
+    this.transferObjects = new Map();
+  }
+
+  store(obj: TransferObject, id: number): void {
+    this.transferObjects.set(id, obj);
+  }
+
+  get(id: number): TransferObject {
+    const obj = this.transferObjects.get(id);
+
+    if (obj) {
+      return obj;
+    } else {
+      throw new Error('Object with id (' + id + ') does not exist.');
+    }
+  }
 }

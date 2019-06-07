@@ -18,6 +18,7 @@ import { WorkerDOMConfiguration } from '../configuration';
 import { Strings } from '../strings';
 import { NodeContext } from '../nodes';
 import { WorkerContext } from '../worker';
+import { TransferObjects } from '../transfer-objects';
 
 export interface CommandExecutor {
   execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number;
@@ -25,5 +26,11 @@ export interface CommandExecutor {
 }
 
 export interface CommandExecutorInterface {
-  (strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, config: WorkerDOMConfiguration): CommandExecutor;
+  (
+    strings: Strings,
+    nodeContext: NodeContext,
+    workerContext: WorkerContext,
+    config: WorkerDOMConfiguration,
+    transferObjects?: TransferObjects,
+  ): CommandExecutor;
 }
