@@ -23,6 +23,9 @@ import { store } from './strings';
 import { serialize } from './global-id';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
+/**
+ * Object that exists in the main thread, but must be handled from the worker thread. Behavior is transferred between threads.
+ */
 export class TransferObject implements SerializableObject {
   private id: number;
   private document: Document;
