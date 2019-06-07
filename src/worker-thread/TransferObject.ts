@@ -31,26 +31,26 @@ export class TransferObject implements SerializableObject {
    * @param id Identifying number for object.
    * @param document Document where object will be used.
    * @param creationMethod Method to use to create this object. In this case, "new" means the object constructor should be used.
-   * @param creationObjectType The type of the object needed to create the corresponding object in the main thread.
+   * @param serializedCreationObject The object needed to create the corresponding object in the main thread, serialized.
    * @param args Arguments needed for object creation.
    */
-  constructor(id: number, document: Document, creationMethod: string, creationObjectType: TransferrableArgs, args: any[]) {
+  constructor(id: number, document: Document, creationMethod: string, serializedCreationObject: number[], args: any[]) {
     this.id = id;
     this.document = document;
-    this.createObjectReference(creationObjectType, creationMethod, args);
+    this.createObjectReference(serializedCreationObject, creationMethod, args);
   }
 
   /**
    * Creates object in the main thread, and associates it with this object with the id provided.
-   * @param creationObjectType The type of the object needed to create the corresponding object in the main thread.
+   * @param serializedCreationObject The object needed to create the corresponding object in the main thread, serialized.
    * @param creationMethod Method to use to create this object. In this case, "new" means the object constructor should be used.
    * @param args Arguments needed for object creation.
    */
-  private createObjectReference(creationObjectType: TransferrableArgs, creationMethod: string, args: any[]) {
+  private createObjectReference(serializedCreationObject: number[], creationMethod: string, args: any[]) {
     transfer(this.document, [
       TransferrableMutationType.OBJECT_CREATION,
       this.document.body[TransferrableKeys.index], // some filler ID for main-thread/mutator.ts to read
-      creationObjectType,
+      ...serializedCreationObject,
       store(creationMethod),
       this.id,
       args.length,

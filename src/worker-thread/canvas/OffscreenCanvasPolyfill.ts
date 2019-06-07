@@ -301,11 +301,23 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   ////////////////////////////////////////
   // createLinearGradient, createRadialGradient, createPattern can be done in the worker thread
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
-    return new CanvasGradientFake(this.idGenerator.getNextId(), this.canvasElement.ownerDocument as Document, 'createLinearGradient', [...arguments]);
+    return new CanvasGradientFake(
+      this.idGenerator.getNextId(),
+      this.canvasElement.ownerDocument as Document,
+      'createLinearGradient',
+      [...arguments],
+      this.serialize(),
+    );
   }
 
   createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
-    return new CanvasGradientFake(this.idGenerator.getNextId(), this.canvasElement.ownerDocument as Document, 'createRadialGradient', [...arguments]);
+    return new CanvasGradientFake(
+      this.idGenerator.getNextId(),
+      this.canvasElement.ownerDocument as Document,
+      'createRadialGradient',
+      [...arguments],
+      this.serialize(),
+    );
   }
 
   createPattern(): CanvasPattern {

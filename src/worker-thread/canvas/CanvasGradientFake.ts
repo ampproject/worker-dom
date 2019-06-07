@@ -15,12 +15,11 @@
  */
 
 import { Document } from '../dom/Document';
-import { TransferrableArgs } from '../../transfer/TransferrableArgs';
 import { TransferObject } from '../TransferObject';
 
 export class CanvasGradientFake extends TransferObject {
-  constructor(id: number, document: Document, method: string, args: number[]) {
-    super(id, document, method, TransferrableArgs.CanvasRenderingContext2D, args);
+  constructor(id: number, document: Document, method: string, args: number[], serializedCreationObject: number[]) {
+    super(id, document, method, serializedCreationObject, args);
   }
 
   addColorStop(offset: number, color: string) {
