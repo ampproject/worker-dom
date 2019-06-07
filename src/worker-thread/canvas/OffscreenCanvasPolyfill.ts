@@ -308,8 +308,8 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     return new CanvasGradientFake(this.idGenerator.getNextId(), this.canvasElement.ownerDocument as Document, 'createRadialGradient', [...arguments]);
   }
 
-  createPattern(image: CanvasImageSource, repetition: string): CanvasPattern {
-    return new CanvasPatternFake(this.idGenerator.getNextId(), this.canvasElement.ownerDocument as Document, [...arguments]);
+  createPattern(): CanvasPattern {
+    return {} as CanvasPattern;
   }
 
   createImageData(): ImageData {
