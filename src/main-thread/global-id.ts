@@ -61,7 +61,7 @@ export function deserialize(
 
       case TransferrableArgs.TransferObject:
         if (!transferObjects) {
-          throw new Error('Objects not provided.');
+          throw new Error('transferObjects not provided.');
         }
 
         args.push(transferObjects.get(buffer[offset++]));
@@ -73,7 +73,7 @@ export function deserialize(
         break;
 
       default:
-        throw new Error('cannot deserialize argument');
+        throw new Error('Cannot deserialize argument.');
     }
   }
   return {

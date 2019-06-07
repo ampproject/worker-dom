@@ -15,7 +15,7 @@
  */
 
 /**
- * Generates ID's for TransferObjects.
+ * Generates unique ID's for TransferObjects.
  */
 export class TransferObjectIdGenerator {
   private currentId: number;

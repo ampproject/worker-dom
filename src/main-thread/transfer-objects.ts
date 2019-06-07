@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+declare type TransferObject = CanvasGradient;
 
-declare type TransferObject = CanvasGradient | CanvasPattern;
-
+/**
+ * Stores objects that have their behavior handled from the main-thread. Each object is associated to a unique ID.
+ */
 export class TransferObjects {
-  private transferObjects: Map<number, TransferObject>;
+  private objects: Map<number, TransferObject>;
 
   constructor() {
-    this.transferObjects = new Map();
+    this.objects = new Map();
   }
 
   store(obj: TransferObject, id: number): void {
-    this.transferObjects.set(id, obj);
+    this.objects.set(id, obj);
   }
 
   get(id: number): TransferObject {
-    const obj = this.transferObjects.get(id);
+    const obj = this.objects.get(id);
 
     if (obj) {
       return obj;

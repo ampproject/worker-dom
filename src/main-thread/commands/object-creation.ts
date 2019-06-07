@@ -21,21 +21,21 @@ import { deserialize } from '../global-id';
 export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config, transferObjects) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_CREATION);
 
+  if (!transferObjects) {
+    throw new Error('transferObjects is not defined.');
+  }
+
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      if (!transferObjects) {
-        throw new Error('transferObjects is not defined.');
-      }
-
-      let { offset, args: des } = deserialize(
+      let { offset, args: deserializedArgs } = deserialize(
         mutations,
         startPosition + ObjectTransferMutationIndex.Target,
-        1,
+        1, // argCount
         strings,
         nodeContext,
         transferObjects,
       );
-      target = des[0] as RenderableElement;
+      target = deserializedArgs[0] as RenderableElement;
 
       const functionName = strings.get(mutations[offset++]);
       const objectId = mutations[offset++];
@@ -54,7 +54,27 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
       return argsOffset;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
-      return {};
+      let { offset, args: deserializedArgs } = deserialize(
+        mutations,
+        startPosition + ObjectTransferMutationIndex.Target,
+        1, // argCount
+        strings,
+        nodeContext,
+        transferObjects,
+      );
+      target = deserializedArgs[0] as RenderableElement;
+      const functionName = strings.get(mutations[offset++]);
+      const objectId = mutations[offset++];
+      const argCount = mutations[offset++];
+
+      return {
+        type: 'OBJECT_CREATION',
+        target,
+        functionName,
+        objectId,
+        argCount,
+        allowedExecution,
+      };
     },
   };
 };

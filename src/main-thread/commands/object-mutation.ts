@@ -23,7 +23,7 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
 
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      let { offset, args: des } = deserialize(
+      let { offset, args: deserializedArgs } = deserialize(
         mutations,
         startPosition + ObjectTransferMutationIndex.Target,
         1,
@@ -31,7 +31,7 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
         nodeContext,
         transferObjects,
       );
-      target = des[0] as RenderableElement;
+      target = deserializedArgs[0] as RenderableElement;
 
       const functionName = strings.get(mutations[offset++]);
       const argCount = mutations[offset++];
@@ -49,7 +49,24 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
       return argsOffset;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
-      return {};
+      let { offset, args: deserializedArgs } = deserialize(
+        mutations,
+        startPosition + ObjectTransferMutationIndex.Target,
+        1,
+        strings,
+        nodeContext,
+        transferObjects,
+      );
+      target = deserializedArgs[0] as RenderableElement;
+      const functionName = strings.get(mutations[offset++]);
+
+      return {
+        type: 'OBJECT_MUTATION',
+        target,
+        functionName,
+        isSetter: isSetter(target, functionName),
+        allowedExecution,
+      };
     },
   };
 };

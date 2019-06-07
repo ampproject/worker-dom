@@ -31,7 +31,7 @@ export class TransferObject implements SerializableObject {
    * @param id Identifying number for object.
    * @param document Document where object will be used.
    * @param creationMethod Method to use to create this object. In this case, "new" means the object constructor should be used.
-   * @param serializedCreationObject The object needed to create the corresponding object in the main thread, serialized.
+   * @param serializedCreationObject The target object needed to create the corresponding object in the main thread, serialized.
    * @param args Arguments needed for object creation.
    */
   constructor(id: number, document: Document, creationMethod: string, serializedCreationObject: number[], args: any[]) {
@@ -42,7 +42,7 @@ export class TransferObject implements SerializableObject {
 
   /**
    * Creates object in the main thread, and associates it with this object with the id provided.
-   * @param serializedCreationObject The object needed to create the corresponding object in the main thread, serialized.
+   * @param serializedCreationObject The target object needed to create the corresponding object in the main thread, serialized.
    * @param creationMethod Method to use to create this object. In this case, "new" means the object constructor should be used.
    * @param args Arguments needed for object creation.
    */
