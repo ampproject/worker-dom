@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 declare type TransferObject = CanvasGradient;
 
 /**
@@ -25,7 +26,7 @@ export class TransferObjects {
     this.objects = new Map();
   }
 
-  store(obj: TransferObject, id: number): void {
+  store(id: number, obj: TransferObject): void {
     this.objects.set(id, obj);
   }
 

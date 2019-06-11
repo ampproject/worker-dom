@@ -23,9 +23,10 @@ type RenderableElement = HTMLElement | SVGElement | Text | Comment;
 type PostMessage = (message: any, transfer?: Transferable[]) => void;
 declare const DEBUG_ENABLED: boolean;
 
-declare type Serializable = SerializableObject | number | string;
+type SerializableType = TransferrableObject | number | string;
+type Serializable = SerializableType | SerializableType[];
 
-export interface SerializableObject {
+export interface TransferrableObject {
   /**
    * Retrieves an array of values that allow the retrieval of a specific object in the main thread.
    */

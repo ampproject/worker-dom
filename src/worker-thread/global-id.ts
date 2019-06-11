@@ -16,7 +16,7 @@
 
 import { store } from './strings';
 import { TransferrableArgs } from '../transfer/TransferrableArgs';
-import { Serializable, SerializableObject } from './worker-thread';
+import { Serializable, TransferrableObject } from './worker-thread';
 
 const f32 = new Float32Array(1);
 const u16 = new Uint16Array(f32.buffer);
@@ -69,7 +69,7 @@ export function serialize(args: Serializable[]): number[] {
     }
 
     if (typeof arg === 'object') {
-      const serializedObject = (arg as SerializableObject).serialize();
+      const serializedObject = (arg as TransferrableObject).serialize();
 
       for (let i = 0; i < serializedObject.length; i++) {
         serialized.push(serializedObject[i]);

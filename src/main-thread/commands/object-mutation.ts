@@ -73,13 +73,13 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
 
 function isSetter(object: Object, name: string): boolean {
   if (!object) {
-    throw new Error("Property '" + name + "' does not exist on " + object + '.');
+    throw new Error(`Property ${name} does not exist on ${object}.`);
   }
 
   const descriptor = Object.getOwnPropertyDescriptor(object, name);
 
   if (descriptor !== undefined) {
-    return typeof descriptor.set !== 'undefined';
+    return 'set' in descriptor;
   }
 
   return isSetter(Object.getPrototypeOf(object), name);

@@ -33,7 +33,7 @@ import { store } from '../strings';
 import { HTMLElement } from '../dom/HTMLElement';
 import { serialize } from '../global-id';
 import { TransferrableArgs } from '../../transfer/TransferrableArgs';
-import { SerializableObject } from '../worker-thread';
+import { TransferrableObject } from '../worker-thread';
 import { CanvasGradientFake } from './CanvasGradientFake';
 import { TransferObjectIdGenerator } from './TransferObjectIdGenerator';
 
@@ -61,7 +61,7 @@ export class OffscreenCanvasPolyfill<ElementType extends HTMLElement> {
   }
 }
 
-class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement> implements CanvasRenderingContext2D, SerializableObject {
+class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement> implements CanvasRenderingContext2D, TransferrableObject {
   private canvasElement: ElementType;
   private lineDash: number[];
   private idGenerator = new TransferObjectIdGenerator();

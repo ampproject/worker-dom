@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SerializableObject } from './worker-thread';
+import { TransferrableObject } from './worker-thread';
 import { TransferrableArgs } from '../transfer/TransferrableArgs';
 import { Document } from './dom/Document';
 import { transfer } from './MutationTransfer';
@@ -26,7 +26,7 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 /**
  * Object that exists in the main thread, but must be handled from the worker thread. Behavior is transferred between threads.
  */
-export class TransferObject implements SerializableObject {
+export class TransferObject implements TransferrableObject {
   private id: number;
   private document: Document;
 
