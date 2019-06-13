@@ -16,7 +16,7 @@
 
 import { TransferrableMutationType, ObjectTransferMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
-import { deserialize } from '../global-id';
+import { deserialize } from '../deserialize';
 
 export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config, transferObjects) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_MUTATION);

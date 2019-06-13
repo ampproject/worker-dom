@@ -18,7 +18,7 @@ import { Document } from '../dom/Document';
 import { transfer } from '../MutationTransfer';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { serialize } from '../global-id';
+import { serialize } from '../serialize';
 import { store } from '../strings';
 import { TransferrableObject } from '../worker-thread';
 import { TransferrableArgs } from '../../transfer/TransferrableArgs';

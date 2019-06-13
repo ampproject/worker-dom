@@ -31,7 +31,7 @@ import { Document } from '../dom/Document';
 import { toLower } from '../../utils';
 import { store } from '../strings';
 import { HTMLElement } from '../dom/HTMLElement';
-import { serialize } from '../global-id';
+import { serialize } from '../serialize';
 import { TransferrableArgs } from '../../transfer/TransferrableArgs';
 import { TransferrableObject } from '../worker-thread';
 import { CanvasGradientFake } from './CanvasGradientFake';
