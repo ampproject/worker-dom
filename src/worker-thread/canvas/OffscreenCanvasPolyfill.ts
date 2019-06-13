@@ -35,7 +35,6 @@ import { serialize } from '../global-id';
 import { TransferrableArgs } from '../../transfer/TransferrableArgs';
 import { TransferrableObject } from '../worker-thread';
 import { CanvasGradientFake } from './CanvasGradientFake';
-import { TransferObjectIdGenerator } from './TransferObjectIdGenerator';
 
 /**
  * Handles calls to a CanvasRenderingContext2D object in cases where the user's environment does not
@@ -64,7 +63,7 @@ export class OffscreenCanvasPolyfill<ElementType extends HTMLElement> {
 class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement> implements CanvasRenderingContext2D, TransferrableObject {
   private canvasElement: ElementType;
   private lineDash: number[];
-  private idGenerator = new TransferObjectIdGenerator();
+  private objectIndex = 0;
 
   constructor(canvas: ElementType) {
     this.canvasElement = canvas;
@@ -302,7 +301,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   // createLinearGradient, createRadialGradient, createPattern can be done in the worker thread
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
     return new CanvasGradientFake(
-      this.idGenerator.getNextId(),
+      this.objectIndex++,
       this.canvasElement.ownerDocument as Document,
       'createLinearGradient',
       [...arguments],
@@ -312,7 +311,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
 
   createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
     return new CanvasGradientFake(
-      this.idGenerator.getNextId(),
+      this.objectIndex++,
       this.canvasElement.ownerDocument as Document,
       'createRadialGradient',
       [...arguments],
