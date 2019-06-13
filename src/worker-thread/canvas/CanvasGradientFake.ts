@@ -15,14 +15,57 @@
  */
 
 import { Document } from '../dom/Document';
-import { TransferObject } from '../TransferObject';
+import { transfer } from '../MutationTransfer';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { serialize } from '../global-id';
+import { store } from '../strings';
+import { TransferrableObject } from '../worker-thread';
+import { TransferrableArgs } from '../../transfer/TransferrableArgs';
 
-export class CanvasGradientFake extends TransferObject {
+/**
+ * Wrapper class for CanvasGradient. The user will be able to manipulate as a regular CanvasGradient object.
+ */
+export class CanvasGradientFake implements TransferrableObject {
+  private id: number;
+  private document: Document;
+
   constructor(id: number, document: Document, method: string, args: number[], serializedCreationObject: number[]) {
-    super(id, document, method, serializedCreationObject, args);
+    this.document = document;
+    this.id = id;
+    this.createObjectReference(serializedCreationObject, method, args);
+  }
+
+  /**
+   * Creates CanvasGradient object in the main thread, and associates it with this object with the id provided.
+   * @param serializedCreationObject The target object needed to create the corresponding object in the main thread, serialized.
+   * @param creationMethod Method to use to create this object.
+   * @param args Arguments needed for object creation.
+   */
+  private createObjectReference(serializedCreationObject: number[], creationMethod: string, args: number[]) {
+    transfer(this.document, [
+      TransferrableMutationType.OBJECT_CREATION,
+      this.document.body[TransferrableKeys.index], // some filler ID for main-thread/mutator.ts to read
+      ...serializedCreationObject,
+      store(creationMethod),
+      this.id,
+      args.length,
+      ...serialize(args),
+    ]);
   }
 
   addColorStop(offset: number, color: string) {
-    this.mutateObject('addColorStop', [...arguments]);
+    transfer(this.document, [
+      TransferrableMutationType.OBJECT_MUTATION,
+      this.document.body[TransferrableKeys.index], // some filler id for main-thread/mutator.ts to read
+      ...this.serialize(),
+      store('addColorStop'),
+      2, // arg count
+      ...serialize([...arguments]),
+    ]);
+  }
+
+  serialize(): number[] {
+    return [TransferrableArgs.TransferObject, this.id];
   }
 }
