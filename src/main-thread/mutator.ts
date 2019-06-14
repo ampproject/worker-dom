@@ -111,18 +111,25 @@ export class MutatorProcessor {
       let length: number = mutationArray.length;
 
       while (operationStart < length) {
-        const target = this.nodeContext.getNode(mutationArray[operationStart + 1]);
-        if (!target) {
-          console.error(`getNode() yields null – ${target}`);
-          return;
+        const mutationType = mutationArray[operationStart];
+
+        if (mutationType === TransferrableMutationType.OBJECT_MUTATION || mutationType === TransferrableMutationType.OBJECT_CREATION) {
+          if (DEBUG_ENABLED) {
+            console.log(ReadableMutationType[mutationType], this.executors[mutationType].print(mutationArray, operationStart));
+          }
+          operationStart = this.executors[mutationType].execute(mutationArray, operationStart);
+        } else {
+          const target = this.nodeContext.getNode(mutationArray[operationStart + 1]);
+
+          if (!target) {
+            console.error(`getNode() yields null – ${target}`);
+            return;
+          }
+          if (DEBUG_ENABLED) {
+            console.log(ReadableMutationType[mutationType], this.executors[mutationType].print(mutationArray, operationStart, target));
+          }
+          operationStart = this.executors[mutationType].execute(mutationArray, operationStart, target);
         }
-        if (DEBUG_ENABLED) {
-          console.log(
-            ReadableMutationType[mutationArray[operationStart]],
-            this.executors[mutationArray[operationStart]].print(mutationArray, operationStart, target),
-          );
-        }
-        operationStart = this.executors[mutationArray[operationStart]].execute(mutationArray, operationStart, target);
       }
     });
     if (DEBUG_ENABLED) {

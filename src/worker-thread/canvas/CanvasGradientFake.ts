@@ -17,7 +17,6 @@
 import { Document } from '../dom/Document';
 import { transfer } from '../MutationTransfer';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { serialize } from '../serialize';
 import { store } from '../strings';
 import { TransferrableObject } from '../worker-thread';
@@ -45,11 +44,10 @@ export class CanvasGradientFake implements TransferrableObject {
   private createObjectReference(serializedCreationObject: number[], creationMethod: string, args: number[]) {
     transfer(this.document, [
       TransferrableMutationType.OBJECT_CREATION,
-      this.document.body[TransferrableKeys.index], // some filler ID for main-thread/mutator.ts to read
-      ...serializedCreationObject,
       store(creationMethod),
       this.id,
       args.length,
+      ...serializedCreationObject,
       ...serialize(args),
     ]);
   }
@@ -57,10 +55,9 @@ export class CanvasGradientFake implements TransferrableObject {
   addColorStop(offset: number, color: string) {
     transfer(this.document, [
       TransferrableMutationType.OBJECT_MUTATION,
-      this.document.body[TransferrableKeys.index], // some filler id for main-thread/mutator.ts to read
-      ...this.serialize(),
       store('addColorStop'),
       2, // arg count
+      ...this.serialize(),
       ...serialize([...arguments]),
     ]);
   }

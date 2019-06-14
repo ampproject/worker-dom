@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TransferrableMutationType, ObjectTransferMutationIndex } from '../../transfer/TransferrableMutation';
+import { TransferrableMutationType, ObjectCreationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 import { deserialize } from '../deserialize';
 
@@ -26,22 +26,22 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
   }
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      let { offset, args: deserializedTarget } = deserialize(
+    execute(mutations: Uint16Array, startPosition: number): number {
+      const functionName = strings.get(mutations[startPosition + ObjectCreationIndex.FunctionName]);
+      const objectId = mutations[startPosition + ObjectCreationIndex.ObjectId];
+      const argCount = mutations[startPosition + ObjectCreationIndex.ArgumentCount];
+
+      const { offset: targetOffset, args: deserializedTarget } = deserialize(
         mutations,
-        startPosition + ObjectTransferMutationIndex.Target,
+        startPosition + ObjectCreationIndex.SerializedTarget,
         1, // argCount
         strings,
         nodeContext,
         transferObjects,
       );
-      target = deserializedTarget[0] as RenderableElement;
+      const target = deserializedTarget[0] as RenderableElement;
 
-      const functionName = strings.get(mutations[offset++]);
-      const objectId = mutations[offset++];
-
-      const argCount = mutations[offset++];
-      const { offset: argsOffset, args } = deserialize(mutations, offset, argCount, strings, nodeContext, transferObjects);
+      const { offset: argsOffset, args } = deserialize(mutations, targetOffset, argCount, strings, nodeContext, transferObjects);
 
       if (allowedExecution) {
         if (functionName === 'new') {
@@ -54,18 +54,19 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
       return argsOffset;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
-      let { offset, args: deserializedArgs } = deserialize(
+      const functionName = strings.get(mutations[startPosition + ObjectCreationIndex.FunctionName]);
+      const objectId = mutations[startPosition + ObjectCreationIndex.ObjectId];
+      const argCount = mutations[startPosition + ObjectCreationIndex.ArgumentCount];
+
+      const { args: deserializedArgs } = deserialize(
         mutations,
-        startPosition + ObjectTransferMutationIndex.Target,
+        startPosition + ObjectCreationIndex.SerializedTarget,
         1, // argCount
         strings,
         nodeContext,
         transferObjects,
       );
       target = deserializedArgs[0] as RenderableElement;
-      const functionName = strings.get(mutations[offset++]);
-      const objectId = mutations[offset++];
-      const argCount = mutations[offset++];
 
       return {
         type: 'OBJECT_CREATION',

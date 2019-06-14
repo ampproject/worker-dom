@@ -161,20 +161,25 @@ export const enum OffscreenContextPolyfillMutationIndex {
   End = 5,
 }
 
-export const enum ObjectTransferMutationIndex {
-  // FOR NOW: we don't use index 1 because the mutator extracts target from it
-  // we have a different mechanism for retrievieng the target element, so we'll be using a filler.
+export const enum ObjectMutationIndex {
+  FunctionName = 1,
+  ArgumentCount = 2,
 
-  // Target (0 ... N)
-  Target = 2,
+  // SerializedTarget and Args offsets will vary depending on the object
+  SerializedTarget = 3,
+  Args = 3,
 
-  // Function name (N)
-  FunctionName = 2,
+  End = 3,
+}
 
-  // Arg count (N+1)
+export const enum ObjectCreationIndex {
+  FunctionName = 1,
+  ObjectId = 2,
   ArgumentCount = 3,
 
-  // Args (N + 2 ... L)
+  // SerializedTarget and Args offsets will vary depending on the object
+  SerializedTarget = 4,
   Args = 4,
+
   End = 4,
 }

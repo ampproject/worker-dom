@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TransferrableMutationType, ObjectTransferMutationIndex } from '../../transfer/TransferrableMutation';
+import { TransferrableMutationType, ObjectMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 import { deserialize } from '../deserialize';
 
@@ -22,21 +22,21 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_MUTATION);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      let { offset, args: deserializedTarget } = deserialize(
+    execute(mutations: Uint16Array, startPosition: number): number {
+      const functionName = strings.get(mutations[startPosition + ObjectMutationIndex.FunctionName]);
+      const argCount = mutations[startPosition + ObjectMutationIndex.ArgumentCount];
+
+      const { offset: targetOffset, args: deserializedTarget } = deserialize(
         mutations,
-        startPosition + ObjectTransferMutationIndex.Target,
+        startPosition + ObjectMutationIndex.SerializedTarget,
         1,
         strings,
         nodeContext,
         transferObjects,
       );
-      target = deserializedTarget[0] as RenderableElement;
+      const target = deserializedTarget[0] as RenderableElement;
 
-      const functionName = strings.get(mutations[offset++]);
-      const argCount = mutations[offset++];
-
-      const { offset: argsOffset, args } = deserialize(mutations, offset, argCount, strings, nodeContext, transferObjects);
+      const { offset: argsOffset, args } = deserialize(mutations, targetOffset, argCount, strings, nodeContext, transferObjects);
 
       if (allowedExecution) {
         if (isSetter(target, functionName)) {
@@ -49,16 +49,16 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
       return argsOffset;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
-      let { offset, args: deserializedArgs } = deserialize(
+      const functionName = strings.get(mutations[startPosition + ObjectMutationIndex.FunctionName]);
+      const { args: deserializedTarget } = deserialize(
         mutations,
-        startPosition + ObjectTransferMutationIndex.Target,
+        startPosition + ObjectMutationIndex.SerializedTarget,
         1,
         strings,
         nodeContext,
         transferObjects,
       );
-      target = deserializedArgs[0] as RenderableElement;
-      const functionName = strings.get(mutations[offset++]);
+      target = deserializedTarget[0] as RenderableElement;
 
       return {
         type: 'OBJECT_MUTATION',

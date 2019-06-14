@@ -73,11 +73,9 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   private [TransferrableKeys.mutated](fnName: string, args: any[]) {
     transfer(this.canvasElement.ownerDocument as Document, [
       TransferrableMutationType.OBJECT_MUTATION,
-      this.canvasElement[TransferrableKeys.index], // filler number since mutator.ts retrieves target differently
-      TransferrableArgs.CanvasRenderingContext2D,
-      this.canvasElement[TransferrableKeys.index],
       store(fnName),
       args.length,
+      ...this.serialize(),
       ...serialize(args),
     ]);
   }

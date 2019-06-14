@@ -21,7 +21,7 @@ import { WorkerContext } from '../worker';
 import { TransferObjects } from '../transfer-objects';
 
 export interface CommandExecutor {
-  execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number;
+  execute(mutations: Uint16Array, startPosition: number, target?: RenderableElement): number;
   print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object;
 }
 
