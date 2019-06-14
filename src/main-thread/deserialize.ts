@@ -17,7 +17,7 @@
 import { Strings } from './strings';
 import { TransferrableArgs } from '../transfer/TransferrableArgs';
 import { NodeContext } from './nodes';
-import { TransferObjects } from './transfer-objects';
+import { ObjectContext } from './object-context';
 
 interface DeserializedArgs {
   args: unknown[];
@@ -33,7 +33,7 @@ export function deserialize(
   count: number,
   strings: Strings,
   nodeContext: NodeContext,
-  transferObjects?: TransferObjects,
+  objectContext?: ObjectContext,
 ): DeserializedArgs {
   const args: unknown[] = [];
   for (let i = 0; i < count; i++) {
@@ -54,17 +54,17 @@ export function deserialize(
 
       case TransferrableArgs.Array:
         const size = buffer[offset++];
-        const des = deserialize(buffer, offset, size, strings, nodeContext, transferObjects);
+        const des = deserialize(buffer, offset, size, strings, nodeContext, objectContext);
         args.push(des.args);
         offset = des.offset;
         break;
 
       case TransferrableArgs.TransferObject:
-        if (!transferObjects) {
-          throw new Error('transferObjects not provided.');
+        if (!objectContext) {
+          throw new Error('objectContext not provided.');
         }
 
-        args.push(transferObjects.get(buffer[offset++]));
+        args.push(objectContext.get(buffer[offset++]));
         break;
 
       case TransferrableArgs.CanvasRenderingContext2D:

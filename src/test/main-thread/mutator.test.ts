@@ -23,7 +23,7 @@ import { WorkerContext } from '../../main-thread/worker';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { Phase } from '../../transfer/Phase';
 import { normalizeConfiguration } from '../../main-thread/configuration';
-import { TransferObjects } from '../../main-thread/transfer-objects';
+import { ObjectContext } from '../../main-thread/object-context';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -31,7 +31,7 @@ const test = anyTest as TestInterface<{
   strings: Strings;
   nodeContext: NodeContext;
   workerContext: WorkerContext;
-  transferObjects: TransferObjects;
+  objectContext: ObjectContext;
 }>;
 
 test.beforeEach(t => {
@@ -42,7 +42,7 @@ test.beforeEach(t => {
   document.body.appendChild(baseElement);
 
   const strings = new Strings();
-  const transferObjects = new TransferObjects();
+  const objectContext = new ObjectContext();
   const nodeContext = new NodeContext(strings, baseElement);
 
   const workerContext = ({
@@ -56,7 +56,7 @@ test.beforeEach(t => {
     strings,
     nodeContext,
     workerContext,
-    transferObjects,
+    objectContext,
   };
 });
 
@@ -66,7 +66,7 @@ test.afterEach(t => {
 });
 
 test.serial('batch mutations', t => {
-  const { env, baseElement, strings, nodeContext, workerContext, transferObjects } = t.context;
+  const { env, baseElement, strings, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;
   const mutator = new MutatorProcessor(
     strings,
@@ -76,7 +76,7 @@ test.serial('batch mutations', t => {
       domURL: 'domURL',
       authorURL: 'authorURL',
     }),
-    transferObjects,
+    objectContext,
   );
 
   mutator.mutate(
@@ -131,7 +131,7 @@ test.serial('batch mutations', t => {
 });
 
 test.serial('batch mutations with custom pump', t => {
-  const { env, baseElement, strings, nodeContext, workerContext, transferObjects } = t.context;
+  const { env, baseElement, strings, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;
 
   const tasks: Array<{ phase: Phase; flush: Function }> = [];
@@ -146,7 +146,7 @@ test.serial('batch mutations with custom pump', t => {
         tasks.push({ phase, flush });
       },
     }),
-    transferObjects,
+    objectContext,
   );
 
   mutator.mutate(
@@ -204,7 +204,7 @@ test.serial('batch mutations with custom pump', t => {
 });
 
 test.serial('leverage allowlist to exclude mutation type', t => {
-  const { env, baseElement, strings, nodeContext, workerContext, transferObjects } = t.context;
+  const { env, baseElement, strings, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;
   const mutator = new MutatorProcessor(
     strings,
@@ -215,7 +215,7 @@ test.serial('leverage allowlist to exclude mutation type', t => {
       authorURL: 'authorURL',
       executorsAllowed: [TransferrableMutationType.CHILD_LIST],
     }),
-    transferObjects,
+    objectContext,
   );
 
   mutator.mutate(
@@ -252,7 +252,7 @@ test.serial('leverage allowlist to exclude mutation type', t => {
 });
 
 test.serial('split strings from mutations', t => {
-  const { env, baseElement, strings, nodeContext, workerContext, transferObjects } = t.context;
+  const { env, baseElement, strings, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;
   const mutator = new MutatorProcessor(
     strings,
@@ -262,7 +262,7 @@ test.serial('split strings from mutations', t => {
       domURL: 'domURL',
       authorURL: 'authorURL',
     }),
-    transferObjects,
+    objectContext,
   );
 
   mutator.mutate(Phase.Mutating, new ArrayBuffer(0), ['hidden'], new Uint16Array([]));

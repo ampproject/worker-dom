@@ -18,11 +18,11 @@ import { TransferrableMutationType, ObjectCreationIndex } from '../../transfer/T
 import { CommandExecutorInterface } from './interface';
 import { deserialize } from '../deserialize';
 
-export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config, transferObjects) => {
+export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config, objectContext) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_CREATION);
 
-  if (!transferObjects) {
-    throw new Error('transferObjects is not defined.');
+  if (!objectContext) {
+    throw new Error('objectContext is not defined.');
   }
 
   return {
@@ -37,17 +37,17 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
         1, // argCount
         strings,
         nodeContext,
-        transferObjects,
+        objectContext,
       );
       const target = deserializedTarget[0] as RenderableElement;
 
-      const { offset: argsOffset, args } = deserialize(mutations, targetOffset, argCount, strings, nodeContext, transferObjects);
+      const { offset: argsOffset, args } = deserialize(mutations, targetOffset, argCount, strings, nodeContext, objectContext);
 
       if (allowedExecution) {
         if (functionName === 'new') {
           // deal with constructor case here
         } else {
-          transferObjects.store(objectId, target[functionName](...args));
+          objectContext.store(objectId, target[functionName](...args));
         }
       }
 
@@ -64,7 +64,7 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
         1, // argCount
         strings,
         nodeContext,
-        transferObjects,
+        objectContext,
       );
       target = deserializedArgs[0] as RenderableElement;
 

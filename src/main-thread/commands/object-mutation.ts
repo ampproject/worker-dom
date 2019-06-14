@@ -18,7 +18,7 @@ import { TransferrableMutationType, ObjectMutationIndex } from '../../transfer/T
 import { CommandExecutorInterface } from './interface';
 import { deserialize } from '../deserialize';
 
-export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config, transferObjects) => {
+export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config, objectContext) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_MUTATION);
 
   return {
@@ -32,11 +32,11 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
         1,
         strings,
         nodeContext,
-        transferObjects,
+        objectContext,
       );
       const target = deserializedTarget[0] as RenderableElement;
 
-      const { offset: argsOffset, args } = deserialize(mutations, targetOffset, argCount, strings, nodeContext, transferObjects);
+      const { offset: argsOffset, args } = deserialize(mutations, targetOffset, argCount, strings, nodeContext, objectContext);
 
       if (allowedExecution) {
         if (isSetter(target, functionName)) {
@@ -56,7 +56,7 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
         1,
         strings,
         nodeContext,
-        transferObjects,
+        objectContext,
       );
       target = deserializedTarget[0] as RenderableElement;
 

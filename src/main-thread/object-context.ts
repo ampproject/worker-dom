@@ -19,7 +19,7 @@ declare type TransferObject = CanvasGradient;
 /**
  * Stores objects that have their behavior handled from the main-thread. Each object is associated to a unique ID.
  */
-export class TransferObjects {
+export class ObjectContext {
   private objects: Map<number, TransferObject>;
 
   constructor() {

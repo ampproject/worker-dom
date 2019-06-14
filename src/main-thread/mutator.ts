@@ -31,7 +31,7 @@ import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
 import { Phase } from '../transfer/Phase';
 import { ObjectMutationProcessor } from './commands/object-mutation';
 import { ObjectCreationProcessor } from './commands/object-creation';
-import { TransferObjects } from './transfer-objects';
+import { ObjectContext } from './object-context';
 
 export class MutatorProcessor {
   private strings: Strings;
@@ -55,7 +55,7 @@ export class MutatorProcessor {
     nodeContext: NodeContext,
     workerContext: WorkerContext,
     config: WorkerDOMConfiguration,
-    transferObjects: TransferObjects,
+    objectContext: ObjectContext,
   ) {
     this.strings = strings;
     this.nodeContext = nodeContext;
@@ -74,8 +74,8 @@ export class MutatorProcessor {
       [TransferrableMutationType.LONG_TASK_START]: LongTaskExecutorInstance,
       [TransferrableMutationType.LONG_TASK_END]: LongTaskExecutorInstance,
       [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor(strings, nodeContext, workerContext, config, transferObjects),
-      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor(strings, nodeContext, workerContext, config, transferObjects),
+      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor(strings, nodeContext, workerContext, config, objectContext),
+      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor(strings, nodeContext, workerContext, config, objectContext),
     };
   }
 
