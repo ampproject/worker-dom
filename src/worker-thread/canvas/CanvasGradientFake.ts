@@ -17,10 +17,10 @@
 import { Document } from '../dom/Document';
 import { transfer } from '../MutationTransfer';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { serialize } from '../serialize';
+import { serializeTransferrableObject } from '../serializeTransferrableObject';
 import { store } from '../strings';
 import { TransferrableObject } from '../worker-thread';
-import { TransferrableArgs } from '../../transfer/TransferrableArgs';
+import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 
 /**
  * Wrapper class for CanvasGradient. The user will be able to manipulate as a regular CanvasGradient object.
@@ -48,7 +48,7 @@ export class CanvasGradientFake implements TransferrableObject {
       this.id,
       args.length,
       ...serializedCreationObject,
-      ...serialize(args),
+      ...serializeTransferrableObject(args),
     ]);
   }
 
@@ -57,12 +57,12 @@ export class CanvasGradientFake implements TransferrableObject {
       TransferrableMutationType.OBJECT_MUTATION,
       store('addColorStop'),
       2, // arg count
-      ...this.serialize(),
-      ...serialize([...arguments]),
+      ...this.serializeTransferrableObject(),
+      ...serializeTransferrableObject([...arguments]),
     ]);
   }
 
-  serialize(): number[] {
-    return [TransferrableArgs.TransferObject, this.id];
+  serializeTransferrableObject(): number[] {
+    return [TransferrableObjectType.TransferObject, this.id];
   }
 }

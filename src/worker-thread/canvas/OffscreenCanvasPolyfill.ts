@@ -31,8 +31,8 @@ import { Document } from '../dom/Document';
 import { toLower } from '../../utils';
 import { store } from '../strings';
 import { HTMLElement } from '../dom/HTMLElement';
-import { serialize } from '../serialize';
-import { TransferrableArgs } from '../../transfer/TransferrableArgs';
+import { serializeTransferrableObject } from '../serializeTransferrableObject';
+import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableObject } from '../worker-thread';
 import { CanvasGradientFake } from './CanvasGradientFake';
 
@@ -75,13 +75,13 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       TransferrableMutationType.OBJECT_MUTATION,
       store(fnName),
       args.length,
-      ...this.serialize(),
-      ...serialize(args),
+      ...this.serializeTransferrableObject(),
+      ...serializeTransferrableObject(args),
     ]);
   }
 
-  serialize(): number[] {
-    return [TransferrableArgs.CanvasRenderingContext2D, this.canvasElement[TransferrableKeys.index]];
+  serializeTransferrableObject(): number[] {
+    return [TransferrableObjectType.CanvasRenderingContext2D, this.canvasElement[TransferrableKeys.index]];
   }
 
   get canvas(): ElementType {
@@ -303,7 +303,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       this.canvasElement.ownerDocument as Document,
       'createLinearGradient',
       [...arguments],
-      this.serialize(),
+      this.serializeTransferrableObject(),
     );
   }
 
@@ -313,7 +313,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       this.canvasElement.ownerDocument as Document,
       'createRadialGradient',
       [...arguments],
-      this.serialize(),
+      this.serializeTransferrableObject(),
     );
   }
 

@@ -15,7 +15,7 @@
  */
 
 import { Strings } from './strings';
-import { TransferrableArgs } from '../transfer/TransferrableArgs';
+import { TransferrableObjectType } from '../transfer/TransferrableMutation';
 import { NodeContext } from './nodes';
 import { ObjectContext } from './object-context';
 
@@ -27,7 +27,7 @@ interface DeserializedArgs {
 const f32 = new Float32Array(1);
 const u16 = new Uint16Array(f32.buffer);
 
-export function deserialize(
+export function deserializeTransferrableObject(
   buffer: Uint16Array,
   offset: number,
   count: number,
@@ -37,29 +37,29 @@ export function deserialize(
 ): DeserializedArgs {
   const args: unknown[] = [];
   for (let i = 0; i < count; i++) {
-    switch (buffer[offset++] as TransferrableArgs) {
-      case TransferrableArgs.SmallInt:
+    switch (buffer[offset++] as TransferrableObjectType) {
+      case TransferrableObjectType.SmallInt:
         args.push(buffer[offset++]);
         break;
 
-      case TransferrableArgs.Float:
+      case TransferrableObjectType.Float:
         u16[0] = buffer[offset++];
         u16[1] = buffer[offset++];
         args.push(f32[0]);
         break;
 
-      case TransferrableArgs.String:
+      case TransferrableObjectType.String:
         args.push(strings.get(buffer[offset++]));
         break;
 
-      case TransferrableArgs.Array:
+      case TransferrableObjectType.Array:
         const size = buffer[offset++];
-        const des = deserialize(buffer, offset, size, strings, nodeContext, objectContext);
+        const des = deserializeTransferrableObject(buffer, offset, size, strings, nodeContext, objectContext);
         args.push(des.args);
         offset = des.offset;
         break;
 
-      case TransferrableArgs.TransferObject:
+      case TransferrableObjectType.TransferObject:
         if (!objectContext) {
           throw new Error('objectContext not provided.');
         }
@@ -67,7 +67,7 @@ export function deserialize(
         args.push(objectContext.get(buffer[offset++]));
         break;
 
-      case TransferrableArgs.CanvasRenderingContext2D:
+      case TransferrableObjectType.CanvasRenderingContext2D:
         const canvas = nodeContext.getNode(buffer[offset++]) as HTMLCanvasElement;
         args.push(canvas.getContext('2d'));
         break;

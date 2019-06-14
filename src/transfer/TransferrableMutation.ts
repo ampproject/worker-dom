@@ -183,3 +183,12 @@ export const enum ObjectCreationIndex {
 
   End = 4,
 }
+
+export const enum TransferrableObjectType {
+  SmallInt = 1,
+  Float = 2,
+  String = 3,
+  Array = 4,
+  TransferObject = 5,
+  CanvasRenderingContext2D = 6,
+}
