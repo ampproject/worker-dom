@@ -16,7 +16,7 @@
 
 import { TransferrableMutationType, ObjectCreationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
-import { deserialize } from '../deserialize';
+import { deserializeTransferrableObject } from '../deserializeTransferrableObject';
 
 export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config, objectContext) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_CREATION);
@@ -31,7 +31,7 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
       const objectId = mutations[startPosition + ObjectCreationIndex.ObjectId];
       const argCount = mutations[startPosition + ObjectCreationIndex.ArgumentCount];
 
-      const { offset: targetOffset, args: deserializedTarget } = deserialize(
+      const { offset: targetOffset, args: deserializedTarget } = deserializeTransferrableObject(
         mutations,
         startPosition + ObjectCreationIndex.SerializedTarget,
         1, // argCount
@@ -41,7 +41,7 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
       );
       const target = deserializedTarget[0] as RenderableElement;
 
-      const { offset: argsOffset, args } = deserialize(mutations, targetOffset, argCount, strings, nodeContext, objectContext);
+      const { offset: argsOffset, args } = deserializeTransferrableObject(mutations, targetOffset, argCount, strings, nodeContext, objectContext);
 
       if (allowedExecution) {
         if (functionName === 'new') {
@@ -58,7 +58,7 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
       const objectId = mutations[startPosition + ObjectCreationIndex.ObjectId];
       const argCount = mutations[startPosition + ObjectCreationIndex.ArgumentCount];
 
-      const { args: deserializedArgs } = deserialize(
+      const { args: deserializedArgs } = deserializeTransferrableObject(
         mutations,
         startPosition + ObjectCreationIndex.SerializedTarget,
         1, // argCount

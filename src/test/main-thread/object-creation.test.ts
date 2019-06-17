@@ -24,7 +24,7 @@ import { NodeContext } from '../../main-thread/nodes';
 import { WorkerContext } from '../../main-thread/worker';
 import { ObjectCreationProcessor } from '../../main-thread/commands/object-creation';
 import { normalizeConfiguration } from '../../main-thread/configuration';
-import { TransferrableArgs } from '../../transfer/TransferrableArgs';
+import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
 const test = anyTest as TestInterface<{
@@ -93,8 +93,17 @@ test('Object creation with mutation at a zero offset', t => {
   const objectId = 111; // give a sample id
   t.throws(() => objectContext.get(objectId));
 
-  const serializedTarget = [TransferrableArgs.CanvasRenderingContext2D, canvasElement._index_];
-  const serializedArgs = [TransferrableArgs.SmallInt, 1, TransferrableArgs.SmallInt, 2, TransferrableArgs.SmallInt, 3, TransferrableArgs.SmallInt, 4];
+  const serializedTarget = [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_];
+  const serializedArgs = [
+    TransferrableObjectType.SmallInt,
+    1,
+    TransferrableObjectType.SmallInt,
+    2,
+    TransferrableObjectType.SmallInt,
+    3,
+    TransferrableObjectType.SmallInt,
+    4,
+  ];
 
   objectCreationProcessor.execute(
     new Uint16Array([
@@ -132,8 +141,17 @@ test('Object creation with mutation at non-zero offset', t => {
   const objectId = 111; // give a sample id
   t.throws(() => objectContext.get(objectId));
 
-  const serializedTarget = [TransferrableArgs.CanvasRenderingContext2D, canvasElement._index_];
-  const serializedArgs = [TransferrableArgs.SmallInt, 1, TransferrableArgs.SmallInt, 2, TransferrableArgs.SmallInt, 3, TransferrableArgs.SmallInt, 4];
+  const serializedTarget = [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_];
+  const serializedArgs = [
+    TransferrableObjectType.SmallInt,
+    1,
+    TransferrableObjectType.SmallInt,
+    2,
+    TransferrableObjectType.SmallInt,
+    3,
+    TransferrableObjectType.SmallInt,
+    4,
+  ];
 
   const mutation = [
     TransferrableMutationType.OBJECT_CREATION,
@@ -163,14 +181,23 @@ test('Returns correct end offset', t => {
 
   const methodName = 'fillRect';
   (targetObject[methodName] as sinon.SinonStub) = sandbox.stub();
-  const serializedArgs = [TransferrableArgs.SmallInt, 1, TransferrableArgs.SmallInt, 2, TransferrableArgs.SmallInt, 3, TransferrableArgs.SmallInt, 4];
+  const serializedArgs = [
+    TransferrableObjectType.SmallInt,
+    1,
+    TransferrableObjectType.SmallInt,
+    2,
+    TransferrableObjectType.SmallInt,
+    3,
+    TransferrableObjectType.SmallInt,
+    4,
+  ];
 
   const mutation = [
     TransferrableMutationType.OBJECT_CREATION,
     storeString(strings, methodName),
     1, // object ID (not important for this test)
     4, // arg count
-    TransferrableArgs.CanvasRenderingContext2D,
+    TransferrableObjectType.CanvasRenderingContext2D,
     canvasElement._index_,
     ...serializedArgs,
 

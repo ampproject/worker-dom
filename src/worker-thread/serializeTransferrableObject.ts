@@ -15,7 +15,7 @@
  */
 
 import { store } from './strings';
-import { TransferrableArgs } from '../transfer/TransferrableArgs';
+import { TransferrableObjectType } from '../transfer/TransferrableMutation';
 import { Serializable, TransferrableObject } from './worker-thread';
 
 const f32 = new Float32Array(1);
@@ -36,7 +36,7 @@ function isSmallInt(num: number): boolean {
  *
  * @param args The arguments to serialize
  */
-export function serialize(args: Serializable[]): number[] {
+export function serializeTransferrableObject(args: Serializable[]): number[] {
   const serialized: number[] = [];
 
   for (let i = 0; i < args.length; i++) {
@@ -44,22 +44,22 @@ export function serialize(args: Serializable[]): number[] {
 
     if (typeof arg === 'number') {
       if (isSmallInt(arg)) {
-        serialized.push(TransferrableArgs.SmallInt, arg);
+        serialized.push(TransferrableObjectType.SmallInt, arg);
       } else {
         f32[0] = arg;
-        serialized.push(TransferrableArgs.Float, u16[0], u16[1]);
+        serialized.push(TransferrableObjectType.Float, u16[0], u16[1]);
       }
       continue;
     }
 
     if (typeof arg === 'string') {
-      serialized.push(TransferrableArgs.String, store(arg));
+      serialized.push(TransferrableObjectType.String, store(arg));
       continue;
     }
 
     if (Array.isArray(arg)) {
-      serialized.push(TransferrableArgs.Array, arg.length);
-      const serializedArray = serialize(arg);
+      serialized.push(TransferrableObjectType.Array, arg.length);
+      const serializedArray = serializeTransferrableObject(arg);
 
       for (let i = 0; i < serializedArray.length; i++) {
         serialized.push(serializedArray[i]);
@@ -69,7 +69,7 @@ export function serialize(args: Serializable[]): number[] {
     }
 
     if (typeof arg === 'object') {
-      const serializedObject = (arg as TransferrableObject).serialize();
+      const serializedObject = (arg as TransferrableObject).serializeTransferrableObject();
 
       for (let i = 0; i < serializedObject.length; i++) {
         serialized.push(serializedObject[i]);

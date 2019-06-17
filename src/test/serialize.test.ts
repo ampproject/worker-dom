@@ -16,21 +16,21 @@
 
 import anyTest, { TestInterface } from 'ava';
 import * as sinon from 'sinon';
-import { serialize } from '../worker-thread/serialize';
-import { TransferrableArgs } from '../transfer/TransferrableArgs';
+import { serializeTransferrableObject } from '../worker-thread/serializeTransferrableObject';
+import { TransferrableObjectType } from '../transfer/TransferrableMutation';
 import { store } from '../worker-thread/strings';
 import { CanvasGradientFake } from '../worker-thread/canvas/CanvasGradientFake';
 
 const test = anyTest as TestInterface<{}>;
 
 test('Serializes Integers', t => {
-  const serialized = serialize([1]);
-  t.deepEqual(serialized, [TransferrableArgs.SmallInt, 1]);
+  const serialized = serializeTransferrableObject([1]);
+  t.deepEqual(serialized, [TransferrableObjectType.SmallInt, 1]);
 });
 
 test('Serializes Floats', t => {
-  const serialized = serialize([1.23]);
-  t.deepEqual(serialized[0], TransferrableArgs.Float);
+  const serialized = serializeTransferrableObject([1.23]);
+  t.deepEqual(serialized[0], TransferrableObjectType.Float);
 
   // don't like implementing behavior but is there a better way to do this?
   const u16 = new Uint16Array([serialized[1], serialized[2]]);
@@ -39,13 +39,13 @@ test('Serializes Floats', t => {
 });
 
 test('Serializes Strings', t => {
-  const serialized = serialize(['hello']);
-  t.deepEqual(serialized, [TransferrableArgs.String, store('hello')]);
+  const serialized = serializeTransferrableObject(['hello']);
+  t.deepEqual(serialized, [TransferrableObjectType.String, store('hello')]);
 });
 
 test('Serializes Arrays', t => {
-  const serialized = serialize([[1, 2, 3]]);
-  t.deepEqual(serialized, [TransferrableArgs.Array, 3 /* array length */, ...serialize([1, 2, 3])]);
+  const serialized = serializeTransferrableObject([[1, 2, 3]]);
+  t.deepEqual(serialized, [TransferrableObjectType.Array, 3 /* array length */, ...serializeTransferrableObject([1, 2, 3])]);
 });
 
 test('Serializes transferable objects', t => {
@@ -53,12 +53,12 @@ test('Serializes transferable objects', t => {
   const gradient = {} as CanvasGradientFake;
 
   // property must exist before sinon lets us stub it
-  gradient['serialize'] = () => [];
+  gradient['serializeTransferrableObject'] = () => [];
 
   // stub must return a value, otherwise creation processor will thow when attempting to store
-  const objectSerializeStub = sinon.stub(gradient, 'serialize').returns([]);
+  const objectSerializeStub = sinon.stub(gradient, 'serializeTransferrableObject').returns([]);
 
-  serialize([gradient]);
+  serializeTransferrableObject([gradient]);
   t.true(objectSerializeStub.calledOnce);
 });
 
