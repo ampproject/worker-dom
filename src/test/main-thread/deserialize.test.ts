@@ -157,13 +157,20 @@ test('Deserializes from different offset', t => {
 test('Returns the correct end offset', t => {
   const { strings, nodeContext } = t.context;
 
-  const serializedArgs = [TransferrableObjectType.SmallInt, 1, TransferrableObjectType.SmallInt, 2];
+  const serializedArgs = [
+    TransferrableObjectType.SmallInt,
+    1,
+    TransferrableObjectType.SmallInt,
+    2,
+
+    // add a value at the end of the array, to test correctness of end offset
+    32,
+  ];
+
   const buffer = new Uint16Array([1, 2, 3].concat(serializedArgs));
+  const { offset: endOffset } = deserializeTransferrableObject(buffer, 3, 2, strings, nodeContext);
 
-  const startOffset = 3;
-  const { offset: endOffset } = deserializeTransferrableObject(buffer, startOffset, 2, strings, nodeContext);
-
-  t.is(endOffset, startOffset + 4);
+  t.is(buffer[endOffset], 32);
 });
 
 // main-thread's strings API does not return an ID when storing a string

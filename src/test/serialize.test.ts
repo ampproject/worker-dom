@@ -32,9 +32,9 @@ test('Serializes Floats', t => {
   const serialized = serializeTransferrableObject([1.23]);
   t.deepEqual(serialized[0], TransferrableObjectType.Float);
 
-  // don't like implementing behavior but is there a better way to do this?
   const u16 = new Uint16Array([serialized[1], serialized[2]]);
   const f32 = new Float32Array(u16.buffer);
+
   t.true(approx(f32[0], 1.23));
 });
 
@@ -55,7 +55,7 @@ test('Serializes transferable objects', t => {
   // property must exist before sinon lets us stub it
   gradient['serializeTransferrableObject'] = () => [];
 
-  // stub must return a value, otherwise creation processor will thow when attempting to store
+  // stub must return a value, otherwise object-creation processor will thow when attempting to store
   const objectSerializeStub = sinon.stub(gradient, 'serializeTransferrableObject').returns([]);
 
   serializeTransferrableObject([gradient]);

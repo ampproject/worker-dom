@@ -168,7 +168,6 @@ test('Mutation starts at a non-zero offset', t => {
   const { strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'fillRect';
-
   const targetObject = canvasElement.getContext('2d');
 
   if (!targetObject) {
