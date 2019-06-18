@@ -20,9 +20,16 @@ import { Strings } from '../strings';
 import { NodeContext } from '../nodes';
 import { WorkerContext } from '../worker';
 import { WorkerDOMConfiguration } from '../configuration';
+import { ObjectContext } from '../object-context';
 
 export interface LongTaskCommandExecutorInterface extends CommandExecutorInterface {
-  (strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, config: WorkerDOMConfiguration): LongTaskCommandExecutor;
+  (
+    strings: Strings,
+    nodeContext: NodeContext,
+    workerContext: WorkerContext,
+    objectContext: ObjectContext,
+    config: WorkerDOMConfiguration,
+  ): LongTaskCommandExecutor;
 }
 export interface LongTaskCommandExecutor extends CommandExecutor {
   active: boolean;
@@ -32,6 +39,7 @@ export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
   strings: Strings,
   nodeContext: NodeContext,
   workerContext: WorkerContext,
+  objectContext: ObjectContext,
   config: WorkerDOMConfiguration,
 ) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.LONG_TASK_START);

@@ -18,7 +18,7 @@ import { ChildListMutationIndex, TransferrableMutationType } from '../../transfe
 import { CommandExecutorInterface } from './interface';
 import { NodeContext } from '../nodes';
 
-export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode }: NodeContext, workerContext, config) => {
+export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode }: NodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHILD_LIST);
 
   return {

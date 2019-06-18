@@ -30,7 +30,7 @@ export interface CommandExecutorInterface {
     strings: Strings,
     nodeContext: NodeContext,
     workerContext: WorkerContext,
+    objectContext: ObjectContext,
     config: WorkerDOMConfiguration,
-    objectContext?: ObjectContext,
   ): CommandExecutor;
 }

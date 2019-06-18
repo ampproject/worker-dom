@@ -17,7 +17,7 @@
 import { AttributeMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 
-export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, config) => {
+export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.ATTRIBUTES);
 
   return {

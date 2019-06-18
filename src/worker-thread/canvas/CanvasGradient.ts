@@ -25,7 +25,7 @@ import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 /**
  * Wrapper class for CanvasGradient. The user will be able to manipulate as a regular CanvasGradient object.
  */
-export class CanvasGradientFake implements TransferrableObject {
+export class CanvasGradient implements TransferrableObject {
   private id: number;
   private document: Document;
 
@@ -57,12 +57,12 @@ export class CanvasGradientFake implements TransferrableObject {
       TransferrableMutationType.OBJECT_MUTATION,
       store('addColorStop'),
       2, // arg count
-      ...this.serializeTransferrableObject(),
+      ...this.serializeAsTransferrableObject(),
       ...serializeTransferrableObject([...arguments]),
     ]);
   }
 
-  serializeTransferrableObject(): number[] {
+  serializeAsTransferrableObject(): number[] {
     return [TransferrableObjectType.TransferObject, this.id];
   }
 }

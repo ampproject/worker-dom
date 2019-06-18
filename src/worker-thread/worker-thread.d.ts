@@ -30,5 +30,5 @@ export interface TransferrableObject {
   /**
    * Retrieves an array of values that allow the retrieval of a specific object in the main thread.
    */
-  serializeTransferrableObject(): number[];
+  serializeAsTransferrableObject(): number[];
 }

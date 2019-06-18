@@ -152,15 +152,6 @@ export const enum OffscreenCanvasMutationIndex {
   End = 2,
 }
 
-export const enum OffscreenContextPolyfillMutationIndex {
-  Target = 1,
-  ArgumentCount = 2,
-  MethodCalled = 3, // strings ID
-  IsSetter = 4,
-  Args = 5,
-  End = 5,
-}
-
 export const enum ObjectMutationIndex {
   FunctionName = 1,
   ArgumentCount = 2,

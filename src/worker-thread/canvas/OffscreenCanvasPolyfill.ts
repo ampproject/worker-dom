@@ -34,7 +34,7 @@ import { HTMLElement } from '../dom/HTMLElement';
 import { serializeTransferrableObject } from '../serializeTransferrableObject';
 import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableObject } from '../worker-thread';
-import { CanvasGradientFake } from './CanvasGradientFake';
+import { CanvasGradient } from './CanvasGradient';
 
 /**
  * Handles calls to a CanvasRenderingContext2D object in cases where the user's environment does not
@@ -75,12 +75,12 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       TransferrableMutationType.OBJECT_MUTATION,
       store(fnName),
       args.length,
-      ...this.serializeTransferrableObject(),
+      ...this.serializeAsTransferrableObject(),
       ...serializeTransferrableObject(args),
     ]);
   }
 
-  serializeTransferrableObject(): number[] {
+  serializeAsTransferrableObject(): number[] {
     return [TransferrableObjectType.CanvasRenderingContext2D, this.canvasElement[TransferrableKeys.index]];
   }
 
@@ -164,11 +164,11 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     this[TransferrableKeys.mutated]('imageSmoothingQuality', [...arguments]);
   }
 
-  set fillStyle(value: string | CanvasGradientFake) {
+  set fillStyle(value: string | CanvasGradient) {
     this[TransferrableKeys.mutated]('fillStyle', [...arguments]);
   }
 
-  set strokeStyle(value: string | CanvasGradientFake) {
+  set strokeStyle(value: string | CanvasGradient) {
     this[TransferrableKeys.mutated]('strokeStyle', [...arguments]);
   }
 
@@ -298,22 +298,22 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   ////////////////////////////////////////
   // createLinearGradient, createRadialGradient, createPattern can be done in the worker thread
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
-    return new CanvasGradientFake(
+    return new CanvasGradient(
       this.objectIndex++,
       this.canvasElement.ownerDocument as Document,
       'createLinearGradient',
       [...arguments],
-      this.serializeTransferrableObject(),
+      this.serializeAsTransferrableObject(),
     );
   }
 
   createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
-    return new CanvasGradientFake(
+    return new CanvasGradient(
       this.objectIndex++,
       this.canvasElement.ownerDocument as Document,
       'createRadialGradient',
       [...arguments],
-      this.serializeTransferrableObject(),
+      this.serializeAsTransferrableObject(),
     );
   }
 
