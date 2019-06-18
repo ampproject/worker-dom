@@ -51,7 +51,7 @@ test('Deserializes int arguments', t => {
   const buffer = new Uint16Array(serializedArgs);
   const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, strings, nodeContext);
 
-  t.is(deserializedArgs[0], 1);
+  t.deepEqual(deserializedArgs, [1]);
 });
 
 test('Deserializes float arguments', t => {
@@ -75,7 +75,7 @@ test('Deserializes string arguments', t => {
   const buffer = new Uint16Array(serializedArgs);
   const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, strings, nodeContext);
 
-  t.is(deserializedArgs[0], 'textArg');
+  t.deepEqual(deserializedArgs, ['textArg']);
 });
 
 test('Deserializes array argument', t => {
@@ -95,7 +95,7 @@ test('Deserializes array argument', t => {
   const buffer = new Uint16Array(serializedArgs);
   const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, strings, nodeContext);
 
-  t.deepEqual(deserializedArgs[0], [1, 2, 3]);
+  t.deepEqual(deserializedArgs, [[1, 2, 3]]);
 });
 
 test('Deserializes object argument', t => {
@@ -109,7 +109,7 @@ test('Deserializes object argument', t => {
   const buffer = new Uint16Array(serializedArgs);
   const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, strings, nodeContext, objectContext);
 
-  t.is(deserializedArgs[0], obj);
+  t.deepEqual(deserializedArgs, [obj]);
 });
 
 test('Deserializes varying types', t => {
@@ -139,9 +139,7 @@ test('Deserializes varying types', t => {
 
   const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 3, strings, nodeContext, objectContext);
 
-  t.is(deserializedArgs[0], smallInt);
-  t.is(deserializedArgs[1], stringArg);
-  t.is(deserializedArgs[2], object);
+  t.deepEqual(deserializedArgs, [smallInt, stringArg, object]);
 });
 
 test('Deserializes from different offset', t => {
@@ -151,7 +149,7 @@ test('Deserializes from different offset', t => {
   const buffer = new Uint16Array([1, 2, 3].concat(serializedArgs));
   const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 3, 1, strings, nodeContext);
 
-  t.is(deserializedArgs[0], 1);
+  t.deepEqual(deserializedArgs, [1]);
 });
 
 test('Returns the correct end offset', t => {

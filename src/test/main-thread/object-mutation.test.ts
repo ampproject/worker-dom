@@ -164,6 +164,72 @@ test('Setter', t => {
   t.true(setter.withArgs(5).calledOnce);
 });
 
+test('Method on prototype', t => {
+  const { strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
+
+  const methodName = 'fillRect';
+  const serializedArgs = [
+    TransferrableObjectType.SmallInt,
+    1,
+    TransferrableObjectType.SmallInt,
+    2,
+    TransferrableObjectType.SmallInt,
+    3,
+    TransferrableObjectType.SmallInt,
+    4,
+  ];
+  const targetObject = canvasElement.getContext('2d');
+
+  if (!targetObject) {
+    throw new Error('targetObject is not defined.');
+  }
+
+  const prototype = Object.getPrototypeOf(targetObject);
+
+  const stub = ((prototype[methodName] as sinon.SinonStub) = sandbox.stub());
+  executeCall(
+    objectMutationProcessor,
+    canvasElement,
+    [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_],
+    methodName,
+    strings,
+    4,
+    serializedArgs,
+  );
+  t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
+});
+
+test('Setter on prototype', t => {
+  const { strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
+
+  const methodName = 'lineWidth';
+  const setter = sandbox.spy();
+  const targetObject = canvasElement.getContext('2d');
+
+  if (!targetObject) {
+    throw new Error('targetObject is not defined.');
+  }
+
+  const prototype = Object.getPrototypeOf(targetObject);
+
+  // must declare property before sinon lets us stub setter
+  (prototype[methodName] as any) = 'existent';
+  sandbox.stub(prototype, methodName).set(setter);
+
+  const serializedArg = [TransferrableObjectType.SmallInt, 5];
+
+  executeCall(
+    objectMutationProcessor,
+    canvasElement,
+    [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_],
+    methodName,
+    strings,
+    1,
+    serializedArg,
+  );
+  t.true(setter.withArgs(5).calledOnce);
+});
+
 test('Mutation starts at a non-zero offset', t => {
   const { strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
 

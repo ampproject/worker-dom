@@ -139,7 +139,6 @@ test('Object creation with mutation at non-zero offset', t => {
   stub.returns(gradientObject);
 
   const objectId = 111; // give a sample id
-  t.throws(() => objectContext.get(objectId));
 
   const serializedTarget = [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_];
   const serializedArgs = [

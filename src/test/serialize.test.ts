@@ -30,12 +30,7 @@ test('Serializes Integers', t => {
 
 test('Serializes Floats', t => {
   const serialized = serializeTransferrableObject([1.23]);
-  t.deepEqual(serialized[0], TransferrableObjectType.Float);
-
-  const u16 = new Uint16Array([serialized[1], serialized[2]]);
-  const f32 = new Float32Array(u16.buffer);
-
-  t.true(approx(f32[0], 1.23));
+  t.deepEqual(serialized, [TransferrableObjectType.Float, 28836, 16285]);
 });
 
 test('Serializes Strings', t => {
@@ -48,7 +43,7 @@ test('Serializes Arrays', t => {
   t.deepEqual(serialized, [TransferrableObjectType.Array, 3 /* array length */, ...serializeTransferrableObject([1, 2, 3])]);
 });
 
-test('Serializes transferable objects', t => {
+test('Serializes Transferable Objects', t => {
   // use a CanvasGradient as an example
   const gradient = {} as CanvasGradientFake;
 
@@ -56,18 +51,10 @@ test('Serializes transferable objects', t => {
   gradient['serializeTransferrableObject'] = () => [];
 
   // stub must return a value, otherwise object-creation processor will thow when attempting to store
-  const objectSerializeStub = sinon.stub(gradient, 'serializeTransferrableObject').returns([]);
+  const fakeSerializedObject = [] as number[];
+  const objectSerializeStub = sinon.stub(gradient, 'serializeTransferrableObject').returns(fakeSerializedObject);
+  const serialized = serializeTransferrableObject([gradient]);
 
-  serializeTransferrableObject([gradient]);
   t.true(objectSerializeStub.calledOnce);
+  t.is(serialized, fakeSerializedObject);
 });
-
-/**
- * Will consider two floating point values equal if they're approximate enough.
- * @param expected
- * @param actual
- */
-function approx(expected: number, actual: number): boolean {
-  const diff = Math.abs(expected - actual);
-  return diff < 0.001;
-}
