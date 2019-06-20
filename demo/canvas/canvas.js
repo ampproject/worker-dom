@@ -27,8 +27,15 @@ function draw(e) {
 }
 
 myCanvas.addEventListener('mousedown', e => {
-  myCtx.strokeStyle = 'red';
-  myCtx.lineWidth = 2;
+  const gradient = myCtx.createRadialGradient(250, 250, 0, 250, 250, 250);
+  gradient.addColorStop(0, 'red');
+  gradient.addColorStop(0.2, 'orange');
+  gradient.addColorStop(0.4, 'yellow');
+  gradient.addColorStop(0.6, 'green');
+  gradient.addColorStop(0.8, 'blue');
+  gradient.addColorStop(1, 'purple');
+  myCtx.strokeStyle = gradient;
+  myCtx.lineWidth = 4;
   myCtx.setLineDash([10, 10]);
   myCtx.beginPath();
   myCtx.moveTo(e.offsetX, e.offsetY);
@@ -42,8 +49,8 @@ myCanvas.addEventListener('mouseup', e => {
 existingCanvasBtn.addEventListener('click', async () => {
   // Scenario #1:
   // Canvas is already on the page
-  myCtx.fillStyle = 'blue';
-  myCtx.strokeStyle = 'blue';
+  myCtx.fillStyle = 'yellow';
+  myCtx.strokeStyle = 'yellow';
   myCtx.lineWidth = 5;
   myCtx.setLineDash([1, 0]);
   myCtx.beginPath();

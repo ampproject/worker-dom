@@ -29,7 +29,9 @@ import { LongTaskExecutor } from './commands/long-task';
 import { CommandExecutor } from './commands/interface';
 import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
 import { Phase } from '../transfer/Phase';
-import { OffscreenPolyfillCallProcessor } from './commands/offscreen-polyfill-calls';
+import { ObjectMutationProcessor } from './commands/object-mutation';
+import { ObjectCreationProcessor } from './commands/object-creation';
+import { ObjectContext } from './object-context';
 
 export class MutatorProcessor {
   private strings: Strings;
@@ -48,25 +50,32 @@ export class MutatorProcessor {
    * @param workerContext
    * @param sanitizer Sanitizer to apply to content if needed.
    */
-  constructor(strings: Strings, nodeContext: NodeContext, workerContext: WorkerContext, config: WorkerDOMConfiguration) {
+  constructor(
+    strings: Strings,
+    nodeContext: NodeContext,
+    workerContext: WorkerContext,
+    config: WorkerDOMConfiguration,
+    objectContext: ObjectContext,
+  ) {
     this.strings = strings;
     this.nodeContext = nodeContext;
     this.sanitizer = config.sanitizer;
     this.mutationPumpFunction = config.mutationPump;
 
-    const LongTaskExecutorInstance = LongTaskExecutor(strings, nodeContext, workerContext, config);
+    const LongTaskExecutorInstance = LongTaskExecutor(strings, nodeContext, workerContext, objectContext, config);
 
     this.executors = {
-      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.PROPERTIES]: PropertyProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor(strings, nodeContext, workerContext, config),
+      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.PROPERTIES]: PropertyProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor(strings, nodeContext, workerContext, objectContext, config),
       [TransferrableMutationType.LONG_TASK_START]: LongTaskExecutorInstance,
       [TransferrableMutationType.LONG_TASK_END]: LongTaskExecutorInstance,
-      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.OFFSCREEN_POLYFILL]: OffscreenPolyfillCallProcessor(strings, nodeContext, workerContext, config),
+      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor(strings, nodeContext, workerContext, objectContext, config),
     };
   }
 
@@ -102,18 +111,25 @@ export class MutatorProcessor {
       let length: number = mutationArray.length;
 
       while (operationStart < length) {
-        const target = this.nodeContext.getNode(mutationArray[operationStart + 1]);
-        if (!target) {
-          console.error(`getNode() yields null – ${target}`);
-          return;
+        const mutationType = mutationArray[operationStart];
+
+        if (mutationType === TransferrableMutationType.OBJECT_MUTATION || mutationType === TransferrableMutationType.OBJECT_CREATION) {
+          if (DEBUG_ENABLED) {
+            console.log(ReadableMutationType[mutationType], this.executors[mutationType].print(mutationArray, operationStart));
+          }
+          operationStart = this.executors[mutationType].execute(mutationArray, operationStart);
+        } else {
+          const target = this.nodeContext.getNode(mutationArray[operationStart + 1]);
+
+          if (!target) {
+            console.error(`getNode() yields null – ${target}`);
+            return;
+          }
+          if (DEBUG_ENABLED) {
+            console.log(ReadableMutationType[mutationType], this.executors[mutationType].print(mutationArray, operationStart, target));
+          }
+          operationStart = this.executors[mutationType].execute(mutationArray, operationStart, target);
         }
-        if (DEBUG_ENABLED) {
-          console.log(
-            ReadableMutationType[mutationArray[operationStart]],
-            this.executors[mutationArray[operationStart]].print(mutationArray, operationStart, target),
-          );
-        }
-        operationStart = this.executors[mutationArray[operationStart]].execute(mutationArray, operationStart, target);
       }
     });
     if (DEBUG_ENABLED) {

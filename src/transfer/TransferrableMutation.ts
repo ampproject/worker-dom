@@ -24,7 +24,8 @@ export const enum TransferrableMutationType {
   LONG_TASK_START = 6,
   LONG_TASK_END = 7,
   OFFSCREEN_CANVAS_INSTANCE = 8,
-  OFFSCREEN_POLYFILL = 9,
+  OBJECT_MUTATION = 9,
+  OBJECT_CREATION = 10,
 }
 export const DefaultAllowedMutations = [
   TransferrableMutationType.ATTRIBUTES,
@@ -36,7 +37,8 @@ export const DefaultAllowedMutations = [
   TransferrableMutationType.LONG_TASK_START,
   TransferrableMutationType.LONG_TASK_END,
   TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE,
-  TransferrableMutationType.OFFSCREEN_POLYFILL,
+  TransferrableMutationType.OBJECT_MUTATION,
+  TransferrableMutationType.OBJECT_CREATION,
 ];
 
 export const ReadableMutationType: { [key: number]: string } = {
@@ -49,7 +51,8 @@ export const ReadableMutationType: { [key: number]: string } = {
   6: 'LONG_TASK_START',
   7: 'LONG_TASK_END',
   8: 'OFFSCREEN_CANVAS_INSTANCE',
-  9: 'OFFSCREEN_POLYFILL',
+  9: 'OBJECT_MUTATION',
+  10: 'OBJECT_CREATION',
 };
 
 /**
@@ -149,13 +152,34 @@ export const enum OffscreenCanvasMutationIndex {
   End = 2,
 }
 
-export const enum OffscreenContextPolyfillMutationIndex {
-  Target = 1,
-  Float32Needed = 2,
+export const enum ObjectMutationIndex {
+  FunctionName = 1,
+  ArgumentCount = 2,
+
+  // SerializedTarget and Args offsets will vary depending on the object
+  SerializedTarget = 3,
+  Args = 3,
+
+  End = 3,
+}
+
+export const enum ObjectCreationIndex {
+  FunctionName = 1,
+  ObjectId = 2,
   ArgumentCount = 3,
-  MethodCalled = 4, // strings ID
-  IsSetter = 5,
-  StringArgIndex = 6,
-  Args = 7,
-  End = 7,
+
+  // SerializedTarget and Args offsets will vary depending on the object
+  SerializedTarget = 4,
+  Args = 4,
+
+  End = 4,
+}
+
+export const enum TransferrableObjectType {
+  SmallInt = 1,
+  Float = 2,
+  String = 3,
+  Array = 4,
+  TransferObject = 5,
+  CanvasRenderingContext2D = 6,
 }

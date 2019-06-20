@@ -22,6 +22,7 @@ import { Strings } from '../../main-thread/strings';
 import { NodeContext } from '../../main-thread/nodes';
 import { WorkerContext } from '../../main-thread/worker';
 import { normalizeConfiguration } from '../../main-thread/configuration';
+import { ObjectContext } from '../../main-thread/object-context';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -30,6 +31,7 @@ const test = anyTest as TestInterface<{
   strings: Strings;
   nodeContext: NodeContext;
   workerContext: WorkerContext;
+  objectContext: ObjectContext;
   baseElement: HTMLElement;
 }>;
 
@@ -40,6 +42,7 @@ test.beforeEach(t => {
   const baseElement = document.createElement('div');
   const strings = new Strings();
   const nodeContext = new NodeContext(strings, baseElement);
+  const objectContext = new ObjectContext();
   const workerContext = ({
     getWorker() {},
     messageToWorker() {},
@@ -48,6 +51,7 @@ test.beforeEach(t => {
     strings,
     nodeContext,
     workerContext,
+    objectContext,
     normalizeConfiguration({
       authorURL: 'authorURL',
       domURL: 'domURL',
@@ -67,6 +71,7 @@ test.beforeEach(t => {
     baseElement,
     strings,
     nodeContext,
+    objectContext,
     workerContext,
   };
 });
@@ -77,11 +82,12 @@ test.afterEach(t => {
 });
 
 test.serial('should tolerate no callback', t => {
-  const { longTasks, baseElement, strings, nodeContext, workerContext } = t.context;
+  const { longTasks, baseElement, strings, nodeContext, workerContext, objectContext } = t.context;
   const executor = LongTaskExecutor(
     strings,
     nodeContext,
     workerContext,
+    objectContext,
     normalizeConfiguration({
       authorURL: 'authorURL',
       domURL: 'domURL',

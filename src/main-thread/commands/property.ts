@@ -18,7 +18,7 @@ import { PropertyMutationIndex, TransferrableMutationType } from '../../transfer
 import { CommandExecutorInterface } from './interface';
 import { NumericBoolean } from '../../utils';
 
-export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config) => {
+export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.PROPERTIES);
 
   return {
