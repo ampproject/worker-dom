@@ -58,11 +58,11 @@ test.beforeEach(t => {
     strings,
     nodeContext,
     workerContext,
+    objectContext,
     normalizeConfiguration({
       domURL: 'domURL',
       authorURL: 'authorURL',
     }),
-    objectContext,
   );
 
   t.context = {

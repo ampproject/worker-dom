@@ -19,7 +19,7 @@ import * as sinon from 'sinon';
 import { serializeTransferrableObject } from '../worker-thread/serializeTransferrableObject';
 import { TransferrableObjectType } from '../transfer/TransferrableMutation';
 import { store } from '../worker-thread/strings';
-import { CanvasGradientFake } from '../worker-thread/canvas/CanvasGradientFake';
+import { CanvasGradient } from '../worker-thread/canvas/CanvasGradient';
 
 const test = anyTest as TestInterface<{}>;
 
@@ -45,14 +45,14 @@ test('Serializes Arrays', t => {
 
 test('Serializes Transferable Objects', t => {
   // use a CanvasGradient as an example
-  const gradient = {} as CanvasGradientFake;
+  const gradient = {} as CanvasGradient;
 
   // property must exist before sinon lets us stub it
-  gradient['serializeTransferrableObject'] = () => [];
+  gradient['serializeAsTransferrableObject'] = () => [];
 
   // stub must return a value, otherwise object-creation processor will thow when attempting to store
   const fakeSerializedObject = [] as number[];
-  const objectSerializeStub = sinon.stub(gradient, 'serializeTransferrableObject').returns(fakeSerializedObject);
+  const objectSerializeStub = sinon.stub(gradient, 'serializeAsTransferrableObject').returns(fakeSerializedObject);
   const serialized = serializeTransferrableObject([gradient]);
 
   t.true(objectSerializeStub.calledOnce);
