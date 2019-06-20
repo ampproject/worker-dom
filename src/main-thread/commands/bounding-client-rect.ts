@@ -20,7 +20,7 @@ import { CommandExecutorInterface } from './interface';
 import { BoundClientRectMutationIndex } from '../../transfer/TransferrableBoundClientRect';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
-export const BoundingClientRectProcessor: CommandExecutorInterface = (strings, nodes, workerContext, config) => {
+export const BoundingClientRectProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.GET_BOUNDING_CLIENT_RECT);
 
   return {

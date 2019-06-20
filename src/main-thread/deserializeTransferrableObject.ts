@@ -27,6 +27,15 @@ interface DeserializedArgs {
 const f32 = new Float32Array(1);
 const u16 = new Uint16Array(f32.buffer);
 
+/**
+ * Deserializes TransferrableObjectType arguments.
+ * @param buffer Contains mutation with arguments to deserialize.
+ * @param offset Start position of arguments in mutations buffer.
+ * @param count Number of arguments to deserialize.
+ * @param strings Strings context.
+ * @param nodeContext Nodes context.
+ * @param objectContext Objects context
+ */
 export function deserializeTransferrableObject(
   buffer: Uint16Array,
   offset: number,

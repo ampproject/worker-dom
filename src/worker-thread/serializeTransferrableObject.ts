@@ -69,7 +69,7 @@ export function serializeTransferrableObject(args: Serializable[]): number[] {
     }
 
     if (typeof arg === 'object') {
-      const serializedObject = (arg as TransferrableObject).serializeTransferrableObject();
+      const serializedObject = (arg as TransferrableObject).serializeAsTransferrableObject();
 
       for (let i = 0; i < serializedObject.length; i++) {
         serialized.push(serializedObject[i]);

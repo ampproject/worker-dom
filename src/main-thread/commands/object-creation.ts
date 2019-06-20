@@ -18,7 +18,7 @@ import { TransferrableMutationType, ObjectCreationIndex } from '../../transfer/T
 import { CommandExecutorInterface } from './interface';
 import { deserializeTransferrableObject } from '../deserializeTransferrableObject';
 
-export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config, objectContext) => {
+export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_CREATION);
 
   if (!objectContext) {
@@ -39,7 +39,7 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
         nodeContext,
         objectContext,
       );
-      const target = deserializedTarget[0] as RenderableElement;
+      const target = deserializedTarget[0] as any;
 
       const { offset: argsOffset, args } = deserializeTransferrableObject(mutations, targetOffset, argCount, strings, nodeContext, objectContext);
 
@@ -58,7 +58,7 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
       const objectId = mutations[startPosition + ObjectCreationIndex.ObjectId];
       const argCount = mutations[startPosition + ObjectCreationIndex.ArgumentCount];
 
-      const { args: deserializedArgs } = deserializeTransferrableObject(
+      const { args: deserializedTarget } = deserializeTransferrableObject(
         mutations,
         startPosition + ObjectCreationIndex.SerializedTarget,
         1, // argCount
@@ -66,7 +66,7 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
         nodeContext,
         objectContext,
       );
-      target = deserializedArgs[0] as RenderableElement;
+      target = deserializedTarget[0] as RenderableElement;
 
       return {
         type: 'OBJECT_CREATION',

@@ -62,20 +62,20 @@ export class MutatorProcessor {
     this.sanitizer = config.sanitizer;
     this.mutationPumpFunction = config.mutationPump;
 
-    const LongTaskExecutorInstance = LongTaskExecutor(strings, nodeContext, workerContext, config);
+    const LongTaskExecutorInstance = LongTaskExecutor(strings, nodeContext, workerContext, objectContext, config);
 
     this.executors = {
-      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.PROPERTIES]: PropertyProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor(strings, nodeContext, workerContext, config),
+      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.PROPERTIES]: PropertyProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor(strings, nodeContext, workerContext, objectContext, config),
       [TransferrableMutationType.LONG_TASK_START]: LongTaskExecutorInstance,
       [TransferrableMutationType.LONG_TASK_END]: LongTaskExecutorInstance,
-      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(strings, nodeContext, workerContext, config),
-      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor(strings, nodeContext, workerContext, config, objectContext),
-      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor(strings, nodeContext, workerContext, config, objectContext),
+      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor(strings, nodeContext, workerContext, objectContext, config),
     };
   }
 

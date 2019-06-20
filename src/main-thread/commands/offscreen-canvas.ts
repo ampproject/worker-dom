@@ -19,7 +19,7 @@ import { MessageType } from '../../transfer/Messages';
 import { CommandExecutorInterface } from './interface';
 import { OffscreenCanvasMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
-export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, config) => {
+export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE);
 
   return {
