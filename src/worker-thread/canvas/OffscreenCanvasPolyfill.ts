@@ -32,6 +32,10 @@ import { NumericBoolean, toLower } from '../../utils';
 import { store } from '../strings';
 import { HTMLElement } from '../dom/HTMLElement';
 
+/**
+ * Handles calls to a CanvasRenderingContext2D object in cases where the user's environment does not
+ * support native OffscreenCanvas.
+ */
 export class OffscreenCanvasPolyfill<ElementType extends HTMLElement> {
   canvas: ElementType;
   context: OffscreenCanvasRenderingContext2DPolyfill<ElementType>;
