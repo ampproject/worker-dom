@@ -51,10 +51,10 @@ test('Serializes Transferable Objects', t => {
   gradient['serializeAsTransferrableObject'] = () => [];
 
   // stub must return a value, otherwise object-creation processor will thow when attempting to store
-  const fakeSerializedObject = [] as number[];
+  const fakeSerializedObject = [1, 2, 3, 4] as number[];
   const objectSerializeStub = sinon.stub(gradient, 'serializeAsTransferrableObject').returns(fakeSerializedObject);
   const serialized = serializeTransferrableObject([gradient]);
 
   t.true(objectSerializeStub.calledOnce);
-  t.is(serialized, fakeSerializedObject);
+  t.deepEqual(serialized, fakeSerializedObject);
 });
