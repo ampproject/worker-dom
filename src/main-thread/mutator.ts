@@ -118,6 +118,9 @@ export class MutatorProcessor {
             console.log(ReadableMutationType[mutationType], this.executors[mutationType].print(mutationArray, operationStart));
           }
           operationStart = this.executors[mutationType].execute(mutationArray, operationStart);
+
+          // TODO: remove conditional branching by moving `target = nodeContext.getNode(...)` into
+          // the processors that require it.
         } else {
           const target = this.nodeContext.getNode(mutationArray[operationStart + 1]);
 
