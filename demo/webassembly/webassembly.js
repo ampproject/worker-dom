@@ -19,6 +19,9 @@ const importObject = {};
 const wasmBrowserInstantiate = async () => {
   let response = undefined;
 
+  // Here we are checking if streaming is
+  // supported by the current browser. If not,
+  // we fallback and instantiate manually.
   if (WebAssembly.instantiateStreaming) {
     response = await WebAssembly.instantiateStreaming(fetch(wasmModuleUrl), importObject);
   } else {

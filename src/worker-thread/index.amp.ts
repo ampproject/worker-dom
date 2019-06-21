@@ -135,7 +135,7 @@ const WHITELISTED_GLOBALS = [
 
 const globalScope: GlobalScope = {
   navigator: (self as WorkerGlobalScope).navigator,
-  WebAssembly: (self as any).WebAssembly,
+  WebAssembly: (self as WorkerGlobalScope).WebAssembly,
   localStorage: {},
   location: self.location,
   url: '/',
