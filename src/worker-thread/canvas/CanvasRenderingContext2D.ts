@@ -27,7 +27,7 @@ import {
   CanvasGradient,
   CanvasPattern,
 } from './CanvasTypes';
-import { MessageType, OffscreenCanvasToWorker } from '../../transfer/Messages';
+import { MessageType, OffscreenCanvasToWorker, ImageBitmapToWorker } from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { transfer } from '../MutationTransfer';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
@@ -51,7 +51,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   // createPattern calls need to retrieve an ImageBitmap from the main-thread. Since those can
   // happen subsequently, we must keep track of these to avoid reentrancy problems.
-  private unresolvedPatternCalls = 0;
+  private unresolvedCalls = 0;
   private goodImplementation: CanvasRenderingContext2D;
 
   constructor(canvas: ElementType) {
@@ -300,24 +300,22 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     const isBitmap = typeof (image as any)[TransferrableKeys.serializeAsTransferrableObject] === 'undefined';
 
     if (this.polyfillUsed || isBitmap) {
-      // Having a worker-dom HTMLElement will throw for the native case.
-      // Polyfill case won't throw since it has a proper transfer process
       return this.delegateFunc('createPattern', [...arguments]);
     } else {
       this.upgraded = false;
 
-      // Change the underlying implementation because we don't want calls on the real one until
+      // Degrade the underlying implementation because we don't want calls on the real one until
       // after pattern is retrieved
       const OffscreenCanvas = this.canvasElement.ownerDocument.defaultView.OffscreenCanvas;
       this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
-      this.unresolvedPatternCalls++;
+      this.unresolvedCalls++;
 
       const fakePattern = new FakeNativeCanvasPattern<ElementType>();
       fakePattern.getCanvasPatternAsync(this.canvas, image, repetition).then(() => {
-        this.unresolvedPatternCalls--;
+        this.unresolvedCalls--;
 
         // The good implementation must only come after the last unresolved createPattern call
-        if (this.unresolvedPatternCalls === 0) {
+        if (this.unresolvedCalls === 0) {
           this.implementation = this.goodImplementation;
           this.upgraded = true;
           this.flushQueue();
@@ -325,6 +323,59 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
       });
 
       return fakePattern;
+    }
+  }
+
+  /* DRAWING IMAGES */
+  drawImage(image: CanvasImageSource, dx: number, dy: number): void {
+    const isBitmap = typeof (image as any)[TransferrableKeys.serializeAsTransferrableObject] === 'undefined';
+
+    if (this.polyfillUsed || isBitmap) {
+      this.delegateFunc('drawImage', [...arguments]);
+    } else {
+      // Queue the drawImage call to make sure it gets called in correct order
+      const args = [] as any[];
+      this.queue.push({ fnName: 'drawImage', args, isSetter: false });
+
+      // Degrade the underlying implementation because we don't want calls on the real one
+      // until after the ImageBitmap is received.
+      this.upgraded = false;
+      const OffscreenCanvas = this.canvasElement.ownerDocument.defaultView.OffscreenCanvas;
+      this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
+      this.unresolvedCalls++;
+
+      // Retrieve an ImageBitmap from the main-thread with the same image as the input image
+      new Promise(resolve => {
+        const messageHandler = ({ data }: { data: ImageBitmapToWorker }) => {
+          if (
+            data[TransferrableKeys.type] === MessageType.IMAGE_BITMAP_INSTANCE &&
+            data[TransferrableKeys.target][0] === (image as any)[TransferrableKeys.index]
+          ) {
+            removeEventListener('message', messageHandler);
+            const transferredImageBitmap = (data as ImageBitmapToWorker)[TransferrableKeys.data];
+            resolve(transferredImageBitmap);
+          }
+        };
+
+        if (typeof addEventListener !== 'function') {
+          throw new Error('addEventListener not a function!');
+        } else {
+          addEventListener('message', messageHandler);
+          transfer(this.canvas.ownerDocument as Document, [TransferrableMutationType.IMAGE_BITMAP_INSTANCE, (image as any)[TransferrableKeys.index]]);
+        }
+      })
+
+        // Then call the actual method with the retrieved ImageBitmap
+        .then((instance: ImageBitmap) => {
+          args.push(instance, dx, dy);
+          this.unresolvedCalls--;
+
+          if (this.unresolvedCalls === 0) {
+            this.implementation = this.goodImplementation;
+            this.upgraded = true;
+            this.flushQueue();
+          }
+        });
     }
   }
 
@@ -479,11 +530,6 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   get globalCompositeOperation(): string {
     return this.delegateGetter('globalCompositeOperation');
-  }
-
-  /* DRAWING IMAGES */
-  drawImage(image: CanvasImageSource, dx: number, dy: number): void {
-    this.delegateFunc('drawImage', [...arguments]);
   }
 
   /* PIXEL MANIPULATION */

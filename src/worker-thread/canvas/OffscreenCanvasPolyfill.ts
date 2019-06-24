@@ -327,6 +327,10 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     );
   }
 
+  drawImage(image: CanvasImageSource, dx: number, dy: number) {
+    this[TransferrableKeys.mutated]('drawImage', [...arguments]);
+  }
+
   createImageData(): ImageData {
     return {} as ImageData;
   }
@@ -336,9 +340,6 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   }
 
   putImageData() {}
-
-  // issue: has four signatures, all of them with a CanvasImageSource arg
-  drawImage() {}
 
   // THROW and implement async versions
   isPointInPath(): boolean {
