@@ -53,6 +53,7 @@ import { OffscreenCanvas } from './canvas/CanvasTypes';
 
 const globalScope: GlobalScope = {
   navigator: (self as WorkerGlobalScope).navigator,
+  WebAssembly: (self as any).WebAssembly,
   localStorage: {},
   location: {},
   url: '/',
