@@ -32,6 +32,7 @@ import { Phase } from '../transfer/Phase';
 import { ObjectMutationProcessor } from './commands/object-mutation';
 import { ObjectCreationProcessor } from './commands/object-creation';
 import { ObjectContext } from './object-context';
+import { ImageBitmapProcessor } from './commands/image-bitmap';
 
 export class MutatorProcessor {
   private strings: Strings;
@@ -76,6 +77,7 @@ export class MutatorProcessor {
       [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(strings, nodeContext, workerContext, objectContext, config),
       [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor(strings, nodeContext, workerContext, objectContext, config),
       [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor(strings, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.IMAGE_BITMAP_INSTANCE]: ImageBitmapProcessor(strings, nodeContext, workerContext, objectContext, config),
     };
   }
 

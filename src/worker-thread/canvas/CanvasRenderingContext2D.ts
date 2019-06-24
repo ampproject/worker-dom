@@ -34,6 +34,7 @@ import { TransferrableMutationType } from '../../transfer/TransferrableMutation'
 import { OffscreenCanvasPolyfill } from './OffscreenCanvasPolyfill';
 import { Document } from '../dom/Document';
 import { HTMLElement } from '../dom/HTMLElement';
+import { FakeNativeCanvasPattern } from './FakeNativeCanvasPattern';
 
 export const deferredUpgrades = new WeakMap();
 
@@ -46,6 +47,12 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   private implementation: CanvasRenderingContext2D;
   private upgraded = false;
   private canvasElement: ElementType;
+  private polyfillUsed: boolean;
+
+  // createPattern calls need to retrieve an ImageBitmap from the main-thread. Since those can
+  // happen subsequently, we must keep track of these to avoid reentrancy problems.
+  private unresolvedPatternCalls = 0;
+  private goodImplementation: CanvasRenderingContext2D;
 
   constructor(canvas: ElementType) {
     this.canvasElement = canvas;
@@ -55,6 +62,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     if (typeof OffscreenCanvas === 'undefined') {
       this.implementation = new OffscreenCanvasPolyfill<ElementType>(canvas).getContext('2d');
       this.upgraded = true;
+      this.polyfillUsed = true;
     }
 
     // If the browser supports OffscreenCanvas:
@@ -65,6 +73,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     else {
       this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
       this.getOffscreenCanvasAsync(this.canvasElement);
+      this.polyfillUsed = false;
     }
   }
 
@@ -100,6 +109,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
       }
     }).then((instance: { getContext(c: '2d'): CanvasRenderingContext2D }) => {
       this.implementation = instance.getContext('2d');
+      this.goodImplementation = this.implementation;
       this.upgraded = true;
       this.flushQueue();
     });
@@ -115,9 +125,9 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   private flushQueue() {
     for (const call of this.queue) {
       if (call.isSetter) {
-        (this.implementation as any)[call.fnName] = call.args[0];
+        (this as any)[call.fnName] = call.args[0];
       } else {
-        (this.implementation as any)[call.fnName](...call.args);
+        (this as any)[call.fnName](...call.args);
       }
     }
     this.queue.length = 0;
@@ -252,7 +262,12 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* FILL AND STROKE STYLES */
   set fillStyle(value: string | CanvasGradient | CanvasPattern) {
-    this.delegateSetter('fillStyle', [...arguments]);
+    const isGradient = typeof (value as any).addColorStop !== 'undefined';
+    if (typeof value === 'string' || isGradient || this.polyfillUsed || !this.upgraded) {
+      this.delegateSetter('fillStyle', [...arguments]);
+    } else {
+      this.delegateSetter('fillStyle', [(value as any).implementation]);
+    }
   }
 
   get fillStyle(): string | CanvasGradient | CanvasPattern {
@@ -260,7 +275,12 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set strokeStyle(value: string | CanvasGradient | CanvasPattern) {
-    this.delegateSetter('strokeStyle', [...arguments]);
+    const isGradient = typeof (value as any).addColorStop !== 'undefined';
+    if (typeof value === 'string' || isGradient || this.polyfillUsed || !this.upgraded) {
+      this.delegateSetter('strokeStyle', [...arguments]);
+    } else {
+      this.delegateSetter('strokeStyle', [(value as any).implementation]);
+    }
   }
 
   get strokeStyle(): string | CanvasGradient | CanvasPattern {
@@ -277,7 +297,35 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   createPattern(image: CanvasImageSource, repetition: string): CanvasPattern | null {
-    return this.delegateFunc('createPattern', [...arguments]);
+    const isBitmap = typeof (image as any)[TransferrableKeys.serializeAsTransferrableObject] === 'undefined';
+
+    if (this.polyfillUsed || isBitmap) {
+      // Having a worker-dom HTMLElement will throw for the native case.
+      // Polyfill case won't throw since it has a proper transfer process
+      return this.delegateFunc('createPattern', [...arguments]);
+    } else {
+      this.upgraded = false;
+
+      // Change the underlying implementation because we don't want calls on the real one until
+      // after pattern is retrieved
+      const OffscreenCanvas = this.canvasElement.ownerDocument.defaultView.OffscreenCanvas;
+      this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
+      this.unresolvedPatternCalls++;
+
+      const fakePattern = new FakeNativeCanvasPattern<ElementType>();
+      fakePattern.getCanvasPatternAsync(this.canvas, image, repetition).then(() => {
+        this.unresolvedPatternCalls--;
+
+        // The good implementation must only come after the last unresolved createPattern call
+        if (this.unresolvedPatternCalls === 0) {
+          this.implementation = this.goodImplementation;
+          this.upgraded = true;
+          this.flushQueue();
+        }
+      });
+
+      return fakePattern;
+    }
   }
 
   /* SHADOWS */

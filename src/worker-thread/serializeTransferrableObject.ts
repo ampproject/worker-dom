@@ -17,6 +17,7 @@
 import { store } from './strings';
 import { TransferrableObjectType } from '../transfer/TransferrableMutation';
 import { Serializable, TransferrableObject } from './worker-thread';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 const f32 = new Float32Array(1);
 const u16 = new Uint16Array(f32.buffer);
@@ -38,7 +39,6 @@ function isSmallInt(num: number): boolean {
  */
 export function serializeTransferrableObject(args: Serializable[]): number[] {
   const serialized: number[] = [];
-
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
@@ -69,7 +69,7 @@ export function serializeTransferrableObject(args: Serializable[]): number[] {
     }
 
     if (typeof arg === 'object') {
-      const serializedObject = (arg as TransferrableObject).serializeAsTransferrableObject();
+      const serializedObject = (arg as TransferrableObject)[TransferrableKeys.serializeAsTransferrableObject]();
 
       for (let i = 0; i < serializedObject.length; i++) {
         serialized.push(serializedObject[i]);

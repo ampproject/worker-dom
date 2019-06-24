@@ -35,6 +35,9 @@ import { serializeTransferrableObject } from '../serializeTransferrableObject';
 import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableObject } from '../worker-thread';
 import { CanvasGradient } from './CanvasGradient';
+import { CanvasPattern } from './CanvasPattern';
+import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
+import { HTMLImageElement } from '../dom/HTMLImageElement';
 
 /**
  * Handles calls to a CanvasRenderingContext2D object in cases where the user's environment does not
@@ -75,12 +78,12 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       TransferrableMutationType.OBJECT_MUTATION,
       store(fnName),
       args.length,
-      ...this.serializeAsTransferrableObject(),
+      ...this[TransferrableKeys.serializeAsTransferrableObject](),
       ...serializeTransferrableObject(args),
     ]);
   }
 
-  serializeAsTransferrableObject(): number[] {
+  [TransferrableKeys.serializeAsTransferrableObject](): number[] {
     return [TransferrableObjectType.CanvasRenderingContext2D, this.canvasElement[TransferrableKeys.index]];
   }
 
@@ -164,11 +167,11 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     this[TransferrableKeys.mutated]('imageSmoothingQuality', [...arguments]);
   }
 
-  set fillStyle(value: string | CanvasGradient) {
+  set fillStyle(value: string | CanvasGradient | CanvasPattern) {
     this[TransferrableKeys.mutated]('fillStyle', [...arguments]);
   }
 
-  set strokeStyle(value: string | CanvasGradient) {
+  set strokeStyle(value: string | CanvasGradient | CanvasPattern) {
     this[TransferrableKeys.mutated]('strokeStyle', [...arguments]);
   }
 
@@ -295,15 +298,13 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     this[TransferrableKeys.mutated]('setTransform', [...arguments]);
   }
 
-  ////////////////////////////////////////
-  // createLinearGradient, createRadialGradient, createPattern can be done in the worker thread
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
     return new CanvasGradient(
       this.objectIndex++,
       this.canvasElement.ownerDocument as Document,
       'createLinearGradient',
       [...arguments],
-      this.serializeAsTransferrableObject(),
+      this[TransferrableKeys.serializeAsTransferrableObject](),
     );
   }
 
@@ -313,12 +314,17 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       this.canvasElement.ownerDocument as Document,
       'createRadialGradient',
       [...arguments],
-      this.serializeAsTransferrableObject(),
+      this[TransferrableKeys.serializeAsTransferrableObject](),
     );
   }
 
-  createPattern(): CanvasPattern {
-    return {} as CanvasPattern;
+  createPattern(image: HTMLCanvasElement | HTMLImageElement, repetition: string): CanvasPattern {
+    return new CanvasPattern(
+      this.objectIndex++,
+      this.canvasElement.ownerDocument as Document,
+      [image, repetition],
+      this[TransferrableKeys.serializeAsTransferrableObject](),
+    );
   }
 
   createImageData(): ImageData {
