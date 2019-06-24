@@ -17,7 +17,7 @@
 import { CharacterDataMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 
-export const CharacterDataProcessor: CommandExecutorInterface = (strings, nodes, workerContext, config) => {
+export const CharacterDataProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHARACTER_DATA);
 
   return {

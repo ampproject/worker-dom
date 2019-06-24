@@ -35,6 +35,9 @@ export class HTMLCanvasElement extends HTMLElement {
 }
 registerSubclass('canvas', HTMLCanvasElement);
 
+// Reflected Properties
+// HTMLCanvasElement.height => number, reflected attribute
+// HTMLCanvasElement.width => number, reflected attribute
 reflectProperties([{ height: [0] }, { width: [0] }], HTMLCanvasElement);
 
 // Unimplemented Properties

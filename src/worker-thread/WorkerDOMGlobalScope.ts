@@ -53,6 +53,8 @@ import { HTMLElement } from './dom/HTMLElement';
 export interface GlobalScope {
   initialize: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>) => void;
   navigator: WorkerNavigator;
+  // TODO (#541): Should we type this more explicitly?
+  WebAssembly: object;
   localStorage: object;
   location: object;
   url: string;
@@ -90,6 +92,7 @@ export interface GlobalScope {
   HTMLTableRowElement: typeof HTMLTableRowElement;
   HTMLTableSectionElement: typeof HTMLTableSectionElement;
   HTMLTimeElement: typeof HTMLTimeElement;
+  OffscreenCanvas: any | undefined;
 }
 
 export interface WorkerDOMGlobalScope extends GlobalScope {

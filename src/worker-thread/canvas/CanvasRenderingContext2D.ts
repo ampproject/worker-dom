@@ -37,34 +37,46 @@ import { HTMLElement } from '../dom/HTMLElement';
 
 export const deferredUpgrades = new WeakMap();
 
+/**
+ * Delegates all CanvasRenderingContext2D calls, either to an OffscreenCanvas or a polyfill
+ * (depending on whether it is supported).
+ */
 export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
   private queue = [] as { fnName: string; args: any[]; isSetter: boolean }[];
   private implementation: CanvasRenderingContext2D;
   private upgraded = false;
   private canvasElement: ElementType;
 
-  // TODO: This should only exist in testing environment
-  public goodOffscreenPromise: Promise<void>;
-
   constructor(canvas: ElementType) {
     this.canvasElement = canvas;
     const OffscreenCanvas = canvas.ownerDocument.defaultView.OffscreenCanvas;
 
+    // If the browser does not support OffscreenCanvas, use polyfill
     if (typeof OffscreenCanvas === 'undefined') {
       this.implementation = new OffscreenCanvasPolyfill<ElementType>(canvas).getContext('2d');
       this.upgraded = true;
-    } else {
+    }
+
+    // If the browser supports OffscreenCanvas:
+    // 1. Use un-upgraded (not auto-synchronized) version for all calls performed immediately after
+    // creation. All calls will be queued to call on upgraded version after.
+    // 2. Retrieve an auto-synchronized OffscreenCanvas from the main-thread and call all methods
+    // in the queue.
+    else {
       this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
-      this.goodOffscreenPromise = this.getOffscreenCanvasAsync(this.canvasElement).then(instance => {
-        this.implementation = instance.getContext('2d');
-        this.upgraded = true;
-        this.flushQueue();
-      });
+      this.getOffscreenCanvasAsync(this.canvasElement);
     }
   }
 
-  private getOffscreenCanvasAsync(canvas: ElementType): Promise<{ getContext(c: '2d'): CanvasRenderingContext2D }> {
-    return new Promise((resolve, reject) => {
+  /**
+   * Retrieves auto-synchronized version of an OffscreenCanvas from the main-thread.
+   * @param canvas HTMLCanvasElement associated with this context.
+   */
+  private getOffscreenCanvasAsync(canvas: ElementType): Promise<void> {
+    const deferred: { resolve?: (value?: {} | PromiseLike<{}>) => void; upgradePromise?: Promise<void> } = {};
+    const isTestMode = typeof addEventListener !== 'function';
+
+    const upgradePromise = new Promise(resolve => {
       const messageHandler = ({ data }: { data: OffscreenCanvasToWorker }) => {
         if (
           data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE &&
@@ -76,15 +88,28 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
         }
       };
 
-      // TODO: This should only happen in test environemnet. Otherwise, we should throw.
       if (typeof addEventListener !== 'function') {
-        const deferred = { resolve, reject };
-        deferredUpgrades.set(canvas, deferred);
+        if (isTestMode) {
+          deferred.resolve = resolve;
+        } else {
+          throw new Error('addEventListener not a function!');
+        }
       } else {
         addEventListener('message', messageHandler);
         transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
       }
+    }).then((instance: { getContext(c: '2d'): CanvasRenderingContext2D }) => {
+      this.implementation = instance.getContext('2d');
+      this.upgraded = true;
+      this.flushQueue();
     });
+
+    if (isTestMode) {
+      deferred.upgradePromise = upgradePromise;
+      deferredUpgrades.set(canvas, deferred);
+    }
+
+    return upgradePromise;
   }
 
   private flushQueue() {

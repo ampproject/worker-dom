@@ -50,6 +50,7 @@ import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
 import { MutationObserver } from './MutationObserver';
+import { OffscreenCanvas } from './canvas/CanvasTypes';
 
 const WHITELISTED_GLOBALS = [
   'Array',
@@ -102,6 +103,7 @@ const WHITELISTED_GLOBALS = [
   'Uint8ClampedArray',
   'WeakMap',
   'WeakSet',
+  'WebAssembly',
   'XMLHttpRequest',
   'atob',
   'btoa',
@@ -133,6 +135,7 @@ const WHITELISTED_GLOBALS = [
 
 const globalScope: GlobalScope = {
   navigator: (self as WorkerGlobalScope).navigator,
+  WebAssembly: (self as any).WebAssembly,
   localStorage: {},
   location: self.location,
   url: '/',
@@ -171,6 +174,7 @@ const globalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
+  OffscreenCanvas: (self as any).OffscreenCanvas as OffscreenCanvas,
 };
 
 // WorkerDOM.Document.defaultView ends up being the window object.

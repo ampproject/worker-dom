@@ -21,6 +21,7 @@ import { Strings } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { InboundWorkerDOMConfiguration, normalizeConfiguration } from './configuration';
 import { WorkerContext } from './worker';
+import { ObjectContext } from './object-context';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
@@ -52,12 +53,13 @@ export function install(
   config: InboundWorkerDOMConfiguration,
 ): Promise<Worker | null> {
   const strings = new Strings();
+  const objectContext = new ObjectContext();
   const nodeContext = new NodeContext(strings, baseElement);
   const normalizedConfig = normalizeConfiguration(config);
   return fetchPromise.then(([domScriptContent, authorScriptContent]) => {
     if (domScriptContent && authorScriptContent && config.authorURL) {
       const workerContext = new WorkerContext(baseElement, nodeContext, domScriptContent, authorScriptContent, normalizedConfig);
-      const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, normalizedConfig);
+      const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, normalizedConfig, objectContext);
       workerContext.worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
 
