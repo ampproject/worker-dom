@@ -93,6 +93,7 @@ const GlobalScope: GlobalScope = {
     hardwareConcurrency: 0,
     storage: new StorageManager(),
   },
+  WebAssembly: {},
   localStorage: {},
   location: {},
   url: '/',

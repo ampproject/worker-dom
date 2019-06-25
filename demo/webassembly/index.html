@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>WebAssembly</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/demo.css" rel="stylesheet">
+  <script src="/dist/main.mjs" type="module"></script>
+  <script src="/dist/main.js" nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="/dist/main.js" defer></script> -->  
+</head>
+<body>
+  <div src="/webassembly/webassembly.js" id="upgrade-me">
+    <div class="root">
+      <h1>WebAssembly</h1>
+      <br />
+      <input type="number" value="1"></input> + <input type="number" value="1"></input>
+      <button>Add</button>
+      <div id="result"></div>
+    </div>
+  </div>
+  <script type="module">
+    import {upgradeElement} from '/dist/main.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
+  </script>
+  <script nomodule async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
+    }, false);
+  </script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), './dist/worker/worker.js');
+    }, false);
+  </script> -->
+</body>
+</html>
