@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Vue.js • TodoMVC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="todomvc.css">
+  <style>[v-cloak] { display: none; }</style>
+  <script src="/dist/main.mjs" type="module"></script>
+  <script src="/dist/main.js" nomodule defer></script>
+</head>
+<body>
+  <div src="app.js" id="upgrade-me">
+    <div class="todoapp">
+	  <header class="header">
+		<h1>todos</h1>
+		<input class="new-todo"
+		  autofocus autocomplete="off"
+		  placeholder="What needs to be done?"
+		  v-model="newTodo"
+		  @keyup.enter="addTodo">
+	  </header>
+	  <section class="main" v-show="todos.length" v-cloak>
+		<input id="toggle-all" class="toggle-all" type="checkbox" v-model="allDone">
+		<label for="toggle-all"></label>
+		<ul class="todo-list">
+		  <li v-for="(todo, i) in filteredTodos"
+			class="todo"
+			:key="i"
+			:class="{ completed: todo.completed, editing: todo == editedTodo }">
+			<div class="view">
+			  <input class="toggle" type="checkbox" :checked="todo.completed" @change="todo.completed = !todo.completed">
+			  <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
+			  <button class="destroy" @click="removeTodo(todo)"></button>
+			</div>
+			<input class="edit" type="text"
+			  v-model="todo.title"
+			  @blur="doneEdit(todo)"
+			  @keyup.enter="doneEdit(todo)"
+			  @keyup.esc="cancelEdit(todo)">
+		  </li>
+		</ul>
+	  </section>
+	  <footer class="footer" v-show="todos.length" v-cloak>
+		<span class="todo-count">
+		  <strong>{{ remaining }}</strong> {{ remaining | pluralize }} left
+		</span>
+		<ul class="filters">
+		  <li><a href="#" @click="visibility = 'all'" :class="{ selected: visibility == 'all' }">All</a></li>
+		  <li><a href="#" @click="visibility = 'active'" :class="{ selected: visibility == 'active' }">Active</a></li>
+		  <li><a href="#" @click="visibility = 'completed'" :class="{ selected: visibility == 'completed' }">Completed</a></li>
+		</ul>
+		<button class="clear-completed" @click="removeCompleted" v-show="todos.length > remaining">
+		  Clear completed
+		</button>
+	  </footer>
+	</div>
+	<footer class="info">
+	  <p>Double-click to edit a todo</p>
+	  <p>Written by <a href="http://evanyou.me">Evan You</a></p>
+	  <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+	</footer>
+  </div>
+  <script type="module">
+    import {upgradeElement} from '/dist/main.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
+  </script>
+  <script nomodule async="false" defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
+    }, false);
+  </script>
+</body>
+</html>

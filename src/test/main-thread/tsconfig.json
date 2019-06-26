@@ -1,0 +1,24 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "outDir": "../../../output",
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "target": "esnext",
+    "allowJs": false,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "incremental": true
+  },
+  "include": [
+    "**/*.ts",
+    "../../main-thread/*.d.ts"
+  ]
+}

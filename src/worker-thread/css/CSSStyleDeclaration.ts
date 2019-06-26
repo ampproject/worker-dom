@@ -20,6 +20,9 @@ import { Element } from '../dom/Element';
 import { NamespaceURI } from '../dom/Node';
 import { toLower } from '../../utils';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { store as storeString } from '../strings';
+import { Document } from '../dom/Document';
 
 interface StyleProperties {
   [key: string]: string | null;
@@ -93,10 +96,6 @@ export class CSSStyleDeclaration implements StyleDeclaration {
   constructor(target: Element) {
     this[TransferrableKeys.storeAttribute] = target[TransferrableKeys.storeAttribute].bind(target);
     this[TransferrableKeys.target] = target;
-
-    if (target && target[TransferrableKeys.propertyBackedAttributes]) {
-      target[TransferrableKeys.propertyBackedAttributes].style = [(): string | null => this.cssText, (value: string) => (this.cssText = value)];
-    }
   }
 
   /**
@@ -155,9 +154,13 @@ export class CSSStyleDeclaration implements StyleDeclaration {
    * @param value css text string to parse and store
    */
   set cssText(value: string) {
+    // value should have an "unknown" type but get/set can't have different types.
+    // https://github.com/Microsoft/TypeScript/issues/2521
+    const stringValue = typeof value === 'string' ? value : '';
+
     this[TransferrableKeys.properties] = {};
 
-    const values = value.split(/[:;]/);
+    const values = stringValue.split(/[:;]/);
     const length = values.length;
     for (let index = 0; index + 1 < length; index += 2) {
       this[TransferrableKeys.properties][toLower(values[index].trim())] = values[index + 1].trim();
@@ -169,15 +172,26 @@ export class CSSStyleDeclaration implements StyleDeclaration {
    * Report CSSStyleDeclaration mutations to MutationObserver.
    * @param value value after mutation
    * @private
+   * // TODO(KB): Write a test to ensure mutations are fired for CSSStyleDeclaration changes.
    */
   private mutated(value: string): void {
     const oldValue = this[TransferrableKeys.storeAttribute](this[TransferrableKeys.target].namespaceURI, 'style', value);
-    mutate({
-      type: MutationRecordType.ATTRIBUTES,
-      target: this[TransferrableKeys.target],
-      attributeName: 'style',
-      value,
-      oldValue,
-    });
+    mutate(
+      this[TransferrableKeys.target].ownerDocument as Document,
+      {
+        type: MutationRecordType.ATTRIBUTES,
+        target: this[TransferrableKeys.target],
+        attributeName: 'style',
+        value,
+        oldValue,
+      },
+      [
+        TransferrableMutationType.ATTRIBUTES,
+        this[TransferrableKeys.target][TransferrableKeys.index],
+        storeString('style'),
+        0, // Attribute Namespace is the default value.
+        value !== null ? storeString(value) + 1 : 0,
+      ],
+    );
   }
 }

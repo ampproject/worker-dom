@@ -10,18 +10,18 @@
   },
   "dependencies": {
     "obj-str": "1.0.3",
-    "react": "16.8.3",
-    "react-dom": "16.8.3"
+    "react": "16.8.6",
+    "react-dom": "16.8.6"
   },
   "devDependencies": {
-    "@babel/core": "7.3.4",
-    "@babel/preset-env": "7.3.4",
+    "@babel/core": "7.4.5",
+    "@babel/preset-env": "7.4.5",
     "@babel/plugin-transform-react-jsx": "7.3.0",
-    "babel-loader": "8.0.5",
-    "css-loader": "2.1.0",
-    "mini-css-extract-plugin": "0.5.0",
+    "babel-loader": "8.0.6",
+    "css-loader": "3.0.0",
+    "mini-css-extract-plugin": "0.7.0",
     "style-loader": "0.23.1",
-    "webpack": "4.29.6",
-    "webpack-cli": "3.2.3"
+    "webpack": "4.35.0",
+    "webpack-cli": "3.3.5"
   }
 }

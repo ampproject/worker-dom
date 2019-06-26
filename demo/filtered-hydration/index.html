@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Empty Initial Element</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/demo.css" rel="stylesheet" />
+  <style>
+    img {
+      width: 100%;
+    }
+  </style>
+  <script src="/dist/amp/main.mjs" type="module"></script>
+</head>
+<body>
+  <div src="/filtered-hydration/author.js" id="upgrade-me">
+    <amp-img src="/filtered-hydration/dog.jpg" class='amp-img'>
+      <img src="/filtered-hydration/dog.jpg" />
+    </amp-img>
+  </div>
+  <script type="module">
+    import {upgradeElement} from '/dist/amp/main.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/amp/worker/worker.mjs');
+  </script>
+</body>
+</html>

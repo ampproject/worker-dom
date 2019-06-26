@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import { mutate } from '../MutationObserver';
 import { HTMLElement } from './HTMLElement';
 import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
-import { MutationRecordType } from '../MutationRecord';
 import { reflectProperties } from './enhanceElement';
 import { registerSubclass } from './Element';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { store as storeString } from '../strings';
+import { Document } from './Document';
+import { transfer } from '../MutationTransfer';
+import { NumericBoolean } from '../../utils';
 
 export class HTMLInputElement extends HTMLElement {
   // Per spec, some attributes like 'value' and 'checked' change behavior based on dirty flags.
@@ -45,12 +48,13 @@ export class HTMLInputElement extends HTMLElement {
     // Don't early-out if value doesn't appear to have changed.
     // The worker may have a stale value since 'input' events aren't being forwarded.
     this[TransferrableKeys.value] = String(value);
-    mutate({
-      type: MutationRecordType.PROPERTIES,
-      target: this,
-      propertyName: 'value',
-      value,
-    });
+    transfer(this.ownerDocument as Document, [
+      TransferrableMutationType.PROPERTIES,
+      this[TransferrableKeys.index],
+      storeString('value'),
+      NumericBoolean.FALSE,
+      storeString(value),
+    ]);
   }
 
   get valueAsDate(): Date | null {
@@ -93,13 +97,13 @@ export class HTMLInputElement extends HTMLElement {
       return;
     }
     this[TransferrableKeys.checked] = !!value;
-    mutate({
-      type: MutationRecordType.PROPERTIES,
-      target: this,
-      propertyName: 'checked',
-      // TODO(choumx, #122): Proper support for non-string property mutations.
-      value: String(value),
-    });
+    transfer(this.ownerDocument as Document, [
+      TransferrableMutationType.PROPERTIES,
+      this[TransferrableKeys.index],
+      storeString('checked'),
+      NumericBoolean.TRUE,
+      value === true ? NumericBoolean.TRUE : NumericBoolean.FALSE,
+    ]);
   }
 
   /**
@@ -167,7 +171,7 @@ reflectProperties(
     { autocomplete: [''] },
     { autofocus: [false] },
     { defaultChecked: [false, /* attr */ 'checked'] },
-    { defaultValue: ['', 'value'] },
+    { defaultValue: ['', /* attr */ 'value'] },
     { dirName: [''] },
     { disabled: [false] },
     { formAction: [''] },

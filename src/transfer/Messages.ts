@@ -15,11 +15,11 @@
  */
 
 import { TransferrableEvent } from './TransferrableEvent';
-import { TransferrableMutationRecord } from './TransferrableRecord';
 import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
-import { TransferrableNode, HydrateableNode, TransferredNode } from './TransferrableNodes';
-import { TransferrableBoundingClientRect } from './TransferrableCommands';
+import { HydrateableNode, TransferredNode } from './TransferrableNodes';
+import { TransferrableBoundingClientRect } from './TransferrableBoundClientRect';
+import { Phase } from './Phase';
 
 export const enum MessageType {
   // INIT = 0,
@@ -27,17 +27,22 @@ export const enum MessageType {
   HYDRATE = 2,
   MUTATE = 3,
   SYNC = 4,
-  GET_BOUNDING_CLIENT_RECT = 5,
-  // NAVIGATION_PUSH_STATE = 6,
-  // NAVIGATION_REPLACE_STATE = 7,
-  // NAVIGATION_POP_STATE = 8,
+  RESIZE = 5,
+  GET_BOUNDING_CLIENT_RECT = 6,
+  LONG_TASK_START = 7,
+  LONG_TASK_END = 8,
+  OFFSCREEN_CANVAS_INSTANCE = 9,
+  // NAVIGATION_PUSH_STATE = 8,
+  // NAVIGATION_REPLACE_STATE = 9,
+  // NAVIGATION_POP_STATE = 10,
 }
 
 export interface MutationFromWorker {
   readonly [TransferrableKeys.type]: MessageType;
+  readonly [TransferrableKeys.phase]: Phase;
   readonly [TransferrableKeys.strings]: Array<string>;
-  readonly [TransferrableKeys.nodes]: Array<TransferrableNode>;
-  readonly [TransferrableKeys.mutations]: Array<TransferrableMutationRecord>;
+  readonly [TransferrableKeys.nodes]: ArrayBuffer;
+  readonly [TransferrableKeys.mutations]: ArrayBuffer;
 }
 export type MessageFromWorker = {
   data: MutationFromWorker;
@@ -61,4 +66,13 @@ export interface BoundingClientRectToWorker {
   [TransferrableKeys.target]: TransferredNode;
   [TransferrableKeys.data]: TransferrableBoundingClientRect;
 }
-export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker;
+export interface OffscreenCanvasToWorker {
+  [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE;
+  [TransferrableKeys.target]: TransferredNode;
+  [TransferrableKeys.data]: Object; // This will be an OffscreenCanvas
+}
+export interface ResizeSyncToWorker {
+  [TransferrableKeys.type]: MessageType.RESIZE;
+  [TransferrableKeys.sync]: [number, number];
+}
+export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker | ResizeSyncToWorker | OffscreenCanvasToWorker;

@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-declare interface DOMPurify {
-  addHook(entryPoint: string, hookFunction?: Function): void;
-  isValidAttribute(tag: string, attr: string, value: string): boolean;
-  removeAllHooks(): void;
-  sanitize(dirty: string | Node, cfg: Object): string | Node;
-}
-declare module 'dompurify' {
-  var purify: DOMPurify;
-  export default purify;
-}
-
 declare interface Sanitizer {
   sanitize(node: Node): boolean;
-  validAttribute(tag: string, attr: string, value: string): boolean;
-  validProperty(tag: string, prop: string, value: string): boolean;
+  mutateAttribute(node: Node, attr: string, value: string | null): boolean;
+  mutateProperty(node: Node, prop: string, value: string): boolean;
+}
+
+// OffscreenCanvas not yet available in TypeScript - 'transferControlToOffscreen' would not be
+// detected as a Canvas method unless this is here
+declare interface HTMLCanvasElement {
+  transferControlToOffscreen(): Transferable;
 }
 
 interface Node {
@@ -36,3 +31,5 @@ interface Node {
 }
 
 type RenderableElement = (HTMLElement | SVGElement | Text | Comment) & { [index: string]: any };
+
+declare const DEBUG_ENABLED: boolean;

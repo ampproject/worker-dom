@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+import { HTMLElement } from './dom/HTMLElement';
+import { SVGElement } from './dom/SVGElement';
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
+import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { HTMLDataElement } from './dom/HTMLDataElement';
 import { HTMLEmbedElement } from './dom/HTMLEmbedElement';
 import { HTMLFieldSetElement } from './dom/HTMLFieldSetElement';
@@ -42,25 +45,27 @@ import { HTMLTableElement } from './dom/HTMLTableElement';
 import { HTMLTableRowElement } from './dom/HTMLTableRowElement';
 import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
-import { createDocument } from './dom/Document';
-import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
-import { appendKeys } from './css/CSSStyleDeclaration';
-import { consumeInitialDOM } from './initialize';
+import { Document } from './dom/Document';
+import { GlobalScope } from './WorkerDOMGlobalScope';
+import { initialize } from './initialize';
+import { MutationObserver } from './MutationObserver';
+import { OffscreenCanvas } from './canvas/CanvasTypes';
 
-declare var __ALLOW_POST_MESSAGE__: boolean;
-
-const doc = createDocument(__ALLOW_POST_MESSAGE__ ? (self as DedicatedWorkerGlobalScope).postMessage : undefined);
-export const workerDOM: WorkerDOMGlobalScope = {
-  document: doc,
-  addEventListener: doc.addEventListener.bind(doc),
-  removeEventListener: doc.removeEventListener.bind(doc),
+const globalScope: GlobalScope = {
+  navigator: (self as WorkerGlobalScope).navigator,
+  WebAssembly: (self as any).WebAssembly,
   localStorage: {},
   location: {},
   url: '/',
-  appendKeys,
-  consumeInitialDOM,
+  innerWidth: 0,
+  innerHeight: 0,
+  initialize,
+  MutationObserver,
+  HTMLElement,
+  SVGElement,
   HTMLAnchorElement,
   HTMLButtonElement,
+  HTMLCanvasElement,
   HTMLDataElement,
   HTMLEmbedElement,
   HTMLFieldSetElement,
@@ -87,7 +92,16 @@ export const workerDOM: WorkerDOMGlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
+  OffscreenCanvas: (self as any).OffscreenCanvas as OffscreenCanvas,
 };
 
-// workerDOM ends up being the window object.
-// React now requires the classes to exist off the window object for instanceof checks.
+// WorkerDOM.Document.defaultView ends up being the window object.
+// React requires the classes to exist off the window object for instanceof checks.
+export const workerDOM = (function(postMessage) {
+  const document = new Document(globalScope);
+  document.postMessage = postMessage;
+  document.isConnected = true;
+  document.appendChild((document.body = document.createElement('body')));
+
+  return document.defaultView;
+})(postMessage.bind(self) || (() => void 0));

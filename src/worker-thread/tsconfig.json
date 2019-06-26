@@ -14,10 +14,12 @@
     "strictNullChecks": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "alwaysStrict": true
+    "alwaysStrict": true,
+    "incremental": true
   },
   "include": [
     "*.ts",
-    "**/*.ts"
+    "**/*.ts",
+    "../../third_party/html-parser/*.ts",
   ]
 }

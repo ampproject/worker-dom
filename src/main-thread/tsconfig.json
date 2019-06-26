@@ -3,7 +3,7 @@
   "compilerOptions": {
     "lib": [
       "es2017",
-      "dom",
+      "dom"
     ],
     "outDir": "../../output",
     "sourceMap": true,
@@ -15,8 +15,9 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
+    "incremental": true
   },
   "include": [
-    "*.ts"
+    "**/*.ts"
   ]
 }

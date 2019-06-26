@@ -14,9 +14,13 @@
     "strictNullChecks": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "alwaysStrict": true
+    "alwaysStrict": true,
+    "incremental": true
   },
   "include": [
     "**/*.ts"
+  ],
+  "exclude": [
+    "main-thread/**/*.ts"
   ]
 }

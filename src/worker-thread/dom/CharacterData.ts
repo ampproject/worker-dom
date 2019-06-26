@@ -17,16 +17,21 @@
 import { Node, NodeName } from './Node';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
+import { store as storeString } from '../strings';
+import { Document } from './Document';
 import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 export abstract class CharacterData extends Node {
   private [TransferrableKeys.data]: string;
 
-  constructor(data: string, nodeType: NodeType, nodeName: NodeName, ownerDocument: Node) {
-    super(nodeType, nodeName, ownerDocument);
+  constructor(data: string, nodeType: NodeType, nodeName: NodeName, ownerDocument: Node, overrideIndex?: number) {
+    super(nodeType, nodeName, ownerDocument, overrideIndex);
     this[TransferrableKeys.data] = data;
+
+    this[TransferrableKeys.creationFormat] = [this[TransferrableKeys.index], nodeType, storeString(nodeName), storeString(data), 0];
   }
 
   // Unimplemented Methods
@@ -52,12 +57,16 @@ export abstract class CharacterData extends Node {
     const oldValue = this.data;
     this[TransferrableKeys.data] = value;
 
-    mutate({
-      target: this,
-      type: MutationRecordType.CHARACTER_DATA,
-      value,
-      oldValue,
-    });
+    mutate(
+      this.ownerDocument as Document,
+      {
+        target: this,
+        type: MutationRecordType.CHARACTER_DATA,
+        value,
+        oldValue,
+      },
+      [TransferrableMutationType.CHARACTER_DATA, this[TransferrableKeys.index], storeString(value)],
+    );
   }
 
   /**

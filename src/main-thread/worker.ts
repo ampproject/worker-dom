@@ -15,31 +15,32 @@
  */
 
 import { MessageToWorker } from '../transfer/Messages';
-import { WorkerCallbacks } from './callbacks';
+import { WorkerDOMConfiguration } from './configuration';
 import { createHydrateableRootNode } from './serialize';
+import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
+import { NodeContext } from './nodes';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 export class WorkerContext {
-  private worker: Worker;
-
-  /**
-   * Stored callbacks for the most recently created worker.
-   * Note: This can be easily changed to a lookup table to support multiple workers.
-   */
-  private callbacks: WorkerCallbacks | undefined;
+  private [TransferrableKeys.worker]: Worker;
+  private nodeContext: NodeContext;
+  private config: WorkerDOMConfiguration;
 
   /**
    * @param baseElement
+   * @param nodeContext
    * @param workerDOMScript
    * @param authorScript
-   * @param authorScriptURL
+   * @param config
    */
-  constructor(baseElement: HTMLElement, workerDOMScript: string, authorScript: string, authorScriptURL: string, callbacks?: WorkerCallbacks) {
-    this.callbacks = callbacks;
+  constructor(baseElement: HTMLElement, nodeContext: NodeContext, workerDOMScript: string, authorScript: string, config: WorkerDOMConfiguration) {
+    this.nodeContext = nodeContext;
+    this.config = config;
 
     // TODO(KB): Minify this output during build process.
     const keys: Array<string> = [];
-    const { skeleton, strings } = createHydrateableRootNode(baseElement);
-    for (const key in document.body.style) {
+    const { skeleton, strings } = createHydrateableRootNode(baseElement, config);
+    for (const key in baseElement.style) {
       keys.push(key);
     }
     const code = `
@@ -55,6 +56,7 @@ export class WorkerContext {
         var Node = defaultView.Node;
         var Text = defaultView.Text;
         var Element = defaultView.Element;
+        var HTMLElement = defaultView.HTMLElement;
         var SVGElement = defaultView.SVGElement;
         var Document = defaultView.Document;
         var Event = defaultView.Event;
@@ -66,29 +68,39 @@ export class WorkerContext {
         function removeEventListener(type, handler) {
           return document.removeEventListener(type, handler);
         }
-        this.consumeInitialDOM(document, ${JSON.stringify(strings)}, ${JSON.stringify(skeleton)});
-        this.appendKeys(${JSON.stringify(keys)});
-        document.observe();
+        window.innerWidth = ${window.innerWidth};
+        window.innerHeight = ${window.innerHeight};
+        this.initialize(document, ${JSON.stringify(strings)}, ${JSON.stringify(skeleton)}, ${JSON.stringify(keys)});
+        document[${TransferrableKeys.observe}](window);
         ${authorScript}
       }).call(WorkerThread.workerDOM);
-  //# sourceURL=${encodeURI(authorScriptURL)}`;
-    this.worker = new Worker(URL.createObjectURL(new Blob([code])));
-    if (callbacks && callbacks.onCreateWorker) {
-      callbacks.onCreateWorker(baseElement);
+  //# sourceURL=${encodeURI(config.authorURL)}`;
+    this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
+    if (DEBUG_ENABLED) {
+      console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config));
+    }
+    if (config.onCreateWorker) {
+      config.onCreateWorker(baseElement, strings, skeleton, keys);
     }
   }
 
-  getWorker(): Worker {
-    return this.worker;
+  /**
+   * Returns the private worker.
+   */
+  get worker(): Worker {
+    return this[TransferrableKeys.worker];
   }
 
   /**
    * @param message
    */
-  messageToWorker(message: MessageToWorker) {
-    if (this.callbacks && this.callbacks.onSendMessage) {
-      this.callbacks.onSendMessage(message);
+  messageToWorker(message: MessageToWorker, transferables?: Transferable[]) {
+    if (DEBUG_ENABLED) {
+      console.info('debug', 'messageToWorker', readableMessageToWorker(this.nodeContext, message));
     }
-    this.worker.postMessage(message);
+    if (this.config.onSendMessage) {
+      this.config.onSendMessage(message);
+    }
+    this.worker.postMessage(message, transferables);
   }
 }

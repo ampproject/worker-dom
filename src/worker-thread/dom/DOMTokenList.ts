@@ -19,6 +19,28 @@ import { NamespaceURI } from './Node';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { store as storeString } from '../strings';
+import { Document } from './Document';
+
+/**
+ * Synchronizes the string getter/setter with the actual DOMTokenList instance.
+ * @param defineOn Element or class extension to define getter/setter pair for token list access.
+ * @param accessorKey Key used to access DOMTokenList directly from specific element.
+ * @param propertyName Key used to access DOMTokenList as string getter/setter.
+ */
+export function synchronizedAccessor(defineOn: typeof Element, accessorKey: string, propertyName: string) {
+  Object.defineProperty(defineOn.prototype, propertyName, {
+    enumerable: true,
+    configurable: true,
+    get(): string {
+      return (this as Element)[accessorKey].value;
+    },
+    set(value: string) {
+      (this as Element)[accessorKey].value = value;
+    },
+  });
+}
 
 export class DOMTokenList {
   private [TransferrableKeys.tokens]: Array<string> = [];
@@ -30,31 +52,13 @@ export class DOMTokenList {
    * The DOMTokenList interface represents a set of space-separated tokens.
    * It is indexed beginning with 0 as with JavaScript Array objects and is case-sensitive.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList
-   * @param defineOn Element or class extension to define getter/setter pair for token list access.
    * @param target Specific Element instance to modify when value is changed.
    * @param attributeName Name of the attribute used by Element to access DOMTokenList.
-   * @param accessorKey Key used to access DOMTokenList directly from specific element.
-   * @param propertyName Key used to access DOMTokenList as string getter/setter.
    */
-  constructor(defineOn: typeof Element, target: Element, attributeName: string, accessorKey: string | null, propertyName: string | null) {
+  constructor(target: Element, attributeName: string) {
     this[TransferrableKeys.target] = target;
     this[TransferrableKeys.attributeName] = attributeName;
-
     this[TransferrableKeys.storeAttribute] = target[TransferrableKeys.storeAttribute].bind(target);
-    target[TransferrableKeys.propertyBackedAttributes][attributeName] = [(): string | null => this.value, (value: string) => (this.value = value)];
-
-    if (accessorKey && propertyName) {
-      Object.defineProperty(defineOn.prototype, propertyName, {
-        enumerable: true,
-        configurable: true,
-        get(): string {
-          return (this as Element)[accessorKey].value;
-        },
-        set(value: string) {
-          (this as Element)[accessorKey].value = value;
-        },
-      });
-    }
   }
 
   /**
@@ -83,7 +87,7 @@ export class DOMTokenList {
 
     // Replace current tokens with new tokens.
     this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...(newValue !== '' ? newValue.split(/\s+/) : ''));
-    this.mutated(oldValue, newValue);
+    this[TransferrableKeys.mutated](oldValue, newValue);
   }
 
   /**
@@ -114,7 +118,7 @@ export class DOMTokenList {
   public add(...tokens: string[]): void {
     const oldValue = this.value;
     this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...new Set(this[TransferrableKeys.tokens].concat(tokens)));
-    this.mutated(oldValue, this.value);
+    this[TransferrableKeys.mutated](oldValue, this.value);
   }
 
   /**
@@ -131,7 +135,7 @@ export class DOMTokenList {
       this[TransferrableKeys.tokens].length,
       ...new Set(this[TransferrableKeys.tokens].filter(token => !tokens.includes(token))),
     );
-    this.mutated(oldValue, this.value);
+    this[TransferrableKeys.mutated](oldValue, this.value);
   }
 
   /**
@@ -153,7 +157,7 @@ export class DOMTokenList {
       }
     }
     this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...set);
-    this.mutated(oldValue, this.value);
+    this[TransferrableKeys.mutated](oldValue, this.value);
   }
 
   /**
@@ -186,14 +190,24 @@ export class DOMTokenList {
    * @param value value after mutation
    * @private
    */
-  private mutated(oldValue: string, value: string): void {
+  private [TransferrableKeys.mutated](oldValue: string, value: string): void {
     this[TransferrableKeys.storeAttribute](this[TransferrableKeys.target].namespaceURI, this[TransferrableKeys.attributeName], value);
-    mutate({
-      type: MutationRecordType.ATTRIBUTES,
-      target: this[TransferrableKeys.target],
-      attributeName: this[TransferrableKeys.attributeName],
-      value,
-      oldValue,
-    });
+    mutate(
+      this[TransferrableKeys.target].ownerDocument as Document,
+      {
+        type: MutationRecordType.ATTRIBUTES,
+        target: this[TransferrableKeys.target],
+        attributeName: this[TransferrableKeys.attributeName],
+        value,
+        oldValue,
+      },
+      [
+        TransferrableMutationType.ATTRIBUTES,
+        this[TransferrableKeys.target][TransferrableKeys.index],
+        storeString(this[TransferrableKeys.attributeName]),
+        0, // Attribute Namespace is the default value.
+        value !== null ? storeString(value) + 1 : 0,
+      ],
+    );
   }
 }

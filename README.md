@@ -22,8 +22,8 @@ npm install @ampproject/worker-dom
 WorkerDOM comes in two flavours, a global variant and a module variant. It is possible to include the WorkerDOM main thread code within your document directly or via a bundler. Here's how you might do so directly:
 
 ```html
-<script src="path/to/workerdom/dist/index.mjs" type="module"></script>
-<script src="path/to/workerdom/dist/index.js" nomodule defer></script>
+<script src="path/to/workerdom/dist/main.mjs" type="module"></script>
+<script src="path/to/workerdom/dist/main.js" nomodule defer></script>
 ```
 
 WorkerDOM allows us to upgrade a specific section of the document to be driven by a worker. For example, imagine a `div` node in the page like so:
@@ -36,8 +36,8 @@ To upgrade this node using the module version of the code, we can directly impor
 
 ```html
 <script type="module">
-  import {upgradeElement} from './dist/index.mjs';
-  upgradeElement(document.getElementById('upgrade-me'), './dist/worker.mjs');
+  import {upgradeElement} from './dist/main.mjs';
+  upgradeElement(document.getElementById('upgrade-me'), './dist/worker/worker.mjs');
 </script>
 ```
 
@@ -46,21 +46,31 @@ The nomodule format exposes the global `MainThread`, and could upgrade the `div`
 ```html
 <script nomodule async=false defer>
   document.addEventListener('DOMContentLoaded', function() {
-    MainThread.upgradeElement(document.getElementById('upgrade-me'), './dist/worker.js');
+    MainThread.upgradeElement(document.getElementById('upgrade-me'), './dist/worker/worker.js');
   }, false);
 </script>
 ``` 
 
-### "Safe" mode (in progress, alpha quality)
+### AMP Distribution for `amp-script`
 
-WorkerDOM has a special output variant that includes safety features e.g. HTML sanitization and a web worker sandbox. This variant is distributed under the ".safe" suffix for main and worker thread binaries:
+WorkerDOM has a special output variant that supplies additional hooks for includes safety features e.g. HTML sanitization and a web worker sandbox. This variant is distributed under the amp folder for main and worker thread binaries:
 
 ```
-index.safe.mjs
-index.safe.js
+amp/main.mjs
+amp/worker/worker.mjs
+```
 
-worker.safe.mjs
-worker.safe.js
+This output assumes the consumer will compile this distributed JavaScript to ensure it works with older `user-agent`s.
+
+### Debug Distribution
+
+WorkerDOM also has an output variant that includes additional debugging messages. This variant is distributed in the debug folder.
+
+```
+debug/main.mjs
+debug/main.js
+debug/worker/worker.mjs
+debug/worker/worker.js
 ```
 
 ## Running Demos Locally
@@ -75,7 +85,7 @@ This script will build the current version of WorkerDOM and start up a local [we
 
 ## Which JavaScript APIs can I use?
 
-Currently, most DOM elements and their properties are supported. DOM query APIs like `querySelector` have partial support. Browser APIs like History are not implemented yet. Please see the API support matrix [here](https://github.com/ampproject/worker-dom/web_compat.md).
+Currently, most DOM elements and their properties are supported. DOM query APIs like `querySelector` have partial support. Browser APIs like History are not implemented yet. Please see the API support matrix [here](web_compat_table.md).
 
 ## Local Development
 

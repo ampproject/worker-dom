@@ -21,9 +21,10 @@ import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
 import { matchChildrenElements, matchChildElement, tagNameConditionPredicate } from './matchElements';
 import { HTMLOptionElement } from './HTMLOptionElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { Node } from './Node';
 
 const isOptionPredicate = tagNameConditionPredicate(['OPTION']);
-const isSelectedOptionPredicate = (element: Element): boolean => element.tagName === 'OPTION' && (element as HTMLOptionElement).selected;
+const isSelectedOptionPredicate = (element: Element): boolean => isOptionPredicate(element) && (element as HTMLOptionElement).selected === true;
 
 const enum SizeDefaults {
   SINGLE = 1,
@@ -40,11 +41,43 @@ export class HTMLSelectElement extends HTMLElement {
   private [TransferrableKeys.size]: number = SizeDefaults.UNMODIFIED;
 
   /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/length
+   * Extend functionality after child insertion to make sure the correct option is selected.
+   * @param child
+   */
+  protected [TransferrableKeys.insertedNode](child: Node): void {
+    super[TransferrableKeys.insertedNode](child);
+
+    // When this singular value select is appending a child, set the value property for two cases.
+    // 1. The inserted child is already selected.
+    // 2. The current value of the select is the default ('').
+    if ((!this.multiple && (isOptionPredicate(child as Element) && child.selected)) || this.value === '') {
+      this.value = child.value;
+    }
+  }
+
+  /**
+   * Extend functionality after child insertion to make sure the correct option is selected.
+   * @param child
+   */
+  protected [TransferrableKeys.removedNode](child: Node): void {
+    super[TransferrableKeys.removedNode](child);
+
+    // When this singular value select is removing a selected child
+    // ... set the value property to the first valid option.
+    if (!this.multiple && child.selected) {
+      const options = this.options;
+      if (options.length > 0) {
+        this.value = options[0].value;
+      }
+    }
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLSelectElement/length
    * @return number of controls in the form
    */
   get length(): number {
-    return matchChildrenElements(this, isOptionPredicate).length;
+    return this.options.length;
   }
 
   /**
@@ -118,9 +151,18 @@ export class HTMLSelectElement extends HTMLElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLSelectElement
    * @return the value of the first selected option
    */
-  get value(): string {
+  get value(): any {
     const firstSelectedChild = matchChildElement(this, isSelectedOptionPredicate);
     return firstSelectedChild ? (firstSelectedChild as HTMLOptionElement).value : '';
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLSelectElement
+   * @set value
+   */
+  set value(value: any) {
+    const stringValue = String(value);
+    this.children.forEach((element: Element) => isOptionPredicate(element) && (element.selected = element.value === stringValue));
   }
 }
 registerSubclass('select', HTMLSelectElement);

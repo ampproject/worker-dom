@@ -16,6 +16,7 @@
 
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
+import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { HTMLDataElement } from './dom/HTMLDataElement';
 import { HTMLEmbedElement } from './dom/HTMLEmbedElement';
 import { HTMLFieldSetElement } from './dom/HTMLFieldSetElement';
@@ -45,18 +46,26 @@ import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { Document } from './dom/Document';
 import { EventHandler } from './Event';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
+import { MutationObserver } from './MutationObserver';
+import { SVGElement } from './dom/SVGElement';
+import { HTMLElement } from './dom/HTMLElement';
 
-export interface WorkerDOMGlobalScope {
-  document: Document;
-  addEventListener: (type: string, handler: EventHandler) => void;
-  removeEventListener: (type: string, handler: EventHandler) => void;
+export interface GlobalScope {
+  initialize: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>) => void;
+  navigator: WorkerNavigator;
+  // TODO (#541): Should we type this more explicitly?
+  WebAssembly: object;
   localStorage: object;
   location: object;
   url: string;
-  appendKeys: (keys: Array<string>) => void;
-  consumeInitialDOM: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode) => void;
+  innerWidth: number;
+  innerHeight: number;
+  MutationObserver: typeof MutationObserver;
+  SVGElement: typeof SVGElement;
+  HTMLElement: typeof HTMLElement;
   HTMLAnchorElement: typeof HTMLAnchorElement;
   HTMLButtonElement: typeof HTMLButtonElement;
+  HTMLCanvasElement: typeof HTMLCanvasElement;
   HTMLDataElement: typeof HTMLDataElement;
   HTMLEmbedElement: typeof HTMLEmbedElement;
   HTMLFieldSetElement: typeof HTMLFieldSetElement;
@@ -83,4 +92,11 @@ export interface WorkerDOMGlobalScope {
   HTMLTableRowElement: typeof HTMLTableRowElement;
   HTMLTableSectionElement: typeof HTMLTableSectionElement;
   HTMLTimeElement: typeof HTMLTimeElement;
+  OffscreenCanvas: any | undefined;
+}
+
+export interface WorkerDOMGlobalScope extends GlobalScope {
+  document: Document;
+  addEventListener: (type: string, handler: EventHandler) => void;
+  removeEventListener: (type: string, handler: EventHandler) => void;
 }

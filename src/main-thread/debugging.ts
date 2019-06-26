@@ -22,150 +22,26 @@
  * @see https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#9.4
  */
 
-import { EventToWorker, MessageFromWorker, MessageType, MessageToWorker, ValueSyncToWorker, BoundingClientRectToWorker } from '../transfer/Messages';
-import { HydrateableNode, TransferredNode } from '../transfer/TransferrableNodes';
+import { EventToWorker, MessageType, MessageToWorker, ValueSyncToWorker, BoundingClientRectToWorker } from '../transfer/Messages';
+import { HydrateableNode, TransferredNode, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
 import { NodeContext } from './nodes';
 import { TransferrableEvent } from '../transfer/TransferrableEvent';
-import { Strings } from './strings';
-import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
 import { createReadableHydrateableRootNode } from './serialize';
+import { WorkerDOMConfiguration } from './configuration';
 
 /**
- * Reverse mapping of src/worker-thread/MutationRecord.MutationRecord enum.
+ * @param element
  */
-const MUTATION_RECORD_TYPE_REVERSE_MAPPING = {
-  '0': 'ATTRIBUTES',
-  '1': 'CHARACTER_DATA',
-  '2': 'CHILD_LIST',
-  '3': 'PROPERTIES',
-  '4': 'EVENT_SUBSCRIPTION',
-  '5': 'GET_BOUNDING_CLIENT_RECT',
-};
-
-export class DebuggingContext {
-  private strings: Strings;
-  private nodeContext: NodeContext;
-
-  constructor(strings: Strings, nodeContext: NodeContext) {
-    this.strings = strings;
-    this.nodeContext = nodeContext;
-  }
-
-  /**
-   * @param element
-   */
-  readableHydrateableNodeFromElement(element: RenderableElement): Object {
-    const node = createReadableHydrateableRootNode(element);
-    return readableHydrateableNode(node);
-  }
-
-  /**
-   * @param message
-   */
-  readableMessageFromWorker(message: MessageFromWorker): Object {
-    const { data } = message;
-
-    if (data[TransferrableKeys.type] === MessageType.MUTATE || data[TransferrableKeys.type] === MessageType.HYDRATE) {
-      const mutations = data[TransferrableKeys.mutations];
-      const mutate: any = {
-        type: data[TransferrableKeys.type] === MessageType.MUTATE ? 'MUTATE' : 'HYDRATE',
-        mutations: mutations.map(n => this.readableTransferrableMutationRecord(n)),
-        // Omit 'strings' key.
-      };
-      // TODO(choumx): Like 'strings', I'm not sure 'nodes' is actually useful.
-      // const nodes = data[TransferrableKeys.nodes];
-      // mutate['nodes'] = nodes.map(n => readableTransferrableNode(n));
-      return mutate;
-    } else {
-      return 'Unrecognized MessageFromWorker type: ' + data[TransferrableKeys.type];
-    }
-  }
-
-  /**
-   * @param message
-   */
-  readableMessageToWorker(message: MessageToWorker): Object {
-    if (isEvent(message)) {
-      const event = message[TransferrableKeys.event];
-      return {
-        type: 'EVENT',
-        event: readableTransferrableEvent(this.nodeContext, event),
-      };
-    } else if (isValueSync(message)) {
-      const sync = message[TransferrableKeys.sync];
-      return {
-        type: 'SYNC',
-        sync: readableTransferrableSyncValue(this.nodeContext, sync),
-      };
-    } else if (isBoundingClientRect(message)) {
-      return {
-        type: 'GET_BOUNDING_CLIENT_RECT',
-        target: readableTransferredNode(this.nodeContext, message[TransferrableKeys.target]),
-      };
-    } else {
-      return 'Unrecognized MessageToWorker type: ' + message[TransferrableKeys.type];
-    }
-  }
-
-  /**
-   * @param r
-   */
-  private readableTransferrableMutationRecord(r: TransferrableMutationRecord): Object {
-    const target = r[TransferrableKeys.target];
-
-    const out: any = {
-      type: MUTATION_RECORD_TYPE_REVERSE_MAPPING[r[TransferrableKeys.type]],
-      target: this.nodeContext.getNode(target) || target,
-    };
-    const added = r[TransferrableKeys.addedNodes];
-    if (added) {
-      out['addedNodes'] = added.map(n => readableTransferredNode(this.nodeContext, n));
-    }
-    const removed = r[TransferrableKeys.removedNodes];
-    if (removed) {
-      out['removedNodes'] = removed.map(n => readableTransferredNode(this.nodeContext, n));
-    }
-    const previousSibling = r[TransferrableKeys.previousSibling];
-    if (previousSibling) {
-      out['previousSibling'] = previousSibling;
-    }
-    const nextSibling = r[TransferrableKeys.nextSibling];
-    if (nextSibling) {
-      out['nextSibling'] = nextSibling;
-    }
-    const attributeName = r[TransferrableKeys.attributeName];
-    if (attributeName !== undefined) {
-      out['attributeName'] = this.strings.get(attributeName);
-    }
-    const attributeNamespace = r[TransferrableKeys.attributeNamespace];
-    if (attributeNamespace !== undefined) {
-      out['attributeNamespace'] = attributeNamespace;
-    }
-    const propertyName = r[TransferrableKeys.propertyName];
-    if (propertyName !== undefined) {
-      out['propertyName'] = propertyName;
-    }
-    const value = r[TransferrableKeys.value];
-    if (value !== undefined) {
-      out['value'] = this.strings.get(value);
-    }
-    const oldValue = r[TransferrableKeys.oldValue];
-    if (oldValue !== undefined) {
-      out['oldValue'] = this.strings.get(oldValue);
-    }
-    const addedEvents = r[TransferrableKeys.addedEvents];
-    if (addedEvents !== undefined) {
-      out['addedEvents'] = addedEvents;
-    }
-    const removedEvents = r[TransferrableKeys.removedEvents];
-    if (removedEvents !== undefined) {
-      out['removedEvents'] = removedEvents;
-    }
-    return out;
-  }
-}
+export const readableHydrateableRootNode = (element: RenderableElement, config: WorkerDOMConfiguration): Object =>
+  readableHydrateableNode(createReadableHydrateableRootNode(element, config));
+/**
+ * @param nodeContext {NodeContext}
+ * @param node {TransferredNode}
+ */
+export const readableTransferredNode = (nodeContext: NodeContext, node: TransferredNode): Object | number | null =>
+  (node != null && nodeContext.getNode(node[TransferrableNodeIndex.Index])) || node;
 
 /**
  * @param node
@@ -174,113 +50,96 @@ function readableHydrateableNode(node: HydrateableNode): Object {
   const out: any = {
     nodeType: node[TransferrableKeys.nodeType],
     name: node[TransferrableKeys.localOrNodeName],
+    attributes: null,
+    childNodes: null,
   };
+
   const attributes = node[TransferrableKeys.attributes];
   if (attributes) {
-    out['attributes'] = attributes.map(attr => {
-      return {
-        name: attr[1],
-        value: attr[2],
-      };
-    });
+    out.attributes = attributes.map(attr => ({
+      name: attr[1],
+      value: attr[2],
+    }));
   }
+
   const childNodes = node[TransferrableKeys.childNodes];
   if (childNodes) {
-    out['childNodes'] = childNodes.map(child => readableHydrateableNode(child));
+    out.childNodes = childNodes.map(readableHydrateableNode);
   }
+
   return out;
 }
 
 /**
- * @param n
+ * @param message {MessageToWorker}
  */
-function readableTransferredNode(nodeContext: NodeContext, n: TransferredNode): Object {
-  const index = n[TransferrableKeys.index];
-  return nodeContext.getNode(index) || index;
-}
+const isEvent = (message: MessageToWorker): message is EventToWorker => message[TransferrableKeys.type] == MessageType.EVENT;
+const isValueSync = (message: MessageToWorker): message is ValueSyncToWorker => message[TransferrableKeys.type] == MessageType.SYNC;
+const isBoundingClientRect = (message: MessageToWorker): message is BoundingClientRectToWorker =>
+  message[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT;
 
 /**
- * @param data
+ * @param nodeContext {NodeContext}
+ * @param event {TransferrableEvent}
  */
-function isEvent(message: MessageToWorker): message is EventToWorker {
-  return message[TransferrableKeys.type] == MessageType.EVENT;
-}
-
-/**
- * @param data
- */
-function isValueSync(message: MessageToWorker): message is ValueSyncToWorker {
-  return message[TransferrableKeys.type] == MessageType.SYNC;
-}
-
-/**
- * @param data
- */
-function isBoundingClientRect(message: MessageToWorker): message is BoundingClientRectToWorker {
-  return message[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT;
-}
-
-/**
- * @param e
- */
-function readableTransferrableEvent(nodeContext: NodeContext, e: TransferrableEvent): Object {
-  const out: any = {
-    type: e[TransferrableKeys.type],
+function readableTransferrableEvent(nodeContext: NodeContext, event: TransferrableEvent): Object {
+  const value = (item?: null | number | boolean | TransferredNode): number | boolean | Object | null => {
+    if (typeof item === 'number' || typeof item === 'boolean') {
+      return item !== undefined ? item : null;
+    }
+    return item !== undefined && item !== null ? readableTransferredNode(nodeContext, item) : null;
   };
-  const bubbles = e[TransferrableKeys.bubbles];
-  if (bubbles !== undefined) {
-    out['bubbles'] = bubbles;
-  }
-  const cancelable = e[TransferrableKeys.cancelable];
-  if (cancelable !== undefined) {
-    out['cancelable'] = cancelable;
-  }
-  const cancelBubble = e[TransferrableKeys.cancelBubble];
-  if (cancelBubble !== undefined) {
-    out['cancelBubble'] = cancelBubble;
-  }
-  const defaultPrevented = e[TransferrableKeys.defaultPrevented];
-  if (defaultPrevented !== undefined) {
-    out['defaultPrevented'] = defaultPrevented;
-  }
-  const eventPhase = e[TransferrableKeys.eventPhase];
-  if (eventPhase !== undefined) {
-    out['eventPhase'] = eventPhase;
-  }
-  const isTrusted = e[TransferrableKeys.isTrusted];
-  if (isTrusted !== undefined) {
-    out['isTrusted'] = isTrusted;
-  }
-  const returnValue = e[TransferrableKeys.returnValue];
-  if (returnValue !== undefined) {
-    out['returnValue'] = returnValue;
-  }
-  const currentTarget = e[TransferrableKeys.currentTarget];
-  if (currentTarget) {
-    out['currentTarget'] = readableTransferredNode(nodeContext, currentTarget);
-  }
-  const target = e[TransferrableKeys.target];
-  if (target) {
-    out['target'] = readableTransferredNode(nodeContext, target);
-  }
-  const scoped = e[TransferrableKeys.scoped];
-  if (scoped !== undefined) {
-    out['scoped'] = scoped;
-  }
-  const keyCode = e[TransferrableKeys.keyCode];
-  if (keyCode !== undefined) {
-    out['keyCode'] = keyCode;
-  }
-  return out;
+
+  return {
+    type: event[TransferrableKeys.type],
+    bubbles: value(event[TransferrableKeys.bubbles]),
+    cancelable: value(event[TransferrableKeys.cancelable]),
+    cancelBubble: value(event[TransferrableKeys.cancelBubble]),
+    defaultPrevented: value(event[TransferrableKeys.defaultPrevented]),
+    eventPhase: value(event[TransferrableKeys.eventPhase]),
+    isTrusted: value(event[TransferrableKeys.isTrusted]),
+    returnValue: value(event[TransferrableKeys.returnValue]),
+    currentTarget: value(event[TransferrableKeys.currentTarget]),
+    target: value(event[TransferrableKeys.target]),
+    scoped: value(event[TransferrableKeys.scoped]),
+    keyCode: value(event[TransferrableKeys.keyCode]),
+  };
 }
 
 /**
- * @param v
+ * @param nodeContext {NodeContext}
+ * @param value {TransferrableSyncValue}
  */
-function readableTransferrableSyncValue(nodeContext: NodeContext, v: TransferrableSyncValue): Object {
-  const index = v[TransferrableKeys.index];
+function readableTransferrableSyncValue(nodeContext: NodeContext, value: TransferrableSyncValue): Object {
+  const index = value[TransferrableKeys.index];
   return {
     target: nodeContext.getNode(index) || index,
-    value: v[TransferrableKeys.value],
+    value: value[TransferrableKeys.value],
   };
+}
+
+/**
+ * @param message
+ */
+export function readableMessageToWorker(nodeContext: NodeContext, message: MessageToWorker): Object {
+  if (isEvent(message)) {
+    const event = message[TransferrableKeys.event];
+    return {
+      type: 'EVENT',
+      event: readableTransferrableEvent(nodeContext, event),
+    };
+  } else if (isValueSync(message)) {
+    const sync = message[TransferrableKeys.sync];
+    return {
+      type: 'SYNC',
+      sync: readableTransferrableSyncValue(nodeContext, sync),
+    };
+  } else if (isBoundingClientRect(message)) {
+    return {
+      type: 'GET_BOUNDING_CLIENT_RECT',
+      target: readableTransferredNode(nodeContext, message[TransferrableKeys.target]),
+    };
+  } else {
+    return 'Unrecognized MessageToWorker type: ' + message[TransferrableKeys.type];
+  }
 }

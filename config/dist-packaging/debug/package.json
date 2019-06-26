@@ -1,0 +1,10 @@
+{
+  "main": "main.js",
+  "browser": {
+    "./main": "main.js",
+    "./worker": "worker.js"
+  },
+  "syntax": {
+    "esmodules": "main.mjs"
+  }
+}

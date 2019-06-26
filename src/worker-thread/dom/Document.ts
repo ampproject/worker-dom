@@ -18,6 +18,7 @@ import { Element, NS_NAME_TO_CLASS } from './Element';
 import { HTMLElement } from './HTMLElement';
 import './HTMLAnchorElement';
 import './HTMLButtonElement';
+import './HTMLCanvasElement';
 import './HTMLDataElement';
 import './HTMLDataListElement';
 import './HTMLEmbedElement';
@@ -46,57 +47,84 @@ import './HTMLTableRowElement';
 import './HTMLTableSectionElement';
 import './HTMLTimeElement';
 import { matchChildElement } from './matchElements';
-import { SVGElement } from './SVGElement';
-import { Node, NamespaceURI } from './Node';
-import { Event } from '../Event';
+import { NamespaceURI, Node } from './Node';
 import { Text } from './Text';
 import { Comment } from './Comment';
-import { MutationObserver } from '../MutationObserver';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
-import { observe as observeMutations } from '../DocumentMutations';
-import { propagate as propagateEvents } from '../EventPropagation';
-import { propagate as propagateSyncValues } from '../SyncValuePropagation';
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
+import { PostMessage } from '../worker-thread';
+import { NodeType, HTML_NAMESPACE, HydrateableNode } from '../../transfer/TransferrableNodes';
+import { Phase } from '../../transfer/Phase';
+import { propagate as propagateEvents } from '../Event';
+import { propagate as propagateSyncValues } from '../SyncValuePropagation';
+import { propagate as propagateResize } from '../ResizePropagation';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { WorkerDOMGlobalScope, GlobalScope } from '../WorkerDOMGlobalScope';
+import { set as setPhase } from '../phase';
 
 const DOCUMENT_NAME = '#document';
 
 export class Document extends Element {
-  public defaultView: {
-    document: Document;
-    MutationObserver: typeof MutationObserver;
-    Document: typeof Document;
-    Node: typeof Node;
-    Comment: typeof Comment;
-    Text: typeof Text;
-    Element: typeof Element;
-    SVGElement: typeof SVGElement;
-    Event: typeof Event;
-  };
+  public defaultView: WorkerDOMGlobalScope;
   public documentElement: Document;
   public body: Element;
+  public postMessage: PostMessage;
+  public [TransferrableKeys.allowTransfer]: boolean = true;
 
-  constructor() {
+  constructor(global: GlobalScope) {
     super(NodeType.DOCUMENT_NODE, DOCUMENT_NAME, HTML_NAMESPACE, null);
     // Element uppercases its nodeName, but Document doesn't.
     this.nodeName = DOCUMENT_NAME;
     this.documentElement = this;
-    this.observe = (): void => {
-      observeMutations(this, this.postMessageMethod);
-      propagateEvents();
-      propagateSyncValues();
-    };
-    this.defaultView = {
+
+    this.defaultView = Object.assign(global, {
       document: this,
-      MutationObserver,
-      Document,
-      Node,
-      Comment,
-      Text,
-      Element,
-      SVGElement,
-      Event,
-    };
+      addEventListener: this.addEventListener.bind(this),
+      removeEventListener: this.removeEventListener.bind(this),
+    });
+  }
+
+  /**
+   * Observing the Document indicates it's attached to a main thread
+   * version of the document.
+   *
+   * Each mutation needs to be transferred, synced values need to propagate.
+   */
+  public [TransferrableKeys.observe](): void {
+    setPhase(Phase.Hydrating);
+    propagateEvents(this.defaultView);
+    propagateSyncValues();
+    propagateResize(this.defaultView);
+  }
+
+  /**
+   * Hydrate
+   * @param strings
+   * @param skeleton
+   */
+  public [TransferrableKeys.hydrateNode](strings: Array<string>, skeleton: HydrateableNode): Node {
+    switch (skeleton[TransferrableKeys.nodeType]) {
+      case NodeType.TEXT_NODE:
+        return new Text(strings[skeleton[TransferrableKeys.textContent] as number], this, skeleton[TransferrableKeys.index]);
+      case NodeType.COMMENT_NODE:
+        return new Comment(strings[skeleton[TransferrableKeys.textContent] as number], this, skeleton[TransferrableKeys.index]);
+      default:
+        const namespaceURI: string = strings[skeleton[TransferrableKeys.namespaceURI] as number] || HTML_NAMESPACE;
+        const localName: string = strings[skeleton[TransferrableKeys.localOrNodeName]];
+        const constructor = NS_NAME_TO_CLASS[`${namespaceURI}:${localName}`] || HTMLElement;
+        const node = new constructor(NodeType.ELEMENT_NODE, localName, namespaceURI, this, skeleton[TransferrableKeys.index]);
+
+        (skeleton[TransferrableKeys.attributes] || []).forEach(attribute =>
+          // AttributeNamespaceURI = strings[attribute[0]] !== 'null' ? strings[attribute[0]] : HTML_NAMESPACE
+          node.setAttributeNS(
+            strings[attribute[0]] !== 'null' ? strings[attribute[0]] : HTML_NAMESPACE,
+            strings[attribute[1]],
+            strings[attribute[2]],
+          ),
+        );
+        (skeleton[TransferrableKeys.childNodes] || []).forEach(child => node.appendChild(this[TransferrableKeys.hydrateNode](strings, child)));
+        return node;
+    }
   }
 
   public createElement(name: string): Element {
@@ -133,19 +161,3 @@ export class Document extends Element {
     return matchChildElement(this.body, element => element.id === id);
   }
 }
-
-/**
- *
- * @param postMessageMethod
- */
-export function createDocument(postMessageMethod?: Function): Document {
-  const doc = new Document();
-  doc.postMessageMethod = postMessageMethod;
-  doc.isConnected = true;
-  doc.appendChild((doc.body = doc.createElement('body')));
-
-  return doc;
-}
-
-/** Should only be used for testing. */
-export const documentForTesting = createDocument();

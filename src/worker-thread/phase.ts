@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-export const enum Phases {
-  Initializing = 0,
-  Hydrating = 1,
-  Mutating = 2,
-}
+import { Phase } from '../transfer/Phase';
 
-export let phase: Phases = Phases.Initializing;
-export const set = (newPhase: Phases) => (phase = newPhase);
+export let phase: Phase = Phase.Initializing;
+export const set = (newPhase: Phase) => (phase = newPhase);

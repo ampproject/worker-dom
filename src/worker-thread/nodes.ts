@@ -15,12 +15,28 @@
  */
 
 import { Node } from './dom/Node';
-import { phase, Phases } from './phase';
+import { phase } from './phase';
+import { Phase } from '../transfer/Phase';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 let count: number = 0;
 let transfer: Array<Node> = [];
 const mapping: Map<number, Node> = new Map();
+
+/**
+ * Override the store for a node during the initialization phase.
+ * @param node Node to store and modify with index
+ * @param override Override number to use as the identifier.
+ *
+ * NOTE: THIS IS ONLY TO BE USED DURING INITIALIZATION.
+ */
+export function storeOverride(node: Node, override: number): number {
+  if (phase === Phase.Initializing) {
+    mapping.set((node[TransferrableKeys.index] = override), node);
+    count = Math.max(count, override);
+  }
+  return override;
+}
 
 /**
  * Stores a node in mapping, and makes the index available on the Node directly.
@@ -33,7 +49,7 @@ export function store(node: Node): number {
   }
 
   mapping.set((node[TransferrableKeys.index] = ++count), node);
-  if (phase !== Phases.Initializing) {
+  if (phase > Phase.Initializing) {
     // After Initialization, include all future dom node creation into the list for next transfer.
     transfer.push(node);
   }

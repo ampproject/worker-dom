@@ -16,8 +16,9 @@
 
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
-import { babelPlugin, removeTestingDocument } from './rollup.plugins.js';
-import { MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE } from './rollup.utils.js';
+import replace from 'rollup-plugin-replace';
+import copy from 'rollup-plugin-copy';
+import { babelPlugin } from './rollup.plugins.js';
 
 // Workers do not natively support ES Modules containing `import` or `export` statments.
 // So, here we continue to use the '.mjs' extension to indicate newer ECMASCRIPT support
@@ -26,78 +27,72 @@ const ESModules = [
   {
     input: 'output/worker-thread/index.js',
     output: {
-      file: 'dist/worker.mjs',
+      file: 'dist/worker/worker.mjs',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
+      copy({
+        targets: ['config/dist-packaging/worker/package.json'],
+        outputFolder: 'dist/worker',
+      }),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: false,
-        allowConsole: DEBUG_BUNDLE_VALUE,
+        allowConsole: false,
       }),
-      MINIFY_BUNDLE_VALUE
-        ? compiler({
-            env: 'CUSTOM',
-          })
-        : null,
-      MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean),
+      compiler({
+        env: 'CUSTOM',
+      }),
+      terser(),
+    ],
   },
   {
     input: 'output/worker-thread/index.js',
     output: {
-      file: 'dist/unminified.worker.mjs',
+      file: 'dist/debug/worker/worker.mjs',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
+      copy({
+        targets: ['config/dist-packaging/debug/worker/package.json'],
+        outputFolder: 'dist/debug/worker',
+      }),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: false,
-        allowConsole: DEBUG_BUNDLE_VALUE,
+        allowConsole: false,
       }),
-    ].filter(Boolean),
+    ],
   },
   {
-    input: 'output/worker-thread/index.safe.js',
+    input: 'output/worker-thread/index.amp.js',
     output: {
-      file: 'dist/worker.safe.mjs',
+      file: 'dist/amp/worker/worker.mjs',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
+      copy({
+        targets: ['config/dist-packaging/amp/worker/package.json'],
+        outputFolder: 'dist/amp/worker',
+      }),
+      replace({
+        DEBUG_ENABLED: true,
+      }),
       babelPlugin({
         transpileToES5: false,
-        allowConsole: DEBUG_BUNDLE_VALUE,
+        allowConsole: true,
       }),
-      MINIFY_BUNDLE_VALUE
-        ? compiler({
-            env: 'CUSTOM',
-          })
-        : null,
-      MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean),
-  },
-  {
-    input: 'output/worker-thread/index.safe.js',
-    output: {
-      file: 'dist/unminified.worker.safe.mjs',
-      format: 'iife',
-      name: 'WorkerThread',
-      sourcemap: true,
-    },
-    plugins: [
-      removeTestingDocument(),
-      babelPlugin({
-        transpileToES5: false,
-        allowConsole: DEBUG_BUNDLE_VALUE,
-      }),
-    ].filter(Boolean),
+    ],
   },
 ];
 
@@ -105,107 +100,43 @@ const IIFEModules = [
   {
     input: 'output/worker-thread/index.js',
     output: {
-      file: 'dist/worker.js',
+      file: 'dist/worker/worker.js',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
       babelPlugin({
         transpileToES5: true,
-        allowConsole: DEBUG_BUNDLE_VALUE,
+        allowConsole: false,
       }),
-      MINIFY_BUNDLE_VALUE
-        ? compiler({
-            env: 'CUSTOM',
-          })
-        : null,
-      MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean),
+      compiler({
+        env: 'CUSTOM',
+      }),
+      terser(),
+    ],
   },
   {
     input: 'output/worker-thread/index.js',
     output: {
-      file: 'dist/unminified.worker.js',
+      file: 'dist/debug/worker/worker.js',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
     },
     plugins: [
-      removeTestingDocument(),
+      replace({
+        DEBUG_ENABLED: true,
+      }),
       babelPlugin({
         transpileToES5: true,
-        allowConsole: DEBUG_BUNDLE_VALUE,
+        allowConsole: true,
       }),
-    ].filter(Boolean),
-  },
-  {
-    input: 'output/worker-thread/index.safe.js',
-    output: {
-      file: 'dist/worker.safe.js',
-      format: 'iife',
-      name: 'WorkerThread',
-      sourcemap: true,
-    },
-    plugins: [
-      removeTestingDocument(),
-      babelPlugin({
-        transpileToES5: true,
-        allowConsole: DEBUG_BUNDLE_VALUE,
-      }),
-      MINIFY_BUNDLE_VALUE
-        ? compiler({
-            env: 'CUSTOM',
-          })
-        : null,
-      MINIFY_BUNDLE_VALUE ? terser() : null,
-    ].filter(Boolean),
-  },
-  {
-    input: 'output/worker-thread/index.safe.js',
-    output: {
-      file: 'dist/unminified.worker.safe.js',
-      format: 'iife',
-      name: 'WorkerThread',
-      sourcemap: true,
-    },
-    plugins: [
-      removeTestingDocument(),
-      babelPlugin({
-        transpileToES5: true,
-        allowConsole: DEBUG_BUNDLE_VALUE,
-      }),
-    ].filter(Boolean),
+    ],
   },
 ];
 
-const debugModules = DEBUG_BUNDLE_VALUE
-  ? [
-      {
-        input: 'output/worker-thread/index.js',
-        output: {
-          file: 'dist/debug.worker.js',
-          format: 'iife',
-          name: 'WorkerThread',
-          sourcemap: true,
-          outro: 'window.workerDocument = documentForTesting;',
-        },
-        plugins: [
-          babelPlugin({
-            transpileToES5: false,
-            allowConsole: DEBUG_BUNDLE_VALUE,
-            allowPostMessage: false,
-          }),
-          MINIFY_BUNDLE_VALUE
-            ? compiler({
-                env: 'CUSTOM',
-              })
-            : null,
-          MINIFY_BUNDLE_VALUE ? terser() : null,
-        ].filter(Boolean),
-      },
-    ]
-  : [];
-
-export default [...ESModules, ...IIFEModules, ...debugModules];
+export default [...ESModules, ...IIFEModules];

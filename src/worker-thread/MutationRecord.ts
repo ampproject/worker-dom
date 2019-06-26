@@ -15,19 +15,6 @@
  */
 
 import { Node } from './dom/Node';
-import { TransferrableEventSubscriptionChange } from '../transfer/TransferrableEvent';
-
-export type MutationRecordMutableKey =
-  | 'addedNodes'
-  | 'removedNodes'
-  | 'previousSibling'
-  | 'nextSibling'
-  | 'attributeName'
-  | 'attributeNamespace'
-  | 'propertyName'
-  | 'value'
-  | 'addedEvents'
-  | 'removedEvents';
 
 // MutationRecord interface is modification and extension of the spec version.
 // It supports capturing property changes.
@@ -44,13 +31,7 @@ export interface MutationRecord {
 
   // MutationRecord Extensions
   readonly type: MutationRecordType;
-  // Modifications of properties pass the property name modified.
-  readonly propertyName?: string | null;
-  // Mutation of attributes or properties must pass a value representing the new value.
   readonly value?: string | null;
-  // Event subscription mutations
-  readonly addedEvents?: Array<TransferrableEventSubscriptionChange>;
-  readonly removedEvents?: Array<TransferrableEventSubscriptionChange>;
 }
 
 // Add a new types of MutationRecord to capture changes not normally reported by MutationObserver on Nodes.
@@ -60,7 +41,4 @@ export const enum MutationRecordType {
   ATTRIBUTES = 0,
   CHARACTER_DATA = 1,
   CHILD_LIST = 2,
-  PROPERTIES = 3,
-  EVENT_SUBSCRIPTION = 4,
-  GET_BOUNDING_CLIENT_RECT = 5,
 }

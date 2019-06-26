@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/demo.css" rel="stylesheet" />
+    <script src="/dist/amp/main.mjs" type="module"></script>
+    <style>
+      #status-element {
+        margin-top: 16px;
+        border: 1px dashed lightgray;
+        font-size: smaller;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+  <body>
+    <div src="long-task-demo.js" id="upgrade-me">
+      <div class="root">
+        <button>Run long task</button>
+      </div>
+    </div>
+    <div id="status-element"></div>
+    <script type="module">
+      import { upgradeElement } from '/dist/amp/main.mjs';
+      upgradeElement(document.getElementById('upgrade-me'), '/dist/amp/worker/worker.mjs', (promise, opt_message) => {
+        const statusElement = document.getElementById('status-element');
+        statusElement.textContent = opt_message || 'Long task is running...';
+        promise.then(() => {
+          statusElement.textContent = '';
+        });
+      });
+    </script>
+  </body>
+</html>

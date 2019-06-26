@@ -16,25 +16,36 @@
 
 import { Node, NodeName, NamespaceURI } from './Node';
 import { ParentNode } from './ParentNode';
-import { DOMTokenList } from './DOMTokenList';
+import { DOMTokenList, synchronizedAccessor } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { NumericBoolean, toLower, toUpper } from '../../utils';
-import { Text } from './Text';
+import { toLower, toUpper } from '../../utils';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { HydrateableNode, NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { store as storeString } from '../strings';
+import { Document } from './Document';
+import { transfer } from '../MutationTransfer';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { TransferrableBoundingClientRect } from '../../transfer/TransferrableBoundClientRect';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
-import { TransferrableBoundingClientRect } from '../../transfer/TransferrableCommands';
+import { parse } from '../../third_party/html-parser/html-parser';
+import { propagate } from './Node';
 
 export const NS_NAME_TO_CLASS: { [key: string]: typeof Element } = {};
-export function registerSubclass(localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): void {
-  const key = `${namespace}:${localName}`;
-  NS_NAME_TO_CLASS[key] = subclass;
+export const registerSubclass = (localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): any =>
+  (NS_NAME_TO_CLASS[`${namespace}:${localName}`] = subclass);
+
+interface PropertyBackedAttributes {
+  [key: string]: [(el: Element) => string | null, (el: Element, value: string) => string | boolean];
+}
+
+export function definePropertyBackedAttributes(defineOn: typeof Element, attributes: PropertyBackedAttributes) {
+  const sub = Object.create(defineOn[TransferrableKeys.propertyBackedAttributes]);
+  defineOn[TransferrableKeys.propertyBackedAttributes] = Object.assign(sub, attributes);
 }
 
 interface ClientRect {
@@ -48,40 +59,60 @@ interface ClientRect {
   height: number;
 }
 
+/**
+ * There are six kinds of elements, each having different start/close tag semantics.
+ * @see https://html.spec.whatwg.org/multipage/syntax.html#elements-2
+ */
+enum ElementKind {
+  NORMAL,
+  VOID,
+  // The following element kinds have no special handling in worker-dom yet
+  // and are lumped into the NORMAL kind.
+  /*
+  FOREIGN,
+  TEMPLATE,
+  RAW_TEXT,
+  ESCAPABLE_RAW,
+  */
+}
+
+/**
+ * @see https://html.spec.whatwg.org/multipage/syntax.html#void-elements
+ */
+const VOID_ELEMENTS: string[] = ['AREA', 'BASE', 'BR', 'COL', 'EMBED', 'HR', 'IMG', 'INPUT', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'];
+
 export class Element extends ParentNode {
+  private _classList: DOMTokenList;
+
+  public static [TransferrableKeys.propertyBackedAttributes]: PropertyBackedAttributes = {
+    class: [(el): string | null => el.classList.value, (el, value: string) => (el.classList.value = value)],
+    style: [(el): string | null => el.cssText, (el, value: string) => (el.cssText = value)],
+  };
+
   public localName: NodeName;
   public attributes: Attr[] = [];
-  public [TransferrableKeys.propertyBackedAttributes]: { [key: string]: [() => string | null, (value: string) => string | boolean] } = {};
-  public classList: DOMTokenList = new DOMTokenList(Element, this, 'class', 'classList', 'className');
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
 
-  constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null) {
-    super(nodeType, toUpper(localName), ownerDocument);
+  /**
+   * Element "kind" dictates certain behaviors e.g. start/end tag semantics.
+   * @see https://html.spec.whatwg.org/multipage/syntax.html#elements-2
+   */
+  private kind: ElementKind;
+
+  constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null, overrideIndex?: number) {
+    super(nodeType, toUpper(localName), ownerDocument, overrideIndex);
     this.namespaceURI = namespaceURI || HTML_NAMESPACE;
     this.localName = localName;
-    this[TransferrableKeys.creationFormat] = {
-      [TransferrableKeys.index]: this[TransferrableKeys.index],
-      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: this.nodeType,
-      [TransferrableKeys.localOrNodeName]: storeString(this.localName),
-      [TransferrableKeys.namespaceURI]: this.namespaceURI === null ? undefined : storeString(this.namespaceURI),
-    };
-  }
+    this.kind = VOID_ELEMENTS.includes(this.tagName) ? ElementKind.VOID : ElementKind.NORMAL;
 
-  /**
-   * When hydrating the tree, we need to send HydrateableNode representations
-   * for the main thread to process and store items from for future modifications.
-   */
-  public hydrate(): HydrateableNode {
-    return Object.assign(this[TransferrableKeys.creationFormat], {
-      [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
-      [TransferrableKeys.attributes]: this.attributes.map(attribute => [
-        storeString(attribute.namespaceURI || 'null'),
-        storeString(attribute.name),
-        storeString(attribute.value),
-      ]),
-    });
+    this[TransferrableKeys.creationFormat] = [
+      this[TransferrableKeys.index],
+      this.nodeType,
+      storeString(this.localName),
+      0,
+      this.namespaceURI === null ? 0 : storeString(this.namespaceURI),
+    ];
   }
 
   // Unimplemented properties
@@ -142,7 +173,18 @@ export class Element extends ParentNode {
    */
   get outerHTML(): string {
     const tag = this.localName || this.tagName;
-    return `<${[tag, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${tag}>`;
+
+    const start = `<${[tag, attrsToString(this.attributes)].join(' ').trim()}>`;
+    const contents = this.innerHTML;
+
+    if (!contents) {
+      if (this.kind === ElementKind.VOID) {
+        // Void elements e.g. <input> only have a start tag (unless children are added programmatically).
+        // https://html.spec.whatwg.org/multipage/syntax.html#void-elements
+        return start;
+      }
+    }
+    return start + contents + `</${tag}>`;
   }
 
   /**
@@ -170,13 +212,50 @@ export class Element extends ParentNode {
   }
 
   /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
+   * @param html The raw html string to parse.
+   */
+  set innerHTML(html: string) {
+    const root = parse(html, this);
+
+    // remove previous children
+    this.childNodes.forEach(n => {
+      propagate(n, 'isConnected', false);
+      propagate(n, TransferrableKeys.scopingRoot, n);
+    });
+
+    mutate(
+      this.ownerDocument as Document,
+      {
+        removedNodes: this.childNodes,
+        type: MutationRecordType.CHILD_LIST,
+        target: this,
+      },
+      [
+        TransferrableMutationType.CHILD_LIST,
+        this[TransferrableKeys.index],
+        0,
+        0,
+        0,
+        this.childNodes.length,
+        ...this.childNodes.map(node => node[TransferrableKeys.index]),
+      ],
+    );
+
+    this.childNodes = [];
+
+    // add new children
+    root.childNodes.forEach((child: Node) => this.appendChild(child));
+  }
+
+  /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
    * @param text new text replacing all childNodes content.
    */
   set textContent(text: string) {
     // TODO(KB): Investigate removing all children in a single .splice to childNodes.
-    this.childNodes.forEach(childNode => childNode.remove());
-    this.appendChild(new Text(text, this.ownerDocument));
+    this.childNodes.slice().forEach((child: Node) => child.remove());
+    this.appendChild(this.ownerDocument.createTextNode(text));
   }
 
   /**
@@ -185,7 +264,7 @@ export class Element extends ParentNode {
    * @return text from all childNodes.
    */
   get textContent(): string {
-    return super.textContent;
+    return this.getTextContent();
   }
 
   /**
@@ -256,7 +335,8 @@ export class Element extends ParentNode {
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: unknown): void {
     const valueAsString = String(value);
-    if (this[TransferrableKeys.propertyBackedAttributes][name] !== undefined) {
+    const propertyBacked = (this.constructor as typeof Element)[TransferrableKeys.propertyBackedAttributes][name];
+    if (propertyBacked !== undefined) {
       if (!this.attributes.find(matchAttrPredicate(namespaceURI, name))) {
         this.attributes.push({
           namespaceURI,
@@ -264,19 +344,29 @@ export class Element extends ParentNode {
           value: valueAsString,
         });
       }
-      this[TransferrableKeys.propertyBackedAttributes][name][1](valueAsString);
+      propertyBacked[1](this, valueAsString);
       return;
     }
 
     const oldValue = this[TransferrableKeys.storeAttribute](namespaceURI, name, valueAsString);
-    mutate({
-      type: MutationRecordType.ATTRIBUTES,
-      target: this,
-      attributeName: name,
-      attributeNamespace: namespaceURI,
-      value: valueAsString,
-      oldValue,
-    });
+    mutate(
+      this.ownerDocument as Document,
+      {
+        type: MutationRecordType.ATTRIBUTES,
+        target: this,
+        attributeName: name,
+        attributeNamespace: namespaceURI,
+        value: valueAsString,
+        oldValue,
+      },
+      [
+        TransferrableMutationType.ATTRIBUTES,
+        this[TransferrableKeys.index],
+        storeString(name),
+        storeString(namespaceURI),
+        value !== null ? storeString(valueAsString) + 1 : 0,
+      ],
+    );
   }
 
   public [TransferrableKeys.storeAttribute](namespaceURI: NamespaceURI, name: string, value: string): string {
@@ -306,9 +396,8 @@ export class Element extends ParentNode {
   public getAttributeNS(namespaceURI: NamespaceURI, name: string): string | null {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     if (attr) {
-      return this[TransferrableKeys.propertyBackedAttributes][name] !== undefined
-        ? this[TransferrableKeys.propertyBackedAttributes][name][0]()
-        : attr.value;
+      const propertyBacked = (this.constructor as typeof Element)[TransferrableKeys.propertyBackedAttributes][name];
+      return propertyBacked !== undefined ? propertyBacked[0](this) : attr.value;
     }
     return null;
   }
@@ -328,13 +417,23 @@ export class Element extends ParentNode {
       const oldValue = this.attributes[index].value;
       this.attributes.splice(index, 1);
 
-      mutate({
-        type: MutationRecordType.ATTRIBUTES,
-        target: this,
-        attributeName: name,
-        attributeNamespace: namespaceURI,
-        oldValue,
-      });
+      mutate(
+        this.ownerDocument as Document,
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          target: this,
+          attributeName: name,
+          attributeNamespace: namespaceURI,
+          oldValue,
+        },
+        [
+          TransferrableMutationType.ATTRIBUTES,
+          this[TransferrableKeys.index],
+          storeString(name),
+          storeString(namespaceURI),
+          0, // 0 means no value
+        ],
+      );
     }
   }
 
@@ -382,7 +481,7 @@ export class Element extends ParentNode {
    * @return Element containing all current attributes and potentially childNode clones of the Element requested to be cloned.
    */
   public cloneNode(deep: boolean = false): Element {
-    const clone: Element = this.ownerDocument.createElement(this.nodeName);
+    const clone: Element = this.ownerDocument.createElementNS(this.namespaceURI, this.nodeName);
     this.attributes.forEach(attr => clone.setAttribute(attr.name, attr.value));
     if (deep) {
       this.childNodes.forEach((child: Node) => clone.appendChild(child.cloneNode(deep)));
@@ -410,40 +509,41 @@ export class Element extends ParentNode {
     };
 
     return new Promise(resolve => {
+      const messageHandler = ({ data }: { data: MessageToWorker }) => {
+        if (
+          data[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT &&
+          (data as BoundingClientRectToWorker)[TransferrableKeys.target][0] === this[TransferrableKeys.index]
+        ) {
+          removeEventListener('message', messageHandler);
+          const transferredBoundingClientRect: TransferrableBoundingClientRect = (data as BoundingClientRectToWorker)[TransferrableKeys.data];
+          resolve({
+            top: transferredBoundingClientRect[0],
+            right: transferredBoundingClientRect[1],
+            bottom: transferredBoundingClientRect[2],
+            left: transferredBoundingClientRect[3],
+            width: transferredBoundingClientRect[4],
+            height: transferredBoundingClientRect[5],
+            x: transferredBoundingClientRect[0],
+            y: transferredBoundingClientRect[3],
+          });
+        }
+      };
+
       if (typeof addEventListener !== 'function' || !this.isConnected) {
         // Elements run within Node runtimes are missing addEventListener as a global.
         // In this case, treat the return value the same as a disconnected node.
         resolve(defaultValue);
       } else {
-        addEventListener('message', ({ data }: { data: MessageToWorker }) => {
-          if (
-            data[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT &&
-            (data as BoundingClientRectToWorker)[TransferrableKeys.target][TransferrableKeys.index] === this[TransferrableKeys.index]
-          ) {
-            const transferredBoundingClientRect: TransferrableBoundingClientRect = (data as BoundingClientRectToWorker)[TransferrableKeys.data];
-            resolve({
-              top: transferredBoundingClientRect[0],
-              right: transferredBoundingClientRect[1],
-              bottom: transferredBoundingClientRect[2],
-              left: transferredBoundingClientRect[3],
-              width: transferredBoundingClientRect[4],
-              height: transferredBoundingClientRect[5],
-              x: transferredBoundingClientRect[0],
-              y: transferredBoundingClientRect[3],
-            });
-          }
-        });
-        // Requesting a boundingClientRect can be depdendent on mutations that have not yet
-        // applied in the main thread. As a result, ensure proper order of DOM mutation and reads
-        // by sending the request for a boundingClientRect as a mutation.
-        mutate({
-          type: MutationRecordType.GET_BOUNDING_CLIENT_RECT,
-          target: this,
-        });
-
+        addEventListener('message', messageHandler);
+        transfer(this.ownerDocument as Document, [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]]);
         setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.
       }
     });
   }
+
+  public get classList(): DOMTokenList {
+    return this._classList || (this._classList = new DOMTokenList(this, 'class'));
+  }
 }
+synchronizedAccessor(Element, 'classList', 'className');
 reflectProperties([{ id: [''] }], Element);
