@@ -15,15 +15,16 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { Document, createDocument } from '../../worker-thread/dom/Document';
+import { Document } from '../../worker-thread/dom/Document';
 import { Event } from '../../worker-thread/Event';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   document: Document;
 }>;
 
 test.beforeEach(t => {
-  const document = createDocument();
+  const document = createTestingDocument();
   t.context = { document };
 });
 
