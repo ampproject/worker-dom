@@ -43,6 +43,12 @@ class FakeOffscreenCanvas {
   }
 }
 
+class ImageBitmap {
+  height = 0;
+  width = 0;
+  close() {}
+}
+
 test.beforeEach(t => {
   const sandbox = sinon.createSandbox();
 
@@ -50,8 +56,8 @@ test.beforeEach(t => {
   function OffscreenCanvas() {
     return unUpgradedOffscreen;
   }
-  const document = createTestingDocument({ OffscreenCanvas });
 
+  const document = createTestingDocument({ OffscreenCanvas, ImageBitmap });
   const canvas = document.createElement('canvas') as HTMLCanvasElement;
 
   t.context = {
@@ -404,7 +410,7 @@ test('context calls drawImage', t => {
   const stub = ((unUpgradedOffscreenContext['drawImage'] as sinon.SinonStub) = sandbox.stub());
 
   // a fake object can be used as argument for testing
-  const imageBitmap = {} as ImageBitmap;
+  const imageBitmap = new ImageBitmap();
 
   context2d.drawImage(imageBitmap, 10, 10);
   t.true(stub.withArgs(imageBitmap, 10, 10).calledOnce);
@@ -421,7 +427,7 @@ test('context only calls upgraded drawImage if available', async t => {
   deferredUpgrade.resolve(upgradedInstance);
 
   await deferredUpgrade.upgradePromise.then(() => {
-    const imageBitmap = {} as ImageBitmap;
+    const imageBitmap = new ImageBitmap();
     context2d.drawImage(imageBitmap, 200, 100);
     t.true(upgradedStub.withArgs(imageBitmap, 200, 100).calledOnce);
     t.true(unUpgradedStub.notCalled);
@@ -436,7 +442,7 @@ test('context calls both versions of drawImage when called before upgrade', asyn
   const upgradedInstance = new FakeOffscreenCanvas();
   const upgradedStub = ((upgradedInstance.getContext('2d')['drawImage'] as sinon.SinonStub) = sandbox.stub());
 
-  const imageBitmap = {} as ImageBitmap;
+  const imageBitmap = new ImageBitmap();
 
   context2d.drawImage(imageBitmap, 0, 1);
   t.true(unUpgradedStub.withArgs(imageBitmap, 0, 1).calledOnce);

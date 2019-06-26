@@ -27,7 +27,7 @@ import {
   CanvasGradient,
   CanvasPattern,
 } from './CanvasTypes';
-import { MessageType, OffscreenCanvasToWorker, ImageBitmapToWorker } from '../../transfer/Messages';
+import { MessageType, OffscreenCanvasToWorker } from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { transfer } from '../MutationTransfer';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
@@ -35,6 +35,8 @@ import { OffscreenCanvasPolyfill } from './OffscreenCanvasPolyfill';
 import { Document } from '../dom/Document';
 import { HTMLElement } from '../dom/HTMLElement';
 import { FakeNativeCanvasPattern } from './FakeNativeCanvasPattern';
+import { retrieveImageBitmap } from './canvas-utils';
+import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
 
 export const deferredUpgrades = new WeakMap();
 
@@ -82,6 +84,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
    * @param canvas HTMLCanvasElement associated with this context.
    */
   private getOffscreenCanvasAsync(canvas: ElementType): Promise<void> {
+    this.unresolvedCalls++;
     const deferred: { resolve?: (value?: {} | PromiseLike<{}>) => void; upgradePromise?: Promise<void> } = {};
     const isTestMode = typeof addEventListener !== 'function';
 
@@ -110,8 +113,12 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     }).then((instance: { getContext(c: '2d'): CanvasRenderingContext2D }) => {
       this.implementation = instance.getContext('2d');
       this.goodImplementation = this.implementation;
-      this.upgraded = true;
-      this.flushQueue();
+      this.unresolvedCalls--;
+
+      if (this.unresolvedCalls === 0) {
+        this.upgraded = true;
+        this.flushQueue();
+      }
     });
 
     if (isTestMode) {
@@ -262,11 +269,14 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* FILL AND STROKE STYLES */
   set fillStyle(value: string | CanvasGradient | CanvasPattern) {
-    const isGradient = typeof (value as any).addColorStop !== 'undefined';
-    if (typeof value === 'string' || isGradient || this.polyfillUsed || !this.upgraded) {
-      this.delegateSetter('fillStyle', [...arguments]);
-    } else {
+    // 1. Native pattern instances given to the user hold the 'real' pattern as their implementation prop.
+    // 2. Pattern must be upgraded, otherwise an undefined 'implementation' will be queued instead of the wrapper object.
+    if (value instanceof FakeNativeCanvasPattern && this.upgraded) {
       this.delegateSetter('fillStyle', [(value as any).implementation]);
+
+      // Any other case does not require special handling.
+    } else {
+      this.delegateSetter('fillStyle', [...arguments]);
     }
   }
 
@@ -275,11 +285,14 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set strokeStyle(value: string | CanvasGradient | CanvasPattern) {
-    const isGradient = typeof (value as any).addColorStop !== 'undefined';
-    if (typeof value === 'string' || isGradient || this.polyfillUsed || !this.upgraded) {
-      this.delegateSetter('strokeStyle', [...arguments]);
-    } else {
+    // 1. Native pattern instances given to the user hold the 'real' pattern as their implementation prop.
+    // 2. Pattern must be upgraded, otherwise an undefined 'implementation' could be queued instead of the wrapper object.
+    if (value instanceof FakeNativeCanvasPattern && this.upgraded) {
       this.delegateSetter('strokeStyle', [(value as any).implementation]);
+
+      // Any other case does not require special handling.
+    } else {
+      this.delegateSetter('strokeStyle', [...arguments]);
     }
   }
 
@@ -297,9 +310,10 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   createPattern(image: CanvasImageSource, repetition: string): CanvasPattern | null {
-    const isBitmap = typeof (image as any)[TransferrableKeys.serializeAsTransferrableObject] === 'undefined';
+    const ImageBitmap = this.canvasElement.ownerDocument.defaultView.ImageBitmap;
 
-    if (this.polyfillUsed || isBitmap) {
+    // Only HTMLElement image sources require special handling. ImageBitmap is OK to use.
+    if (this.polyfillUsed || image instanceof ImageBitmap) {
       return this.delegateFunc('createPattern', [...arguments]);
     } else {
       this.upgraded = false;
@@ -311,7 +325,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
       this.unresolvedCalls++;
 
       const fakePattern = new FakeNativeCanvasPattern<ElementType>();
-      fakePattern.getCanvasPatternAsync(this.canvas, image, repetition).then(() => {
+      fakePattern[TransferrableKeys.retrieveCanvasPattern](this.canvas, image, repetition).then(() => {
         this.unresolvedCalls--;
 
         // The good implementation must only come after the last unresolved createPattern call
@@ -328,9 +342,10 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* DRAWING IMAGES */
   drawImage(image: CanvasImageSource, dx: number, dy: number): void {
-    const isBitmap = typeof (image as any)[TransferrableKeys.serializeAsTransferrableObject] === 'undefined';
+    const ImageBitmap = this.canvasElement.ownerDocument.defaultView.ImageBitmap;
 
-    if (this.polyfillUsed || isBitmap) {
+    // Only HTMLElement image sources require special handling. ImageBitmap is OK to use.
+    if (this.polyfillUsed || image instanceof ImageBitmap) {
       this.delegateFunc('drawImage', [...arguments]);
     } else {
       // Queue the drawImage call to make sure it gets called in correct order
@@ -345,26 +360,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
       this.unresolvedCalls++;
 
       // Retrieve an ImageBitmap from the main-thread with the same image as the input image
-      new Promise(resolve => {
-        const messageHandler = ({ data }: { data: ImageBitmapToWorker }) => {
-          if (
-            data[TransferrableKeys.type] === MessageType.IMAGE_BITMAP_INSTANCE &&
-            data[TransferrableKeys.target][0] === (image as any)[TransferrableKeys.index]
-          ) {
-            removeEventListener('message', messageHandler);
-            const transferredImageBitmap = (data as ImageBitmapToWorker)[TransferrableKeys.data];
-            resolve(transferredImageBitmap);
-          }
-        };
-
-        if (typeof addEventListener !== 'function') {
-          throw new Error('addEventListener not a function!');
-        } else {
-          addEventListener('message', messageHandler);
-          transfer(this.canvas.ownerDocument as Document, [TransferrableMutationType.IMAGE_BITMAP_INSTANCE, (image as any)[TransferrableKeys.index]]);
-        }
-      })
-
+      retrieveImageBitmap(image as any, (this.canvas as unknown) as HTMLCanvasElement)
         // Then call the actual method with the retrieved ImageBitmap
         .then((instance: ImageBitmap) => {
           args.push(instance, dx, dy);

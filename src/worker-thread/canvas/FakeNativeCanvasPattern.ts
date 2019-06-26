@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import { transfer } from '../MutationTransfer';
-import { Document } from '../dom/Document';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { ImageBitmapToWorker, MessageType } from '../../transfer/Messages';
 import { HTMLElement } from '../dom/HTMLElement';
 import { CanvasImageSource } from './CanvasTypes';
+import { retrieveImageBitmap } from './canvas-utils';
+import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 /**
  * Wraps CanvasPattern for usage in a native OffscreenCanvas case.
@@ -39,34 +37,20 @@ export class FakeNativeCanvasPattern<ElementType extends HTMLElement> {
    * @param image Image to be used as the pattern's image
    * @param repetition DOMStrings indicating how to repeat the pattern's image.
    */
-  getCanvasPatternAsync(canvas: ElementType, image: CanvasImageSource, repetition: string): Promise<void> {
-    return new Promise(resolve => {
-      const messageHandler = ({ data }: { data: ImageBitmapToWorker }) => {
-        if (
-          data[TransferrableKeys.type] === MessageType.IMAGE_BITMAP_INSTANCE &&
-          data[TransferrableKeys.target][0] === (image as any)[TransferrableKeys.index]
-        ) {
-          removeEventListener('message', messageHandler);
-          const transferredImageBitmap = (data as ImageBitmapToWorker)[TransferrableKeys.data];
-          resolve(transferredImageBitmap);
-        }
-      };
+  [TransferrableKeys.retrieveCanvasPattern](canvas: ElementType, image: CanvasImageSource, repetition: string): Promise<void> {
+    return (
+      retrieveImageBitmap(image as any, (canvas as unknown) as HTMLCanvasElement)
+        // Create new pattern with retrieved ImageBitmap
+        .then((instance: ImageBitmap) => {
+          const pattern = canvas.getContext('2d').createPattern(instance, repetition);
 
-      if (typeof addEventListener !== 'function') {
-        throw new Error('addEventListener not a function!');
-      } else {
-        addEventListener('message', messageHandler);
-        transfer(canvas.ownerDocument as Document, [TransferrableMutationType.IMAGE_BITMAP_INSTANCE, (image as any)[TransferrableKeys.index]]);
-      }
-    }).then((instance: ImageBitmap) => {
-      const pattern = canvas.getContext('2d').createPattern(instance, repetition);
+          if (!pattern) {
+            throw new Error('Pattern is null!');
+          }
 
-      if (!pattern) {
-        throw new Error('Pattern is null!');
-      }
-
-      this.realPattern = pattern;
-    });
+          this.realPattern = pattern;
+        })
+    );
   }
 
   // This method is experimental.

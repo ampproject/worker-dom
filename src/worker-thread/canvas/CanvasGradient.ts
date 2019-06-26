@@ -30,27 +30,9 @@ export class CanvasGradient implements TransferrableObject {
   private id: number;
   private document: Document;
 
-  constructor(id: number, document: Document, method: string, args: number[], serializedCreationObject: number[]) {
+  constructor(id: number, document: Document) {
     this.document = document;
     this.id = id;
-    this.createObjectReference(serializedCreationObject, method, args);
-  }
-
-  /**
-   * Creates CanvasGradient object in the main thread, and associates it with this object with the id provided.
-   * @param serializedCreationObject The target object needed to create the corresponding object in the main thread, serialized.
-   * @param creationMethod Method to use to create this object.
-   * @param args Arguments needed for object creation.
-   */
-  private createObjectReference(serializedCreationObject: number[], creationMethod: string, args: number[]) {
-    transfer(this.document, [
-      TransferrableMutationType.OBJECT_CREATION,
-      store(creationMethod),
-      this.id,
-      args.length,
-      ...serializedCreationObject,
-      ...serializeTransferrableObject(args),
-    ]);
   }
 
   addColorStop(offset: number, color: string) {

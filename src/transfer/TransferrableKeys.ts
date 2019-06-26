@@ -84,6 +84,7 @@ export const enum TransferrableKeys {
   offsetY = 66,
   mutated = 67,
   serializeAsTransferrableObject = 68,
+  retrieveCanvasPattern = 69,
   // This must always be the last numerically ordered Key, for testing purposes.
-  END = 69,
+  END = 70,
 }

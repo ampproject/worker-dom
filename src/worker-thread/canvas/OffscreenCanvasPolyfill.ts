@@ -87,6 +87,23 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     return [TransferrableObjectType.CanvasRenderingContext2D, this.canvasElement[TransferrableKeys.index]];
   }
 
+  /**
+   * Creates object in the main thread, and associates it with the id provided.
+   * @param objectId ID to associate the created object with.
+   * @param creationMethod Method to use for object creation.
+   * @param creationArgs Arguments to pass into the creation method.
+   */
+  private createObjectReference(objectId: number, creationMethod: string, creationArgs: any[]) {
+    transfer(this.canvasElement.ownerDocument as Document, [
+      TransferrableMutationType.OBJECT_CREATION,
+      store(creationMethod),
+      objectId,
+      creationArgs.length,
+      ...this[TransferrableKeys.serializeAsTransferrableObject](),
+      ...serializeTransferrableObject(creationArgs),
+    ]);
+  }
+
   get canvas(): ElementType {
     return this.canvasElement;
   }
@@ -299,32 +316,21 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   }
 
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
-    return new CanvasGradient(
-      this.objectIndex++,
-      this.canvasElement.ownerDocument as Document,
-      'createLinearGradient',
-      [...arguments],
-      this[TransferrableKeys.serializeAsTransferrableObject](),
-    );
+    const gradientId = this.objectIndex++;
+    this.createObjectReference(gradientId, 'createLinearGradient', [...arguments]);
+    return new CanvasGradient(gradientId, this.canvasElement.ownerDocument as Document);
   }
 
   createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
-    return new CanvasGradient(
-      this.objectIndex++,
-      this.canvasElement.ownerDocument as Document,
-      'createRadialGradient',
-      [...arguments],
-      this[TransferrableKeys.serializeAsTransferrableObject](),
-    );
+    const gradientId = this.objectIndex++;
+    this.createObjectReference(gradientId, 'createRadialGradient', [...arguments]);
+    return new CanvasGradient(gradientId, this.canvasElement.ownerDocument as Document);
   }
 
   createPattern(image: HTMLCanvasElement | HTMLImageElement, repetition: string): CanvasPattern {
-    return new CanvasPattern(
-      this.objectIndex++,
-      this.canvasElement.ownerDocument as Document,
-      [image, repetition],
-      this[TransferrableKeys.serializeAsTransferrableObject](),
-    );
+    const patternId = this.objectIndex++;
+    this.createObjectReference(patternId, 'createPattern', [...arguments]);
+    return new CanvasPattern(patternId);
   }
 
   drawImage(image: CanvasImageSource, dx: number, dy: number) {

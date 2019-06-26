@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import { Document } from '../dom/Document';
-import { transfer } from '../MutationTransfer';
-import { TransferrableMutationType, TransferrableObjectType } from '../../transfer/TransferrableMutation';
-import { store } from '../strings';
-import { serializeTransferrableObject } from '../serializeTransferrableObject';
+import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableObject } from '../worker-thread';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
@@ -28,29 +24,9 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
  */
 export class CanvasPattern implements TransferrableObject {
   private id: number;
-  private document: Document;
 
-  constructor(id: number, document: Document, args: any[], serializedCreationObject: number[]) {
+  constructor(id: number) {
     this.id = id;
-    this.document = document;
-    this.createObjectReference(serializedCreationObject, args);
-  }
-
-  /**
-   * Creates CanvasPattern object in the main thread, and associates it with this object with the id provided.
-   * @param serializedCreationObject The target object needed to create the corresponding object in the main thread, serialized.
-   * @param creationMethod Method to use to create this object.
-   * @param args Arguments needed for object creation.
-   */
-  private createObjectReference(serializedCreationObject: number[], args: any[]) {
-    transfer(this.document, [
-      TransferrableMutationType.OBJECT_CREATION,
-      store('createPattern'),
-      this.id,
-      2, // arg count
-      ...serializedCreationObject,
-      ...serializeTransferrableObject(args),
-    ]);
   }
 
   /**
