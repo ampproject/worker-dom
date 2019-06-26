@@ -54,7 +54,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Document.createElement()                            | ✔️     |                                                  | 
 | Document.createElementNS()                          | ✔️     |                                                  | 
 | Document.createEntityReference()                    | ✖️     |                                                  | 
-| Document.createEvent()                              | ✖️     |                                                  | 
+| Document.createEvent()                              | ✔️     |                                                  | 
 | document.createExpression()                         | ✖️     |                                                  | 
 | Document.createNodeIterator()                       | ✖️     |                                                  | 
 | document.createNSResolver()                         | ✖️     |                                                  | 

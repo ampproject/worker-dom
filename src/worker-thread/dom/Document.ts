@@ -135,6 +135,14 @@ export class Document extends Element {
     return new constructor(NodeType.ELEMENT_NODE, localName, namespaceURI, this);
   }
 
+  /**
+   * Note: Unlike DOM, Event subclasses (e.g. MouseEvent) are not instantiated based on `type`.
+   * @param type
+   */
+  public createEvent(type: string): Event {
+    return new Event(type, { bubbles: false, cancelable: false });
+  }
+
   public createTextNode(text: string): Text {
     return new Text(text, this);
   }
