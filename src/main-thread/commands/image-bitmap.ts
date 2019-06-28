@@ -24,14 +24,13 @@ export const ImageBitmapProcessor: CommandExecutorInterface = (strings, nodeCont
 
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
-      const callIndex = mutations[startPosition + ImageBitmapMutationIndex.CallIndex];
       if (allowedExecution) {
         if (target) {
           self.createImageBitmap(target as HTMLImageElement | HTMLCanvasElement).then(imageBitmap => {
             workerContext.messageToWorker(
               {
                 [TransferrableKeys.type]: MessageType.IMAGE_BITMAP_INSTANCE,
-                [TransferrableKeys.callIndex]: callIndex,
+                [TransferrableKeys.callIndex]: mutations[startPosition + ImageBitmapMutationIndex.CallIndex],
                 [TransferrableKeys.data]: imageBitmap,
               },
               [imageBitmap],
@@ -49,6 +48,7 @@ export const ImageBitmapProcessor: CommandExecutorInterface = (strings, nodeCont
         type: 'IMAGE_BITMAP_INSTANCE',
         target,
         allowedExecution,
+        callIndex: mutations[startPosition + ImageBitmapMutationIndex.CallIndex],
       };
     },
   };
