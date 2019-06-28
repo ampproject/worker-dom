@@ -111,14 +111,8 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
         transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
       }
     }).then((instance: { getContext(c: '2d'): CanvasRenderingContext2D }) => {
-      this.implementation = instance.getContext('2d');
-      this.goodImplementation = this.implementation;
-      this.unresolvedCalls--;
-
-      if (this.unresolvedCalls === 0) {
-        this.upgraded = true;
-        this.flushQueue();
-      }
+      this.goodImplementation = instance.getContext('2d');
+      this.maybeUpgradeImplementation();
     });
 
     if (isTestMode) {
@@ -127,6 +121,28 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     }
 
     return upgradePromise;
+  }
+
+  /**
+   * Degrades the underlying context implementation and adds to the unresolved call count.
+   */
+  private degradeImplementation() {
+    this.upgraded = false;
+    const OffscreenCanvas = this.canvasElement.ownerDocument.defaultView.OffscreenCanvas;
+    this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
+    this.unresolvedCalls++;
+  }
+
+  /**
+   * Will upgrade the underlying context implementation if no more unresolved calls remain.
+   */
+  private maybeUpgradeImplementation() {
+    this.unresolvedCalls--;
+    if (this.unresolvedCalls === 0) {
+      this.implementation = this.goodImplementation;
+      this.upgraded = true;
+      this.flushQueue();
+    }
   }
 
   private flushQueue() {
@@ -316,24 +332,13 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     if (this.polyfillUsed || image instanceof ImageBitmap) {
       return this.delegateFunc('createPattern', [...arguments]);
     } else {
-      this.upgraded = false;
-
       // Degrade the underlying implementation because we don't want calls on the real one until
       // after pattern is retrieved
-      const OffscreenCanvas = this.canvasElement.ownerDocument.defaultView.OffscreenCanvas;
-      this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
-      this.unresolvedCalls++;
+      this.degradeImplementation();
 
       const fakePattern = new FakeNativeCanvasPattern<ElementType>();
       fakePattern[TransferrableKeys.retrieveCanvasPattern](this.canvas, image, repetition).then(() => {
-        this.unresolvedCalls--;
-
-        // The good implementation must only come after the last unresolved createPattern call
-        if (this.unresolvedCalls === 0) {
-          this.implementation = this.goodImplementation;
-          this.upgraded = true;
-          this.flushQueue();
-        }
+        this.maybeUpgradeImplementation();
       });
 
       return fakePattern;
@@ -354,23 +359,14 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
       // Degrade the underlying implementation because we don't want calls on the real one
       // until after the ImageBitmap is received.
-      this.upgraded = false;
-      const OffscreenCanvas = this.canvasElement.ownerDocument.defaultView.OffscreenCanvas;
-      this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
-      this.unresolvedCalls++;
+      this.degradeImplementation();
 
       // Retrieve an ImageBitmap from the main-thread with the same image as the input image
       retrieveImageBitmap(image as any, (this.canvas as unknown) as HTMLCanvasElement)
         // Then call the actual method with the retrieved ImageBitmap
         .then((instance: ImageBitmap) => {
           args.push(instance, dx, dy);
-          this.unresolvedCalls--;
-
-          if (this.unresolvedCalls === 0) {
-            this.implementation = this.goodImplementation;
-            this.upgraded = true;
-            this.flushQueue();
-          }
+          this.maybeUpgradeImplementation();
         });
     }
   }

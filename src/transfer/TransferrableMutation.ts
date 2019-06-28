@@ -164,7 +164,8 @@ export const enum OffscreenCanvasMutationIndex {
  */
 export const enum ImageBitmapMutationIndex {
   Target = 1,
-  End = 2,
+  CallIndex = 2,
+  End = 3,
 }
 
 export const enum ObjectMutationIndex {

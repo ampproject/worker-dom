@@ -22,13 +22,13 @@ import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
 import { Document } from '../dom/Document';
 import { transfer } from '../MutationTransfer';
 
+let indexTracker = 0;
+
 export function retrieveImageBitmap(image: HTMLImageElement | HTMLCanvasElement, canvas: HTMLCanvasElement): Promise<any> {
+  const callIndex = indexTracker++;
   return new Promise(resolve => {
     const messageHandler = ({ data }: { data: ImageBitmapToWorker }) => {
-      if (
-        data[TransferrableKeys.type] === MessageType.IMAGE_BITMAP_INSTANCE &&
-        data[TransferrableKeys.target][0] === (image as any)[TransferrableKeys.index]
-      ) {
+      if (data[TransferrableKeys.type] === MessageType.IMAGE_BITMAP_INSTANCE && data[TransferrableKeys.callIndex] === callIndex) {
         removeEventListener('message', messageHandler);
         const transferredImageBitmap = (data as ImageBitmapToWorker)[TransferrableKeys.data];
         resolve(transferredImageBitmap);
@@ -39,7 +39,7 @@ export function retrieveImageBitmap(image: HTMLImageElement | HTMLCanvasElement,
       throw new Error('addEventListener not a function!');
     } else {
       addEventListener('message', messageHandler);
-      transfer(canvas.ownerDocument as Document, [TransferrableMutationType.IMAGE_BITMAP_INSTANCE, (image as any)[TransferrableKeys.index]]);
+      transfer(canvas.ownerDocument as Document, [TransferrableMutationType.IMAGE_BITMAP_INSTANCE, image[TransferrableKeys.index], callIndex]);
     }
   });
 }

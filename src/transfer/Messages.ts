@@ -74,7 +74,7 @@ export interface OffscreenCanvasToWorker {
 }
 export interface ImageBitmapToWorker {
   [TransferrableKeys.type]: MessageType.IMAGE_BITMAP_INSTANCE;
-  [TransferrableKeys.target]: TransferredNode;
+  [TransferrableKeys.callIndex]: number; // number that indicates the number of the image bitmap call
   [TransferrableKeys.data]: Object; // This will be an ImageBitmap object
 }
 export interface ResizeSyncToWorker {
