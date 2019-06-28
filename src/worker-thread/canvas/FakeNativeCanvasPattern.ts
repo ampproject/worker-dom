@@ -24,11 +24,9 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
  * Wraps CanvasPattern for usage in a native OffscreenCanvas case.
  */
 export class FakeNativeCanvasPattern<ElementType extends HTMLElement> {
-  private realPattern = {} as CanvasPattern; // Actual pattern to be used
-
-  get implementation(): CanvasPattern {
-    return this.realPattern;
-  }
+  public [TransferrableKeys.patternImplementation] = {} as CanvasPattern;
+  public [TransferrableKeys.patternUpgraded] = false;
+  public [TransferrableKeys.patternUpgradePromise]: Promise<void>;
 
   /**
    * Retrieves ImageBitmap object from main-thread, which replicates the input image. Upon
@@ -38,19 +36,20 @@ export class FakeNativeCanvasPattern<ElementType extends HTMLElement> {
    * @param repetition DOMStrings indicating how to repeat the pattern's image.
    */
   [TransferrableKeys.retrieveCanvasPattern](canvas: ElementType, image: CanvasImageSource, repetition: string): Promise<void> {
-    return (
-      retrieveImageBitmap(image as any, (canvas as unknown) as HTMLCanvasElement)
-        // Create new pattern with retrieved ImageBitmap
-        .then((instance: ImageBitmap) => {
-          const pattern = canvas.getContext('2d').createPattern(instance, repetition);
+    this[TransferrableKeys.patternUpgradePromise] = retrieveImageBitmap(image as any, (canvas as unknown) as HTMLCanvasElement)
+      // Create new pattern with retrieved ImageBitmap
+      .then((instance: ImageBitmap) => {
+        const pattern = canvas.getContext('2d').createPattern(instance, repetition);
 
-          if (!pattern) {
-            throw new Error('Pattern is null!');
-          }
+        if (!pattern) {
+          throw new Error('Pattern is null!');
+        }
 
-          this.realPattern = pattern;
-        })
-    );
+        this[TransferrableKeys.patternImplementation] = pattern;
+        this[TransferrableKeys.patternUpgraded] = true;
+      });
+
+    return this[TransferrableKeys.patternUpgradePromise];
   }
 
   // This method is experimental.

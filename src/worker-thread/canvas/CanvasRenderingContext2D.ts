@@ -288,8 +288,18 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     // 1. Native pattern instances given to the user hold the 'real' pattern as their implementation prop.
     // 2. Pattern must be upgraded, otherwise an undefined 'implementation' will be queued instead of the wrapper object.
     if (value instanceof FakeNativeCanvasPattern && this.upgraded) {
-      this.delegateSetter('fillStyle', [(value as any).implementation]);
+      // This case occurs only when an un-upgraded pattern is passed into a different (already
+      // upgraded) canvas context.
+      if (!value[TransferrableKeys.patternUpgraded]) {
+        this.queue.push({ fnName: 'fillStyle', args: [value], isSetter: true });
 
+        this.degradeImplementation();
+        value[TransferrableKeys.patternUpgradePromise].then(() => {
+          this.maybeUpgradeImplementation();
+        });
+      } else {
+        this.delegateSetter('fillStyle', [value[TransferrableKeys.patternImplementation]]);
+      }
       // Any other case does not require special handling.
     } else {
       this.delegateSetter('fillStyle', [...arguments]);
@@ -304,7 +314,18 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     // 1. Native pattern instances given to the user hold the 'real' pattern as their implementation prop.
     // 2. Pattern must be upgraded, otherwise an undefined 'implementation' could be queued instead of the wrapper object.
     if (value instanceof FakeNativeCanvasPattern && this.upgraded) {
-      this.delegateSetter('strokeStyle', [(value as any).implementation]);
+      // This case occurs only when an un-upgraded pattern is passed into a different (already
+      // upgraded) canvas context.
+      if (!value[TransferrableKeys.patternUpgraded]) {
+        this.queue.push({ fnName: 'strokeStyle', args: [value], isSetter: true });
+
+        this.degradeImplementation();
+        value[TransferrableKeys.patternUpgradePromise].then(() => {
+          this.maybeUpgradeImplementation();
+        });
+      } else {
+        this.delegateSetter('strokeStyle', [value[TransferrableKeys.patternImplementation]]);
+      }
 
       // Any other case does not require special handling.
     } else {
