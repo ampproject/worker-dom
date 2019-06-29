@@ -32,6 +32,7 @@ export const enum MessageType {
   LONG_TASK_START = 7,
   LONG_TASK_END = 8,
   OFFSCREEN_CANVAS_INSTANCE = 9,
+  IMAGE_BITMAP_INSTANCE = 10,
   // NAVIGATION_PUSH_STATE = 8,
   // NAVIGATION_REPLACE_STATE = 9,
   // NAVIGATION_POP_STATE = 10,
@@ -71,8 +72,19 @@ export interface OffscreenCanvasToWorker {
   [TransferrableKeys.target]: TransferredNode;
   [TransferrableKeys.data]: Object; // This will be an OffscreenCanvas
 }
+export interface ImageBitmapToWorker {
+  [TransferrableKeys.type]: MessageType.IMAGE_BITMAP_INSTANCE;
+  [TransferrableKeys.callIndex]: number; // number that indicates the number of the image bitmap call
+  [TransferrableKeys.data]: Object; // This will be an ImageBitmap object
+}
 export interface ResizeSyncToWorker {
   [TransferrableKeys.type]: MessageType.RESIZE;
   [TransferrableKeys.sync]: [number, number];
 }
-export type MessageToWorker = EventToWorker | ValueSyncToWorker | BoundingClientRectToWorker | ResizeSyncToWorker | OffscreenCanvasToWorker;
+export type MessageToWorker =
+  | EventToWorker
+  | ValueSyncToWorker
+  | BoundingClientRectToWorker
+  | ResizeSyncToWorker
+  | OffscreenCanvasToWorker
+  | ImageBitmapToWorker;

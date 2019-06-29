@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-declare type TransferObject = CanvasGradient;
+declare type TransferObject = CanvasGradient | CanvasPattern;
 
 /**
  * Stores objects that have their behavior handled from the main-thread. Each object is associated to a unique ID.

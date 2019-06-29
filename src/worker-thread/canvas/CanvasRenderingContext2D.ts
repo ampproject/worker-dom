@@ -34,6 +34,9 @@ import { TransferrableMutationType } from '../../transfer/TransferrableMutation'
 import { OffscreenCanvasPolyfill } from './OffscreenCanvasPolyfill';
 import { Document } from '../dom/Document';
 import { HTMLElement } from '../dom/HTMLElement';
+import { FakeNativeCanvasPattern } from './FakeNativeCanvasPattern';
+import { retrieveImageBitmap } from './canvas-utils';
+import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
 
 export const deferredUpgrades = new WeakMap();
 
@@ -46,6 +49,12 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   private implementation: CanvasRenderingContext2D;
   private upgraded = false;
   private canvasElement: ElementType;
+  private polyfillUsed: boolean;
+
+  // createPattern calls need to retrieve an ImageBitmap from the main-thread. Since those can
+  // happen subsequently, we must keep track of these to avoid reentrancy problems.
+  private unresolvedCalls = 0;
+  private goodImplementation: CanvasRenderingContext2D;
 
   constructor(canvas: ElementType) {
     this.canvasElement = canvas;
@@ -55,6 +64,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     if (typeof OffscreenCanvas === 'undefined') {
       this.implementation = new OffscreenCanvasPolyfill<ElementType>(canvas).getContext('2d');
       this.upgraded = true;
+      this.polyfillUsed = true;
     }
 
     // If the browser supports OffscreenCanvas:
@@ -65,6 +75,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     else {
       this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
       this.getOffscreenCanvasAsync(this.canvasElement);
+      this.polyfillUsed = false;
     }
   }
 
@@ -73,6 +84,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
    * @param canvas HTMLCanvasElement associated with this context.
    */
   private getOffscreenCanvasAsync(canvas: ElementType): Promise<void> {
+    this.unresolvedCalls++;
     const deferred: { resolve?: (value?: {} | PromiseLike<{}>) => void; upgradePromise?: Promise<void> } = {};
     const isTestMode = typeof addEventListener !== 'function';
 
@@ -99,9 +111,8 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
         transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
       }
     }).then((instance: { getContext(c: '2d'): CanvasRenderingContext2D }) => {
-      this.implementation = instance.getContext('2d');
-      this.upgraded = true;
-      this.flushQueue();
+      this.goodImplementation = instance.getContext('2d');
+      this.maybeUpgradeImplementation();
     });
 
     if (isTestMode) {
@@ -112,12 +123,34 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     return upgradePromise;
   }
 
+  /**
+   * Degrades the underlying context implementation and adds to the unresolved call count.
+   */
+  private degradeImplementation() {
+    this.upgraded = false;
+    const OffscreenCanvas = this.canvasElement.ownerDocument.defaultView.OffscreenCanvas;
+    this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
+    this.unresolvedCalls++;
+  }
+
+  /**
+   * Will upgrade the underlying context implementation if no more unresolved calls remain.
+   */
+  private maybeUpgradeImplementation() {
+    this.unresolvedCalls--;
+    if (this.unresolvedCalls === 0) {
+      this.implementation = this.goodImplementation;
+      this.upgraded = true;
+      this.flushQueue();
+    }
+  }
+
   private flushQueue() {
     for (const call of this.queue) {
       if (call.isSetter) {
-        (this.implementation as any)[call.fnName] = call.args[0];
+        (this as any)[call.fnName] = call.args[0];
       } else {
-        (this.implementation as any)[call.fnName](...call.args);
+        (this as any)[call.fnName](...call.args);
       }
     }
     this.queue.length = 0;
@@ -252,7 +285,25 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* FILL AND STROKE STYLES */
   set fillStyle(value: string | CanvasGradient | CanvasPattern) {
-    this.delegateSetter('fillStyle', [...arguments]);
+    // 1. Native pattern instances given to the user hold the 'real' pattern as their implementation prop.
+    // 2. Pattern must be upgraded, otherwise an undefined 'implementation' will be queued instead of the wrapper object.
+    if (value instanceof FakeNativeCanvasPattern && this.upgraded) {
+      // This case occurs only when an un-upgraded pattern is passed into a different (already
+      // upgraded) canvas context.
+      if (!value[TransferrableKeys.patternUpgraded]) {
+        this.queue.push({ fnName: 'fillStyle', args: [value], isSetter: true });
+
+        this.degradeImplementation();
+        value[TransferrableKeys.patternUpgradePromise].then(() => {
+          this.maybeUpgradeImplementation();
+        });
+      } else {
+        this.delegateSetter('fillStyle', [value[TransferrableKeys.patternImplementation]]);
+      }
+      // Any other case does not require special handling.
+    } else {
+      this.delegateSetter('fillStyle', [...arguments]);
+    }
   }
 
   get fillStyle(): string | CanvasGradient | CanvasPattern {
@@ -260,7 +311,26 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set strokeStyle(value: string | CanvasGradient | CanvasPattern) {
-    this.delegateSetter('strokeStyle', [...arguments]);
+    // 1. Native pattern instances given to the user hold the 'real' pattern as their implementation prop.
+    // 2. Pattern must be upgraded, otherwise an undefined 'implementation' could be queued instead of the wrapper object.
+    if (value instanceof FakeNativeCanvasPattern && this.upgraded) {
+      // This case occurs only when an un-upgraded pattern is passed into a different (already
+      // upgraded) canvas context.
+      if (!value[TransferrableKeys.patternUpgraded]) {
+        this.queue.push({ fnName: 'strokeStyle', args: [value], isSetter: true });
+
+        this.degradeImplementation();
+        value[TransferrableKeys.patternUpgradePromise].then(() => {
+          this.maybeUpgradeImplementation();
+        });
+      } else {
+        this.delegateSetter('strokeStyle', [value[TransferrableKeys.patternImplementation]]);
+      }
+
+      // Any other case does not require special handling.
+    } else {
+      this.delegateSetter('strokeStyle', [...arguments]);
+    }
   }
 
   get strokeStyle(): string | CanvasGradient | CanvasPattern {
@@ -277,7 +347,49 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   createPattern(image: CanvasImageSource, repetition: string): CanvasPattern | null {
-    return this.delegateFunc('createPattern', [...arguments]);
+    const ImageBitmap = this.canvasElement.ownerDocument.defaultView.ImageBitmap;
+
+    // Only HTMLElement image sources require special handling. ImageBitmap is OK to use.
+    if (this.polyfillUsed || image instanceof ImageBitmap) {
+      return this.delegateFunc('createPattern', [...arguments]);
+    } else {
+      // Degrade the underlying implementation because we don't want calls on the real one until
+      // after pattern is retrieved
+      this.degradeImplementation();
+
+      const fakePattern = new FakeNativeCanvasPattern<ElementType>();
+      fakePattern[TransferrableKeys.retrieveCanvasPattern](this.canvas, image, repetition).then(() => {
+        this.maybeUpgradeImplementation();
+      });
+
+      return fakePattern;
+    }
+  }
+
+  /* DRAWING IMAGES */
+  drawImage(image: CanvasImageSource, dx: number, dy: number): void {
+    const ImageBitmap = this.canvasElement.ownerDocument.defaultView.ImageBitmap;
+
+    // Only HTMLElement image sources require special handling. ImageBitmap is OK to use.
+    if (this.polyfillUsed || image instanceof ImageBitmap) {
+      this.delegateFunc('drawImage', [...arguments]);
+    } else {
+      // Queue the drawImage call to make sure it gets called in correct order
+      const args = [] as any[];
+      this.queue.push({ fnName: 'drawImage', args, isSetter: false });
+
+      // Degrade the underlying implementation because we don't want calls on the real one
+      // until after the ImageBitmap is received.
+      this.degradeImplementation();
+
+      // Retrieve an ImageBitmap from the main-thread with the same image as the input image
+      retrieveImageBitmap(image as any, (this.canvas as unknown) as HTMLCanvasElement)
+        // Then call the actual method with the retrieved ImageBitmap
+        .then((instance: ImageBitmap) => {
+          args.push(instance, dx, dy);
+          this.maybeUpgradeImplementation();
+        });
+    }
   }
 
   /* SHADOWS */
@@ -431,11 +543,6 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   get globalCompositeOperation(): string {
     return this.delegateGetter('globalCompositeOperation');
-  }
-
-  /* DRAWING IMAGES */
-  drawImage(image: CanvasImageSource, dx: number, dy: number): void {
-    this.delegateFunc('drawImage', [...arguments]);
   }
 
   /* PIXEL MANIPULATION */

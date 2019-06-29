@@ -15,6 +15,8 @@
  */
 
 import { HTMLElement } from '../dom/HTMLElement';
+import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
+import { HTMLImageElement } from '../dom/HTMLImageElement';
 
 /** The CanvasRenderingContext2D interface, part of the Canvas API, provides the 2D rendering context for the drawing surface of a <canvas> element. It is used for drawing shapes, text, images, and other objects. */
 export interface CanvasRenderingContext2D
@@ -179,7 +181,7 @@ declare var ImageBitmap: {
 
 export type CanvasDirection = 'ltr' | 'rtl' | 'inherit';
 export type CanvasFillRule = 'nonzero' | 'evenodd';
-export type CanvasImageSource = ImageBitmap;
+export type CanvasImageSource = HTMLCanvasElement | HTMLImageElement | ImageBitmap;
 export type CanvasLineCap = 'butt' | 'round' | 'square';
 export type CanvasLineJoin = 'round' | 'bevel' | 'miter';
 export type CanvasTextAlign = 'start' | 'end' | 'left' | 'right' | 'center';

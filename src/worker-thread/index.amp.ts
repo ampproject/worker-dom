@@ -175,6 +175,7 @@ const globalScope: GlobalScope = {
   HTMLTableSectionElement,
   HTMLTimeElement,
   OffscreenCanvas: (self as any).OffscreenCanvas as OffscreenCanvas,
+  ImageBitmap: (self as any).ImageBitmap as ImageBitmap,
 };
 
 // WorkerDOM.Document.defaultView ends up being the window object.
