@@ -83,6 +83,12 @@ export const enum TransferrableKeys {
   offsetX = 65,
   offsetY = 66,
   mutated = 67,
+  serializeAsTransferrableObject = 68,
+  retrieveCanvasPattern = 69,
+  patternImplementation = 70,
+  patternUpgraded = 71,
+  patternUpgradePromise = 72,
+  callIndex = 73,
   // This must always be the last numerically ordered Key, for testing purposes.
-  END = 68,
+  END = 74,
 }

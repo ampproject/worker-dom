@@ -81,6 +81,10 @@ export function deserializeTransferrableObject(
         args.push(canvas.getContext('2d'));
         break;
 
+      case TransferrableObjectType.HTMLElement:
+        args.push(nodeContext.getNode(buffer[offset++]));
+        break;
+
       default:
         throw new Error('Cannot deserialize argument.');
     }

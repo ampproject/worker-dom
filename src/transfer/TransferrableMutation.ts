@@ -26,6 +26,7 @@ export const enum TransferrableMutationType {
   OFFSCREEN_CANVAS_INSTANCE = 8,
   OBJECT_MUTATION = 9,
   OBJECT_CREATION = 10,
+  IMAGE_BITMAP_INSTANCE = 11,
 }
 export const DefaultAllowedMutations = [
   TransferrableMutationType.ATTRIBUTES,
@@ -39,6 +40,7 @@ export const DefaultAllowedMutations = [
   TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE,
   TransferrableMutationType.OBJECT_MUTATION,
   TransferrableMutationType.OBJECT_CREATION,
+  TransferrableMutationType.IMAGE_BITMAP_INSTANCE,
 ];
 
 export const ReadableMutationType: { [key: number]: string } = {
@@ -53,6 +55,7 @@ export const ReadableMutationType: { [key: number]: string } = {
   8: 'OFFSCREEN_CANVAS_INSTANCE',
   9: 'OBJECT_MUTATION',
   10: 'OBJECT_CREATION',
+  11: 'IMAGE_BITMAP_INSTANCE',
 };
 
 /**
@@ -152,6 +155,19 @@ export const enum OffscreenCanvasMutationIndex {
   End = 2,
 }
 
+/**
+ * ImageBitmap Mutations
+ * [
+ *   TransferableMutationType.IMAGE_BITMAP_INSTANCE,
+ *   Target.index,
+ * ]
+ */
+export const enum ImageBitmapMutationIndex {
+  Target = 1,
+  CallIndex = 2,
+  End = 3,
+}
+
 export const enum ObjectMutationIndex {
   FunctionName = 1,
   ArgumentCount = 2,
@@ -182,4 +198,5 @@ export const enum TransferrableObjectType {
   Array = 4,
   TransferObject = 5,
   CanvasRenderingContext2D = 6,
+  HTMLElement = 7,
 }

@@ -35,6 +35,9 @@ import { serializeTransferrableObject } from '../serializeTransferrableObject';
 import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableObject } from '../worker-thread';
 import { CanvasGradient } from './CanvasGradient';
+import { CanvasPattern } from './CanvasPattern';
+import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
+import { HTMLImageElement } from '../dom/HTMLImageElement';
 
 /**
  * Handles calls to a CanvasRenderingContext2D object in cases where the user's environment does not
@@ -75,13 +78,30 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       TransferrableMutationType.OBJECT_MUTATION,
       store(fnName),
       args.length,
-      ...this.serializeAsTransferrableObject(),
+      ...this[TransferrableKeys.serializeAsTransferrableObject](),
       ...serializeTransferrableObject(args),
     ]);
   }
 
-  serializeAsTransferrableObject(): number[] {
+  [TransferrableKeys.serializeAsTransferrableObject](): number[] {
     return [TransferrableObjectType.CanvasRenderingContext2D, this.canvasElement[TransferrableKeys.index]];
+  }
+
+  /**
+   * Creates object in the main thread, and associates it with the id provided.
+   * @param objectId ID to associate the created object with.
+   * @param creationMethod Method to use for object creation.
+   * @param creationArgs Arguments to pass into the creation method.
+   */
+  private createObjectReference(objectId: number, creationMethod: string, creationArgs: any[]) {
+    transfer(this.canvasElement.ownerDocument as Document, [
+      TransferrableMutationType.OBJECT_CREATION,
+      store(creationMethod),
+      objectId,
+      creationArgs.length,
+      ...this[TransferrableKeys.serializeAsTransferrableObject](),
+      ...serializeTransferrableObject(creationArgs),
+    ]);
   }
 
   get canvas(): ElementType {
@@ -164,11 +184,11 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     this[TransferrableKeys.mutated]('imageSmoothingQuality', [...arguments]);
   }
 
-  set fillStyle(value: string | CanvasGradient) {
+  set fillStyle(value: string | CanvasGradient | CanvasPattern) {
     this[TransferrableKeys.mutated]('fillStyle', [...arguments]);
   }
 
-  set strokeStyle(value: string | CanvasGradient) {
+  set strokeStyle(value: string | CanvasGradient | CanvasPattern) {
     this[TransferrableKeys.mutated]('strokeStyle', [...arguments]);
   }
 
@@ -295,30 +315,26 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     this[TransferrableKeys.mutated]('setTransform', [...arguments]);
   }
 
-  ////////////////////////////////////////
-  // createLinearGradient, createRadialGradient, createPattern can be done in the worker thread
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
-    return new CanvasGradient(
-      this.objectIndex++,
-      this.canvasElement.ownerDocument as Document,
-      'createLinearGradient',
-      [...arguments],
-      this.serializeAsTransferrableObject(),
-    );
+    const gradientId = this.objectIndex++;
+    this.createObjectReference(gradientId, 'createLinearGradient', [...arguments]);
+    return new CanvasGradient(gradientId, this.canvasElement.ownerDocument as Document);
   }
 
   createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
-    return new CanvasGradient(
-      this.objectIndex++,
-      this.canvasElement.ownerDocument as Document,
-      'createRadialGradient',
-      [...arguments],
-      this.serializeAsTransferrableObject(),
-    );
+    const gradientId = this.objectIndex++;
+    this.createObjectReference(gradientId, 'createRadialGradient', [...arguments]);
+    return new CanvasGradient(gradientId, this.canvasElement.ownerDocument as Document);
   }
 
-  createPattern(): CanvasPattern {
-    return {} as CanvasPattern;
+  createPattern(image: HTMLCanvasElement | HTMLImageElement, repetition: string): CanvasPattern {
+    const patternId = this.objectIndex++;
+    this.createObjectReference(patternId, 'createPattern', [...arguments]);
+    return new CanvasPattern(patternId);
+  }
+
+  drawImage(image: CanvasImageSource, dx: number, dy: number) {
+    this[TransferrableKeys.mutated]('drawImage', [...arguments]);
   }
 
   createImageData(): ImageData {
@@ -330,9 +346,6 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   }
 
   putImageData() {}
-
-  // issue: has four signatures, all of them with a CanvasImageSource arg
-  drawImage() {}
 
   // THROW and implement async versions
   isPointInPath(): boolean {

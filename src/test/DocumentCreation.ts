@@ -133,6 +133,7 @@ const GlobalScope: GlobalScope = {
   HTMLTableSectionElement,
   HTMLTimeElement,
   OffscreenCanvas: typeof OffscreenCanvas === 'undefined' ? undefined : OffscreenCanvas,
+  ImageBitmap: typeof ImageBitmap === 'undefined' ? undefined : ImageBitmap,
 };
 
 /**

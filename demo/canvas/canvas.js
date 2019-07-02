@@ -49,8 +49,12 @@ myCanvas.addEventListener('mouseup', e => {
 existingCanvasBtn.addEventListener('click', async () => {
   // Scenario #1:
   // Canvas is already on the page
-  myCtx.fillStyle = 'yellow';
-  myCtx.strokeStyle = 'yellow';
+  const img = document.getElementById('myImg');
+  const pattern = myCtx.createPattern(img, 'repeat');
+  myCtx.fillStyle = pattern;
+  const pattern2 = myCtx.createPattern(img, 'repeat');
+
+  myCtx.strokeStyle = pattern2;
   myCtx.lineWidth = 5;
   myCtx.setLineDash([1, 0]);
   myCtx.beginPath();

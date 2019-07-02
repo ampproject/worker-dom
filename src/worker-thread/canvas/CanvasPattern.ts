@@ -14,36 +14,25 @@
  * limitations under the License.
  */
 
-import { Document } from '../dom/Document';
-import { transfer } from '../MutationTransfer';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { serializeTransferrableObject } from '../serializeTransferrableObject';
-import { store } from '../strings';
-import { TransferrableObject } from '../worker-thread';
 import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
+import { TransferrableObject } from '../worker-thread';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 /**
- * Wrapper class for CanvasGradient. The user will be able to manipulate as a regular CanvasGradient object.
+ * Wrapper class for CanvasPattern. The user will be able to manipulate as a regular CanvasPattern object.
+ * This class will be used when the CanvasRenderingContext is using an OffscreenCanvas polyfill.
  */
-export class CanvasGradient implements TransferrableObject {
+export class CanvasPattern implements TransferrableObject {
   private id: number;
-  private document: Document;
 
-  constructor(id: number, document: Document) {
-    this.document = document;
+  constructor(id: number) {
     this.id = id;
   }
 
-  addColorStop(offset: number, color: string) {
-    transfer(this.document, [
-      TransferrableMutationType.OBJECT_MUTATION,
-      store('addColorStop'),
-      2, // arg count
-      ...this[TransferrableKeys.serializeAsTransferrableObject](),
-      ...serializeTransferrableObject([...arguments]),
-    ]);
-  }
+  /**
+   * This is an experimental method.
+   */
+  setTransform() {}
 
   [TransferrableKeys.serializeAsTransferrableObject](): number[] {
     return [TransferrableObjectType.TransferObject, this.id];
