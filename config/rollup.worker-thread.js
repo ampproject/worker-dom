@@ -94,6 +94,28 @@ const ESModules = [
       }),
     ],
   },
+  {
+    input: 'output/worker-thread/index.amp.js',
+    output: {
+      file: 'dist/amp/worker/worker.js',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+    },
+    plugins: [
+      copy({
+        targets: ['config/dist-packaging/amp/worker/package.json'],
+        outputFolder: 'dist/amp/worker',
+      }),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: false,
+      }),
+    ],
+  },
 ];
 
 const IIFEModules = [
