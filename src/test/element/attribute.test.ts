@@ -70,6 +70,14 @@ test('setAttribute overwrites the value if the attribute already exists', t => {
   t.deepEqual(node.attributes[0], attrOverride);
 });
 
+test('setAttribute with empty string', t => {
+  const { node } = t.context;
+
+  node.setAttribute('foo', '');
+  t.true(node.hasAttribute('foo'));
+  t.is(node.getAttribute('foo'), '');
+});
+
 test('setAttribute converts non-strings to strings', t => {
   const { node } = t.context;
 
