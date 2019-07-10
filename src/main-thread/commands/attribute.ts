@@ -20,7 +20,7 @@ import { CommandExecutorInterface } from './interface';
 export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.ATTRIBUTES);
 
-  function getValue(mutations: Uint16Array, startPosition: number) {
+  function getValue(mutations: Uint16Array, startPosition: number): string | null {
     const value = mutations[startPosition + AttributeMutationIndex.Value];
     // Value is sent as 0 when it's the default value or removal.
     // Value is sent as index + 1 when it's a valid value.
