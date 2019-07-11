@@ -19,7 +19,7 @@ import { StringContext } from './strings';
 
 export class NodeContext {
   public baseElement: HTMLElement;
-  private strings: StringContext;
+  private stringContext: StringContext;
   private count: number;
   private nodes: Map<number, Node>;
 
@@ -29,9 +29,9 @@ export class NodeContext {
    * Worker.
    * @param baseElement Element that will be controlled by a Worker
    */
-  constructor(strings: StringContext, baseElement: Element) {
+  constructor(stringContext: StringContext, baseElement: Element) {
     this.count = 2;
-    this.strings = strings;
+    this.stringContext = stringContext;
 
     // The nodes map is populated with two default values pointing to baseElement.
     // These are [document, document.body] from the worker.
@@ -52,16 +52,16 @@ export class NodeContext {
     for (let iterator = 0; iterator < nodeBufferLength; iterator += TransferrableNodeIndex.End) {
       let node: Node;
       if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.TEXT_NODE) {
-        node = document.createTextNode(this.strings.get(nodeBuffer[iterator + TransferrableNodeIndex.TextContent]));
+        node = document.createTextNode(this.stringContext.get(nodeBuffer[iterator + TransferrableNodeIndex.TextContent]));
       } else if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.COMMENT_NODE) {
-        node = document.createComment(this.strings.get(nodeBuffer[iterator + TransferrableNodeIndex.TextContent]));
+        node = document.createComment(this.stringContext.get(nodeBuffer[iterator + TransferrableNodeIndex.TextContent]));
       } else if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.DOCUMENT_FRAGMENT_NODE) {
         node = document.createDocumentFragment();
       } else {
-        const nodeName = this.strings.get(nodeBuffer[iterator + TransferrableNodeIndex.NodeName]);
+        const nodeName = this.stringContext.get(nodeBuffer[iterator + TransferrableNodeIndex.NodeName]);
         node =
           nodeBuffer[iterator + TransferrableNodeIndex.Namespace] !== 0
-            ? document.createElementNS(this.strings.get(nodeBuffer[iterator + TransferrableNodeIndex.Namespace]), nodeName)
+            ? document.createElementNS(this.stringContext.get(nodeBuffer[iterator + TransferrableNodeIndex.Namespace]), nodeName)
             : document.createElement(nodeName);
 
         // TODO(KB): Restore Properties

@@ -16,7 +16,7 @@
 
 import anyTest, { TestInterface } from 'ava';
 import * as sinon from 'sinon';
-import { Strings } from '../../main-thread/strings';
+import { StringContext } from '../../main-thread/strings';
 import { ObjectContext } from '../../main-thread/object-context';
 import { CommandExecutor } from '../../main-thread/commands/interface';
 import { Env } from './helpers/env';
@@ -29,7 +29,7 @@ import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 
 const test = anyTest as TestInterface<{
   sandbox: sinon.SinonSandbox;
-  strings: Strings;
+  stringContext: StringContext;
   objectContext: ObjectContext;
   objectMutationProcessor: CommandExecutor;
   canvasElement: HTMLCanvasElement;
@@ -41,13 +41,13 @@ test.beforeEach(t => {
   const { document } = env;
   const baseElement = document.createElement('div');
 
-  const strings = new Strings();
+  const stringContext = new StringContext();
   const objectContext = new ObjectContext();
 
   const ctx = {} as CanvasRenderingContext2D;
   const canvasElement = ({ _index_: 1, getContext: (c: string) => ctx } as unknown) as HTMLCanvasElement;
 
-  const nodeContext = new NodeContext(strings, baseElement);
+  const nodeContext = new NodeContext(stringContext, baseElement);
   sandbox.stub(nodeContext, 'getNode').returns(canvasElement);
   const workerContext = ({
     getWorker() {},
@@ -55,7 +55,7 @@ test.beforeEach(t => {
   } as unknown) as WorkerContext;
 
   const objectMutationProcessor = ObjectMutationProcessor(
-    strings,
+    stringContext,
     nodeContext,
     workerContext,
     objectContext,
@@ -67,7 +67,7 @@ test.beforeEach(t => {
 
   t.context = {
     sandbox,
-    strings,
+    stringContext: stringContext,
     objectContext,
     objectMutationProcessor,
     canvasElement,
@@ -80,7 +80,7 @@ test.afterEach(t => {
 });
 
 test('Method call with no arguments', t => {
-  const { sandbox, strings, objectMutationProcessor, canvasElement } = t.context;
+  const { sandbox, stringContext: strings, objectMutationProcessor, canvasElement } = t.context;
 
   const methodName = 'stroke';
   const targetObject = canvasElement.getContext('2d');
@@ -103,7 +103,7 @@ test('Method call with no arguments', t => {
 });
 
 test('Method with arguments', t => {
-  const { strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext: strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'fillRect';
   const serializedArgs = [
@@ -136,7 +136,7 @@ test('Method with arguments', t => {
 });
 
 test('Setter', t => {
-  const { strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext: strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'lineWidth';
   const setter = sandbox.spy();
@@ -165,7 +165,7 @@ test('Setter', t => {
 });
 
 test('Method on prototype', t => {
-  const { strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext: strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'fillRect';
   const serializedArgs = [
@@ -200,7 +200,7 @@ test('Method on prototype', t => {
 });
 
 test('Setter on prototype', t => {
-  const { strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext: strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'lineWidth';
   const setter = sandbox.spy();
@@ -231,7 +231,7 @@ test('Setter on prototype', t => {
 });
 
 test('Mutation starts at a non-zero offset', t => {
-  const { strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext: strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'fillRect';
   const targetObject = canvasElement.getContext('2d');
@@ -270,7 +270,7 @@ test('Mutation starts at a non-zero offset', t => {
 });
 
 test('Returns correct end offset', t => {
-  const { strings, objectMutationProcessor, canvasElement, sandbox } = t.context;
+  const { stringContext: strings, objectMutationProcessor, canvasElement, sandbox } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
 
@@ -314,7 +314,7 @@ function executeCall(
   target: RenderableElement,
   serializedTargetObject: number[],
   fnName: string,
-  strings: Strings,
+  stringContext: StringContext,
   argCount: number,
   serializedArgs: number[],
   stringsIndex?: number,
@@ -322,7 +322,7 @@ function executeCall(
   return mutationProcessor.execute(
     new Uint16Array([
       TransferrableMutationType.OBJECT_MUTATION,
-      storeString(strings, fnName, stringsIndex),
+      storeString(stringContext, fnName, stringsIndex),
       argCount,
       ...serializedTargetObject,
       ...serializedArgs,
@@ -334,7 +334,7 @@ function executeCall(
 
 // main-thread's strings API does not return an ID when storing a string
 // so for convenience:
-function storeString(strings: Strings, text: string, currentIndex = -1) {
-  strings.store(text);
+function storeString(stringContext: StringContext, text: string, currentIndex = -1) {
+  stringContext.store(text);
   return ++currentIndex;
 }

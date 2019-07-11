@@ -17,13 +17,13 @@
 import anyTest, { TestInterface } from 'ava';
 import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { deserializeTransferrableObject } from '../../main-thread/deserializeTransferrableObject';
-import { Strings } from '../../main-thread/strings';
+import { StringContext } from '../../main-thread/strings';
 import { NodeContext } from '../../main-thread/nodes';
 import { Env } from './helpers/env';
 import { ObjectContext } from '../../main-thread/object-context';
 
 const test = anyTest as TestInterface<{
-  strings: Strings;
+  stringContext: StringContext;
   nodeContext: NodeContext;
   objectContext: ObjectContext;
 }>;
@@ -33,19 +33,19 @@ test.beforeEach(t => {
   const { document } = env;
   const baseElement = document.createElement('div');
 
-  const strings = new Strings();
+  const stringContext = new StringContext();
   const objectContext = new ObjectContext();
-  const nodeContext = new NodeContext(strings, baseElement);
+  const nodeContext = new NodeContext(stringContext, baseElement);
 
   t.context = {
-    strings,
+    stringContext: stringContext,
     nodeContext,
     objectContext,
   };
 });
 
 test('Deserializes int arguments', t => {
-  const { strings, nodeContext } = t.context;
+  const { stringContext: strings, nodeContext } = t.context;
 
   const serializedArgs = [TransferrableObjectType.SmallInt, 1];
   const buffer = new Uint16Array(serializedArgs);
@@ -55,7 +55,7 @@ test('Deserializes int arguments', t => {
 });
 
 test('Deserializes float arguments', t => {
-  const { strings, nodeContext } = t.context;
+  const { stringContext: strings, nodeContext } = t.context;
 
   const f32 = new Float32Array(1);
   const u16 = new Uint16Array(f32.buffer);
@@ -69,7 +69,7 @@ test('Deserializes float arguments', t => {
 });
 
 test('Deserializes string arguments', t => {
-  const { strings, nodeContext } = t.context;
+  const { stringContext: strings, nodeContext } = t.context;
 
   const serializedArgs = [TransferrableObjectType.String, storeString(strings, 'textArg')];
   const buffer = new Uint16Array(serializedArgs);
@@ -79,7 +79,7 @@ test('Deserializes string arguments', t => {
 });
 
 test('Deserializes array argument', t => {
-  const { strings, nodeContext } = t.context;
+  const { stringContext: strings, nodeContext } = t.context;
 
   const serializedArgs = [
     TransferrableObjectType.Array,
@@ -99,7 +99,7 @@ test('Deserializes array argument', t => {
 });
 
 test('Deserializes object argument', t => {
-  const { strings, nodeContext, objectContext } = t.context;
+  const { stringContext: strings, nodeContext, objectContext } = t.context;
 
   const id = 5; // example object id
   const obj = {} as CanvasGradient;
@@ -113,7 +113,7 @@ test('Deserializes object argument', t => {
 });
 
 test('Deserializes varying types', t => {
-  const { strings, nodeContext, objectContext } = t.context;
+  const { stringContext: strings, nodeContext, objectContext } = t.context;
 
   // argument 1: SmallInt
   const smallInt = 1;
@@ -143,7 +143,7 @@ test('Deserializes varying types', t => {
 });
 
 test('Deserializes from different offset', t => {
-  const { strings, nodeContext } = t.context;
+  const { stringContext: strings, nodeContext } = t.context;
 
   const serializedArgs = [TransferrableObjectType.SmallInt, 1];
   const buffer = new Uint16Array([1, 2, 3].concat(serializedArgs));
@@ -153,7 +153,7 @@ test('Deserializes from different offset', t => {
 });
 
 test('Returns the correct end offset', t => {
-  const { strings, nodeContext } = t.context;
+  const { stringContext: strings, nodeContext } = t.context;
 
   const serializedArgs = [
     TransferrableObjectType.SmallInt,
@@ -173,8 +173,8 @@ test('Returns the correct end offset', t => {
 
 // main-thread's strings API does not return an ID when storing a string
 // so for convenience:
-function storeString(strings: Strings, text: string, currentIndex = -1) {
-  strings.store(text);
+function storeString(stringContext: StringContext, text: string, currentIndex = -1) {
+  stringContext.store(text);
   return ++currentIndex;
 }
 
