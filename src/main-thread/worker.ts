@@ -46,7 +46,6 @@ export class WorkerContext {
     }
 
     const localStorageData = config.sanitizer ? config.sanitizer.getStorage('local') : window.localStorage;
-
     const sessionStorageData = config.sanitizer ? config.sanitizer.getStorage('session') : window.sessionStorage;
 
     // TODO(choumx): Stop wrapping author script.

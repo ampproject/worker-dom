@@ -17,6 +17,6 @@
 declare module 'jsdom' {
   export class JSDOM {
     public readonly window: Window;
-    constructor(html: string);
+    constructor(html: string, options: object);
   }
 }

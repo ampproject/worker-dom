@@ -24,7 +24,7 @@ export class Env {
   rafTasks: Array<Function>;
 
   constructor() {
-    this.jsdom = new JSDOM('<!DOCTYPE html>');
+    this.jsdom = new JSDOM('<!DOCTYPE html>', { url: 'http://localhost:3001' });
     this.document = this.jsdom.window.document;
     this.window = this.jsdom.window;
 
