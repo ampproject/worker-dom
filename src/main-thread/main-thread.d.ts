@@ -31,7 +31,7 @@ declare interface Sanitizer {
    * @param value
    * @return True if attribute change was applied.
    */
-  mutateAttribute(node: Node, attr: string, value: string | null): boolean;
+  changeAttribute(node: Node, attr: string, value: string | null): boolean;
 
   /**
    * Requests a node property change.
@@ -40,7 +40,14 @@ declare interface Sanitizer {
    * @param value
    * @return True if property change was applied.
    */
-  mutateProperty(node: Node, prop: string, value: string): boolean;
+  changeProperty(node: Node, prop: string, value: string): boolean;
+
+  /**
+   * Retrieves the current localStorage or sessionStorage data.
+   * @param scope 'local' or 'session'.
+   * @return
+   */
+  getStorage(scope: string): { [key: string]: string };
 
   /**
    * Requests a change in localStorage or sessionStorage.
@@ -49,7 +56,7 @@ declare interface Sanitizer {
    * @param value A storage value. To remove a key, pass `null` here.
    * @return True if storage change was applied.
    */
-  mutateStorage(scope: string, key: string | null, value: string | null): boolean;
+  changeStorage(scope: string, key: string | null, value: string | null): boolean;
 }
 
 // OffscreenCanvas not yet available in TypeScript - 'transferControlToOffscreen' would not be

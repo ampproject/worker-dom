@@ -45,9 +45,9 @@ export class WorkerContext {
       cssKeys.push(key);
     }
 
-    // TODO(choumx): Sanitize the initial values for local/sessionStorage.
-    const localStorageAsString = JSON.stringify(window.localStorage);
-    const sessionStorageAsString = JSON.stringify(window.sessionStorage);
+    const localStorageData = config.sanitizer ? config.sanitizer.getStorage('local') : window.localStorage;
+
+    const sessionStorageData = config.sanitizer ? config.sanitizer.getStorage('session') : window.sessionStorage;
 
     // TODO(choumx): Stop wrapping author script.
     const code = `
@@ -83,8 +83,8 @@ export class WorkerContext {
           ${JSON.stringify(strings)},
           ${JSON.stringify(skeleton)},
           ${JSON.stringify(cssKeys)},
-          ${localStorageAsString},
-          ${sessionStorageAsString}
+          ${JSON.stringify(localStorageData)},
+          ${JSON.stringify(sessionStorageData)}
         );
         document[${TransferrableKeys.observe}](window);
         ${authorScript}

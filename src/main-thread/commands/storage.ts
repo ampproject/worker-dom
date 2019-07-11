@@ -36,7 +36,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
         // to avoid leaking memory.
 
         if (config.sanitizer) {
-          config.sanitizer.mutateStorage(scope, key, value);
+          config.sanitizer.changeStorage(scope, key, value);
         } else {
           let storage;
           if (scope == 'local') {

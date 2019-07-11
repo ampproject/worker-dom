@@ -45,7 +45,7 @@ export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, wor
         if (target) {
           if (attributeName != null) {
             if (config.sanitizer) {
-              const mutated = config.sanitizer.mutateAttribute(target, attributeName, value);
+              const mutated = config.sanitizer.changeAttribute(target, attributeName, value);
               if (!mutated) {
                 // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
               }
