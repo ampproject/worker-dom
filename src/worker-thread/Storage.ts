@@ -27,10 +27,18 @@ export class Storage {
   private document: Document;
   private scope: string;
 
+  /**
+   * Constructor is not directly invokable in the native implementation.
+   * @param document
+   * @param scope
+   */
   constructor(document: Document, scope: string) {
-    this.data = {};
     this.document = document;
     this.scope = scope;
+  }
+
+  setData(value: { [key: string]: string }): void {
+    this.data = value;
   }
 
   get length() {

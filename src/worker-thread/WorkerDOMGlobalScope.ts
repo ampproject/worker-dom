@@ -52,11 +52,19 @@ import { SVGElement } from './dom/SVGElement';
 import { HTMLElement } from './dom/HTMLElement';
 
 export interface GlobalScope {
-  initialize: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>) => void;
+  initialize: (
+    document: Document,
+    strings: Array<string>,
+    hydrateableNode: HydrateableNode,
+    cssKeys: Array<string>,
+    localStorageData: object,
+    sessionStorageData: object,
+  ) => void;
   navigator: WorkerNavigator;
   // TODO (#541): Should we type this more explicitly?
   WebAssembly: object;
   localStorage?: Storage;
+  sessionStorage?: Storage;
   location: object;
   url: string;
   indexedDB: IDBFactory;

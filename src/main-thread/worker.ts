@@ -38,11 +38,18 @@ export class WorkerContext {
     this.config = config;
 
     // TODO(KB): Minify this output during build process.
-    const keys: Array<string> = [];
     const { skeleton, strings } = createHydrateableRootNode(baseElement, config);
+
+    const cssKeys: Array<string> = [];
     for (const key in baseElement.style) {
-      keys.push(key);
+      cssKeys.push(key);
     }
+
+    // TODO(choumx): Sanitize the initial values for local/sessionStorage.
+    const localStorageAsString = JSON.stringify(window.localStorage);
+    const sessionStorageAsString = JSON.stringify(window.sessionStorage);
+
+    // TODO(choumx): Stop wrapping author script.
     const code = `
       'use strict';
       ${workerDOMScript}
@@ -51,6 +58,7 @@ export class WorkerContext {
         var window = this;
         var document = this.document;
         var localStorage = this.localStorage;
+        var sessionStorage = this.sessionStorage;
         var location = this.location;
         var defaultView = document.defaultView;
         var Node = defaultView.Node;
@@ -70,7 +78,14 @@ export class WorkerContext {
         }
         window.innerWidth = ${window.innerWidth};
         window.innerHeight = ${window.innerHeight};
-        this.initialize(document, ${JSON.stringify(strings)}, ${JSON.stringify(skeleton)}, ${JSON.stringify(keys)});
+        this.initialize(
+          document,
+          ${JSON.stringify(strings)},
+          ${JSON.stringify(skeleton)},
+          ${JSON.stringify(cssKeys)},
+          ${localStorageAsString},
+          ${sessionStorageAsString}
+        );
         document[${TransferrableKeys.observe}](window);
         ${authorScript}
       }).call(WorkerThread.workerDOM);
@@ -80,7 +95,7 @@ export class WorkerContext {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config));
     }
     if (config.onCreateWorker) {
-      config.onCreateWorker(baseElement, strings, skeleton, keys);
+      config.onCreateWorker(baseElement, strings, skeleton, cssKeys);
     }
   }
 
