@@ -47,7 +47,7 @@ export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
   let currentResolver: Function | null;
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+    execute(mutations: Uint16Array, startPosition: number): number {
       if (allowedExecution && config.longTask) {
         if (mutations[startPosition] === TransferrableMutationType.LONG_TASK_START) {
           index++;
@@ -65,7 +65,7 @@ export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
       }
       return startPosition + LongTaskMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+    print(mutations: Uint16Array, startPosition: number): Object {
       return {
         type: ReadableMutationType[mutations[startPosition]],
         allowedExecution,

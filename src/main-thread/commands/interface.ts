@@ -21,8 +21,8 @@ import { WorkerContext } from '../worker';
 import { ObjectContext } from '../object-context';
 
 export interface CommandExecutor {
-  execute(mutations: Uint16Array, startPosition: number, target?: RenderableElement): number;
-  print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object;
+  execute(mutations: Uint16Array, startPosition: number): number;
+  print(mutations: Uint16Array, startPosition: number): Object;
 }
 
 export interface CommandExecutorInterface {

@@ -18,12 +18,16 @@ import { PropertyMutationIndex, TransferrableMutationType } from '../../transfer
 import { CommandExecutorInterface } from './interface';
 import { NumericBoolean } from '../../utils';
 
+const CONTEXT = 'PROPERTY';
+
 export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.PROPERTIES);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+    execute(mutations: Uint16Array, startPosition: number): number {
       if (allowedExecution) {
+        const targetIndex = mutations[startPosition + PropertyMutationIndex.Target];
+        const target = nodeContext.getNode(targetIndex);
         const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
         const isBooleanProperty = mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE;
         const value = isBooleanProperty
@@ -31,21 +35,27 @@ export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext
           : (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) ||
             null;
 
-        if (name && value != null) {
-          if (config.sanitizer) {
-            const mutated = config.sanitizer.mutateProperty(target, name, String(value));
-            if (!mutated) {
-              // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
+        if (target) {
+          if (name && value != null) {
+            if (config.sanitizer) {
+              const mutated = config.sanitizer.mutateProperty(target, name, String(value));
+              if (!mutated) {
+                // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
+              }
+            } else {
+              target[name] = value;
             }
-          } else {
-            target[name] = value;
           }
+        } else {
+          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
         }
       }
 
       return startPosition + PropertyMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+    print(mutations: Uint16Array, startPosition: number): Object {
+      const targetIndex = mutations[startPosition + PropertyMutationIndex.Target];
+      const target = nodeContext.getNode(targetIndex);
       const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
       const isBooleanProperty = mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE;
       const value = isBooleanProperty

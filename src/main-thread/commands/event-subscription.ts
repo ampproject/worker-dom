@@ -171,7 +171,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
   };
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+    execute(mutations: Uint16Array, startPosition: number): number {
       const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
       const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
       const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;
@@ -179,12 +179,15 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
         startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
 
       if (allowedExecution) {
+        const targetIndex = mutations[startPosition + EventSubscriptionMutationIndex.Target];
+        const target = nodeContext.getNode(targetIndex);
+
         if (target) {
           for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
             processListenerChange(target, iterator <= addEventListenersPosition, strings.get(mutations[iterator]), mutations[iterator + 1]);
           }
         } else {
-          console.error(`getNode() yields null – ${target}`);
+          console.error(`getNode(${targetIndex}) is null.`);
         }
       }
 
