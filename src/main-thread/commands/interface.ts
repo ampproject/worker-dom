@@ -15,7 +15,7 @@
  */
 
 import { WorkerDOMConfiguration } from '../configuration';
-import { Strings } from '../strings';
+import { StringContext } from '../strings';
 import { NodeContext } from '../nodes';
 import { WorkerContext } from '../worker';
 import { ObjectContext } from '../object-context';
@@ -27,7 +27,7 @@ export interface CommandExecutor {
 
 export interface CommandExecutorInterface {
   (
-    strings: Strings,
+    stringContext: StringContext,
     nodeContext: NodeContext,
     workerContext: WorkerContext,
     objectContext: ObjectContext,

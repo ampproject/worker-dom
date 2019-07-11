@@ -15,11 +15,11 @@
  */
 
 import { NodeType, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
-import { Strings } from './strings';
+import { StringContext } from './strings';
 
 export class NodeContext {
   public baseElement: HTMLElement;
-  private strings: Strings;
+  private strings: StringContext;
   private count: number;
   private nodes: Map<number, Node>;
 
@@ -29,7 +29,7 @@ export class NodeContext {
    * Worker.
    * @param baseElement Element that will be controlled by a Worker
    */
-  constructor(strings: Strings, baseElement: Element) {
+  constructor(strings: StringContext, baseElement: Element) {
     this.count = 2;
     this.strings = strings;
 
