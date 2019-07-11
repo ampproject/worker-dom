@@ -19,12 +19,16 @@ import { MessageType } from '../../transfer/Messages';
 import { CommandExecutorInterface } from './interface';
 import { OffscreenCanvasMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
+const CONTEXT = 'OFFSCREEN_CANVAS_INSTANCE';
+
 export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+    execute(mutations: Uint16Array, startPosition: number): number {
       if (allowedExecution) {
+        const targetIndex = mutations[startPosition + OffscreenCanvasMutationIndex.Target];
+        const target = nodeContext.getNode(targetIndex);
         if (target) {
           const offscreen = (target as HTMLCanvasElement).transferControlToOffscreen();
           workerContext.messageToWorker(
@@ -36,7 +40,7 @@ export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, node
             [offscreen],
           );
         } else {
-          console.error(`getNode() yields null – ${target}`);
+          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
         }
       }
 
@@ -44,7 +48,7 @@ export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, node
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       return {
-        type: 'OFFSCREEN_CANVAS_INSTANCE',
+        type: CONTEXT,
         target,
         allowedExecution,
       };
