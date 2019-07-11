@@ -51,6 +51,7 @@ import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
 import { MutationObserver } from './MutationObserver';
 import { OffscreenCanvas } from './canvas/CanvasTypes';
+import { Storage } from './Storage';
 
 const WHITELISTED_GLOBALS = [
   'Array',
@@ -135,7 +136,6 @@ const WHITELISTED_GLOBALS = [
 const globalScope: GlobalScope = {
   navigator: (self as WorkerGlobalScope).navigator,
   WebAssembly: (self as any).WebAssembly,
-  localStorage: {},
   location: self.location,
   url: '/',
   indexedDB: (self as WorkerGlobalScope).indexedDB,
@@ -185,6 +185,8 @@ export const workerDOM = (function(postMessage) {
   document.postMessage = postMessage;
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
+
+  globalScope.localStorage = new Storage(document);
 
   return document.defaultView;
 })(postMessage.bind(self) || (() => void 0));

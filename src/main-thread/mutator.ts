@@ -33,6 +33,7 @@ import { ObjectMutationProcessor } from './commands/object-mutation';
 import { ObjectCreationProcessor } from './commands/object-creation';
 import { ObjectContext } from './object-context';
 import { ImageBitmapProcessor } from './commands/image-bitmap';
+import { StorageProcessor } from './commands/storage';
 
 export class MutatorProcessor {
   private stringContext: StringContext;
@@ -63,33 +64,22 @@ export class MutatorProcessor {
     this.sanitizer = config.sanitizer;
     this.mutationPumpFunction = config.mutationPump;
 
-    const LongTaskExecutorInstance = LongTaskExecutor(stringContext, nodeContext, workerContext, objectContext, config);
-
+    const args = [stringContext, nodeContext, workerContext, objectContext, config];
+    const sharedLongTaskProcessor = LongTaskExecutor.call(null, args);
     this.executors = {
-      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor(stringContext, nodeContext, workerContext, objectContext, config),
-      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor(stringContext, nodeContext, workerContext, objectContext, config),
-      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor(stringContext, nodeContext, workerContext, objectContext, config),
-      [TransferrableMutationType.PROPERTIES]: PropertyProcessor(stringContext, nodeContext, workerContext, objectContext, config),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor(stringContext, nodeContext, workerContext, objectContext, config),
-      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor(
-        stringContext,
-        nodeContext,
-        workerContext,
-        objectContext,
-        config,
-      ),
-      [TransferrableMutationType.LONG_TASK_START]: LongTaskExecutorInstance,
-      [TransferrableMutationType.LONG_TASK_END]: LongTaskExecutorInstance,
-      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor(
-        stringContext,
-        nodeContext,
-        workerContext,
-        objectContext,
-        config,
-      ),
-      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor(stringContext, nodeContext, workerContext, objectContext, config),
-      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor(stringContext, nodeContext, workerContext, objectContext, config),
-      [TransferrableMutationType.IMAGE_BITMAP_INSTANCE]: ImageBitmapProcessor(stringContext, nodeContext, workerContext, objectContext, config),
+      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor.call(null, args),
+      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor.call(null, args),
+      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor.call(null, args),
+      [TransferrableMutationType.PROPERTIES]: PropertyProcessor.call(null, args),
+      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor.call(null, args),
+      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor.call(null, args),
+      [TransferrableMutationType.LONG_TASK_START]: sharedLongTaskProcessor,
+      [TransferrableMutationType.LONG_TASK_END]: sharedLongTaskProcessor,
+      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor.call(null, args),
+      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor.call(null, args),
+      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor.call(null, args),
+      [TransferrableMutationType.IMAGE_BITMAP_INSTANCE]: ImageBitmapProcessor.call(null, args),
+      [TransferrableMutationType.STORAGE]: StorageProcessor.call(null, args),
     };
   }
 

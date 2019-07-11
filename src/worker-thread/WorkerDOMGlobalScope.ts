@@ -47,6 +47,7 @@ import { Document } from './dom/Document';
 import { EventHandler } from './Event';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { MutationObserver } from './MutationObserver';
+import { Storage } from './Storage';
 import { SVGElement } from './dom/SVGElement';
 import { HTMLElement } from './dom/HTMLElement';
 
@@ -55,7 +56,7 @@ export interface GlobalScope {
   navigator: WorkerNavigator;
   // TODO (#541): Should we type this more explicitly?
   WebAssembly: object;
-  localStorage: object;
+  localStorage?: Storage;
   location: object;
   url: string;
   indexedDB: IDBFactory;

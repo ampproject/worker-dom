@@ -18,7 +18,7 @@
  * Stores indexed strings that are used in postMessage() calls from the worker.
  */
 export class StringContext {
-  private strings: Array<string>;
+  private strings: Array<string | null>;
 
   constructor() {
     this.strings = [];
@@ -27,10 +27,18 @@ export class StringContext {
   /**
    * Return a string for the specified index.
    * @param index string index to retrieve.
-   * @returns string in map for the index.
+   * @return string in map for the index.
    */
   get(index: number): string {
     return this.strings[index] || '';
+  }
+
+  /**
+   * Removes the string at the specified index.
+   * @param index
+   */
+  removeAt(index: number): void {
+    this.strings[index] = null;
   }
 
   /**
