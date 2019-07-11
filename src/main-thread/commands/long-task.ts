@@ -36,7 +36,7 @@ export interface LongTaskCommandExecutor extends CommandExecutor {
 }
 
 export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
-  strings: StringContext,
+  stringContext: StringContext,
   nodeContext: NodeContext,
   workerContext: WorkerContext,
   objectContext: ObjectContext,

@@ -16,7 +16,7 @@
 
 import anyTest, { TestInterface } from 'ava';
 import * as sinon from 'sinon';
-import { Strings } from '../../main-thread/strings';
+import { StringContext } from '../../main-thread/strings';
 import { ObjectContext } from '../../main-thread/object-context';
 import { CommandExecutor } from '../../main-thread/commands/interface';
 import { Env } from './helpers/env';
@@ -28,7 +28,7 @@ import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
 const test = anyTest as TestInterface<{
-  strings: Strings;
+  stringContext: StringContext;
   objectContext: ObjectContext;
   objectCreationProcessor: CommandExecutor;
   sandbox: sinon.SinonSandbox;
@@ -37,21 +37,21 @@ const test = anyTest as TestInterface<{
 
 test.beforeEach(t => {
   const sandbox = sinon.createSandbox();
-  const strings = new Strings();
+  const stringContext = new StringContext();
   const objectContext = new ObjectContext();
 
   const env = new Env();
   const { document } = env;
   const baseElement = document.createElement('div');
 
-  const nodeContext = new NodeContext(strings, baseElement);
+  const nodeContext = new NodeContext(stringContext, baseElement);
   const workerContext = ({
     getWorker() {},
     messageToWorker() {},
   } as unknown) as WorkerContext;
 
   const objectCreationProcessor = ObjectCreationProcessor(
-    strings,
+    stringContext,
     nodeContext,
     workerContext,
     objectContext,
@@ -66,7 +66,7 @@ test.beforeEach(t => {
   sandbox.stub(nodeContext, 'getNode').returns(canvasElement);
 
   t.context = {
-    strings,
+    stringContext: stringContext,
     objectContext,
     objectCreationProcessor,
     sandbox,
@@ -75,7 +75,7 @@ test.beforeEach(t => {
 });
 
 test('Object creation with mutation at a zero offset', t => {
-  const { strings, objectContext, objectCreationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext: strings, objectContext, objectCreationProcessor, sandbox, canvasElement } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
   const methodName = 'createLinearGradient';
@@ -123,7 +123,7 @@ test('Object creation with mutation at a zero offset', t => {
 });
 
 test('Object creation with mutation at non-zero offset', t => {
-  const { strings, objectContext, objectCreationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext: strings, objectContext, objectCreationProcessor, sandbox, canvasElement } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
   const methodName = 'createLinearGradient';
@@ -170,7 +170,7 @@ test('Object creation with mutation at non-zero offset', t => {
 });
 
 test('Returns correct end offset', t => {
-  const { strings, objectCreationProcessor, canvasElement, sandbox } = t.context;
+  const { stringContext: strings, objectCreationProcessor, canvasElement, sandbox } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
 
@@ -210,7 +210,7 @@ test('Returns correct end offset', t => {
   t.is(mutationsArray[endOffset], 32);
 });
 
-function storeString(strings: Strings, text: string, currentIndex = -1) {
-  strings.store(text);
+function storeString(stringContext: StringContext, text: string, currentIndex = -1) {
+  stringContext.store(text);
   return ++currentIndex;
 }
