@@ -21,39 +21,50 @@ import { Document } from './dom/Document';
 import { transfer } from './MutationTransfer';
 
 const observers: MutationObserver[] = [];
+
 let pendingMutations = false;
 
-const match = (observerTarget: Node | null, target: Node): boolean =>
-  observerTarget !== null && target[TransferrableKeys.index] === observerTarget[TransferrableKeys.index];
+/**
+ * @param observerTarget
+ * @param target
+ */
+const matchesIndex = (observerTarget: Node | null, target: Node): boolean => {
+  return !!observerTarget && observerTarget[TransferrableKeys.index] === target[TransferrableKeys.index];
+};
+
+/**
+ * @param observer
+ * @param record
+ */
 const pushMutation = (observer: MutationObserver, record: MutationRecord): void => {
   observer.pushRecord(record);
+
   if (!pendingMutations) {
     pendingMutations = true;
-    Promise.resolve().then(
-      (): void => {
-        pendingMutations = false;
-        observers.forEach(observer => observer.callback(observer.takeRecords()));
-      },
-    );
+    Promise.resolve().then((): void => {
+      pendingMutations = false;
+      observers.forEach(observer => observer.callback(observer.takeRecords()));
+    });
   }
 };
 
 /**
- * When DOM mutations occur, Nodes will call this method with MutationRecords
- * These records are then pushed into MutationObserver instances that match the MutationRecord.target
- * @param record MutationRecord to push into MutationObservers.
+ * @param document
+ * @param record
+ * @param transferable
  */
 export function mutate(document: Document, record: MutationRecord, transferable: Array<number>): void {
+  // Post-message `transferable` to the main thread to apply mutations.
   transfer(document, transferable);
 
+  // The MutationRecord is only used for external callers of MutationObserver.
   observers.forEach(observer => {
-    let target: Node | null = record.target;
-    do {
-      if (match(observer.target, target)) {
+    for (let t: Node | null = record.target; t; t = t.parentNode) {
+      if (matchesIndex(observer.target, t)) {
         pushMutation(observer, record);
         break;
       }
-    } while ((target = target.parentNode));
+    }
   });
 }
 
@@ -110,7 +121,8 @@ export class MutationObserver {
    * @return Mutation Records stored on this MutationObserver instance.
    */
   public takeRecords(): MutationRecord[] {
-    return this[TransferrableKeys.records].splice(0, this[TransferrableKeys.records].length);
+    const records = this[TransferrableKeys.records];
+    return records.splice(0, records.length);
   }
 
   /**

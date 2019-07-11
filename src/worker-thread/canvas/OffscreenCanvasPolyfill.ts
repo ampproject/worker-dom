@@ -347,16 +347,15 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
 
   putImageData() {}
 
-  // THROW and implement async versions
   isPointInPath(): boolean {
-    throw new Error('No synchronous implementation for isPointInPath available.');
+    throw new Error('isPointInPath is not implemented.');
   }
 
   isPointInStroke(): boolean {
-    throw new Error('No synchronous implementation for isPointInStroke available.');
+    throw new Error('isPointInStroke is not implemented.');
   }
 
   measureText(): TextMetrics {
-    throw new Error('No synchronous implementation for measureText available.');
+    throw new Error('measureText is not implemented.');
   }
 }
