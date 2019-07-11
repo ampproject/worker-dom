@@ -50,6 +50,7 @@ import { MutationObserver } from '../worker-thread/MutationObserver';
 import { GlobalScope } from '../worker-thread/WorkerDOMGlobalScope';
 import { HTMLCanvasElement } from '../worker-thread/dom/HTMLCanvasElement';
 import { CanvasRenderingContext2D } from '../worker-thread/canvas/CanvasTypes';
+import { Storage } from '../worker-thread/Storage';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -94,7 +95,6 @@ const GlobalScope: GlobalScope = {
     storage: new StorageManager(),
   },
   WebAssembly: {},
-  localStorage: {},
   location: {},
   url: '/',
   indexedDB: {} as IDBFactory,
@@ -146,6 +146,9 @@ export function createTestingDocument(overrides: {} | null = null): Document {
   const document = new Document(customGlobal);
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
+
+  customGlobal.localStorage = new Storage(document, 'local');
+  customGlobal.sessionStorage = new Storage(document, 'session');
 
   return document;
 }
