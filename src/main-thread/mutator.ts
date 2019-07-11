@@ -65,21 +65,21 @@ export class MutatorProcessor {
     this.mutationPumpFunction = config.mutationPump;
 
     const args = [stringContext, nodeContext, workerContext, objectContext, config];
-    const sharedLongTaskProcessor = LongTaskExecutor.call(null, args);
+    const sharedLongTaskProcessor = LongTaskExecutor.apply(null, args);
     this.executors = {
-      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor.call(null, args),
-      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor.call(null, args),
-      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor.call(null, args),
-      [TransferrableMutationType.PROPERTIES]: PropertyProcessor.call(null, args),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor.call(null, args),
-      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor.call(null, args),
+      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor.apply(null, args),
+      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor.apply(null, args),
+      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor.apply(null, args),
+      [TransferrableMutationType.PROPERTIES]: PropertyProcessor.apply(null, args),
+      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor.apply(null, args),
+      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor.apply(null, args),
       [TransferrableMutationType.LONG_TASK_START]: sharedLongTaskProcessor,
       [TransferrableMutationType.LONG_TASK_END]: sharedLongTaskProcessor,
-      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor.call(null, args),
-      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor.call(null, args),
-      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor.call(null, args),
-      [TransferrableMutationType.IMAGE_BITMAP_INSTANCE]: ImageBitmapProcessor.call(null, args),
-      [TransferrableMutationType.STORAGE]: StorageProcessor.call(null, args),
+      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor.apply(null, args),
+      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor.apply(null, args),
+      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor.apply(null, args),
+      [TransferrableMutationType.IMAGE_BITMAP_INSTANCE]: ImageBitmapProcessor.apply(null, args),
+      [TransferrableMutationType.STORAGE]: StorageProcessor.apply(null, args),
     };
   }
 

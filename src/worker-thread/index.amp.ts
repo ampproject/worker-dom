@@ -186,7 +186,7 @@ export const workerDOM = (function(postMessage) {
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
 
-  globalScope.localStorage = new Storage(document);
+  globalScope.localStorage = new Storage(document, 'local');
 
   return document.defaultView;
 })(postMessage.bind(self) || (() => void 0));

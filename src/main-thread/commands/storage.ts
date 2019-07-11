@@ -57,24 +57,23 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
   };
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+    execute(mutations: Uint16Array, startPosition: number): number {
       if (allowedExecution) {
         const scope = strings.get(mutations[startPosition + StorageMutationIndex.Scope]);
         const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
         const valueIndex = mutations[startPosition + StorageMutationIndex.Value];
+
+        // TODO(choumx): Clean up key/value strings (or don't store them in the first place)
+        // to avoid leaking memory.
 
         if (keyIndex >= 0) {
           const key = strings.get(keyIndex);
           if (valueIndex >= 0) {
             const value = strings.get(valueIndex);
             setItem(scope, key, value);
-            // Clean up `value` string to avoid leaking memory.
-            strings.removeAt(valueIndex);
           } else {
             removeItem(scope, key);
           }
-          // Clean up `key` string to avoid leaking memory.
-          strings.removeAt(keyIndex);
         } else {
           if (valueIndex > 0) {
             throw new Error('Unexpected storage operation.');
@@ -86,7 +85,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
 
       return startPosition + StorageMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+    print(mutations: Uint16Array, startPosition: number): Object {
       const scope = strings.get(mutations[startPosition + StorageMutationIndex.Scope]);
       const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
       const valueIndex = mutations[startPosition + StorageMutationIndex.Value];

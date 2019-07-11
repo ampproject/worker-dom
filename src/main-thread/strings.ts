@@ -34,14 +34,6 @@ export class StringContext {
   }
 
   /**
-   * Removes the string at the specified index.
-   * @param index
-   */
-  removeAt(index: number): void {
-    this.strings[index] = null;
-  }
-
-  /**
    * Stores a string in mapping and returns the index of the location.
    * @param value string to store
    * @return location in map

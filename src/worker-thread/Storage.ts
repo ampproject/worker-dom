@@ -25,10 +25,12 @@ import { transfer } from './MutationTransfer';
 export class Storage {
   private data: { [key: string]: string };
   private document: Document;
+  private scope: string;
 
-  constructor(document: Document) {
+  constructor(document: Document, scope: string) {
     this.data = {};
     this.document = document;
+    this.scope = scope;
   }
 
   get length() {
@@ -47,10 +49,12 @@ export class Storage {
   }
 
   public setItem(key: string, value: string): void {
-    this.data[key] = String(value);
+    // Convert value to string to mimic native behavior.
+    const stringValue = String(value);
+    this.data[key] = stringValue;
 
     // The key/value strings are removed from storage in StorageProcessor.
-    transfer(this.document, [TransferrableMutationType.STORAGE, store(key), store(value)]);
+    transfer(this.document, [TransferrableMutationType.STORAGE, store(this.scope), store(key), store(stringValue)]);
   }
 
   public removeItem(key: string): void {
@@ -58,6 +62,7 @@ export class Storage {
 
     transfer(this.document, [
       TransferrableMutationType.STORAGE,
+      store(this.scope),
       store(key),
       -1, // value == -1 represents deletion.
     ]);
@@ -68,6 +73,7 @@ export class Storage {
 
     transfer(this.document, [
       TransferrableMutationType.STORAGE,
+      store(this.scope),
       -1, // key == -1 represents all keys.
       -1, // value == -1 represents deletion.
     ]);
