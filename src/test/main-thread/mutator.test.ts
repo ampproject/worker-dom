@@ -53,7 +53,7 @@ test.beforeEach(t => {
   t.context = {
     env,
     baseElement,
-    stringContext: stringContext,
+    stringContext,
     nodeContext,
     workerContext,
     objectContext,
@@ -66,10 +66,10 @@ test.afterEach(t => {
 });
 
 test.serial('batch mutations', t => {
-  const { env, baseElement, stringContext: strings, nodeContext, workerContext, objectContext } = t.context;
+  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;
   const mutator = new MutatorProcessor(
-    strings,
+    stringContext,
     nodeContext,
     workerContext,
     normalizeConfiguration({
@@ -131,12 +131,12 @@ test.serial('batch mutations', t => {
 });
 
 test.serial('batch mutations with custom pump', t => {
-  const { env, baseElement, stringContext: strings, nodeContext, workerContext, objectContext } = t.context;
+  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;
 
   const tasks: Array<{ phase: Phase; flush: Function }> = [];
   const mutator = new MutatorProcessor(
-    strings,
+    stringContext,
     nodeContext,
     workerContext,
     normalizeConfiguration({
@@ -204,10 +204,10 @@ test.serial('batch mutations with custom pump', t => {
 });
 
 test.serial('leverage allowlist to exclude mutation type', t => {
-  const { env, baseElement, stringContext: strings, nodeContext, workerContext, objectContext } = t.context;
+  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;
   const mutator = new MutatorProcessor(
-    strings,
+    stringContext,
     nodeContext,
     workerContext,
     normalizeConfiguration({
@@ -252,10 +252,10 @@ test.serial('leverage allowlist to exclude mutation type', t => {
 });
 
 test.serial('split strings from mutations', t => {
-  const { env, baseElement, stringContext: strings, nodeContext, workerContext, objectContext } = t.context;
+  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;
   const mutator = new MutatorProcessor(
-    strings,
+    stringContext,
     nodeContext,
     workerContext,
     normalizeConfiguration({

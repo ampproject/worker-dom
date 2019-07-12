@@ -69,7 +69,7 @@ test.beforeEach(t => {
     executor,
     longTasks,
     baseElement,
-    stringContext: stringContext,
+    stringContext,
     nodeContext,
     objectContext,
     workerContext,
@@ -82,9 +82,9 @@ test.afterEach(t => {
 });
 
 test.serial('should tolerate no callback', t => {
-  const { longTasks, baseElement, stringContext: strings, nodeContext, workerContext, objectContext } = t.context;
+  const { longTasks, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
   const executor = LongTaskExecutor(
-    strings,
+    stringContext,
     nodeContext,
     workerContext,
     objectContext,

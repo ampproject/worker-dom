@@ -67,7 +67,7 @@ export interface GlobalScope {
   sessionStorage?: Storage;
   location: object;
   url: string;
-  indexedDB: IDBFactory;
+  indexedDB?: IDBFactory;
   innerWidth: number;
   innerHeight: number;
   MutationObserver: typeof MutationObserver;

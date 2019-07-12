@@ -18,7 +18,7 @@
  * Stores indexed strings that are used in postMessage() calls from the worker.
  */
 export class StringContext {
-  private strings: Array<string | null>;
+  private strings: Array<string>;
 
   constructor() {
     this.strings = [];

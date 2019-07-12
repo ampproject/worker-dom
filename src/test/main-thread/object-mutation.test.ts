@@ -67,7 +67,7 @@ test.beforeEach(t => {
 
   t.context = {
     sandbox,
-    stringContext: stringContext,
+    stringContext,
     objectContext,
     objectMutationProcessor,
     canvasElement,
@@ -80,7 +80,7 @@ test.afterEach(t => {
 });
 
 test('Method call with no arguments', t => {
-  const { sandbox, stringContext: strings, objectMutationProcessor, canvasElement } = t.context;
+  const { sandbox, stringContext, objectMutationProcessor, canvasElement } = t.context;
 
   const methodName = 'stroke';
   const targetObject = canvasElement.getContext('2d');
@@ -95,7 +95,7 @@ test('Method call with no arguments', t => {
     canvasElement,
     [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_],
     methodName,
-    strings,
+    stringContext,
     0,
     [],
   );
@@ -103,7 +103,7 @@ test('Method call with no arguments', t => {
 });
 
 test('Method with arguments', t => {
-  const { stringContext: strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'fillRect';
   const serializedArgs = [
@@ -128,7 +128,7 @@ test('Method with arguments', t => {
     canvasElement,
     [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_],
     methodName,
-    strings,
+    stringContext,
     4,
     serializedArgs,
   );
@@ -136,7 +136,7 @@ test('Method with arguments', t => {
 });
 
 test('Setter', t => {
-  const { stringContext: strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'lineWidth';
   const setter = sandbox.spy();
@@ -157,7 +157,7 @@ test('Setter', t => {
     canvasElement,
     [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_],
     methodName,
-    strings,
+    stringContext,
     1,
     serializedArg,
   );
@@ -165,7 +165,7 @@ test('Setter', t => {
 });
 
 test('Method on prototype', t => {
-  const { stringContext: strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'fillRect';
   const serializedArgs = [
@@ -192,7 +192,7 @@ test('Method on prototype', t => {
     canvasElement,
     [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_],
     methodName,
-    strings,
+    stringContext,
     4,
     serializedArgs,
   );
@@ -200,7 +200,7 @@ test('Method on prototype', t => {
 });
 
 test('Setter on prototype', t => {
-  const { stringContext: strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'lineWidth';
   const setter = sandbox.spy();
@@ -223,7 +223,7 @@ test('Setter on prototype', t => {
     canvasElement,
     [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_],
     methodName,
-    strings,
+    stringContext,
     1,
     serializedArg,
   );
@@ -231,7 +231,7 @@ test('Setter on prototype', t => {
 });
 
 test('Mutation starts at a non-zero offset', t => {
-  const { stringContext: strings, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'fillRect';
   const targetObject = canvasElement.getContext('2d');
@@ -255,7 +255,7 @@ test('Mutation starts at a non-zero offset', t => {
 
   const mutation = [
     TransferrableMutationType.OBJECT_MUTATION,
-    storeString(strings, methodName),
+    storeString(stringContext, methodName),
     4, // arg count
     TransferrableObjectType.CanvasRenderingContext2D,
     canvasElement._index_,
@@ -270,7 +270,7 @@ test('Mutation starts at a non-zero offset', t => {
 });
 
 test('Returns correct end offset', t => {
-  const { stringContext: strings, objectMutationProcessor, canvasElement, sandbox } = t.context;
+  const { stringContext, objectMutationProcessor, canvasElement, sandbox } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
 
@@ -293,7 +293,7 @@ test('Returns correct end offset', t => {
 
   const mutation = [
     TransferrableMutationType.OBJECT_MUTATION,
-    storeString(strings, methodName),
+    storeString(stringContext, methodName),
     4, // arg count
     TransferrableObjectType.CanvasRenderingContext2D,
     canvasElement._index_,

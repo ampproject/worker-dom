@@ -13,14 +13,14 @@
     "preact": "8.4.2"
   },
   "devDependencies": {
-    "@babel/core": "7.4.5",
-    "@babel/preset-env": "7.4.5",
+    "@babel/core": "7.5.4",
+    "@babel/preset-env": "7.5.4",
     "@babel/plugin-transform-react-jsx": "7.3.0",
     "babel-loader": "8.0.6",
     "css-loader": "3.0.0",
     "mini-css-extract-plugin": "0.7.0",
     "style-loader": "0.23.1",
-    "webpack": "4.35.2",
+    "webpack": "4.35.3",
     "webpack-cli": "3.3.5"
   }
 }
