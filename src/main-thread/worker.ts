@@ -45,6 +45,7 @@ export class WorkerContext {
       cssKeys.push(key);
     }
 
+    // TODO(choumx): Sync read of all localStorage and sessionStorage a possible performance bottleneck?
     const localStorageData = config.sanitizer ? config.sanitizer.getStorage('local') : window.localStorage;
     const sessionStorageData = config.sanitizer ? config.sanitizer.getStorage('session') : window.sessionStorage;
 

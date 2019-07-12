@@ -24,6 +24,7 @@ export class Env {
   rafTasks: Array<Function>;
 
   constructor() {
+    // JSDOM document URL necessary for localStorage access.
     this.jsdom = new JSDOM('<!DOCTYPE html>', { url: 'http://localhost:3001' });
     this.document = this.jsdom.window.document;
     this.window = this.jsdom.window;
