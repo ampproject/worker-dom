@@ -41,9 +41,6 @@
     "release": "np",
     "prepublishOnly": "npm-run-all clean build"
   },
-  "dependencies": {
-    "@types/sinon": "7.0.13"
-  },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.10.0",
     "@babel/cli": "7.5.0",
@@ -52,6 +49,7 @@
     "@babel/plugin-proposal-object-rest-spread": "7.5.4",
     "@babel/preset-env": "7.5.4",
     "@types/node": "11.13.17",
+    "@types/sinon": "7.0.13",
     "acorn": "6.2.0",
     "acorn-walk": "6.2.0",
     "ava": "2.2.0",
