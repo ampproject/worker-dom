@@ -18,7 +18,7 @@ import anyTest, { TestInterface } from 'ava';
 import { Env } from './helpers/env';
 import { LongTaskCommandExecutor, LongTaskExecutor } from '../../main-thread/commands/long-task';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { Strings } from '../../main-thread/strings';
+import { StringContext } from '../../main-thread/strings';
 import { NodeContext } from '../../main-thread/nodes';
 import { WorkerContext } from '../../main-thread/worker';
 import { normalizeConfiguration } from '../../main-thread/configuration';
@@ -28,7 +28,7 @@ const test = anyTest as TestInterface<{
   env: Env;
   executor: LongTaskCommandExecutor;
   longTasks: Array<Promise<any>>;
-  strings: Strings;
+  stringContext: StringContext;
   nodeContext: NodeContext;
   workerContext: WorkerContext;
   objectContext: ObjectContext;
@@ -40,15 +40,15 @@ test.beforeEach(t => {
   const { document } = env;
   const longTasks: Array<Promise<any>> = [];
   const baseElement = document.createElement('div');
-  const strings = new Strings();
-  const nodeContext = new NodeContext(strings, baseElement);
+  const stringContext = new StringContext();
+  const nodeContext = new NodeContext(stringContext, baseElement);
   const objectContext = new ObjectContext();
   const workerContext = ({
     getWorker() {},
     messageToWorker() {},
   } as unknown) as WorkerContext;
   const executor = LongTaskExecutor(
-    strings,
+    stringContext,
     nodeContext,
     workerContext,
     objectContext,
@@ -69,7 +69,7 @@ test.beforeEach(t => {
     executor,
     longTasks,
     baseElement,
-    strings,
+    stringContext,
     nodeContext,
     objectContext,
     workerContext,
@@ -82,9 +82,9 @@ test.afterEach(t => {
 });
 
 test.serial('should tolerate no callback', t => {
-  const { longTasks, baseElement, strings, nodeContext, workerContext, objectContext } = t.context;
+  const { longTasks, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
   const executor = LongTaskExecutor(
-    strings,
+    stringContext,
     nodeContext,
     workerContext,
     objectContext,

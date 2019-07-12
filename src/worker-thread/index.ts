@@ -57,6 +57,7 @@ const globalScope: GlobalScope = {
   localStorage: {},
   location: {},
   url: '/',
+  indexedDB: (self as WorkerGlobalScope).indexedDB,
   innerWidth: 0,
   innerHeight: 0,
   initialize,

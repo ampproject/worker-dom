@@ -17,7 +17,7 @@
 import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
 import { MutatorProcessor } from './mutator';
 import { NodeContext } from './nodes';
-import { Strings } from './strings';
+import { StringContext } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { InboundWorkerDOMConfiguration, normalizeConfiguration } from './configuration';
 import { WorkerContext } from './worker';
@@ -52,14 +52,14 @@ export function install(
   baseElement: HTMLElement,
   config: InboundWorkerDOMConfiguration,
 ): Promise<Worker | null> {
-  const strings = new Strings();
+  const stringContext = new StringContext();
   const objectContext = new ObjectContext();
-  const nodeContext = new NodeContext(strings, baseElement);
+  const nodeContext = new NodeContext(stringContext, baseElement);
   const normalizedConfig = normalizeConfiguration(config);
   return fetchPromise.then(([domScriptContent, authorScriptContent]) => {
     if (domScriptContent && authorScriptContent && config.authorURL) {
       const workerContext = new WorkerContext(baseElement, nodeContext, domScriptContent, authorScriptContent, normalizedConfig);
-      const mutatorContext = new MutatorProcessor(strings, nodeContext, workerContext, normalizedConfig, objectContext);
+      const mutatorContext = new MutatorProcessor(stringContext, nodeContext, workerContext, normalizedConfig, objectContext);
       workerContext.worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
 

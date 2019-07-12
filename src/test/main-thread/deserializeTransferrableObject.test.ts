@@ -17,13 +17,13 @@
 import anyTest, { TestInterface } from 'ava';
 import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { deserializeTransferrableObject } from '../../main-thread/deserializeTransferrableObject';
-import { Strings } from '../../main-thread/strings';
+import { StringContext } from '../../main-thread/strings';
 import { NodeContext } from '../../main-thread/nodes';
 import { Env } from './helpers/env';
 import { ObjectContext } from '../../main-thread/object-context';
 
 const test = anyTest as TestInterface<{
-  strings: Strings;
+  stringContext: StringContext;
   nodeContext: NodeContext;
   objectContext: ObjectContext;
 }>;
@@ -33,29 +33,29 @@ test.beforeEach(t => {
   const { document } = env;
   const baseElement = document.createElement('div');
 
-  const strings = new Strings();
+  const stringContext = new StringContext();
   const objectContext = new ObjectContext();
-  const nodeContext = new NodeContext(strings, baseElement);
+  const nodeContext = new NodeContext(stringContext, baseElement);
 
   t.context = {
-    strings,
+    stringContext,
     nodeContext,
     objectContext,
   };
 });
 
 test('Deserializes int arguments', t => {
-  const { strings, nodeContext } = t.context;
+  const { stringContext, nodeContext } = t.context;
 
   const serializedArgs = [TransferrableObjectType.SmallInt, 1];
   const buffer = new Uint16Array(serializedArgs);
-  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, strings, nodeContext);
+  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, stringContext, nodeContext);
 
   t.deepEqual(deserializedArgs, [1]);
 });
 
 test('Deserializes float arguments', t => {
-  const { strings, nodeContext } = t.context;
+  const { stringContext, nodeContext } = t.context;
 
   const f32 = new Float32Array(1);
   const u16 = new Uint16Array(f32.buffer);
@@ -63,23 +63,23 @@ test('Deserializes float arguments', t => {
 
   const serializedArgs = [TransferrableObjectType.Float, u16[0], u16[1]];
   const buffer = new Uint16Array(serializedArgs);
-  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, strings, nodeContext);
+  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, stringContext, nodeContext);
 
   t.true(approx(1.23, deserializedArgs[0] as number));
 });
 
 test('Deserializes string arguments', t => {
-  const { strings, nodeContext } = t.context;
+  const { stringContext, nodeContext } = t.context;
 
-  const serializedArgs = [TransferrableObjectType.String, storeString(strings, 'textArg')];
+  const serializedArgs = [TransferrableObjectType.String, storeString(stringContext, 'textArg')];
   const buffer = new Uint16Array(serializedArgs);
-  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, strings, nodeContext);
+  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, stringContext, nodeContext);
 
   t.deepEqual(deserializedArgs, ['textArg']);
 });
 
 test('Deserializes array argument', t => {
-  const { strings, nodeContext } = t.context;
+  const { stringContext, nodeContext } = t.context;
 
   const serializedArgs = [
     TransferrableObjectType.Array,
@@ -93,13 +93,13 @@ test('Deserializes array argument', t => {
   ];
 
   const buffer = new Uint16Array(serializedArgs);
-  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, strings, nodeContext);
+  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, stringContext, nodeContext);
 
   t.deepEqual(deserializedArgs, [[1, 2, 3]]);
 });
 
 test('Deserializes object argument', t => {
-  const { strings, nodeContext, objectContext } = t.context;
+  const { stringContext, nodeContext, objectContext } = t.context;
 
   const id = 5; // example object id
   const obj = {} as CanvasGradient;
@@ -107,20 +107,20 @@ test('Deserializes object argument', t => {
 
   const serializedArgs = [TransferrableObjectType.TransferObject, id];
   const buffer = new Uint16Array(serializedArgs);
-  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, strings, nodeContext, objectContext);
+  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, stringContext, nodeContext, objectContext);
 
   t.deepEqual(deserializedArgs, [obj]);
 });
 
 test('Deserializes varying types', t => {
-  const { strings, nodeContext, objectContext } = t.context;
+  const { stringContext, nodeContext, objectContext } = t.context;
 
   // argument 1: SmallInt
   const smallInt = 1;
 
   // argument 2: String
   const stringArg = 'textArg';
-  const stringId = storeString(strings, stringArg);
+  const stringId = storeString(stringContext, stringArg);
 
   // argument 3: Object
   const objectId = 7;
@@ -137,23 +137,23 @@ test('Deserializes varying types', t => {
   ];
   const buffer = new Uint16Array(serializedArgs);
 
-  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 3, strings, nodeContext, objectContext);
+  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 3, stringContext, nodeContext, objectContext);
 
   t.deepEqual(deserializedArgs, [smallInt, stringArg, object]);
 });
 
 test('Deserializes from different offset', t => {
-  const { strings, nodeContext } = t.context;
+  const { stringContext, nodeContext } = t.context;
 
   const serializedArgs = [TransferrableObjectType.SmallInt, 1];
   const buffer = new Uint16Array([1, 2, 3].concat(serializedArgs));
-  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 3, 1, strings, nodeContext);
+  const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 3, 1, stringContext, nodeContext);
 
   t.deepEqual(deserializedArgs, [1]);
 });
 
 test('Returns the correct end offset', t => {
-  const { strings, nodeContext } = t.context;
+  const { stringContext, nodeContext } = t.context;
 
   const serializedArgs = [
     TransferrableObjectType.SmallInt,
@@ -166,15 +166,15 @@ test('Returns the correct end offset', t => {
   ];
 
   const buffer = new Uint16Array([1, 2, 3].concat(serializedArgs));
-  const { offset: endOffset } = deserializeTransferrableObject(buffer, 3, 2, strings, nodeContext);
+  const { offset: endOffset } = deserializeTransferrableObject(buffer, 3, 2, stringContext, nodeContext);
 
   t.is(buffer[endOffset], 32);
 });
 
 // main-thread's strings API does not return an ID when storing a string
 // so for convenience:
-function storeString(strings: Strings, text: string, currentIndex = -1) {
-  strings.store(text);
+function storeString(stringContext: StringContext, text: string, currentIndex = -1) {
+  stringContext.store(text);
   return ++currentIndex;
 }
 
