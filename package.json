@@ -1,8 +1,11 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.12.3",
+  "version": "0.13.0",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/main",
+  "files": [
+    "dist"
+  ],
   "syntax": {
     "esmodules": "dist/main.mjs"
   },
@@ -24,7 +27,7 @@
     "tsc:build:main": "tsc -p config/tsconfig.build.main-thread.json",
     "clean": "rimraf output dist",
     "pretest": "npm-run-all --parallel tsc:test:*",
-    "test": "ava -v output/test/**/*.test.js",
+    "test": "ava -v",
     "pre~rollup": "npm-run-all --parallel tsc:build:*",
     "~rollup": "rollup --config config/rollup.config.js",
     "lint:worker": "tslint -c config/tslint.json -p src/worker-thread/",
@@ -51,7 +54,7 @@
     "@types/node": "11.13.17",
     "acorn": "6.2.0",
     "acorn-walk": "6.2.0",
-    "ava": "1.4.1",
+    "ava": "2.2.0",
     "babel-plugin-minify-replace": "0.5.0",
     "babel-plugin-transform-remove-console": "6.9.4",
     "bundlesize": "0.18.0",
@@ -114,7 +117,9 @@
   "esm": {
     "cjs": true
   },
-  "files": [
-    "dist"
-  ]
+  "ava": {
+    "files": [
+      "output/test/**/*.test.js"
+    ]
+  }
 }
