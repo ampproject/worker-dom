@@ -66,7 +66,7 @@ test.beforeEach(t => {
   sandbox.stub(nodeContext, 'getNode').returns(canvasElement);
 
   t.context = {
-    stringContext: stringContext,
+    stringContext,
     objectContext,
     objectCreationProcessor,
     sandbox,
@@ -75,7 +75,7 @@ test.beforeEach(t => {
 });
 
 test('Object creation with mutation at a zero offset', t => {
-  const { stringContext: strings, objectContext, objectCreationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext, objectContext, objectCreationProcessor, sandbox, canvasElement } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
   const methodName = 'createLinearGradient';
@@ -108,7 +108,7 @@ test('Object creation with mutation at a zero offset', t => {
   objectCreationProcessor.execute(
     new Uint16Array([
       TransferrableMutationType.OBJECT_CREATION,
-      storeString(strings, methodName),
+      storeString(stringContext, methodName),
       objectId,
       4, // arg count
       ...serializedTarget,
@@ -123,7 +123,7 @@ test('Object creation with mutation at a zero offset', t => {
 });
 
 test('Object creation with mutation at non-zero offset', t => {
-  const { stringContext: strings, objectContext, objectCreationProcessor, sandbox, canvasElement } = t.context;
+  const { stringContext, objectContext, objectCreationProcessor, sandbox, canvasElement } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
   const methodName = 'createLinearGradient';
@@ -154,7 +154,7 @@ test('Object creation with mutation at non-zero offset', t => {
 
   const mutation = [
     TransferrableMutationType.OBJECT_CREATION,
-    storeString(strings, methodName),
+    storeString(stringContext, methodName),
     objectId,
     4, // arg count
     ...serializedTarget,
@@ -170,7 +170,7 @@ test('Object creation with mutation at non-zero offset', t => {
 });
 
 test('Returns correct end offset', t => {
-  const { stringContext: strings, objectCreationProcessor, canvasElement, sandbox } = t.context;
+  const { stringContext, objectCreationProcessor, canvasElement, sandbox } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
 
@@ -193,7 +193,7 @@ test('Returns correct end offset', t => {
 
   const mutation = [
     TransferrableMutationType.OBJECT_CREATION,
-    storeString(strings, methodName),
+    storeString(stringContext, methodName),
     1, // object ID (not important for this test)
     4, // arg count
     TransferrableObjectType.CanvasRenderingContext2D,
