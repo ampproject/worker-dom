@@ -52,8 +52,12 @@ const ESModules = [
     plugins: [
       removeWorkerWhitespace(),
       copy({
-        targets: ['config/dist-packaging/debug/package.json'],
-        outputFolder: 'dist/debug',
+        targets: [
+          {
+            src: 'config/dist-packaging/debug/package.json',
+            dest: 'dist/debug',
+          },
+        ],
       }),
       replace({
         DEBUG_ENABLED: true,
@@ -74,8 +78,12 @@ const ESModules = [
     plugins: [
       removeWorkerWhitespace(),
       copy({
-        targets: ['config/dist-packaging/amp/package.json'],
-        outputFolder: 'dist/amp',
+        targets: [
+          {
+            src: 'config/dist-packaging/amp/package.json',
+            dest: 'dist/amp',
+          },
+        ],
       }),
       replace({
         DEBUG_ENABLED: true,

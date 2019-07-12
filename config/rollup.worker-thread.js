@@ -42,8 +42,12 @@ const ESModules = [
     },
     plugins: [
       copy({
-        targets: ['config/dist-packaging/worker/package.json'],
-        outputFolder: 'dist/worker',
+        targets: [
+          {
+            src: 'config/dist-packaging/worker/package.json',
+            dest: 'dist/worker',
+          },
+        ],
       }),
       replace({
         DEBUG_ENABLED: false,
@@ -65,8 +69,12 @@ const ESModules = [
     },
     plugins: [
       copy({
-        targets: ['config/dist-packaging/debug/worker/package.json'],
-        outputFolder: 'dist/debug/worker',
+        targets: [
+          {
+            src: 'config/dist-packaging/debug/worker/package.json',
+            dest: 'dist/debug/worker',
+          },
+        ],
       }),
       replace({
         DEBUG_ENABLED: false,
@@ -87,8 +95,12 @@ const ESModules = [
     },
     plugins: [
       copy({
-        targets: ['config/dist-packaging/amp/worker/package.json'],
-        outputFolder: 'dist/amp/worker',
+        targets: [
+          {
+            src: 'config/dist-packaging/amp/worker/package.json',
+            dest: 'dist/amp/worker',
+          },
+        ],
       }),
       replace({
         DEBUG_ENABLED: true,
@@ -109,8 +121,12 @@ const ESModules = [
     },
     plugins: [
       copy({
-        targets: ['config/dist-packaging/amp/worker/package.json'],
-        outputFolder: 'dist/amp/worker',
+        targets: [
+          {
+            src: 'config/dist-packaging/amp/worker/package.json',
+            dest: 'dist/amp/worker',
+          },
+        ],
       }),
       replace({
         DEBUG_ENABLED: false,
