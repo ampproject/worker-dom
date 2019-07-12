@@ -48,7 +48,7 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
 
       return argsOffset;
     },
-    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+    print(mutations: Uint16Array, startPosition: number): Object {
       const functionName = strings.get(mutations[startPosition + ObjectMutationIndex.FunctionName]);
       const { args: deserializedTarget } = deserializeTransferrableObject(
         mutations,
@@ -58,7 +58,7 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
         nodeContext,
         objectContext,
       );
-      target = deserializedTarget[0] as RenderableElement;
+      const target = deserializedTarget[0] as RenderableElement;
 
       return {
         type: 'OBJECT_MUTATION',

@@ -17,21 +17,31 @@
 import { CharacterDataMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 
+const CONTEXT = 'CHAR_DATA';
+
 export const CharacterDataProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHARACTER_DATA);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+    execute(mutations: Uint16Array, startPosition: number): number {
       if (allowedExecution) {
+        const targetIndex = mutations[startPosition + CharacterDataMutationIndex.Target];
+        const target = nodes.getNode(targetIndex);
         const value = mutations[startPosition + CharacterDataMutationIndex.Value];
-        if (value) {
-          // Sanitization not necessary for textContent.
-          target.textContent = strings.get(value);
+        if (target) {
+          if (value) {
+            // Sanitization not necessary for textContent.
+            target.textContent = strings.get(value);
+          }
+        } else {
+          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
         }
       }
       return startPosition + CharacterDataMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+    print(mutations: Uint16Array, startPosition: number): Object {
+      const targetIndex = mutations[startPosition + CharacterDataMutationIndex.Target];
+      const target = nodes.getNode(targetIndex);
       return {
         target,
         allowedExecution,

@@ -17,40 +17,55 @@
 import { AttributeMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 
+const CONTEXT = 'ATTR_LIST';
+
 export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.ATTRIBUTES);
 
-  function getValue(mutations: Uint16Array, startPosition: number): string | null {
+  /**
+   * @param mutations
+   * @param startPosition
+   */
+  const getValue = (mutations: Uint16Array, startPosition: number): string | null => {
     const value = mutations[startPosition + AttributeMutationIndex.Value];
     // Value is sent as 0 when it's the default value or removal.
     // Value is sent as index + 1 when it's a valid value.
     return value !== 0 ? strings.get(value - 1) : null;
-  }
+  };
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+    execute(mutations: Uint16Array, startPosition: number): number {
       if (allowedExecution) {
+        const targetIndex = mutations[startPosition + AttributeMutationIndex.Target];
+        const target = nodes.getNode(targetIndex);
+
         const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);
         const value = getValue(mutations, startPosition);
 
-        if (attributeName != null) {
-          if (config.sanitizer) {
-            const mutated = config.sanitizer.mutateAttribute(target, attributeName, value);
-            if (!mutated) {
-              // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
-            }
-          } else {
-            if (value == null) {
-              target.removeAttribute(attributeName);
+        if (target) {
+          if (attributeName != null) {
+            if (config.sanitizer) {
+              const mutated = config.sanitizer.mutateAttribute(target, attributeName, value);
+              if (!mutated) {
+                // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
+              }
             } else {
-              target.setAttribute(attributeName, value);
+              if (value == null) {
+                target.removeAttribute(attributeName);
+              } else {
+                target.setAttribute(attributeName, value);
+              }
             }
           }
+        } else {
+          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
         }
       }
       return startPosition + AttributeMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+    print(mutations: Uint16Array, startPosition: number): Object {
+      const targetIndex = mutations[startPosition + AttributeMutationIndex.Target];
+      const target = nodes.getNode(targetIndex);
       const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);
       const value = getValue(mutations, startPosition);
 
