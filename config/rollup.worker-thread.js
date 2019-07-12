@@ -20,6 +20,14 @@ import replace from 'rollup-plugin-replace';
 import copy from 'rollup-plugin-copy';
 import { babelPlugin } from './rollup.plugins.js';
 
+// Compile plugins should always be added at the end of the plugin list.
+const compilePlugins = [
+  compiler({
+    env: 'CUSTOM',
+  }),
+  terser(),
+];
+
 // Workers do not natively support ES Modules containing `import` or `export` statments.
 // So, here we continue to use the '.mjs' extension to indicate newer ECMASCRIPT support
 // but ensure the code can be run within a worker by putting it inside a named iife.
@@ -44,10 +52,7 @@ const ESModules = [
         transpileToES5: false,
         allowConsole: false,
       }),
-      compiler({
-        env: 'CUSTOM',
-      }),
-      terser(),
+      ...compilePlugins,
     ],
   },
   {
@@ -94,6 +99,29 @@ const ESModules = [
       }),
     ],
   },
+  {
+    input: 'output/worker-thread/index.amp.js',
+    output: {
+      file: 'dist/amp/worker/worker.js',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+    },
+    plugins: [
+      copy({
+        targets: ['config/dist-packaging/amp/worker/package.json'],
+        outputFolder: 'dist/amp/worker',
+      }),
+      replace({
+        DEBUG_ENABLED: false,
+      }),
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: false,
+      }),
+      ...compilePlugins,
+    ],
+  },
 ];
 
 const IIFEModules = [
@@ -113,10 +141,7 @@ const IIFEModules = [
         transpileToES5: true,
         allowConsole: false,
       }),
-      compiler({
-        env: 'CUSTOM',
-      }),
-      terser(),
+      ...compilePlugins,
     ],
   },
   {

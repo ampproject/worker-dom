@@ -114,27 +114,11 @@ export class MutatorProcessor {
 
       while (operationStart < length) {
         const mutationType = mutationArray[operationStart];
-
-        if (mutationType === TransferrableMutationType.OBJECT_MUTATION || mutationType === TransferrableMutationType.OBJECT_CREATION) {
-          if (DEBUG_ENABLED) {
-            console.log(ReadableMutationType[mutationType], this.executors[mutationType].print(mutationArray, operationStart));
-          }
-          operationStart = this.executors[mutationType].execute(mutationArray, operationStart);
-
-          // TODO: remove conditional branching by moving `target = nodeContext.getNode(...)` into
-          // the processors that require it.
-        } else {
-          const target = this.nodeContext.getNode(mutationArray[operationStart + 1]);
-
-          if (!target) {
-            console.error(`getNode() yields null – ${target}`);
-            return;
-          }
-          if (DEBUG_ENABLED) {
-            console.log(ReadableMutationType[mutationType], this.executors[mutationType].print(mutationArray, operationStart, target));
-          }
-          operationStart = this.executors[mutationType].execute(mutationArray, operationStart, target);
+        const executor = this.executors[mutationType];
+        if (DEBUG_ENABLED) {
+          console.log(ReadableMutationType[mutationType], executor.print(mutationArray, operationStart));
         }
+        operationStart = executor.execute(mutationArray, operationStart);
       }
     });
     if (DEBUG_ENABLED) {

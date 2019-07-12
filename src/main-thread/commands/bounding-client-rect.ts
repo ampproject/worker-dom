@@ -20,12 +20,16 @@ import { CommandExecutorInterface } from './interface';
 import { BoundClientRectMutationIndex } from '../../transfer/TransferrableBoundClientRect';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
+const CONTEXT = 'GET_BOUNDING_CLIENT_RECT';
+
 export const BoundingClientRectProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.GET_BOUNDING_CLIENT_RECT);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
+    execute(mutations: Uint16Array, startPosition: number): number {
       if (allowedExecution) {
+        const targetIndex = mutations[startPosition + BoundClientRectMutationIndex.Target];
+        const target = nodes.getNode(targetIndex);
         if (target) {
           const boundingRect = target.getBoundingClientRect();
           workerContext.messageToWorker({
@@ -41,15 +45,17 @@ export const BoundingClientRectProcessor: CommandExecutorInterface = (strings, n
             ],
           });
         } else {
-          console.error(`getNode() yields null – ${target}`);
+          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
         }
       }
 
       return startPosition + BoundClientRectMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+    print(mutations: Uint16Array, startPosition: number): Object {
+      const targetIndex = mutations[startPosition + BoundClientRectMutationIndex.Target];
+      const target = nodes.getNode(targetIndex);
       return {
-        type: 'GET_BOUNDING_CLIENT_RECT',
+        type: CONTEXT,
         target,
         allowedExecution,
       };
