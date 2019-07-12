@@ -29,8 +29,8 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
         const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
         const valueIndex = mutations[startPosition + StorageMutationIndex.Value];
 
-        const key = keyIndex >= 0 ? strings.get(keyIndex) : null;
-        const value = valueIndex >= 0 ? strings.get(valueIndex) : null;
+        const key = keyIndex > 0 ? strings.get(keyIndex) : null;
+        const value = valueIndex > 0 ? strings.get(valueIndex) : null;
 
         // TODO(choumx): Clean up key/value strings (or don't store them in the first place)
         // to avoid leaking memory.
@@ -71,8 +71,8 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
       const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
       const valueIndex = mutations[startPosition + StorageMutationIndex.Value];
 
-      const key = keyIndex >= 0 ? strings.get(keyIndex) : null;
-      const value = valueIndex >= 0 ? strings.get(valueIndex) : null;
+      const key = keyIndex > 0 ? strings.get(keyIndex) : null;
+      const value = valueIndex > 0 ? strings.get(valueIndex) : null;
 
       return {
         type: CONTEXT,

@@ -144,6 +144,7 @@ const GlobalScope: GlobalScope = {
 export function createTestingDocument(overrides: {} | null = null): Document {
   const customGlobal = Object.assign({}, GlobalScope, overrides);
   const document = new Document(customGlobal);
+  document.postMessage = () => {};
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
 
