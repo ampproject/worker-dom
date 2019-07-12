@@ -20,16 +20,18 @@ import { CommandExecutorInterface } from './interface';
 export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.ATTRIBUTES);
 
+  function getValue(mutations: Uint16Array, startPosition: number): string | null {
+    const value = mutations[startPosition + AttributeMutationIndex.Value];
+    // Value is sent as 0 when it's the default value or removal.
+    // Value is sent as index + 1 when it's a valid value.
+    return value !== 0 ? strings.get(value - 1) : null;
+  }
+
   return {
     execute(mutations: Uint16Array, startPosition: number, target: RenderableElement): number {
       if (allowedExecution) {
         const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);
-        // Value is sent as 0 when it's the default value or removal.
-        // Value is sent as index + 1 when it's a valid value.
-        const value =
-          (mutations[startPosition + AttributeMutationIndex.Value] !== 0 &&
-            strings.get(mutations[startPosition + AttributeMutationIndex.Value] - 1)) ||
-          null;
+        const value = getValue(mutations, startPosition);
 
         if (attributeName != null) {
           if (config.sanitizer) {
@@ -50,11 +52,7 @@ export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, wor
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);
-      // Value is sent as 0 when it's the default value or removal.
-      // Value is sent as index + 1 when it's a valid value.
-      const value =
-        (mutations[startPosition + AttributeMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + AttributeMutationIndex.Value] - 1)) ||
-        null;
+      const value = getValue(mutations, startPosition);
 
       return {
         target,

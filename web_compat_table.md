@@ -899,7 +899,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Window.innerWidth                                   | ✖️     |                                                  | 
 | Window.isSecureContext                              | ✖️     |                                                  | 
 | Window.length                                       | ✖️     |                                                  | 
-| Window.localStorage                                 | ✔️     |                                                  | 
+| Window.localStorage                                 | ✖️     |                                                  | 
 | Window.locationbar                                  | ✖️     |                                                  | 
 | Window.matchMedia()                                 | ✖️     |                                                  | 
 | Window.maximize()                                   | ✖️     |                                                  | 
