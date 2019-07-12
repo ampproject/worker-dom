@@ -16,7 +16,7 @@
 
 import { CommandExecutor, CommandExecutorInterface } from './interface';
 import { TransferrableMutationType, ReadableMutationType, LongTaskMutationIndex } from '../../transfer/TransferrableMutation';
-import { Strings } from '../strings';
+import { StringContext } from '../strings';
 import { NodeContext } from '../nodes';
 import { WorkerContext } from '../worker';
 import { WorkerDOMConfiguration } from '../configuration';
@@ -24,7 +24,7 @@ import { ObjectContext } from '../object-context';
 
 export interface LongTaskCommandExecutorInterface extends CommandExecutorInterface {
   (
-    strings: Strings,
+    stringContext: StringContext,
     nodeContext: NodeContext,
     workerContext: WorkerContext,
     objectContext: ObjectContext,
@@ -36,7 +36,7 @@ export interface LongTaskCommandExecutor extends CommandExecutor {
 }
 
 export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
-  strings: Strings,
+  stringContext: StringContext,
   nodeContext: NodeContext,
   workerContext: WorkerContext,
   objectContext: ObjectContext,

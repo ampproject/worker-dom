@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-export class Strings {
+/**
+ * Stores indexed strings that are used in postMessage() calls from the worker.
+ */
+export class StringContext {
   private strings: Array<string>;
 
   constructor() {
@@ -44,6 +47,6 @@ export class Strings {
    * @param values
    */
   storeValues(values: Array<string>): void {
-    values.forEach(this.store.bind(this));
+    values.forEach(v => this.store(v));
   }
 }

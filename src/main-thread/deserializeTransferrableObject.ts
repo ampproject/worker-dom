@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Strings } from './strings';
+import { StringContext } from './strings';
 import { TransferrableObjectType } from '../transfer/TransferrableMutation';
 import { NodeContext } from './nodes';
 import { ObjectContext } from './object-context';
@@ -32,7 +32,7 @@ const u16 = new Uint16Array(f32.buffer);
  * @param buffer Contains mutation with arguments to deserialize.
  * @param offset Start position of arguments in mutations buffer.
  * @param count Number of arguments to deserialize.
- * @param strings Strings context.
+ * @param stringContext Strings context.
  * @param nodeContext Nodes context.
  * @param objectContext Objects context
  */
@@ -40,7 +40,7 @@ export function deserializeTransferrableObject(
   buffer: Uint16Array,
   offset: number,
   count: number,
-  strings: Strings,
+  stringContext: StringContext,
   nodeContext: NodeContext,
   objectContext?: ObjectContext,
 ): DeserializedArgs {
@@ -58,12 +58,12 @@ export function deserializeTransferrableObject(
         break;
 
       case TransferrableObjectType.String:
-        args.push(strings.get(buffer[offset++]));
+        args.push(stringContext.get(buffer[offset++]));
         break;
 
       case TransferrableObjectType.Array:
         const size = buffer[offset++];
-        const des = deserializeTransferrableObject(buffer, offset, size, strings, nodeContext, objectContext);
+        const des = deserializeTransferrableObject(buffer, offset, size, stringContext, nodeContext, objectContext);
         args.push(des.args);
         offset = des.offset;
         break;
