@@ -97,7 +97,6 @@ const GlobalScope: GlobalScope = {
   localStorage: {},
   location: {},
   url: '/',
-  indexedDB: {} as IDBFactory,
   innerWidth: 0,
   innerHeight: 0,
   initialize: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>) => void 0,
