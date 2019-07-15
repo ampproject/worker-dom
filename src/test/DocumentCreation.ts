@@ -49,6 +49,7 @@ import { MutationObserver } from '../worker-thread/MutationObserver';
 import { GlobalScope } from '../worker-thread/WorkerDOMGlobalScope';
 import { HTMLCanvasElement } from '../worker-thread/dom/HTMLCanvasElement';
 import { CanvasRenderingContext2D } from '../worker-thread/canvas/CanvasTypes';
+import { Event as WorkerDOMEvent } from '../worker-thread/Event';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -76,6 +77,7 @@ declare var OffscreenCanvas: {
 const GlobalScope: GlobalScope = {
   innerWidth: 0,
   innerHeight: 0,
+  Event: WorkerDOMEvent,
   MutationObserver,
   SVGElement,
   HTMLElement,

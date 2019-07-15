@@ -26,19 +26,21 @@ let indexTracker = 0;
 
 export function retrieveImageBitmap(image: HTMLImageElement | HTMLCanvasElement, canvas: HTMLCanvasElement): Promise<any> {
   const callIndex = indexTracker++;
+  const document = canvas.ownerDocument as Document;
+
   return new Promise(resolve => {
     const messageHandler = ({ data }: { data: ImageBitmapToWorker }) => {
       if (data[TransferrableKeys.type] === MessageType.IMAGE_BITMAP_INSTANCE && data[TransferrableKeys.callIndex] === callIndex) {
-        removeEventListener('message', messageHandler);
+        document.removeGlobalEventListener('message', messageHandler);
         const transferredImageBitmap = (data as ImageBitmapToWorker)[TransferrableKeys.data];
         resolve(transferredImageBitmap);
       }
     };
 
-    if (typeof addEventListener !== 'function') {
-      throw new Error('addEventListener not a function!');
+    if (!document.addGlobalEventListener) {
+      throw new Error('addGlobalEventListener is not defined.');
     } else {
-      addEventListener('message', messageHandler);
+      document.addGlobalEventListener('message', messageHandler);
       transfer(canvas.ownerDocument as Document, [TransferrableMutationType.IMAGE_BITMAP_INSTANCE, image[TransferrableKeys.index], callIndex]);
     }
   });

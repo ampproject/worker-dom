@@ -47,6 +47,7 @@ export class WorkerContext {
       (function(){
         ${workerDOMScript}
         self['window'] = self;
+        self['localStorage'] = {}; // TODO(choumx): Remove.
         var workerDOM = WorkerThread.workerDOM;
         WorkerThread.hydrate(
           workerDOM.document,

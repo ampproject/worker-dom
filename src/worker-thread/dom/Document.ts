@@ -68,7 +68,11 @@ export class Document extends Element {
   public defaultView: WorkerDOMGlobalScope;
   public documentElement: Document;
   public body: Element;
+
+  // Internal variables.
   public postMessage: PostMessage;
+  public addGlobalEventListener: Function;
+  public removeGlobalEventListener: Function;
   public [TransferrableKeys.allowTransfer]: boolean = true;
 
   constructor(global: GlobalScope) {
@@ -93,7 +97,7 @@ export class Document extends Element {
   public [TransferrableKeys.observe](): void {
     setPhase(Phase.Hydrating);
     propagateEvents(this.defaultView);
-    propagateSyncValues();
+    propagateSyncValues(this.defaultView);
     propagateResize(this.defaultView);
   }
 

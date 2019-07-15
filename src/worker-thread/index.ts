@@ -49,10 +49,12 @@ import { Document } from './dom/Document';
 import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
+import { Event as WorkerDOMEvent } from './Event';
 
 const globalScope: GlobalScope = {
   innerWidth: 0,
   innerHeight: 0,
+  Event: WorkerDOMEvent,
   MutationObserver,
   HTMLElement,
   SVGElement,
@@ -87,15 +89,20 @@ const globalScope: GlobalScope = {
   HTMLTimeElement,
 };
 
+const noop = () => void 0;
+
 // WorkerDOM.Document.defaultView ends up being the window object.
 // React requires the classes to exist off the window object for instanceof checks.
-export const workerDOM = (function(postMessage) {
+export const workerDOM = (function(postMessage, addEventListener, removeEventListener) {
   const document = new Document(globalScope);
+  // TODO(choumx): Avoid polluting Document's public API.
   document.postMessage = postMessage;
+  document.addGlobalEventListener = addEventListener;
+  document.removeGlobalEventListener = removeEventListener;
+
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
-
   return document.defaultView;
-})(postMessage.bind(self) || (() => void 0));
+})(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
 export const hydrate = initialize;

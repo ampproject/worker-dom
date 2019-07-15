@@ -44,7 +44,7 @@ import { HTMLTableRowElement } from './dom/HTMLTableRowElement';
 import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { Document } from './dom/Document';
-import { EventHandler } from './Event';
+import { EventHandler, Event as WorkerDOMEvent } from './Event';
 import { MutationObserver } from './MutationObserver';
 import { SVGElement } from './dom/SVGElement';
 import { HTMLElement } from './dom/HTMLElement';
@@ -56,6 +56,9 @@ import { HTMLElement } from './dom/HTMLElement';
 export interface GlobalScope {
   innerWidth: number;
   innerHeight: number;
+  // Event exists natively in web workers but override with our synthetic event
+  // implementation to enable setting readonly properties like currentTarget.
+  Event: typeof WorkerDOMEvent;
   MutationObserver: typeof MutationObserver;
   SVGElement: typeof SVGElement;
   HTMLElement: typeof HTMLElement;
