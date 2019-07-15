@@ -19,6 +19,7 @@ import { Document } from './dom/Document';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
+import { Storage } from './Storage';
 
 export function initialize(
   document: Document,
@@ -37,12 +38,6 @@ export function initialize(
   const window = document.defaultView;
   window.innerWidth = innerWidth;
   window.innerHeight = innerHeight;
-
-  const global = document.defaultView;
-  if (global.localStorage) {
-    global.localStorage.setData(localStorageData);
-  }
-  if (global.sessionStorage) {
-    global.sessionStorage.setData(sessionStorageData);
-  }
+  window.localStorage = new Storage(document, 'local', localStorageData);
+  window.sessionStorage = new Storage(document, 'session', sessionStorageData);
 }

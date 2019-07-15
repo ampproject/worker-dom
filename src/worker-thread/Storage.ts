@@ -32,16 +32,10 @@ export class Storage {
    * @param document
    * @param scope
    */
-  constructor(document: Document, scope: string) {
+  constructor(document: Document, scope: string, data: { [key: string]: string }) {
     this.document = document;
     this.scope = scope;
-    this.data = {};
-  }
-
-  // TODO(choumx): Change initial data to be passed in the constructor
-  // once author script is no longer wrapped and globals are available.
-  setData(value: { [key: string]: string }): void {
-    this.data = value;
+    this.data = data;
   }
 
   get length() {

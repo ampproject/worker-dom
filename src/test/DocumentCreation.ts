@@ -124,8 +124,8 @@ export function createTestingDocument(overrides: {} | null = null): Document {
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
 
-  customGlobal.localStorage = new Storage(document, 'local');
-  customGlobal.sessionStorage = new Storage(document, 'session');
+  customGlobal.localStorage = new Storage(document, 'local', {});
+  customGlobal.sessionStorage = new Storage(document, 'session', {});
 
   return document;
 }

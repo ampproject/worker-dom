@@ -29,7 +29,7 @@ const test = anyTest as TestInterface<{
 
 test.beforeEach(t => {
   const document = createTestingDocument();
-  const storage = new Storage(document, 'scope');
+  const storage = new Storage(document, 'scope', {});
 
   t.context = {
     document,

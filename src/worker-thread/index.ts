@@ -50,7 +50,6 @@ import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
 import { Event as WorkerDOMEvent } from './Event';
-import { Storage } from './Storage';
 
 const globalScope: GlobalScope = {
   innerWidth: 0,
@@ -108,9 +107,6 @@ export const workerDOM = (function(postMessage, addEventListener, removeEventLis
 
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
-
-  globalScope.localStorage = new Storage(document, 'local');
-  globalScope.sessionStorage = new Storage(document, 'session');
 
   return document.defaultView;
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
