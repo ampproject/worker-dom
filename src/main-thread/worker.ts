@@ -46,12 +46,16 @@ export class WorkerContext {
       'use strict';
       (function(){
         ${workerDOMScript}
-        var window = self['window'] = WorkerThread.workerDOM;
-        window.innerWidth = ${window.innerWidth};
-        window.innerHeight = ${window.innerHeight};
-        WorkerThread.hydrate(window.document, ${JSON.stringify(strings)}, ${JSON.stringify(skeleton)}, ${JSON.stringify(keys)});
-        window.document[${TransferrableKeys.observe}](this);
-        Object.keys(window).forEach(key => self[key] = window[key]);
+        self['window'] = self;
+        var workerDOM = WorkerThread.workerDOM;
+        WorkerThread.hydrate(
+          workerDOM.document,
+          ${JSON.stringify(strings)},
+          ${JSON.stringify(skeleton)},
+          ${JSON.stringify(keys)},
+          [${window.innerWidth}, ${window.innerHeight}]);
+        workerDOM.document[${TransferrableKeys.observe}](this);
+        Object.keys(workerDOM).forEach(key => self[key] = workerDOM[key]);
       }).call(self);
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;
