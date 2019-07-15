@@ -45,20 +45,15 @@ import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { Document } from './dom/Document';
 import { EventHandler } from './Event';
-import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { MutationObserver } from './MutationObserver';
 import { SVGElement } from './dom/SVGElement';
 import { HTMLElement } from './dom/HTMLElement';
 
+/**
+ * Should only contain properties that exist on Window.
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Window
+ */
 export interface GlobalScope {
-  initialize: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>) => void;
-  navigator: WorkerNavigator;
-  // TODO (#541): Should we type this more explicitly?
-  WebAssembly: object;
-  localStorage: object;
-  location: object;
-  url: string;
-  indexedDB?: IDBFactory;
   innerWidth: number;
   innerHeight: number;
   MutationObserver: typeof MutationObserver;
@@ -93,8 +88,6 @@ export interface GlobalScope {
   HTMLTableRowElement: typeof HTMLTableRowElement;
   HTMLTableSectionElement: typeof HTMLTableSectionElement;
   HTMLTimeElement: typeof HTMLTimeElement;
-  OffscreenCanvas: any | undefined;
-  ImageBitmap: any | undefined;
 }
 
 export interface WorkerDOMGlobalScope extends GlobalScope {

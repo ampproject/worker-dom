@@ -75,7 +75,7 @@ export class Document extends Element {
     super(NodeType.DOCUMENT_NODE, DOCUMENT_NAME, HTML_NAMESPACE, null);
     // Element uppercases its nodeName, but Document doesn't.
     this.nodeName = DOCUMENT_NAME;
-    this.documentElement = this;
+    this.documentElement = this; // TODO(choumx): Should be the <html> element.
 
     this.defaultView = Object.assign(global, {
       document: this,

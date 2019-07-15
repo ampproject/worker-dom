@@ -49,18 +49,10 @@ import { Document } from './dom/Document';
 import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
-import { OffscreenCanvas } from './canvas/CanvasTypes';
 
 const globalScope: GlobalScope = {
-  navigator: (self as WorkerGlobalScope).navigator,
-  WebAssembly: (self as any).WebAssembly,
-  localStorage: {},
-  location: {},
-  url: '/',
-  indexedDB: (self as WorkerGlobalScope).indexedDB,
   innerWidth: 0,
   innerHeight: 0,
-  initialize,
   MutationObserver,
   HTMLElement,
   SVGElement,
@@ -93,8 +85,6 @@ const globalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
-  OffscreenCanvas: (self as any).OffscreenCanvas as OffscreenCanvas,
-  ImageBitmap: (self as any).ImageBitmap as ImageBitmap,
 };
 
 // WorkerDOM.Document.defaultView ends up being the window object.
@@ -107,3 +97,5 @@ export const workerDOM = (function(postMessage) {
 
   return document.defaultView;
 })(postMessage.bind(self) || (() => void 0));
+
+export const hydrate = initialize;

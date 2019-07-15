@@ -50,7 +50,6 @@ import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
 import { MutationObserver } from './MutationObserver';
-import { OffscreenCanvas } from './canvas/CanvasTypes';
 
 const WHITELISTED_GLOBALS = [
   'Array',
@@ -106,6 +105,8 @@ const WHITELISTED_GLOBALS = [
   'WebAssembly',
   'XMLHttpRequest',
   'atob',
+  'addEventListener',
+  'removeEventListener',
   'btoa',
   'caches',
   'clearInterval',
@@ -113,6 +114,7 @@ const WHITELISTED_GLOBALS = [
   'console',
   'decodeURI',
   'decodeURIComponent',
+  'document',
   'encodeURI',
   'encodeURIComponent',
   'escape',
@@ -120,28 +122,25 @@ const WHITELISTED_GLOBALS = [
   'indexedDB',
   'isFinite',
   'isNaN',
+  'location',
+  'navigator',
   'onerror',
   'onrejectionhandled',
   'onunhandledrejection',
   'parseFloat',
   'parseInt',
   'performance',
+  'requestAnimationFrame',
+  'cancelAnimationFrame',
+  'self',
   'setTimeout',
   'setInterval',
-  'undefined',
   'unescape',
 ];
 
 const globalScope: GlobalScope = {
-  navigator: (self as WorkerGlobalScope).navigator,
-  WebAssembly: (self as any).WebAssembly,
-  localStorage: {},
-  location: self.location,
-  url: '/',
-  indexedDB: (self as WorkerGlobalScope).indexedDB,
   innerWidth: 0,
   innerHeight: 0,
-  initialize,
   MutationObserver,
   SVGElement,
   HTMLElement,
@@ -174,8 +173,6 @@ const globalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
-  OffscreenCanvas: (self as any).OffscreenCanvas as OffscreenCanvas,
-  ImageBitmap: (self as any).ImageBitmap as ImageBitmap,
 };
 
 // WorkerDOM.Document.defaultView ends up being the window object.
@@ -185,7 +182,6 @@ export const workerDOM = (function(postMessage) {
   document.postMessage = postMessage;
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
-
   return document.defaultView;
 })(postMessage.bind(self) || (() => void 0));
 
@@ -210,31 +206,42 @@ function updateLongTask(global: WorkerGlobalScope) {
 }
 
 /**
- * Walks up a global's prototype chain and dereferences non-whitelisted properties
- * until EventTarget is reached.
  * @param global
  */
 function updateGlobals(global: WorkerGlobalScope) {
-  function deleteUnsafe(object: any, property: string) {
-    if (WHITELISTED_GLOBALS.indexOf(property) >= 0) {
-      return;
+  /**
+   * @param object
+   * @param property
+   * @return True if property was deleted from object. Otherwise, false.
+   */
+  const deleteUnsafe = (object: any, property: string): boolean => {
+    if (WHITELISTED_GLOBALS.indexOf(property) < 0) {
+      try {
+        delete object[property];
+        return true;
+      } catch (e) {
+        console.warn(e);
+      }
     }
-    try {
-      console.info(`Deleting ${property}...`);
-      delete object[property];
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-
+    return false;
+  };
+  // Walk up global's prototype chain and dereference non-whitelisted properties
+  // until EventTarget is reached.
   let current = global;
   while (current && current.constructor !== EventTarget) {
-    console.info('Removing references from:', current);
-    Object.getOwnPropertyNames(current).forEach(prop => deleteUnsafe(current, prop));
+    const deleted: string[] = [];
+    Object.getOwnPropertyNames(current).forEach(prop => {
+      if (deleteUnsafe(current, prop)) {
+        deleted.push(prop);
+      }
+    });
+    console.info(`Removed ${deleted.length} references from`, current, ':', deleted);
     current = Object.getPrototypeOf(current);
   }
-
+  // Wrap global.fetch() with our longTask API.
   updateLongTask(global);
 }
 
 updateGlobals(self);
+
+export const hydrate = initialize;
