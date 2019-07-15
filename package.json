@@ -76,7 +76,7 @@
     "sinon": "7.3.2",
     "sirv": "0.4.2",
     "tslint": "5.18.0",
-    "typescript": "3.4.5"
+    "typescript": "3.5.3"
   },
   "lint-staged": {
     "*.{js,ts}": [
@@ -94,7 +94,7 @@
     {
       "path": "./dist/worker/worker.mjs",
       "compression": "brotli",
-      "maxSize": "10.95 kB"
+      "maxSize": "11.0 kB"
     },
     {
       "path": "./dist/worker/worker.js",

@@ -91,6 +91,8 @@ export interface GlobalScope {
   HTMLTableRowElement: typeof HTMLTableRowElement;
   HTMLTableSectionElement: typeof HTMLTableSectionElement;
   HTMLTimeElement: typeof HTMLTimeElement;
+  OffscreenCanvas?: typeof OffscreenCanvas;
+  ImageBitmap?: typeof ImageBitmap;
 }
 
 export interface WorkerDOMGlobalScope extends GlobalScope {
