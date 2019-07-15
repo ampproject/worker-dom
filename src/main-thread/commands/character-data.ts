@@ -17,8 +17,6 @@
 import { CharacterDataMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 
-const CONTEXT = 'CHAR_DATA';
-
 export const CharacterDataProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHARACTER_DATA);
 
@@ -34,7 +32,7 @@ export const CharacterDataProcessor: CommandExecutorInterface = (strings, nodes,
             target.textContent = strings.get(value);
           }
         } else {
-          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
+          console.error(`CHAR_DATA: getNode(${targetIndex}) is null.`);
         }
       }
       return startPosition + CharacterDataMutationIndex.End;

@@ -17,8 +17,6 @@
 import { AttributeMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 
-const CONTEXT = 'ATTR_LIST';
-
 export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.ATTRIBUTES);
 
@@ -58,7 +56,7 @@ export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, wor
             }
           }
         } else {
-          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
+          console.error(`ATTR_LIST: getNode(${targetIndex}) is null.`);
         }
       }
       return startPosition + AttributeMutationIndex.End;

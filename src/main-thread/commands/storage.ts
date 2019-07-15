@@ -17,8 +17,6 @@
 import { CommandExecutorInterface } from './interface';
 import { TransferrableMutationType, StorageMutationIndex } from '../../transfer/TransferrableMutation';
 
-const CONTEXT = 'STORAGE';
-
 export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.PROPERTIES);
 
@@ -59,7 +57,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
               }
             }
           } else {
-            console.error(`${CONTEXT}: Unexpected scope: "${scope}".`);
+            console.error(`STORAGE: Unexpected scope: "${scope}".`);
           }
         }
       }
@@ -75,7 +73,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
       const value = valueIndex > 0 ? strings.get(valueIndex) : null;
 
       return {
-        type: CONTEXT,
+        type: 'STORAGE',
         scope,
         key,
         value,
