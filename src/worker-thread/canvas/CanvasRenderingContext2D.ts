@@ -96,7 +96,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
           data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE &&
           data[TransferrableKeys.target][0] === canvas[TransferrableKeys.index]
         ) {
-          document.removeRemoveEventListener('message', messageHandler);
+          document.removeGlobalEventListener('message', messageHandler);
           const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
           resolve(transferredOffscreenCanvas as { getContext(c: '2d'): CanvasRenderingContext2D });
         }

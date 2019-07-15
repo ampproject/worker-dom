@@ -25,6 +25,7 @@ import {
   CanvasLineJoin,
   CanvasDirection,
   CanvasFillRule,
+  CanvasImageSource,
 } from './CanvasTypes';
 import { transfer } from '../MutationTransfer';
 import { Document } from '../dom/Document';

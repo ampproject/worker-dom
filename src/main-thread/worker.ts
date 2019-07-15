@@ -95,6 +95,6 @@ export class WorkerContext {
     if (this.config.onSendMessage) {
       this.config.onSendMessage(message);
     }
-    this.worker.postMessage(message, transferables);
+    this.worker.postMessage(message, transferables || []);
   }
 }

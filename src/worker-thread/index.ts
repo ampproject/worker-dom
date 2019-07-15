@@ -101,6 +101,11 @@ export const workerDOM = (function(postMessage, addEventListener, removeEventLis
   document.addGlobalEventListener = addEventListener;
   document.removeGlobalEventListener = removeEventListener;
 
+  // Canvas's use of native OffscreenCanvas checks the existence of the property
+  // on the WorkerDOMGlobalScope.
+  globalScope.OffscreenCanvas = (self as any)['OffscreenCanvas'];
+  globalScope.ImageBitmap = (self as any)['ImageBitmap'];
+
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
 
