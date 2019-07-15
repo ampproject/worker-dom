@@ -85,8 +85,10 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
    */
   private getOffscreenCanvasAsync(canvas: ElementType): Promise<void> {
     this.unresolvedCalls++;
+
     const deferred: { resolve?: (value?: {} | PromiseLike<{}>) => void; upgradePromise?: Promise<void> } = {};
-    const isTestMode = typeof addEventListener !== 'function';
+    const document = this.canvasElement.ownerDocument;
+    const isTestMode = !document.addGlobalEventListener;
 
     const upgradePromise = new Promise(resolve => {
       const messageHandler = ({ data }: { data: OffscreenCanvasToWorker }) => {
@@ -94,20 +96,20 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
           data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE &&
           data[TransferrableKeys.target][0] === canvas[TransferrableKeys.index]
         ) {
-          removeEventListener('message', messageHandler);
+          document.removeRemoveEventListener('message', messageHandler);
           const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
           resolve(transferredOffscreenCanvas as { getContext(c: '2d'): CanvasRenderingContext2D });
         }
       };
 
-      if (typeof addEventListener !== 'function') {
+      if (!document.addGlobalEventListener) {
         if (isTestMode) {
           deferred.resolve = resolve;
         } else {
-          throw new Error('addEventListener not a function!');
+          throw new Error('addGlobalEventListener is not defined.');
         }
       } else {
-        addEventListener('message', messageHandler);
+        document.addGlobalEventListener('message', messageHandler);
         transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
       }
     }).then((instance: { getContext(c: '2d'): CanvasRenderingContext2D }) => {

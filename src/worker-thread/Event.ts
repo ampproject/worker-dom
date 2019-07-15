@@ -156,14 +156,14 @@ const touchListFromTransfer = (
  * method to dispatch the transfered event in the worker thread.
  */
 export function propagate(global: WorkerDOMGlobalScope): void {
-  if (typeof addEventListener !== 'function') {
+  const document = global.document;
+  if (!document.addGlobalEventListener) {
     return;
   }
-  addEventListener('message', ({ data }: { data: EventToWorker }) => {
+  document.addGlobalEventListener('message', ({ data }: { data: EventToWorker }) => {
     if (data[TransferrableKeys.type] !== MessageType.EVENT) {
       return;
     }
-
     const event = data[TransferrableKeys.event] as TransferrableEvent;
     const node = get(event[TransferrableKeys.index]);
     if (node !== null) {

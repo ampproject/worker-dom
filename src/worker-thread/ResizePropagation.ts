@@ -19,14 +19,14 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 
 export function propagate(global: WorkerDOMGlobalScope): void {
-  if (typeof addEventListener !== 'function') {
+  const document = global.document;
+  if (!document.addGlobalEventListener) {
     return;
   }
-  addEventListener('message', ({ data }: { data: MessageToWorker }) => {
+  document.addGlobalEventListener('message', ({ data }: { data: MessageToWorker }) => {
     if (data[TransferrableKeys.type] !== MessageType.RESIZE) {
       return;
     }
-
     const sync = (data as ResizeSyncToWorker)[TransferrableKeys.sync];
     if (sync) {
       global.innerWidth = sync[0];
