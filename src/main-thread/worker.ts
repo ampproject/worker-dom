@@ -37,7 +37,6 @@ export class WorkerContext {
     this.nodeContext = nodeContext;
     this.config = config;
 
-    // TODO(KB): Minify this output during build process.
     const { skeleton, strings } = createHydrateableRootNode(baseElement, config);
 
     const cssKeys: Array<string> = [];
@@ -52,44 +51,21 @@ export class WorkerContext {
     // TODO(choumx): Stop wrapping author script.
     const code = `
       'use strict';
-      ${workerDOMScript}
-      (function() {
-        var self = this;
-        var window = this;
-        var document = this.document;
-        var localStorage = this.localStorage;
-        var sessionStorage = this.sessionStorage;
-        var location = this.location;
-        var defaultView = document.defaultView;
-        var Node = defaultView.Node;
-        var Text = defaultView.Text;
-        var Element = defaultView.Element;
-        var HTMLElement = defaultView.HTMLElement;
-        var SVGElement = defaultView.SVGElement;
-        var Document = defaultView.Document;
-        var Event = defaultView.Event;
-        var MutationObserver = defaultView.MutationObserver;
-
-        function addEventListener(type, handler) {
-          return document.addEventListener(type, handler);
-        }
-        function removeEventListener(type, handler) {
-          return document.removeEventListener(type, handler);
-        }
-        window.innerWidth = ${window.innerWidth};
-        window.innerHeight = ${window.innerHeight};
-        this.initialize(
-          document,
+      (function(){
+        ${workerDOMScript}
+        self['window'] = self;
+        var workerDOM = WorkerThread.workerDOM;
+        WorkerThread.hydrate(
+          workerDOM.document,
           ${JSON.stringify(strings)},
           ${JSON.stringify(skeleton)},
-          ${JSON.stringify(cssKeys)},
-          ${JSON.stringify(localStorageData)},
-          ${JSON.stringify(sessionStorageData)}
-        );
-        document[${TransferrableKeys.observe}](window);
-        ${authorScript}
-      }).call(WorkerThread.workerDOM);
-  //# sourceURL=${encodeURI(config.authorURL)}`;
+          ${JSON.stringify(keys)},
+          [${window.innerWidth}, ${window.innerHeight}]);
+        workerDOM.document[${TransferrableKeys.observe}](this);
+        Object.keys(workerDOM).forEach(key => self[key] = workerDOM[key]);
+      }).call(self);
+      ${authorScript}
+      //# sourceURL=${encodeURI(config.authorURL)}`;
     this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
     if (DEBUG_ENABLED) {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config));

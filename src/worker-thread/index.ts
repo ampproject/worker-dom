@@ -49,18 +49,13 @@ import { Document } from './dom/Document';
 import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
-import { OffscreenCanvas } from './canvas/CanvasTypes';
+import { Event as WorkerDOMEvent } from './Event';
 import { Storage } from './Storage';
 
 const globalScope: GlobalScope = {
-  navigator: (self as WorkerGlobalScope).navigator,
-  WebAssembly: (self as any).WebAssembly,
-  location: self.location,
-  url: '/',
-  indexedDB: (self as WorkerGlobalScope).indexedDB,
   innerWidth: 0,
   innerHeight: 0,
-  initialize,
+  Event: WorkerDOMEvent,
   MutationObserver,
   HTMLElement,
   SVGElement,
@@ -93,15 +88,19 @@ const globalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
-  OffscreenCanvas: (self as any).OffscreenCanvas as OffscreenCanvas,
-  ImageBitmap: (self as any).ImageBitmap as ImageBitmap,
 };
+
+const noop = () => void 0;
 
 // WorkerDOM.Document.defaultView ends up being the window object.
 // React requires the classes to exist off the window object for instanceof checks.
-export const workerDOM = (function(postMessage) {
+export const workerDOM = (function(postMessage, addEventListener, removeEventListener) {
   const document = new Document(globalScope);
+  // TODO(choumx): Avoid polluting Document's public API.
   document.postMessage = postMessage;
+  document.addGlobalEventListener = addEventListener;
+  document.removeGlobalEventListener = removeEventListener;
+
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
 
@@ -109,4 +108,6 @@ export const workerDOM = (function(postMessage) {
   globalScope.sessionStorage = new Storage(document, 'session');
 
   return document.defaultView;
-})(postMessage.bind(self) || (() => void 0));
+})(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
+
+export const hydrate = initialize;

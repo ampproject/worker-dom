@@ -25,6 +25,7 @@ export function initialize(
   strings: Array<string>,
   hydrateableNode: HydrateableNode,
   cssKeys: Array<string>,
+  [innerWidth, innerHeight]: [number, number],
   localStorageData: { [key: string]: string },
   sessionStorageData: { [key: string]: string },
 ): void {
@@ -33,6 +34,10 @@ export function initialize(
   (hydrateableNode[TransferrableKeys.childNodes] || []).forEach(child =>
     document.body.appendChild(document[TransferrableKeys.hydrateNode](strings, child)),
   );
+  const window = document.defaultView;
+  window.innerWidth = innerWidth;
+  window.innerHeight = innerHeight;
+
   const global = document.defaultView;
   if (global.localStorage) {
     global.localStorage.setData(localStorageData);

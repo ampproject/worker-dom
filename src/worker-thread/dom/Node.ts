@@ -48,7 +48,7 @@ export const propagate = (node: Node, property: string | number, value: any): vo
 
 export abstract class Node {
   [index: string]: any;
-  public ownerDocument: Node;
+  public ownerDocument: Node; // TODO(choumx): Should be a Document.
   // https://drafts.csswg.org/selectors-4/#scoping-root
   public [TransferrableKeys.scopingRoot]: Node;
   public nodeType: NodeType;
