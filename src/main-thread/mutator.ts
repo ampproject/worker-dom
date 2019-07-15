@@ -64,7 +64,13 @@ export class MutatorProcessor {
     this.sanitizer = config.sanitizer;
     this.mutationPumpFunction = config.mutationPump;
 
-    const args = [stringContext, nodeContext, workerContext, objectContext, config];
+    const args: [StringContext, NodeContext, WorkerContext, ObjectContext, WorkerDOMConfiguration] = [
+      stringContext,
+      nodeContext,
+      workerContext,
+      objectContext,
+      config,
+    ];
     const sharedLongTaskProcessor = LongTaskExecutor.apply(null, args);
     this.executors = {
       [TransferrableMutationType.CHILD_LIST]: ChildListProcessor.apply(null, args),
