@@ -59,8 +59,11 @@ export class WorkerContext {
           workerDOM.document,
           ${JSON.stringify(strings)},
           ${JSON.stringify(skeleton)},
-          ${JSON.stringify(keys)},
-          [${window.innerWidth}, ${window.innerHeight}]);
+          ${JSON.stringify(cssKeys)},
+          [${window.innerWidth}, ${window.innerHeight}],
+          ${localStorageData},
+          ${sessionStorageData},
+        );
         workerDOM.document[${TransferrableKeys.observe}](this);
         Object.keys(workerDOM).forEach(key => self[key] = workerDOM[key]);
       }).call(self);
