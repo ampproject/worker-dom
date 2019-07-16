@@ -191,6 +191,12 @@ export const workerDOM = (function(postMessage, addEventListener, removeEventLis
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
 
+  // TODO(choumx): Remove once defaultView contains all native worker globals.
+  // Canvas's use of native OffscreenCanvas checks the existence of the property
+  // on the WorkerDOMGlobalScope.
+  globalScope.OffscreenCanvas = (self as any)['OffscreenCanvas'];
+  globalScope.ImageBitmap = (self as any)['ImageBitmap'];
+
   return document.defaultView;
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 

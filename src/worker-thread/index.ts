@@ -100,6 +100,7 @@ export const workerDOM = (function(postMessage, addEventListener, removeEventLis
   document.addGlobalEventListener = addEventListener;
   document.removeGlobalEventListener = removeEventListener;
 
+  // TODO(choumx): Remove once defaultView contains all native worker globals.
   // Canvas's use of native OffscreenCanvas checks the existence of the property
   // on the WorkerDOMGlobalScope.
   globalScope.OffscreenCanvas = (self as any)['OffscreenCanvas'];
