@@ -47,8 +47,8 @@ export const propagate = (node: Node, property: string | number, value: any): vo
 // This is intentional to reduce the number of classes.
 
 export abstract class Node {
-  [index: string]: any;
-  public ownerDocument: Node;
+  [index: string]: any; // TODO(choumx): Remove this typing escape hatch.
+  public ownerDocument: Node; // TODO(choumx): Should be a Document.
   // https://drafts.csswg.org/selectors-4/#scoping-root
   public [TransferrableKeys.scopingRoot]: Node;
   public nodeType: NodeType;

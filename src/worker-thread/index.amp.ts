@@ -50,98 +50,99 @@ import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
 import { MutationObserver } from './MutationObserver';
-import { OffscreenCanvas } from './canvas/CanvasTypes';
+import { Event as WorkerDOMEvent } from './Event';
 
-const WHITELISTED_GLOBALS = [
-  'Array',
-  'ArrayBuffer',
-  'Blob',
-  'BigInt',
-  'BigInt64Array',
-  'BigUint64Array',
-  'Boolean',
-  'Cache',
-  'CustomEvent',
-  'DataView',
-  'Date',
-  'Error',
-  'EvalError',
-  'Event',
-  'EventTarget',
-  'Float32Array',
-  'Float64Array',
-  'Function',
-  'Infinity',
-  'Int16Array',
-  'Int32Array',
-  'Int8Array',
-  'Intl',
-  'JSON',
-  'Map',
-  'Math',
-  'NaN',
-  'Number',
-  'Object',
-  'Promise',
-  'Proxy',
-  'RangeError',
-  'ReferenceError',
-  'Reflect',
-  'RegExp',
-  'Set',
-  'String',
-  'Symbol',
-  'SyntaxError',
-  'TextDecoder',
-  'TextEncoder',
-  'TypeError',
-  'URIError',
-  'URL',
-  'Uint16Array',
-  'Uint32Array',
-  'Uint8Array',
-  'Uint8ClampedArray',
-  'WeakMap',
-  'WeakSet',
-  'WebAssembly',
-  'XMLHttpRequest',
-  'atob',
-  'btoa',
-  'caches',
-  'clearInterval',
-  'clearTimeout',
-  'console',
-  'decodeURI',
-  'decodeURIComponent',
-  'encodeURI',
-  'encodeURIComponent',
-  'escape',
-  'fetch',
-  'indexedDB',
-  'isFinite',
-  'isNaN',
-  'onerror',
-  'onrejectionhandled',
-  'onunhandledrejection',
-  'parseFloat',
-  'parseInt',
-  'performance',
-  'setTimeout',
-  'setInterval',
-  'undefined',
-  'unescape',
-];
+const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
+  Array: true,
+  ArrayBuffer: true,
+  Blob: true,
+  BigInt: true,
+  BigInt64Array: true,
+  BigUint64Array: true,
+  Boolean: true,
+  Cache: true,
+  CustomEvent: true,
+  DataView: true,
+  Date: true,
+  Error: true,
+  EvalError: true,
+  Event: true,
+  EventTarget: true,
+  Float32Array: true,
+  Float64Array: true,
+  Function: true,
+  Infinity: true,
+  Int16Array: true,
+  Int32Array: true,
+  Int8Array: true,
+  Intl: true,
+  JSON: true,
+  Map: true,
+  Math: true,
+  NaN: true,
+  Number: true,
+  Object: true,
+  Promise: true,
+  Proxy: true,
+  RangeError: true,
+  ReferenceError: true,
+  Reflect: true,
+  RegExp: true,
+  Set: true,
+  String: true,
+  Symbol: true,
+  SyntaxError: true,
+  TextDecoder: true,
+  TextEncoder: true,
+  TypeError: true,
+  URIError: true,
+  URL: true,
+  Uint16Array: true,
+  Uint32Array: true,
+  Uint8Array: true,
+  Uint8ClampedArray: true,
+  WeakMap: true,
+  WeakSet: true,
+  WebAssembly: true,
+  XMLHttpRequest: true,
+  atob: true,
+  addEventListener: true,
+  removeEventListener: true,
+  btoa: true,
+  caches: true,
+  clearInterval: true,
+  clearTimeout: true,
+  console: true,
+  decodeURI: true,
+  decodeURIComponent: true,
+  document: true,
+  encodeURI: true,
+  encodeURIComponent: true,
+  escape: true,
+  fetch: true,
+  indexedDB: true,
+  isFinite: true,
+  isNaN: true,
+  location: true,
+  navigator: true,
+  onerror: true,
+  onrejectionhandled: true,
+  onunhandledrejection: true,
+  parseFloat: true,
+  parseInt: true,
+  performance: true,
+  requestAnimationFrame: true,
+  cancelAnimationFrame: true,
+  self: true,
+  setTimeout: true,
+  setInterval: true,
+  unescape: true,
+};
 
 const globalScope: GlobalScope = {
-  navigator: (self as WorkerGlobalScope).navigator,
-  WebAssembly: (self as any).WebAssembly,
-  localStorage: {},
-  location: self.location,
-  url: '/',
-  indexedDB: (self as WorkerGlobalScope).indexedDB,
   innerWidth: 0,
   innerHeight: 0,
-  initialize,
+  Event: WorkerDOMEvent,
   MutationObserver,
   SVGElement,
   HTMLElement,
@@ -174,20 +175,23 @@ const globalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
-  OffscreenCanvas: (self as any).OffscreenCanvas as OffscreenCanvas,
-  ImageBitmap: (self as any).ImageBitmap as ImageBitmap,
 };
+
+const noop = () => void 0;
 
 // WorkerDOM.Document.defaultView ends up being the window object.
 // React requires the classes to exist off the window object for instanceof checks.
-export const workerDOM = (function(postMessage) {
+export const workerDOM = (function(postMessage, addEventListener, removeEventListener) {
   const document = new Document(globalScope);
+  // TODO(choumx): Avoid polluting Document's public API.
   document.postMessage = postMessage;
+  document.addGlobalEventListener = addEventListener;
+  document.removeGlobalEventListener = removeEventListener;
+
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
-
   return document.defaultView;
-})(postMessage.bind(self) || (() => void 0));
+})(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
 /**
  * Instruments relevant calls to work via LongTask API.
@@ -210,31 +214,42 @@ function updateLongTask(global: WorkerGlobalScope) {
 }
 
 /**
- * Walks up a global's prototype chain and dereferences non-whitelisted properties
- * until EventTarget is reached.
  * @param global
  */
 function updateGlobals(global: WorkerGlobalScope) {
-  function deleteUnsafe(object: any, property: string) {
-    if (WHITELISTED_GLOBALS.indexOf(property) >= 0) {
-      return;
+  /**
+   * @param object
+   * @param property
+   * @return True if property was deleted from object. Otherwise, false.
+   */
+  const deleteUnsafe = (object: any, property: string): boolean => {
+    if (!ALLOWLISTED_GLOBALS.hasOwnProperty(property)) {
+      try {
+        delete object[property];
+        return true;
+      } catch (e) {
+        console.warn(e);
+      }
     }
-    try {
-      console.info(`Deleting ${property}...`);
-      delete object[property];
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-
+    return false;
+  };
+  // Walk up global's prototype chain and dereference non-allowlisted properties
+  // until EventTarget is reached.
   let current = global;
   while (current && current.constructor !== EventTarget) {
-    console.info('Removing references from:', current);
-    Object.getOwnPropertyNames(current).forEach(prop => deleteUnsafe(current, prop));
+    const deleted: string[] = [];
+    Object.getOwnPropertyNames(current).forEach(prop => {
+      if (deleteUnsafe(current, prop)) {
+        deleted.push(prop);
+      }
+    });
+    console.info(`Removed ${deleted.length} references from`, current, ':', deleted);
     current = Object.getPrototypeOf(current);
   }
-
+  // Wrap global.fetch() with our longTask API.
   updateLongTask(global);
 }
 
 updateGlobals(self);
+
+export const hydrate = initialize;

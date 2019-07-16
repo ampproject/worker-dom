@@ -49,18 +49,12 @@ import { Document } from './dom/Document';
 import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
-import { OffscreenCanvas } from './canvas/CanvasTypes';
+import { Event as WorkerDOMEvent } from './Event';
 
 const globalScope: GlobalScope = {
-  navigator: (self as WorkerGlobalScope).navigator,
-  WebAssembly: (self as any).WebAssembly,
-  localStorage: {},
-  location: {},
-  url: '/',
-  indexedDB: (self as WorkerGlobalScope).indexedDB,
   innerWidth: 0,
   innerHeight: 0,
-  initialize,
+  Event: WorkerDOMEvent,
   MutationObserver,
   HTMLElement,
   SVGElement,
@@ -93,17 +87,27 @@ const globalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
-  OffscreenCanvas: (self as any).OffscreenCanvas as OffscreenCanvas,
-  ImageBitmap: (self as any).ImageBitmap as ImageBitmap,
 };
+
+const noop = () => void 0;
 
 // WorkerDOM.Document.defaultView ends up being the window object.
 // React requires the classes to exist off the window object for instanceof checks.
-export const workerDOM = (function(postMessage) {
+export const workerDOM = (function(postMessage, addEventListener, removeEventListener) {
   const document = new Document(globalScope);
+  // TODO(choumx): Avoid polluting Document's public API.
   document.postMessage = postMessage;
+  document.addGlobalEventListener = addEventListener;
+  document.removeGlobalEventListener = removeEventListener;
+
+  // Canvas's use of native OffscreenCanvas checks the existence of the property
+  // on the WorkerDOMGlobalScope.
+  globalScope.OffscreenCanvas = (self as any)['OffscreenCanvas'];
+  globalScope.ImageBitmap = (self as any)['ImageBitmap'];
+
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
-
   return document.defaultView;
-})(postMessage.bind(self) || (() => void 0));
+})(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
+
+export const hydrate = initialize;

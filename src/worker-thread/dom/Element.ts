@@ -514,7 +514,7 @@ export class Element extends ParentNode {
           data[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT &&
           (data as BoundingClientRectToWorker)[TransferrableKeys.target][0] === this[TransferrableKeys.index]
         ) {
-          removeEventListener('message', messageHandler);
+          this.ownerDocument.removeGlobalEventListener('message', messageHandler);
           const transferredBoundingClientRect: TransferrableBoundingClientRect = (data as BoundingClientRectToWorker)[TransferrableKeys.data];
           resolve({
             top: transferredBoundingClientRect[0],
@@ -529,12 +529,12 @@ export class Element extends ParentNode {
         }
       };
 
-      if (typeof addEventListener !== 'function' || !this.isConnected) {
+      if (!this.ownerDocument.addGlobalEventListener || !this.isConnected) {
         // Elements run within Node runtimes are missing addEventListener as a global.
         // In this case, treat the return value the same as a disconnected node.
         resolve(defaultValue);
       } else {
-        addEventListener('message', messageHandler);
+        this.ownerDocument.addGlobalEventListener('message', messageHandler);
         transfer(this.ownerDocument as Document, [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]]);
         setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.
       }

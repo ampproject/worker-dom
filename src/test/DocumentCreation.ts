@@ -45,11 +45,11 @@ import { HTMLTableRowElement } from '../worker-thread/dom/HTMLTableRowElement';
 import { HTMLTableSectionElement } from '../worker-thread/dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from '../worker-thread/dom/HTMLTimeElement';
 import { Document } from '../worker-thread/dom/Document';
-import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { MutationObserver } from '../worker-thread/MutationObserver';
 import { GlobalScope } from '../worker-thread/WorkerDOMGlobalScope';
 import { HTMLCanvasElement } from '../worker-thread/dom/HTMLCanvasElement';
 import { CanvasRenderingContext2D } from '../worker-thread/canvas/CanvasTypes';
+import { Event as WorkerDOMEvent } from '../worker-thread/Event';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -75,31 +75,9 @@ declare var OffscreenCanvas: {
 };
 
 const GlobalScope: GlobalScope = {
-  navigator: {
-    appCodeName: 'Mozilla',
-    appName: 'Netscape',
-    appVersion:
-      '5.0 (Linux; Android 8.0.0; Pixel 2 XL Build/OPD1.170816.004) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Mobile Safari/537.36',
-    platform: 'MacIntel',
-    product: 'Gecko',
-    userAgent:
-      'Mozilla/5.0 (Linux; Android 8.0.0; Pixel 2 XL Build/OPD1.170816.004) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Mobile Safari/537.36',
-    serviceWorker: new ServiceWorkerContainer(),
-    productSub: '20030107',
-    vendor: 'Google Inc.',
-    vendorSub: '',
-    onLine: true,
-    sendBeacon: () => true,
-    hardwareConcurrency: 0,
-    storage: new StorageManager(),
-  },
-  WebAssembly: {},
-  localStorage: {},
-  location: {},
-  url: '/',
   innerWidth: 0,
   innerHeight: 0,
-  initialize: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>) => void 0,
+  Event: WorkerDOMEvent,
   MutationObserver,
   SVGElement,
   HTMLElement,
@@ -132,8 +110,6 @@ const GlobalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
-  OffscreenCanvas: typeof OffscreenCanvas === 'undefined' ? undefined : OffscreenCanvas,
-  ImageBitmap: typeof ImageBitmap === 'undefined' ? undefined : ImageBitmap,
 };
 
 /**

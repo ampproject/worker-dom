@@ -68,14 +68,18 @@ export class Document extends Element {
   public defaultView: WorkerDOMGlobalScope;
   public documentElement: Document;
   public body: Element;
+
+  // Internal variables.
   public postMessage: PostMessage;
+  public addGlobalEventListener: Function;
+  public removeGlobalEventListener: Function;
   public [TransferrableKeys.allowTransfer]: boolean = true;
 
   constructor(global: GlobalScope) {
     super(NodeType.DOCUMENT_NODE, DOCUMENT_NAME, HTML_NAMESPACE, null);
     // Element uppercases its nodeName, but Document doesn't.
     this.nodeName = DOCUMENT_NAME;
-    this.documentElement = this;
+    this.documentElement = this; // TODO(choumx): Should be the <html> element.
 
     this.defaultView = Object.assign(global, {
       document: this,
@@ -93,7 +97,7 @@ export class Document extends Element {
   public [TransferrableKeys.observe](): void {
     setPhase(Phase.Hydrating);
     propagateEvents(this.defaultView);
-    propagateSyncValues();
+    propagateSyncValues(this.defaultView);
     propagateResize(this.defaultView);
   }
 

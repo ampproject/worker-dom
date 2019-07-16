@@ -44,23 +44,21 @@ import { HTMLTableRowElement } from './dom/HTMLTableRowElement';
 import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { Document } from './dom/Document';
-import { EventHandler } from './Event';
-import { HydrateableNode } from '../transfer/TransferrableNodes';
+import { EventHandler, Event as WorkerDOMEvent } from './Event';
 import { MutationObserver } from './MutationObserver';
 import { SVGElement } from './dom/SVGElement';
 import { HTMLElement } from './dom/HTMLElement';
 
+/**
+ * Should only contain properties that exist on Window.
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Window
+ */
 export interface GlobalScope {
-  initialize: (document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>) => void;
-  navigator: WorkerNavigator;
-  // TODO (#541): Should we type this more explicitly?
-  WebAssembly: object;
-  localStorage: object;
-  location: object;
-  url: string;
-  indexedDB?: IDBFactory;
   innerWidth: number;
   innerHeight: number;
+  // Event exists natively in web workers but override with our synthetic event
+  // implementation to enable setting readonly properties like currentTarget.
+  Event: typeof WorkerDOMEvent;
   MutationObserver: typeof MutationObserver;
   SVGElement: typeof SVGElement;
   HTMLElement: typeof HTMLElement;
@@ -93,8 +91,8 @@ export interface GlobalScope {
   HTMLTableRowElement: typeof HTMLTableRowElement;
   HTMLTableSectionElement: typeof HTMLTableSectionElement;
   HTMLTimeElement: typeof HTMLTimeElement;
-  OffscreenCanvas: any | undefined;
-  ImageBitmap: any | undefined;
+  OffscreenCanvas?: typeof OffscreenCanvas;
+  ImageBitmap?: typeof ImageBitmap;
 }
 
 export interface WorkerDOMGlobalScope extends GlobalScope {

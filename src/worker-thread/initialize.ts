@@ -20,10 +20,19 @@ import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { appendKeys } from './css/CSSStyleDeclaration';
 
-export function initialize(document: Document, strings: Array<string>, hydrateableNode: HydrateableNode, keys: Array<string>): void {
+export function initialize(
+  document: Document,
+  strings: Array<string>,
+  hydrateableNode: HydrateableNode,
+  keys: Array<string>,
+  [innerWidth, innerHeight]: [number, number],
+): void {
   appendKeys(keys);
   strings.forEach(storeString);
   (hydrateableNode[TransferrableKeys.childNodes] || []).forEach(child =>
     document.body.appendChild(document[TransferrableKeys.hydrateNode](strings, child)),
   );
+  const window = document.defaultView;
+  window.innerWidth = innerWidth;
+  window.innerHeight = innerHeight;
 }
