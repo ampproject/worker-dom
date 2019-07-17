@@ -44,19 +44,19 @@ declare interface Sanitizer {
 
   /**
    * Retrieves the current localStorage or sessionStorage data.
-   * @param scope 'local' or 'session'.
+   * @param location 0 for localStorage, 1 for sessionStorage.
    * @return
    */
-  getStorage(scope: string): { [key: string]: string };
+  getStorage(location: number): { [key: string]: string };
 
   /**
    * Requests a change in localStorage or sessionStorage.
-   * @param scope 'local' or 'session'.
+   * @param location 0 for localStorage, 1 for sessionStorage.
    * @param key A storage item key. To change all keys, pass `null` here.
    * @param value A storage value. To remove a key, pass `null` here.
    * @return True if storage change was applied.
    */
-  changeStorage(scope: string, key: string | null, value: string | null): boolean;
+  changeStorage(location: number, key: string | null, value: string | null): boolean;
 }
 
 // OffscreenCanvas not yet available in TypeScript - 'transferControlToOffscreen' would not be

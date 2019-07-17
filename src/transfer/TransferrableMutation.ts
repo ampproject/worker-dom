@@ -221,13 +221,13 @@ export const enum TransferrableObjectType {
  * Storage Mutations
  * [
  *   TransferableMutationType.STORAGE,
- *   'local' || 'session',
+ *   StorageLocation,
  *   string(key),
  *   string(value),
  * ]
  */
 export const enum StorageMutationIndex {
-  Scope = 1,
+  Location = 1,
   Key = 2,
   Value = 3,
   End = 4,

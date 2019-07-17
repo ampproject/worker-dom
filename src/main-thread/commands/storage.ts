@@ -16,6 +16,7 @@
 
 import { CommandExecutorInterface } from './interface';
 import { TransferrableMutationType, StorageMutationIndex } from '../../transfer/TransferrableMutation';
+import { StorageLocation } from '../../transfer/TransferrableStorage';
 
 export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.PROPERTIES);
@@ -23,7 +24,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
   return {
     execute(mutations: Uint16Array, startPosition: number): number {
       if (allowedExecution) {
-        const scope = strings.get(mutations[startPosition + StorageMutationIndex.Scope]);
+        const location = mutations[startPosition + StorageMutationIndex.Location];
         const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
         const valueIndex = mutations[startPosition + StorageMutationIndex.Value];
 
@@ -34,30 +35,30 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
         // to avoid leaking memory.
 
         if (config.sanitizer) {
-          config.sanitizer.changeStorage(scope, key, value);
+          config.sanitizer.changeStorage(location, key, value);
         } else {
           let storage;
-          if (scope == 'local') {
+          if (location === StorageLocation.Local) {
             storage = window.localStorage;
-          } else if (scope == 'session') {
+          } else if (location === StorageLocation.Session) {
             storage = window.sessionStorage;
           }
           if (storage) {
-            if (key != null) {
-              if (value != null) {
-                storage.setItem(key, value);
+            if (key == null) {
+              if (value == null) {
+                storage.clear();
               } else {
-                storage.removeItem(key);
+                throw new Error('Unexpected storage operation.');
               }
             } else {
-              if (value != null) {
-                throw new Error('Unexpected storage operation.');
+              if (value == null) {
+                storage.removeItem(key);
               } else {
-                storage.clear();
+                storage.setItem(key, value);
               }
             }
           } else {
-            console.error(`STORAGE: Unexpected scope: "${scope}".`);
+            console.error(`STORAGE: Unexpected location: "${location}".`);
           }
         }
       }
@@ -65,7 +66,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
       return startPosition + StorageMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number): Object {
-      const scope = strings.get(mutations[startPosition + StorageMutationIndex.Scope]);
+      const scope = strings.get(mutations[startPosition + StorageMutationIndex.Location]);
       const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
       const valueIndex = mutations[startPosition + StorageMutationIndex.Value];
 

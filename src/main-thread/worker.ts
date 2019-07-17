@@ -20,6 +20,7 @@ import { createHydrateableRootNode } from './serialize';
 import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
 import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { StorageLocation } from '../transfer/TransferrableStorage';
 
 export class WorkerContext {
   private [TransferrableKeys.worker]: Worker;
@@ -45,8 +46,8 @@ export class WorkerContext {
     }
 
     // TODO(choumx): Sync read of all localStorage and sessionStorage a possible performance bottleneck?
-    const localStorageData = config.sanitizer ? config.sanitizer.getStorage('local') : window.localStorage;
-    const sessionStorageData = config.sanitizer ? config.sanitizer.getStorage('session') : window.sessionStorage;
+    const localStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Local) : window.localStorage;
+    const sessionStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Session) : window.sessionStorage;
 
     const code = `
       'use strict';

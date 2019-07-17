@@ -15,6 +15,7 @@
  */
 
 import { Document } from './dom/Document';
+import { StorageLocation } from '../transfer/TransferrableStorage';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { store } from './strings';
 import { transfer } from './MutationTransfer';
@@ -25,16 +26,16 @@ import { transfer } from './MutationTransfer';
 export class Storage {
   private data: { [key: string]: string };
   private document: Document;
-  private scope: string;
+  private location: StorageLocation;
 
   /**
    * Constructor is not directly invokable in the native implementation.
    * @param document
    * @param scope
    */
-  constructor(document: Document, scope: string, data: { [key: string]: string }) {
+  constructor(document: Document, location: StorageLocation, data: { [key: string]: string }) {
     this.document = document;
-    this.scope = scope;
+    this.location = location;
     this.data = data;
   }
 
@@ -44,8 +45,7 @@ export class Storage {
 
   public key(n: number): string | null {
     const keys = Object.keys(this.data);
-    const k = keys[n];
-    return k === undefined ? null : k;
+    return n >= 0 && n < keys.length ? keys[n] : null;
   }
 
   public getItem(key: string): string | null {
@@ -59,7 +59,7 @@ export class Storage {
     this.data[key] = stringValue;
 
     // The key/value strings are removed from storage in StorageProcessor.
-    transfer(this.document, [TransferrableMutationType.STORAGE, store(this.scope), store(key), store(stringValue)]);
+    transfer(this.document, [TransferrableMutationType.STORAGE, this.location, store(key), store(stringValue)]);
   }
 
   public removeItem(key: string): void {
@@ -67,18 +67,18 @@ export class Storage {
 
     transfer(this.document, [
       TransferrableMutationType.STORAGE,
-      store(this.scope),
+      this.location,
       store(key),
       0, // value == 0 represents deletion.
     ]);
   }
 
   public clear(): void {
-    this.data = {};
+    this.data = Object.create(null);
 
     transfer(this.document, [
       TransferrableMutationType.STORAGE,
-      store(this.scope),
+      this.location,
       0, // key == 0 represents all keys.
       0, // value == 0 represents deletion.
     ]);

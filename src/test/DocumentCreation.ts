@@ -51,6 +51,7 @@ import { HTMLCanvasElement } from '../worker-thread/dom/HTMLCanvasElement';
 import { CanvasRenderingContext2D } from '../worker-thread/canvas/CanvasTypes';
 import { Event as WorkerDOMEvent } from '../worker-thread/Event';
 import { Storage } from '../worker-thread/Storage';
+import { StorageLocation } from '../transfer/TransferrableStorage';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -124,8 +125,8 @@ export function createTestingDocument(overrides: {} | null = null): Document {
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
 
-  customGlobal.localStorage = new Storage(document, 'local', {});
-  customGlobal.sessionStorage = new Storage(document, 'session', {});
+  customGlobal.localStorage = new Storage(document, StorageLocation.Local, {});
+  customGlobal.sessionStorage = new Storage(document, StorageLocation.Session, {});
 
   return document;
 }
