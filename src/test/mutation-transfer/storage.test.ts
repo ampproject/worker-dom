@@ -21,6 +21,7 @@ import { createTestingDocument } from '../DocumentCreation';
 import { Storage } from '../../worker-thread/Storage';
 import { Document } from '../../worker-thread/dom/Document';
 import { setTimeout } from 'timers';
+import { StorageLocation } from '../../transfer/TransferrableStorage';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -29,7 +30,7 @@ const test = anyTest as TestInterface<{
 
 test.beforeEach(t => {
   const document = createTestingDocument();
-  const storage = new Storage(document, 'scope', {});
+  const storage = new Storage(document, StorageLocation.Local, {});
 
   t.context = {
     document,
@@ -55,7 +56,7 @@ test.serial.cb('Storage.setItem', t => {
   const { document, storage } = t.context;
 
   expectMutations(document, (mutations, strings) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, strings.indexOf('scope'), strings.indexOf('foo'), strings.indexOf('bar')]);
+    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, StorageLocation.Local, strings.indexOf('foo'), strings.indexOf('bar')]);
     t.end();
   });
 
@@ -66,7 +67,7 @@ test.serial.cb('Storage.removeItem', t => {
   const { document, storage } = t.context;
 
   expectMutations(document, (mutations, strings) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, strings.indexOf('scope'), strings.indexOf('foo'), 0]);
+    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, StorageLocation.Local, strings.indexOf('foo'), 0]);
     t.end();
   });
 
@@ -77,7 +78,7 @@ test.serial.cb('Storage.clear', t => {
   const { document, storage } = t.context;
 
   expectMutations(document, (mutations, strings) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, strings.indexOf('scope'), 0, 0]);
+    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, StorageLocation.Local, 0, 0]);
     t.end();
   });
 
