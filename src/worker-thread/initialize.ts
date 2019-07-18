@@ -19,7 +19,7 @@ import { Document } from './dom/Document';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
-import { Storage } from './Storage';
+import { createStorage } from './Storage';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 
 export function initialize(
@@ -39,6 +39,6 @@ export function initialize(
   const window = document.defaultView;
   window.innerWidth = innerWidth;
   window.innerHeight = innerHeight;
-  window.localStorage = new Storage(document, StorageLocation.Local, localStorageData);
-  window.sessionStorage = new Storage(document, StorageLocation.Session, sessionStorageData);
+  window.localStorage = createStorage(document, StorageLocation.Local, localStorageData);
+  window.sessionStorage = createStorage(document, StorageLocation.Session, sessionStorageData);
 }

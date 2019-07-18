@@ -18,7 +18,7 @@ import anyTest, { TestInterface } from 'ava';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { expectMutations } from '../Emitter';
 import { createTestingDocument } from '../DocumentCreation';
-import { Storage } from '../../worker-thread/Storage';
+import { Storage, createStorage } from '../../worker-thread/Storage';
 import { Document } from '../../worker-thread/dom/Document';
 import { setTimeout } from 'timers';
 import { StorageLocation } from '../../transfer/TransferrableStorage';
@@ -30,7 +30,7 @@ const test = anyTest as TestInterface<{
 
 test.beforeEach(t => {
   const document = createTestingDocument();
-  const storage = new Storage(document, StorageLocation.Local, {});
+  const storage = createStorage(document, StorageLocation.Local, {});
 
   t.context = {
     document,

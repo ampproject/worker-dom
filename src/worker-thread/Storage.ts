@@ -21,66 +21,78 @@ import { store } from './strings';
 import { transfer } from './MutationTransfer';
 
 /**
- * Implementation of https://developer.mozilla.org/en-US/docs/Web/API/Storage.
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Storage
  */
-export class Storage {
-  private data: { [key: string]: string };
-  private document: Document;
-  private location: StorageLocation;
+export interface Storage {
+  length: number;
+  key(n: number): string | null;
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+  clear(): void;
+}
 
-  /**
-   * Constructor is not directly invokable in the native implementation.
-   * @param document
-   * @param scope
-   */
-  constructor(document: Document, location: StorageLocation, data: { [key: string]: string }) {
-    this.document = document;
-    this.location = location;
-    this.data = data;
-  }
+/**
+ * @param document
+ * @param location
+ * @param data
+ */
+export function createStorage(document: Document, location: StorageLocation, data: { [key: string]: string }): Storage {
+  const storage: any = Object.assign(Object.create(null), data);
 
-  get length() {
-    return Object.keys(this.data).length;
-  }
+  // Define properties on a prototype-less object instead of a class so that
+  // it behaves more like normal objects, e.g. bracket notation and JSON.stringify.
+  const define = Object.defineProperty;
+  define(storage, 'length', {
+    get: function() {
+      return Object.keys(this).length;
+    },
+  });
+  define(storage, 'key', {
+    value: function(n: number) {
+      const keys = Object.keys(this);
+      return n >= 0 && n < keys.length ? keys[n] : null;
+    },
+  });
+  define(storage, 'getItem', {
+    value: function(key: string): string | null {
+      const value = this[key];
+      return value ? value : null;
+    },
+  });
+  define(storage, 'setItem', {
+    value: function(key: string, value: string): void {
+      const stringValue = String(value);
+      this[key] = stringValue;
 
-  public key(n: number): string | null {
-    const keys = Object.keys(this.data);
-    return n >= 0 && n < keys.length ? keys[n] : null;
-  }
+      transfer(document, [TransferrableMutationType.STORAGE, location, store(key), store(stringValue)]);
+    },
+  });
+  define(storage, 'removeItem', {
+    value: function(key: string): void {
+      delete this[key];
 
-  public getItem(key: string): string | null {
-    const item = this.data[key];
-    return item === undefined ? null : item;
-  }
+      transfer(document, [
+        TransferrableMutationType.STORAGE,
+        location,
+        store(key),
+        0, // value == 0 represents deletion.
+      ]);
+    },
+  });
+  define(storage, 'clear', {
+    value: function(): void {
+      Object.keys(this).forEach(key => {
+        delete this[key];
+      });
 
-  public setItem(key: string, value: string): void {
-    // Convert value to string to mimic native behavior.
-    const stringValue = String(value);
-    this.data[key] = stringValue;
-
-    // The key/value strings are removed from storage in StorageProcessor.
-    transfer(this.document, [TransferrableMutationType.STORAGE, this.location, store(key), store(stringValue)]);
-  }
-
-  public removeItem(key: string): void {
-    delete this.data[key];
-
-    transfer(this.document, [
-      TransferrableMutationType.STORAGE,
-      this.location,
-      store(key),
-      0, // value == 0 represents deletion.
-    ]);
-  }
-
-  public clear(): void {
-    this.data = Object.create(null);
-
-    transfer(this.document, [
-      TransferrableMutationType.STORAGE,
-      this.location,
-      0, // key == 0 represents all keys.
-      0, // value == 0 represents deletion.
-    ]);
-  }
+      transfer(document, [
+        TransferrableMutationType.STORAGE,
+        location,
+        0, // key == 0 represents all keys.
+        0, // value == 0 represents deletion.
+      ]);
+    },
+  });
+  return storage as Storage;
 }
