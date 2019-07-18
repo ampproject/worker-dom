@@ -53,6 +53,14 @@ test('can access data with bracket notation', t => {
   t.is(storage.getItem('bar'), 'foo');
 });
 
+test('can be JSON-stringified', t => {
+  const { storage } = t.context;
+  t.is(JSON.stringify(storage), '{"existingKey":"existingValue"}');
+
+  storage.setItem('foo', 'bar');
+  t.is(JSON.stringify(storage), '{"existingKey":"existingValue","foo":"bar"}');
+});
+
 test('length', t => {
   const { storage } = t.context;
   t.is(storage.length, 1);
