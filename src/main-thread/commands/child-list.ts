@@ -18,8 +18,6 @@ import { ChildListMutationIndex, TransferrableMutationType } from '../../transfe
 import { CommandExecutorInterface } from './interface';
 import { NodeContext } from '../nodes';
 
-const CONTEXT = 'CHILD_LIST';
-
 export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode }: NodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHILD_LIST);
 
@@ -42,7 +40,7 @@ export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode 
                 if (node) {
                   node.remove();
                 } else {
-                  console.error(`${CONTEXT}: getNode(${removeId}) is null.`);
+                  console.error(`CHILD_LIST: getNode(${removeId}) is null.`);
                 }
               });
           }
@@ -60,7 +58,7 @@ export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode 
               });
           }
         } else {
-          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
+          console.error(`CHILD_LIST: getNode(${targetIndex}) is null.`);
         }
       }
       return startPosition + ChildListMutationIndex.End + appendNodeCount + removeNodeCount;

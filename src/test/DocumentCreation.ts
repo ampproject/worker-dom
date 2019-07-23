@@ -50,6 +50,8 @@ import { GlobalScope } from '../worker-thread/WorkerDOMGlobalScope';
 import { HTMLCanvasElement } from '../worker-thread/dom/HTMLCanvasElement';
 import { CanvasRenderingContext2D } from '../worker-thread/canvas/CanvasTypes';
 import { Event as WorkerDOMEvent } from '../worker-thread/Event';
+import { createStorage } from '../worker-thread/Storage';
+import { StorageLocation } from '../transfer/TransferrableStorage';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -119,8 +121,12 @@ const GlobalScope: GlobalScope = {
 export function createTestingDocument(overrides: {} | null = null): Document {
   const customGlobal = Object.assign({}, GlobalScope, overrides);
   const document = new Document(customGlobal);
+  document.postMessage = () => {};
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
+
+  customGlobal.localStorage = createStorage(document, StorageLocation.Local, {});
+  customGlobal.sessionStorage = createStorage(document, StorageLocation.Session, {});
 
   return document;
 }

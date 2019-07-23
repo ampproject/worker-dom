@@ -46,6 +46,7 @@ import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { Document } from './dom/Document';
 import { EventHandler, Event as WorkerDOMEvent } from './Event';
 import { MutationObserver } from './MutationObserver';
+import { Storage } from './Storage';
 import { SVGElement } from './dom/SVGElement';
 import { HTMLElement } from './dom/HTMLElement';
 
@@ -56,6 +57,8 @@ import { HTMLElement } from './dom/HTMLElement';
 export interface GlobalScope {
   innerWidth: number;
   innerHeight: number;
+  localStorage?: Storage;
+  sessionStorage?: Storage;
   // Event exists natively in web workers but override with our synthetic event
   // implementation to enable setting readonly properties like currentTarget.
   Event: typeof WorkerDOMEvent;

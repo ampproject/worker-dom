@@ -19,8 +19,6 @@ import { TransferrableMutationType, ImageBitmapMutationIndex } from '../../trans
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { MessageType } from '../../transfer/Messages';
 
-const CONTEXT = 'IMAGE_BITMAP_INSTANCE';
-
 export const ImageBitmapProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.IMAGE_BITMAP_INSTANCE);
 
@@ -41,7 +39,7 @@ export const ImageBitmapProcessor: CommandExecutorInterface = (strings, nodeCont
             );
           });
         } else {
-          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
+          console.error(`IMAGE_BITMAP_INSTANCE: getNode(${targetIndex}) is null.`);
         }
       }
 
@@ -51,7 +49,7 @@ export const ImageBitmapProcessor: CommandExecutorInterface = (strings, nodeCont
       const targetIndex = mutations[startPosition + ImageBitmapMutationIndex.Target];
       const target = nodeContext.getNode(targetIndex);
       return {
-        type: CONTEXT,
+        type: 'IMAGE_BITMAP_INSTANCE',
         target,
         allowedExecution,
         callIndex: mutations[startPosition + ImageBitmapMutationIndex.CallIndex],

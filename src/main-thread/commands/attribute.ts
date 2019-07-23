@@ -17,8 +17,6 @@
 import { AttributeMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 
-const CONTEXT = 'ATTR_LIST';
-
 export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.ATTRIBUTES);
 
@@ -45,7 +43,7 @@ export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, wor
         if (target) {
           if (attributeName != null) {
             if (config.sanitizer) {
-              const mutated = config.sanitizer.mutateAttribute(target, attributeName, value);
+              const mutated = config.sanitizer.changeAttribute(target, attributeName, value);
               if (!mutated) {
                 // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
               }
@@ -58,7 +56,7 @@ export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, wor
             }
           }
         } else {
-          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
+          console.error(`ATTR_LIST: getNode(${targetIndex}) is null.`);
         }
       }
       return startPosition + AttributeMutationIndex.End;

@@ -18,16 +18,20 @@ import { store as storeString } from './strings';
 import { Document } from './dom/Document';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { appendKeys } from './css/CSSStyleDeclaration';
+import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
+import { createStorage } from './Storage';
+import { StorageLocation } from '../transfer/TransferrableStorage';
 
 export function initialize(
   document: Document,
   strings: Array<string>,
   hydrateableNode: HydrateableNode,
-  keys: Array<string>,
+  cssKeys: Array<string>,
   [innerWidth, innerHeight]: [number, number],
+  localStorageData: { [key: string]: string },
+  sessionStorageData: { [key: string]: string },
 ): void {
-  appendKeys(keys);
+  addCssKeys(cssKeys);
   strings.forEach(storeString);
   (hydrateableNode[TransferrableKeys.childNodes] || []).forEach(child =>
     document.body.appendChild(document[TransferrableKeys.hydrateNode](strings, child)),
@@ -35,4 +39,6 @@ export function initialize(
   const window = document.defaultView;
   window.innerWidth = innerWidth;
   window.innerHeight = innerHeight;
+  window.localStorage = createStorage(document, StorageLocation.Local, localStorageData);
+  window.sessionStorage = createStorage(document, StorageLocation.Session, sessionStorageData);
 }

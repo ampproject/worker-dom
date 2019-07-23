@@ -19,8 +19,6 @@ import { MessageType } from '../../transfer/Messages';
 import { CommandExecutorInterface } from './interface';
 import { OffscreenCanvasMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
-const CONTEXT = 'OFFSCREEN_CANVAS_INSTANCE';
-
 export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE);
 
@@ -40,7 +38,7 @@ export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, node
             [offscreen],
           );
         } else {
-          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
+          console.error(`'OFFSCREEN_CANVAS_INSTANCE': getNode(${targetIndex}) is null.`);
         }
       }
 
@@ -48,7 +46,7 @@ export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, node
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
       return {
-        type: CONTEXT,
+        type: 'OFFSCREEN_CANVAS_INSTANCE',
         target,
         allowedExecution,
       };

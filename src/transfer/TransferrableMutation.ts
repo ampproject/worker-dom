@@ -27,7 +27,9 @@ export const enum TransferrableMutationType {
   OBJECT_MUTATION = 9,
   OBJECT_CREATION = 10,
   IMAGE_BITMAP_INSTANCE = 11,
+  STORAGE = 12,
 }
+
 export const DefaultAllowedMutations = [
   TransferrableMutationType.ATTRIBUTES,
   TransferrableMutationType.CHARACTER_DATA,
@@ -41,6 +43,7 @@ export const DefaultAllowedMutations = [
   TransferrableMutationType.OBJECT_MUTATION,
   TransferrableMutationType.OBJECT_CREATION,
   TransferrableMutationType.IMAGE_BITMAP_INSTANCE,
+  TransferrableMutationType.STORAGE,
 ];
 
 export const ReadableMutationType: { [key: number]: string } = {
@@ -56,6 +59,7 @@ export const ReadableMutationType: { [key: number]: string } = {
   9: 'OBJECT_MUTATION',
   10: 'OBJECT_CREATION',
   11: 'IMAGE_BITMAP_INSTANCE',
+  12: 'STORAGE',
 };
 
 /**
@@ -168,29 +172,41 @@ export const enum ImageBitmapMutationIndex {
   End = 3,
 }
 
+/**
+ * ObjectMutation Mutations
+ * [
+ *   TransferableMutationType.IMAGE_BITMAP_INSTANCE,
+ *   Target.index,
+ * ]
+ * // TODO(choumx): Fix naming inconsistency.
+ */
 export const enum ObjectMutationIndex {
   FunctionName = 1,
   ArgumentCount = 2,
-
-  // SerializedTarget and Args offsets will vary depending on the object
   SerializedTarget = 3,
-  Args = 3,
-
-  End = 3,
+  // "End" index is variable.
 }
 
+/**
+ * ObjectCreation Mutations
+ * [
+ *   TransferableMutationType.IMAGE_BITMAP_INSTANCE,
+ *   Target.index,
+ * ]
+ * // TODO(choumx): Fix naming inconsistency.
+ */
 export const enum ObjectCreationIndex {
   FunctionName = 1,
   ObjectId = 2,
   ArgumentCount = 3,
-
-  // SerializedTarget and Args offsets will vary depending on the object
   SerializedTarget = 4,
-  Args = 4,
-
-  End = 4,
+  // "End" index is variable.
 }
 
+/**
+ * Used in OBJECT_MUTATION and OBJECT_CREATION mutations for typing non-primitives
+ * passed in function parameters, e.g. <image> in CanvasRenderingContext2D.drawImage(<image>).
+ */
 export const enum TransferrableObjectType {
   SmallInt = 1,
   Float = 2,
@@ -199,4 +215,20 @@ export const enum TransferrableObjectType {
   TransferObject = 5,
   CanvasRenderingContext2D = 6,
   HTMLElement = 7,
+}
+
+/**
+ * Storage Mutations
+ * [
+ *   TransferableMutationType.STORAGE,
+ *   StorageLocation,
+ *   string(key),
+ *   string(value),
+ * ]
+ */
+export const enum StorageMutationIndex {
+  Location = 1,
+  Key = 2,
+  Value = 3,
+  End = 4,
 }
