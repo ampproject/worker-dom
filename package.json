@@ -50,7 +50,7 @@
     "@babel/preset-env": "7.5.4",
     "@types/node": "11.13.17",
     "@types/sinon": "7.0.13",
-    "acorn": "6.2.0",
+    "acorn": "6.2.1",
     "acorn-walk": "6.2.0",
     "ava": "2.2.0",
     "babel-plugin-minify-replace": "0.5.0",
