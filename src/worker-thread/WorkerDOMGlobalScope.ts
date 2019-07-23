@@ -49,6 +49,12 @@ import { MutationObserver } from './MutationObserver';
 import { Storage } from './Storage';
 import { SVGElement } from './dom/SVGElement';
 import { HTMLElement } from './dom/HTMLElement';
+import { HTMLDataListElement } from './dom/HTMLDataListElement';
+import { Text } from './dom/Text';
+import { Comment } from './dom/Comment';
+import { CharacterData } from './dom/CharacterData';
+import { DocumentFragment } from './dom/DocumentFragment';
+import { DOMTokenList } from './dom/DOMTokenList';
 
 /**
  * Should only contain properties that exist on Window.
@@ -59,16 +65,17 @@ export interface GlobalScope {
   innerHeight: number;
   localStorage?: Storage;
   sessionStorage?: Storage;
-  // Event exists natively in web workers but override with our synthetic event
-  // implementation to enable setting readonly properties like currentTarget.
-  Event: typeof WorkerDOMEvent;
-  MutationObserver: typeof MutationObserver;
-  SVGElement: typeof SVGElement;
-  HTMLElement: typeof HTMLElement;
+  CharacterData: typeof CharacterData;
+  Comment: typeof Comment;
+  Document: typeof Document;
+  DocumentFragment: typeof DocumentFragment;
+  DOMTokenList: typeof DOMTokenList;
   HTMLAnchorElement: typeof HTMLAnchorElement;
   HTMLButtonElement: typeof HTMLButtonElement;
   HTMLCanvasElement: typeof HTMLCanvasElement;
   HTMLDataElement: typeof HTMLDataElement;
+  HTMLDataListElement: typeof HTMLDataListElement;
+  HTMLElement: typeof HTMLElement;
   HTMLEmbedElement: typeof HTMLEmbedElement;
   HTMLFieldSetElement: typeof HTMLFieldSetElement;
   HTMLFormElement: typeof HTMLFormElement;
@@ -94,6 +101,12 @@ export interface GlobalScope {
   HTMLTableRowElement: typeof HTMLTableRowElement;
   HTMLTableSectionElement: typeof HTMLTableSectionElement;
   HTMLTimeElement: typeof HTMLTimeElement;
+  SVGElement: typeof SVGElement;
+  Text: typeof Text;
+  // Event exists natively in web workers but override with our synthetic event
+  // implementation to enable setting readonly properties like currentTarget.
+  Event: typeof WorkerDOMEvent;
+  MutationObserver: typeof MutationObserver;
   OffscreenCanvas?: typeof OffscreenCanvas;
   ImageBitmap?: typeof ImageBitmap;
 }

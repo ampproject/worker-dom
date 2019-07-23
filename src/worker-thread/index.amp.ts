@@ -51,6 +51,12 @@ import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
 import { MutationObserver } from './MutationObserver';
 import { Event as WorkerDOMEvent } from './Event';
+import { Text } from './dom/Text';
+import { HTMLDataListElement } from './dom/HTMLDataListElement';
+import { CharacterData } from './dom/CharacterData';
+import { DOMTokenList } from './dom/DOMTokenList';
+import { Comment } from './dom/Comment';
+import { DocumentFragment } from './dom/DocumentFragment';
 
 const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
   Array: true,
@@ -142,14 +148,17 @@ const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
 const globalScope: GlobalScope = {
   innerWidth: 0,
   innerHeight: 0,
-  Event: WorkerDOMEvent,
-  MutationObserver,
-  SVGElement,
-  HTMLElement,
+  CharacterData,
+  Comment,
+  Document,
+  DocumentFragment,
+  DOMTokenList,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLCanvasElement,
   HTMLDataElement,
+  HTMLDataListElement,
+  HTMLElement,
   HTMLEmbedElement,
   HTMLFieldSetElement,
   HTMLFormElement,
@@ -175,6 +184,10 @@ const globalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
+  SVGElement,
+  Text,
+  Event: WorkerDOMEvent,
+  MutationObserver,
 };
 
 const noop = () => void 0;

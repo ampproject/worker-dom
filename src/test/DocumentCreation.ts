@@ -52,6 +52,12 @@ import { CanvasRenderingContext2D } from '../worker-thread/canvas/CanvasTypes';
 import { Event as WorkerDOMEvent } from '../worker-thread/Event';
 import { createStorage } from '../worker-thread/Storage';
 import { StorageLocation } from '../transfer/TransferrableStorage';
+import { CharacterData } from '../worker-thread/dom/CharacterData';
+import { Comment } from '../worker-thread/dom/Comment';
+import { DocumentFragment } from '../worker-thread/dom/DocumentFragment';
+import { Text } from '../worker-thread/dom/Text';
+import { DOMTokenList } from '../worker-thread/dom/DOMTokenList';
+import { HTMLDataListElement } from '../worker-thread/dom/HTMLDataListElement';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -79,14 +85,17 @@ declare var OffscreenCanvas: {
 const GlobalScope: GlobalScope = {
   innerWidth: 0,
   innerHeight: 0,
-  Event: WorkerDOMEvent,
-  MutationObserver,
-  SVGElement,
-  HTMLElement,
+  CharacterData,
+  Comment,
+  Document,
+  DocumentFragment,
+  DOMTokenList,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLCanvasElement,
   HTMLDataElement,
+  HTMLDataListElement,
+  HTMLElement,
   HTMLEmbedElement,
   HTMLFieldSetElement,
   HTMLFormElement,
@@ -112,6 +121,10 @@ const GlobalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
+  SVGElement,
+  Text,
+  Event: WorkerDOMEvent,
+  MutationObserver,
 };
 
 /**
