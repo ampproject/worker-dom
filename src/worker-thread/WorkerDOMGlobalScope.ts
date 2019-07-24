@@ -55,6 +55,7 @@ import { Comment } from './dom/Comment';
 import { CharacterData } from './dom/CharacterData';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { DOMTokenList } from './dom/DOMTokenList';
+import { Element } from './dom/Element';
 
 /**
  * Should only contain properties that exist on Window.
@@ -70,6 +71,7 @@ export interface GlobalScope {
   Document: typeof Document;
   DocumentFragment: typeof DocumentFragment;
   DOMTokenList: typeof DOMTokenList;
+  Element: typeof Element;
   HTMLAnchorElement: typeof HTMLAnchorElement;
   HTMLButtonElement: typeof HTMLButtonElement;
   HTMLCanvasElement: typeof HTMLCanvasElement;

@@ -58,6 +58,7 @@ import { DocumentFragment } from '../worker-thread/dom/DocumentFragment';
 import { Text } from '../worker-thread/dom/Text';
 import { DOMTokenList } from '../worker-thread/dom/DOMTokenList';
 import { HTMLDataListElement } from '../worker-thread/dom/HTMLDataListElement';
+import { Element } from '../worker-thread/dom/Element';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -90,6 +91,7 @@ const GlobalScope: GlobalScope = {
   Document,
   DocumentFragment,
   DOMTokenList,
+  Element,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLCanvasElement,

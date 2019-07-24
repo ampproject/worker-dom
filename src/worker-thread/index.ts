@@ -56,6 +56,7 @@ import { CharacterData } from './dom/CharacterData';
 import { Comment } from './dom/Comment';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { DocumentFragment } from './dom/DocumentFragment';
+import { Element } from './dom/Element';
 
 const globalScope: GlobalScope = {
   innerWidth: 0,
@@ -65,6 +66,7 @@ const globalScope: GlobalScope = {
   DOMTokenList,
   Document,
   DocumentFragment,
+  Element,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLCanvasElement,

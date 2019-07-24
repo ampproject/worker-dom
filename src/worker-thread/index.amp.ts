@@ -57,6 +57,7 @@ import { CharacterData } from './dom/CharacterData';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { Comment } from './dom/Comment';
 import { DocumentFragment } from './dom/DocumentFragment';
+import { Element } from './dom/Element';
 
 const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
   Array: true,
@@ -153,6 +154,7 @@ const globalScope: GlobalScope = {
   Document,
   DocumentFragment,
   DOMTokenList,
+  Element,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLCanvasElement,
