@@ -111,6 +111,7 @@ const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
   WeakMap: true,
   WeakSet: true,
   WebAssembly: true,
+  WebSocket: true,
   XMLHttpRequest: true,
   atob: true,
   addEventListener: true,
