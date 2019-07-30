@@ -27,7 +27,7 @@ export class StringContext {
   /**
    * Return a string for the specified index.
    * @param index string index to retrieve.
-   * @returns string in map for the index.
+   * @return string in map for the index.
    */
   get(index: number): string {
     return this.strings[index] || '';

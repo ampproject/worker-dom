@@ -50,6 +50,15 @@ import { GlobalScope } from '../worker-thread/WorkerDOMGlobalScope';
 import { HTMLCanvasElement } from '../worker-thread/dom/HTMLCanvasElement';
 import { CanvasRenderingContext2D } from '../worker-thread/canvas/CanvasTypes';
 import { Event as WorkerDOMEvent } from '../worker-thread/Event';
+import { createStorage } from '../worker-thread/Storage';
+import { StorageLocation } from '../transfer/TransferrableStorage';
+import { CharacterData } from '../worker-thread/dom/CharacterData';
+import { Comment } from '../worker-thread/dom/Comment';
+import { DocumentFragment } from '../worker-thread/dom/DocumentFragment';
+import { Text } from '../worker-thread/dom/Text';
+import { DOMTokenList } from '../worker-thread/dom/DOMTokenList';
+import { HTMLDataListElement } from '../worker-thread/dom/HTMLDataListElement';
+import { Element } from '../worker-thread/dom/Element';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -77,14 +86,18 @@ declare var OffscreenCanvas: {
 const GlobalScope: GlobalScope = {
   innerWidth: 0,
   innerHeight: 0,
-  Event: WorkerDOMEvent,
-  MutationObserver,
-  SVGElement,
-  HTMLElement,
+  CharacterData,
+  Comment,
+  Document,
+  DocumentFragment,
+  DOMTokenList,
+  Element,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLCanvasElement,
   HTMLDataElement,
+  HTMLDataListElement,
+  HTMLElement,
   HTMLEmbedElement,
   HTMLFieldSetElement,
   HTMLFormElement,
@@ -110,6 +123,10 @@ const GlobalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
+  SVGElement,
+  Text,
+  Event: WorkerDOMEvent,
+  MutationObserver,
 };
 
 /**
@@ -119,8 +136,12 @@ const GlobalScope: GlobalScope = {
 export function createTestingDocument(overrides: {} | null = null): Document {
   const customGlobal = Object.assign({}, GlobalScope, overrides);
   const document = new Document(customGlobal);
+  document.postMessage = () => {};
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
+
+  customGlobal.localStorage = createStorage(document, StorageLocation.Local, {});
+  customGlobal.sessionStorage = createStorage(document, StorageLocation.Session, {});
 
   return document;
 }

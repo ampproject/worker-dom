@@ -20,8 +20,6 @@ import { CommandExecutorInterface } from './interface';
 import { BoundClientRectMutationIndex } from '../../transfer/TransferrableBoundClientRect';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
-const CONTEXT = 'GET_BOUNDING_CLIENT_RECT';
-
 export const BoundingClientRectProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.GET_BOUNDING_CLIENT_RECT);
 
@@ -45,7 +43,7 @@ export const BoundingClientRectProcessor: CommandExecutorInterface = (strings, n
             ],
           });
         } else {
-          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
+          console.error(`GET_BOUNDING_CLIENT_RECT: getNode(${targetIndex}) is null.`);
         }
       }
 
@@ -55,7 +53,7 @@ export const BoundingClientRectProcessor: CommandExecutorInterface = (strings, n
       const targetIndex = mutations[startPosition + BoundClientRectMutationIndex.Target];
       const target = nodes.getNode(targetIndex);
       return {
-        type: CONTEXT,
+        type: 'GET_BOUNDING_CLIENT_RECT',
         target,
         allowedExecution,
       };

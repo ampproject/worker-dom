@@ -20,6 +20,7 @@ import { createHydrateableRootNode } from './serialize';
 import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
 import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { StorageLocation } from '../transfer/TransferrableStorage';
 
 export class WorkerContext {
   private [TransferrableKeys.worker]: Worker;
@@ -37,24 +38,32 @@ export class WorkerContext {
     this.nodeContext = nodeContext;
     this.config = config;
 
-    const keys: Array<string> = [];
     const { skeleton, strings } = createHydrateableRootNode(baseElement, config);
+
+    const cssKeys: Array<string> = [];
     for (const key in baseElement.style) {
-      keys.push(key);
+      cssKeys.push(key);
     }
+
+    // TODO(choumx): Sync read of all localStorage and sessionStorage a possible performance bottleneck?
+    const localStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Local) : window.localStorage;
+    const sessionStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Session) : window.sessionStorage;
+
     const code = `
       'use strict';
       (function(){
         ${workerDOMScript}
         self['window'] = self;
-        self['localStorage'] = {}; // TODO(choumx): Remove.
         var workerDOM = WorkerThread.workerDOM;
         WorkerThread.hydrate(
           workerDOM.document,
           ${JSON.stringify(strings)},
           ${JSON.stringify(skeleton)},
-          ${JSON.stringify(keys)},
-          [${window.innerWidth}, ${window.innerHeight}]);
+          ${JSON.stringify(cssKeys)},
+          [${window.innerWidth}, ${window.innerHeight}],
+          ${JSON.stringify(localStorageData)},
+          ${JSON.stringify(sessionStorageData)}
+        );
         workerDOM.document[${TransferrableKeys.observe}](this);
         Object.keys(workerDOM).forEach(key => self[key] = workerDOM[key]);
       }).call(self);
@@ -65,7 +74,7 @@ export class WorkerContext {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config));
     }
     if (config.onCreateWorker) {
-      config.onCreateWorker(baseElement, strings, skeleton, keys);
+      config.onCreateWorker(baseElement, strings, skeleton, cssKeys);
     }
   }
 

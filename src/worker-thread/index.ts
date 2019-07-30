@@ -50,18 +50,29 @@ import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
 import { Event as WorkerDOMEvent } from './Event';
+import { Text } from './dom/Text';
+import { HTMLDataListElement } from './dom/HTMLDataListElement';
+import { CharacterData } from './dom/CharacterData';
+import { Comment } from './dom/Comment';
+import { DOMTokenList } from './dom/DOMTokenList';
+import { DocumentFragment } from './dom/DocumentFragment';
+import { Element } from './dom/Element';
 
 const globalScope: GlobalScope = {
   innerWidth: 0,
   innerHeight: 0,
-  Event: WorkerDOMEvent,
-  MutationObserver,
-  HTMLElement,
-  SVGElement,
+  CharacterData,
+  Comment,
+  DOMTokenList,
+  Document,
+  DocumentFragment,
+  Element,
   HTMLAnchorElement,
   HTMLButtonElement,
   HTMLCanvasElement,
   HTMLDataElement,
+  HTMLDataListElement,
+  HTMLElement,
   HTMLEmbedElement,
   HTMLFieldSetElement,
   HTMLFormElement,
@@ -87,6 +98,10 @@ const globalScope: GlobalScope = {
   HTMLTableRowElement,
   HTMLTableSectionElement,
   HTMLTimeElement,
+  SVGElement,
+  Text,
+  Event: WorkerDOMEvent,
+  MutationObserver,
 };
 
 const noop = () => void 0;
@@ -100,6 +115,7 @@ export const workerDOM = (function(postMessage, addEventListener, removeEventLis
   document.addGlobalEventListener = addEventListener;
   document.removeGlobalEventListener = removeEventListener;
 
+  // TODO(choumx): Remove once defaultView contains all native worker globals.
   // Canvas's use of native OffscreenCanvas checks the existence of the property
   // on the WorkerDOMGlobalScope.
   globalScope.OffscreenCanvas = (self as any)['OffscreenCanvas'];
@@ -107,6 +123,7 @@ export const workerDOM = (function(postMessage, addEventListener, removeEventLis
 
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
+
   return document.defaultView;
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 

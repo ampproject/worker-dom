@@ -26,6 +26,7 @@ import { Document } from './dom/Document';
 let pending = false;
 let pendingMutations: Array<number> = [];
 
+// TODO(choumx): Change `mutation` to Array<Uint16> to prevent casting errors e.g. integer underflow, precision loss.
 export function transfer(document: Document, mutation: Array<number>): void {
   if (phase > Phase.Initializing && document[TransferrableKeys.allowTransfer]) {
     pending = true;

@@ -134,6 +134,7 @@ export class Document extends Element {
   public createElement(name: string): Element {
     return this.createElementNS(HTML_NAMESPACE, toLower(name));
   }
+
   public createElementNS(namespaceURI: NamespaceURI, localName: string): Element {
     const constructor = NS_NAME_TO_CLASS[`${namespaceURI}:${localName}`] || HTMLElement;
     return new constructor(NodeType.ELEMENT_NODE, localName, namespaceURI, this);
@@ -150,9 +151,11 @@ export class Document extends Element {
   public createTextNode(text: string): Text {
     return new Text(text, this);
   }
+
   public createComment(text: string): Comment {
     return new Comment(text, this);
   }
+
   public createDocumentFragment(): DocumentFragment {
     return new DocumentFragment(this);
   }

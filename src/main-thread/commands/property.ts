@@ -18,8 +18,6 @@ import { PropertyMutationIndex, TransferrableMutationType } from '../../transfer
 import { CommandExecutorInterface } from './interface';
 import { NumericBoolean } from '../../utils';
 
-const CONTEXT = 'PROPERTY';
-
 export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.PROPERTIES);
 
@@ -38,7 +36,7 @@ export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext
         if (target) {
           if (name && value != null) {
             if (config.sanitizer) {
-              const mutated = config.sanitizer.mutateProperty(target, name, String(value));
+              const mutated = config.sanitizer.changeProperty(target, name, String(value));
               if (!mutated) {
                 // TODO(choumx): Inform worker that sanitizer ignored unsafe property value change.
               }
@@ -47,7 +45,7 @@ export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext
             }
           }
         } else {
-          console.error(`${CONTEXT}: getNode(${targetIndex}) is null.`);
+          console.error(`PROPERTY: getNode(${targetIndex}) is null.`);
         }
       }
 
