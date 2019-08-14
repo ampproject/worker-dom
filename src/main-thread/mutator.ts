@@ -113,7 +113,7 @@ export class MutatorProcessor {
    * Investigations in using asyncFlush to resolve are worth considering.
    */
   private syncFlush = (): void => {
-    if (DEBUG_ENABLED) {
+    if (WORKER_DOM_DEBUG) {
       console.group('Mutations');
     }
     this.mutationQueue.forEach(mutationArray => {
@@ -123,13 +123,13 @@ export class MutatorProcessor {
       while (operationStart < length) {
         const mutationType = mutationArray[operationStart];
         const executor = this.executors[mutationType];
-        if (DEBUG_ENABLED) {
+        if (WORKER_DOM_DEBUG) {
           console.log(ReadableMutationType[mutationType], executor.print(mutationArray, operationStart));
         }
         operationStart = executor.execute(mutationArray, operationStart);
       }
     });
-    if (DEBUG_ENABLED) {
+    if (WORKER_DOM_DEBUG) {
       console.groupEnd();
     }
     this.mutationQueue = [];

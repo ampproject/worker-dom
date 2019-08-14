@@ -50,7 +50,7 @@ const ESModules = [
         ],
       }),
       replace({
-        DEBUG_ENABLED: false,
+        WORKER_DOM_DEBUG: false,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -77,7 +77,7 @@ const ESModules = [
         ],
       }),
       replace({
-        DEBUG_ENABLED: false,
+        WORKER_DOM_DEBUG: false,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -92,6 +92,7 @@ const ESModules = [
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
+      banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
     },
     plugins: [
       copy({
@@ -101,9 +102,6 @@ const ESModules = [
             dest: 'dist/amp/worker',
           },
         ],
-      }),
-      replace({
-        DEBUG_ENABLED: true,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -118,6 +116,7 @@ const ESModules = [
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
+      banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
     },
     plugins: [
       copy({
@@ -128,12 +127,9 @@ const ESModules = [
           },
         ],
       }),
-      replace({
-        DEBUG_ENABLED: false,
-      }),
       babelPlugin({
         transpileToES5: true,
-        allowConsole: false,
+        allowConsole: true,
       }),
       ...compilePlugins,
     ],
@@ -151,7 +147,7 @@ const IIFEModules = [
     },
     plugins: [
       replace({
-        DEBUG_ENABLED: false,
+        WORKER_DOM_DEBUG: false,
       }),
       babelPlugin({
         transpileToES5: true,
@@ -170,7 +166,7 @@ const IIFEModules = [
     },
     plugins: [
       replace({
-        DEBUG_ENABLED: true,
+        WORKER_DOM_DEBUG: true,
       }),
       babelPlugin({
         transpileToES5: true,

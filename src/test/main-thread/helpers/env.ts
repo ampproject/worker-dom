@@ -67,7 +67,7 @@ export class Env {
       value: requestAnimationFrame,
     });
 
-    Object.defineProperty(global, 'DEBUG_ENABLED', {
+    Object.defineProperty(global, 'WORKER_DOM_DEBUG', {
       configurable: true,
       value: false,
     });
