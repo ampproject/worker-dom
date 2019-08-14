@@ -70,7 +70,7 @@ export class WorkerContext {
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;
     this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
-    if (DEBUG_ENABLED) {
+    if (WORKER_DOM_DEBUG) {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config));
     }
     if (config.onCreateWorker) {
@@ -89,7 +89,7 @@ export class WorkerContext {
    * @param message
    */
   messageToWorker(message: MessageToWorker, transferables?: Transferable[]) {
-    if (DEBUG_ENABLED) {
+    if (WORKER_DOM_DEBUG) {
       console.info('debug', 'messageToWorker', readableMessageToWorker(this.nodeContext, message));
     }
     if (this.config.onSendMessage) {

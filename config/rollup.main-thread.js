@@ -32,7 +32,7 @@ const ESModules = [
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
       replace({
-        DEBUG_ENABLED: false,
+        WORKER_DOM_DEBUG: false,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -60,7 +60,7 @@ const ESModules = [
         ],
       }),
       replace({
-        DEBUG_ENABLED: true,
+        WORKER_DOM_DEBUG: true,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -74,6 +74,7 @@ const ESModules = [
       file: 'dist/amp/main.mjs',
       format: 'es',
       sourcemap: true,
+      banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
     },
     plugins: [
       removeWorkerWhitespace(),
@@ -84,9 +85,6 @@ const ESModules = [
             dest: 'dist/amp',
           },
         ],
-      }),
-      replace({
-        DEBUG_ENABLED: true,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -109,7 +107,7 @@ const IIFEModules = [
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
       replace({
-        DEBUG_ENABLED: false,
+        WORKER_DOM_DEBUG: false,
       }),
       babelPlugin({
         transpileToES5: true,
@@ -130,7 +128,7 @@ const IIFEModules = [
     plugins: [
       removeWorkerWhitespace(),
       replace({
-        DEBUG_ENABLED: true,
+        WORKER_DOM_DEBUG: true,
       }),
       babelPlugin({
         transpileToES5: true,
