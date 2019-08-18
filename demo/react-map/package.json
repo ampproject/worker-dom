@@ -22,6 +22,6 @@
     "mini-css-extract-plugin": "0.8.0",
     "style-loader": "0.23.1",
     "webpack": "4.39.2",
-    "webpack-cli": "3.3.6"
+    "webpack-cli": "3.3.7"
   }
 }
