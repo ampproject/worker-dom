@@ -75,7 +75,7 @@
     "rollup-plugin-terser": "5.1.1",
     "sinon": "7.4.1",
     "sirv": "0.4.2",
-    "tslint": "5.18.0",
+    "tslint": "5.19.0",
     "typescript": "3.5.3"
   },
   "lint-staged": {
