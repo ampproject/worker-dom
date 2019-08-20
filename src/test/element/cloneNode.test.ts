@@ -19,12 +19,15 @@ import { createTestingDocument } from '../DocumentCreation';
 import { Element } from '../../worker-thread/dom/Element';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { Text } from '../../worker-thread/dom/Text';
+import { Document } from '../../worker-thread/dom/Document';
+import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement';
 
 const test = anyTest as TestInterface<{
   parent: Element;
   child: Element;
   text: Text;
   sibling: Element;
+  document: Document;
 }>;
 
 test.beforeEach(t => {
@@ -35,6 +38,7 @@ test.beforeEach(t => {
     child: document.createElement('p'),
     text: document.createTextNode('text'),
     sibling: document.createElement('aside'),
+    document,
   };
 
   t.context.child.appendChild(t.context.text);
@@ -47,6 +51,12 @@ test('cloneNode should create a new node with the same tagName', t => {
   const { parent } = t.context;
 
   t.is(parent.cloneNode().tagName, parent.tagName);
+});
+
+test('cloneNode should create a new node with the same nodeName', t => {
+  const { parent } = t.context;
+
+  t.is(parent.cloneNode().nodeName, parent.nodeName);
 });
 
 test('cloneNode should create a new node with a different index', t => {
@@ -102,4 +112,12 @@ test('cloneNode should create a new node with the same children when the deep fl
   t.is(parent.childNodes.length, clone.childNodes.length);
   t.is(parent.childNodes[0].tagName, clone.childNodes[0].tagName);
   t.is(parent.childNodes[0].childNodes[0].textContent, clone.childNodes[0].childNodes[0].textContent);
+});
+
+test('cloneNode should return a new instance of the the same type as the input', t => {
+  const { document } = t.context;
+  const element = document.createElement('a');
+  const clone = element.cloneNode();
+
+  t.true(clone instanceof HTMLAnchorElement);
 });

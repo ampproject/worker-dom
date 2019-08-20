@@ -481,7 +481,10 @@ export class Element extends ParentNode {
    * @return Element containing all current attributes and potentially childNode clones of the Element requested to be cloned.
    */
   public cloneNode(deep: boolean = false): Element {
-    const clone: Element = this.ownerDocument.createElementNS(this.namespaceURI, this.nodeName);
+    const clone: Element = this.ownerDocument.createElementNS(
+      this.namespaceURI,
+      this.namespaceURI === HTML_NAMESPACE ? toLower(this.tagName) : this.tagName,
+    );
     this.attributes.forEach(attr => clone.setAttribute(attr.name, attr.value));
     if (deep) {
       this.childNodes.forEach((child: Node) => clone.appendChild(child.cloneNode(deep)));
