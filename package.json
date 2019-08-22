@@ -19,16 +19,14 @@
   "author": "The AMP HTML Authors",
   "license": "Apache-2.0",
   "scripts": {
-    "tsc:test:worker": "tsc -p config/tsconfig.test.worker-thread.json",
-    "tsc:test:main": "tsc -p config/tsconfig.test.main-thread.json",
-    "tsc:test:tests": "tsc -p config/tsconfig.tests.json",
-    "tsc:test:tests-main": "tsc -p config/tsconfig.tests.main-thread.json",
-    "tsc:build:worker": "tsc -p config/tsconfig.build.worker-thread.json",
-    "tsc:build:main": "tsc -p config/tsconfig.build.main-thread.json",
+    "tsc:worker": "tsc -p src/worker-thread/tsconfig.json",
+    "tsc:main": "tsc -p src/main-thread/tsconfig.json",
+    "tsc:tests": "tsc -p src/test/tsconfig.json",
+    "tsc:tests-main": "tsc -p src/test/main-thread/tsconfig.json",
     "clean": "rimraf output dist",
-    "pretest": "npm-run-all --parallel tsc:test:*",
+    "pretest": "npm-run-all --parallel tsc:*",
     "test": "ava -v",
-    "pre~rollup": "npm-run-all --parallel tsc:build:*",
+    "pre~rollup": "npm-run-all --parallel tsc:worker tsc:main",
     "~rollup": "rollup --config config/rollup.config.js",
     "lint:worker": "tslint -c config/tslint.json -p src/worker-thread/",
     "lint:main": "tslint -c config/tslint.json -p src/main-thread/",
@@ -116,6 +114,10 @@
     "cjs": true
   },
   "ava": {
+    "require": [
+			"esm"
+		],
+    "babel": false,
     "files": [
       "output/test/**/*.test.js"
     ]

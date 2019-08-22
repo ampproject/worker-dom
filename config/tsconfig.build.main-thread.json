@@ -1,6 +1,0 @@
-{
-  "extends": "../src/main-thread/tsconfig.json",
-  "compilerOptions": {
-    "module": "esnext"
-  }
-}
