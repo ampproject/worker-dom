@@ -115,8 +115,8 @@
   },
   "ava": {
     "require": [
-			"esm"
-		],
+      "esm"
+    ],
     "babel": false,
     "files": [
       "output/test/**/*.test.js"
