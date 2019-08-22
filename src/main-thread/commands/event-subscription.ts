@@ -142,9 +142,11 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
     const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
     const isChangeEvent = type === 'change';
     const isResizeEvent = type === 'resize';
+    const isKeyPressEvent = type === 'keypress';
+    const isGlobalEvent = target === nodeContext.baseElement && (isResizeEvent || isKeyPressEvent);
 
     if (addEvent) {
-      if (isResizeEvent && target === nodeContext.baseElement) {
+      if (isGlobalEvent) {
         addEventListener(type, (knownListeners[index] = eventHandler(1)));
         return;
       }
@@ -155,7 +157,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
       }
       (target as HTMLElement).addEventListener(type, (knownListeners[index] = eventHandler(target._index_)));
     } else {
-      if (isResizeEvent && target === nodeContext.baseElement) {
+      if (isGlobalEvent) {
         removeEventListener(type, knownListeners[index]);
         return;
       }
