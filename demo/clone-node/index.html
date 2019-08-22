@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Comments</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/demo.css" rel="stylesheet" />
+    <script src="/dist/main.mjs" type="module"></script>
+    <script src="/dist/main.js" nomodule defer></script>
+    <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+    <!-- Comment either block to enable module/nomodule or disable it. -->
+    <!-- <script src="/dist/main.js" defer></script> -->
+  </head>
+  <body>
+    <div src="/clone-node/clone.js" id="upgrade-me">
+      <button type="button" id="clone">
+        Clone!
+      </button>
+      <p>This <strong>element</strong> <u>will</u> be <em>cloned</em>.</p>
+    </div>
+    <script type="module">
+      import { upgradeElement } from '/dist/main.mjs';
+      upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
+    </script>
+    <script nomodule async="false" defer>
+      document.addEventListener(
+        'DOMContentLoaded',
+        function() {
+          MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
+        },
+        false,
+      );
+    </script>
+    <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+    <!-- Comment either block to enable module/nomodule or disable it. -->
+    <!-- <script async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), './dist/worker/worker.js');
+    }, false);
+  </script> -->
+  </body>
+</html>
