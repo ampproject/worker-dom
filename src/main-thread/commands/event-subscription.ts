@@ -138,34 +138,26 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
    * @param index number in the listeners array this event corresponds to.
    */
   const processListenerChange = (target: RenderableElement, addEvent: boolean, type: string, index: number): void => {
+    if (target === nodeContext.baseElement) {
+      addEvent ? addEventListener(type, (knownListeners[index] = eventHandler(1))) : removeEventListener(type, knownListeners[index]);
+      return;
+    }
+
     let changeEventSubscribed: boolean = target.onchange !== null;
-    const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
     const isChangeEvent = type === 'change';
-    const isResizeEvent = type === 'resize';
-
     if (addEvent) {
-      if (isResizeEvent && target === nodeContext.baseElement) {
-        addEventListener(type, (knownListeners[index] = eventHandler(1)));
-        return;
-      }
-
       if (isChangeEvent) {
         changeEventSubscribed = true;
         target.onchange = null;
       }
       (target as HTMLElement).addEventListener(type, (knownListeners[index] = eventHandler(target._index_)));
     } else {
-      if (isResizeEvent && target === nodeContext.baseElement) {
-        removeEventListener(type, knownListeners[index]);
-        return;
-      }
-
       if (isChangeEvent) {
         changeEventSubscribed = false;
       }
       (target as HTMLElement).removeEventListener(type, knownListeners[index]);
     }
-    if (shouldTrack && !changeEventSubscribed) {
+    if (shouldTrackChanges(target as HTMLElement) && !changeEventSubscribed) {
       applyDefaultChangeListener(workerContext, target as RenderableElement);
     }
   };

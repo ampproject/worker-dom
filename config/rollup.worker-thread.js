@@ -77,11 +77,11 @@ const ESModules = [
         ],
       }),
       replace({
-        WORKER_DOM_DEBUG: false,
+        WORKER_DOM_DEBUG: true,
       }),
       babelPlugin({
         transpileToES5: false,
-        allowConsole: false,
+        allowConsole: true,
       }),
     ],
   },
