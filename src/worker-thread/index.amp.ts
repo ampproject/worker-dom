@@ -46,7 +46,7 @@ import { HTMLTableRowElement } from './dom/HTMLTableRowElement';
 import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { Document } from './dom/Document';
-import { GlobalScope } from './WorkerDOMGlobalScope';
+import { GlobalScope, WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
 import { MutationObserver } from './MutationObserver';
@@ -58,6 +58,12 @@ import { DOMTokenList } from './dom/DOMTokenList';
 import { Comment } from './dom/Comment';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { Element } from './dom/Element';
+import { transfer } from './MutationTransfer';
+import { TransferrableMutationType } from '../transfer/TransferrableMutation';
+import { store } from './strings';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { MessageType, StorageValueToWorker, MessageToWorker } from '../transfer/Messages';
+import { StorageLocation } from '../transfer/TransferrableStorage';
 
 const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
   Array: true,
@@ -197,7 +203,7 @@ const noop = () => void 0;
 
 // WorkerDOM.Document.defaultView ends up being the window object.
 // React requires the classes to exist off the window object for instanceof checks.
-export const workerDOM = (function(postMessage, addEventListener, removeEventListener) {
+export const workerDOM: WorkerDOMGlobalScope = (function(postMessage, addEventListener, removeEventListener) {
   const document = new Document(globalScope);
   // TODO(choumx): Avoid polluting Document's public API.
   document.postMessage = postMessage;
@@ -216,30 +222,8 @@ export const workerDOM = (function(postMessage, addEventListener, removeEventLis
   return document.defaultView;
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
-/**
- * Instruments relevant calls to work via LongTask API.
- * @param global
- */
-function updateLongTask(global: WorkerGlobalScope) {
-  const originalFetch = global['fetch'];
-  if (originalFetch) {
-    try {
-      Object.defineProperty(global, 'fetch', {
-        enumerable: true,
-        writable: true,
-        configurable: true,
-        value: longTaskWrap(workerDOM.document, originalFetch.bind(global)),
-      });
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-}
-
-/**
- * @param global
- */
-function updateGlobals(global: WorkerGlobalScope) {
+// Modify global scope by removing disallowed properties and wrapping `fetch()`.
+(function(global: WorkerGlobalScope) {
   /**
    * @param object
    * @param property
@@ -270,9 +254,54 @@ function updateGlobals(global: WorkerGlobalScope) {
     current = Object.getPrototypeOf(current);
   }
   // Wrap global.fetch() with our longTask API.
-  updateLongTask(global);
-}
+  const originalFetch = global['fetch'];
+  if (originalFetch) {
+    try {
+      Object.defineProperty(global, 'fetch', {
+        enumerable: true,
+        writable: true,
+        configurable: true,
+        value: longTaskWrap(workerDOM.document, originalFetch.bind(global)),
+      });
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+})(self);
 
-updateGlobals(self);
+const { document } = workerDOM;
+
+// Offer AMP.setState() and AMP.getState() on global scope.
+(self as any).AMP = {
+  getState: (key: string): Promise<{} | null> => {
+    return new Promise(resolve => {
+      const messageHandler = (event: MessageEvent) => {
+        const message: MessageToWorker = event.data;
+        if (message[TransferrableKeys.type] !== MessageType.GET_STORAGE) {
+          return;
+        }
+        // TODO: There is a race condition here if there are multiple concurrent
+        // getState(k) messages in flight, where k is the same value.
+        const storageMessage = message as StorageValueToWorker;
+        if (storageMessage[TransferrableKeys.key] !== key) {
+          return;
+        }
+        document.removeGlobalEventListener('message', messageHandler);
+        const value = storageMessage[TransferrableKeys.value];
+        resolve(value);
+      };
+
+      document.addGlobalEventListener('message', messageHandler);
+      transfer(document, [TransferrableMutationType.STORAGE, /* get */ 0, StorageLocation.AmpState, /* key */ store(key), /* value */ 0]);
+      setTimeout(resolve, 5000, null); // TODO: Why a magical constant, define and explain.
+    });
+  },
+  setState: (state: {}): void => {
+    // Stringify `state` so it can be post-messaged as a transferrable.
+    // TODO: try/catch?
+    const stringified = JSON.stringify(state);
+    transfer(document, [TransferrableMutationType.STORAGE, /* set */ 1, StorageLocation.AmpState, /* key */ 0, /* value */ store(stringified)]);
+  },
+};
 
 export const hydrate = initialize;

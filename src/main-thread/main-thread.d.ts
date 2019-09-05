@@ -44,14 +44,15 @@ declare interface Sanitizer {
 
   /**
    * Retrieves the current localStorage or sessionStorage data.
-   * @param location 0 for localStorage, 1 for sessionStorage.
+   * @param location 0 for localStorage, 1 for sessionStorage, 2 for AMP state.
+   * @param key
    * @return
    */
-  getStorage(location: number): { [key: string]: string };
+  getStorage(location: number, key?: string | null): { [key: string]: string };
 
   /**
    * Requests a change in localStorage or sessionStorage.
-   * @param location 0 for localStorage, 1 for sessionStorage.
+   * @param location 0 for localStorage, 1 for sessionStorage, 2 for AMP state.
    * @param key A storage item key. To change all keys, pass `null` here.
    * @param value A storage value. To remove a key, pass `null` here.
    * @return True if storage change was applied.

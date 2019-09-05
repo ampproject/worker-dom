@@ -20,6 +20,7 @@ import { TransferrableKeys } from './TransferrableKeys';
 import { HydrateableNode, TransferredNode } from './TransferrableNodes';
 import { TransferrableBoundingClientRect } from './TransferrableBoundClientRect';
 import { Phase } from './Phase';
+import { StorageLocation } from './TransferrableStorage';
 
 export const enum MessageType {
   // INIT = 0,
@@ -33,6 +34,7 @@ export const enum MessageType {
   LONG_TASK_END = 8,
   OFFSCREEN_CANVAS_INSTANCE = 9,
   IMAGE_BITMAP_INSTANCE = 10,
+  GET_STORAGE = 11,
   // NAVIGATION_PUSH_STATE = 8,
   // NAVIGATION_REPLACE_STATE = 9,
   // NAVIGATION_POP_STATE = 10,
@@ -81,10 +83,17 @@ export interface ResizeSyncToWorker {
   [TransferrableKeys.type]: MessageType.RESIZE;
   [TransferrableKeys.sync]: [number, number];
 }
+export interface StorageValueToWorker {
+  [TransferrableKeys.type]: MessageType.GET_STORAGE;
+  [TransferrableKeys.key]: string;
+  [TransferrableKeys.location]: StorageLocation;
+  [TransferrableKeys.value]: { [key: string]: string };
+}
 export type MessageToWorker =
   | EventToWorker
   | ValueSyncToWorker
   | BoundingClientRectToWorker
   | ResizeSyncToWorker
   | OffscreenCanvasToWorker
-  | ImageBitmapToWorker;
+  | ImageBitmapToWorker
+  | StorageValueToWorker;
