@@ -85,8 +85,8 @@ export interface ResizeSyncToWorker {
 }
 export interface StorageValueToWorker {
   [TransferrableKeys.type]: MessageType.GET_STORAGE;
-  [TransferrableKeys.key]: string;
-  [TransferrableKeys.location]: StorageLocation;
+  [TransferrableKeys.storageKey]: string;
+  [TransferrableKeys.storageLocation]: StorageLocation;
   [TransferrableKeys.value]: { [key: string]: string };
 }
 export type MessageToWorker =

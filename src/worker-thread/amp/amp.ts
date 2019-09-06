@@ -39,7 +39,7 @@ export class AMP {
         // TODO: There is a race condition here if there are multiple concurrent
         // getState(k) messages in flight, where k is the same value.
         const storageMessage = message as StorageValueToWorker;
-        if (storageMessage[TransferrableKeys.key] !== key) {
+        if (storageMessage[TransferrableKeys.storageKey] !== key) {
           return;
         }
         this.document.removeGlobalEventListener('message', messageHandler);

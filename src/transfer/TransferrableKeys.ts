@@ -89,8 +89,8 @@ export const enum TransferrableKeys {
   patternUpgraded = 71,
   patternUpgradePromise = 72,
   callIndex = 73,
-  location = 74,
-  key = 75,
+  storageKey = 74,
+  storageLocation = 75,
   // This must always be the last numerically ordered Key, for testing purposes.
   END = 76,
 }

@@ -28,8 +28,8 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
       const value = config.sanitizer.getStorage(location, key);
       const message: StorageValueToWorker = {
         [TransferrableKeys.type]: MessageType.GET_STORAGE,
-        [TransferrableKeys.key]: key || '',
-        [TransferrableKeys.location]: location,
+        [TransferrableKeys.storageKey]: key || '',
+        [TransferrableKeys.storageLocation]: location,
         [TransferrableKeys.value]: value,
       };
       workerContext.messageToWorker(message);

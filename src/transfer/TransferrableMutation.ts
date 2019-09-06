@@ -221,7 +221,7 @@ export const enum TransferrableObjectType {
  * Storage Mutations
  * [
  *   TransferrableMutationType.STORAGE,
- *   number, // 0 for get, 1 for set
+ *   GetOrSet,
  *   StorageLocation,
  *   string(key),
  *   string(value),
