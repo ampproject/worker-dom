@@ -18,7 +18,7 @@ import { CommandExecutorInterface } from './interface';
 import { TransferrableMutationType, StorageMutationIndex } from '../../transfer/TransferrableMutation';
 import { StorageLocation } from '../../transfer/TransferrableStorage';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { MessageType, StorageValueToWorker } from '../../transfer/Messages';
+import { MessageType, StorageValueToWorker, GetOrSet } from '../../transfer/Messages';
 
 export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.STORAGE);
@@ -40,7 +40,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
 
   const set = (location: StorageLocation, key: string | null, value: string | null): void => {
     if (config.sanitizer) {
-      config.sanitizer.changeStorage(location, key, value);
+      config.sanitizer.setStorage(location, key, value);
     } else {
       let storage;
       if (location === StorageLocation.Local) {
@@ -81,9 +81,9 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
         const key = keyIndex > 0 ? strings.get(keyIndex) : null;
         const value = valueIndex > 0 ? strings.get(valueIndex) : null;
 
-        if (getOrSet === 0) {
+        if (getOrSet === GetOrSet.GET) {
           get(location, key);
-        } else if (getOrSet === 1) {
+        } else if (getOrSet === GetOrSet.SET) {
           set(location, key, value);
         }
       }

@@ -57,7 +57,7 @@ declare interface Sanitizer {
    * @param value A storage value. To remove a key, pass `null` here.
    * @return True if storage change was applied.
    */
-  changeStorage(location: number, key: string | null, value: string | null): boolean;
+  setStorage(location: number, key: string | null, value: string | null): boolean;
 }
 
 // OffscreenCanvas not yet available in TypeScript - 'transferControlToOffscreen' would not be

@@ -97,3 +97,11 @@ export type MessageToWorker =
   | OffscreenCanvasToWorker
   | ImageBitmapToWorker
   | StorageValueToWorker;
+
+/**
+ * Can parameterize a method invocation message as a getter or setter.
+ */
+export const enum GetOrSet {
+  GET = 1,
+  SET = 2,
+}

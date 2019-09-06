@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-import { HTMLElement } from './dom/HTMLElement';
-import { SVGElement } from './dom/SVGElement';
+import { AMP } from './amp/amp';
+import { CharacterData } from './dom/CharacterData';
+import { Comment } from './dom/Comment';
+import { DOMTokenList } from './dom/DOMTokenList';
+import { Document } from './dom/Document';
+import { DocumentFragment } from './dom/DocumentFragment';
+import { Element } from './dom/Element';
+import { Event as WorkerDOMEvent } from './Event';
+import { GlobalScope, WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
 import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { HTMLDataElement } from './dom/HTMLDataElement';
+import { HTMLDataListElement } from './dom/HTMLDataListElement';
+import { HTMLElement } from './dom/HTMLElement';
 import { HTMLEmbedElement } from './dom/HTMLEmbedElement';
 import { HTMLFieldSetElement } from './dom/HTMLFieldSetElement';
 import { HTMLFormElement } from './dom/HTMLFormElement';
@@ -45,25 +54,11 @@ import { HTMLTableElement } from './dom/HTMLTableElement';
 import { HTMLTableRowElement } from './dom/HTMLTableRowElement';
 import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
-import { Document } from './dom/Document';
-import { GlobalScope, WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
+import { MutationObserver } from './MutationObserver';
+import { SVGElement } from './dom/SVGElement';
+import { Text } from './dom/Text';
 import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
-import { MutationObserver } from './MutationObserver';
-import { Event as WorkerDOMEvent } from './Event';
-import { Text } from './dom/Text';
-import { HTMLDataListElement } from './dom/HTMLDataListElement';
-import { CharacterData } from './dom/CharacterData';
-import { DOMTokenList } from './dom/DOMTokenList';
-import { Comment } from './dom/Comment';
-import { DocumentFragment } from './dom/DocumentFragment';
-import { Element } from './dom/Element';
-import { transfer } from './MutationTransfer';
-import { TransferrableMutationType } from '../transfer/TransferrableMutation';
-import { store } from './strings';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { MessageType, StorageValueToWorker, MessageToWorker } from '../transfer/Messages';
-import { StorageLocation } from '../transfer/TransferrableStorage';
 
 const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
   Array: true,
@@ -269,39 +264,7 @@ export const workerDOM: WorkerDOMGlobalScope = (function(postMessage, addEventLi
   }
 })(self);
 
-const { document } = workerDOM;
-
-// Offer AMP.setState() and AMP.getState() on global scope.
-(self as any).AMP = {
-  getState: (key: string): Promise<{} | null> => {
-    return new Promise(resolve => {
-      const messageHandler = (event: MessageEvent) => {
-        const message: MessageToWorker = event.data;
-        if (message[TransferrableKeys.type] !== MessageType.GET_STORAGE) {
-          return;
-        }
-        // TODO: There is a race condition here if there are multiple concurrent
-        // getState(k) messages in flight, where k is the same value.
-        const storageMessage = message as StorageValueToWorker;
-        if (storageMessage[TransferrableKeys.key] !== key) {
-          return;
-        }
-        document.removeGlobalEventListener('message', messageHandler);
-        const value = storageMessage[TransferrableKeys.value];
-        resolve(value);
-      };
-
-      document.addGlobalEventListener('message', messageHandler);
-      transfer(document, [TransferrableMutationType.STORAGE, /* get */ 0, StorageLocation.AmpState, /* key */ store(key), /* value */ 0]);
-      setTimeout(resolve, 5000, null); // TODO: Why a magical constant, define and explain.
-    });
-  },
-  setState: (state: {}): void => {
-    // Stringify `state` so it can be post-messaged as a transferrable.
-    // TODO: try/catch?
-    const stringified = JSON.stringify(state);
-    transfer(document, [TransferrableMutationType.STORAGE, /* set */ 1, StorageLocation.AmpState, /* key */ 0, /* value */ store(stringified)]);
-  },
-};
+// Offer APIs like AMP.setState() on the global scope.
+(self as any).AMP = new AMP(workerDOM.document);
 
 export const hydrate = initialize;
