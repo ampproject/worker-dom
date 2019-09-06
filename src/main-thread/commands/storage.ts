@@ -40,6 +40,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
 
   const set = (location: StorageLocation, key: string | null, value: string | null): void => {
     if (config.sanitizer) {
+      // TODO: Message worker so AMP.setState() can be Promise-able.
       config.sanitizer.setStorage(location, key, value);
     } else {
       let storage;
@@ -91,7 +92,8 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
       return startPosition + StorageMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number): Object {
-      const scope = strings.get(mutations[startPosition + StorageMutationIndex.Location]);
+      const getOrSet = mutations[startPosition + StorageMutationIndex.GetOrSet];
+      const location = mutations[startPosition + StorageMutationIndex.Location];
       const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
       const valueIndex = mutations[startPosition + StorageMutationIndex.Value];
 
@@ -100,7 +102,8 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
 
       return {
         type: 'STORAGE',
-        scope,
+        getOrSet,
+        location,
         key,
         value,
         allowedExecution,
