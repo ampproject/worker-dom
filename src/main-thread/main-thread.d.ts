@@ -31,7 +31,7 @@ declare interface Sanitizer {
    * @param value
    * @return True if attribute change was applied.
    */
-  changeAttribute(node: Node, attr: string, value: string | null): boolean;
+  setAttribute(node: Node, attr: string, value: string | null): boolean;
 
   /**
    * Requests a node property change.
@@ -40,7 +40,7 @@ declare interface Sanitizer {
    * @param value
    * @return True if property change was applied.
    */
-  changeProperty(node: Node, prop: string, value: string): boolean;
+  setProperty(node: Node, prop: string, value: string): boolean;
 
   /**
    * Retrieves the current localStorage or sessionStorage data.
