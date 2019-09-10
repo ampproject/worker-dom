@@ -228,7 +228,7 @@ export const enum TransferrableObjectType {
  * ]
  */
 export const enum StorageMutationIndex {
-  GetOrSet = 1,
+  Operation = 1,
   Location = 2,
   Key = 3,
   Value = 4,

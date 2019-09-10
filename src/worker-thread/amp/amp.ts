@@ -29,6 +29,10 @@ export class AMP {
     this.document = document;
   }
 
+  /**
+   * Returns a promise that resolves with the value of `key`.
+   * @param key
+   */
   getState(key: string): Promise<{} | null> {
     return new Promise(resolve => {
       const messageHandler = (event: MessageEvent) => {
@@ -53,6 +57,10 @@ export class AMP {
     });
   }
 
+  /**
+   * Deep-merges `state` into the existing state.
+   * @param state
+   */
   setState(state: {}): void {
     // Stringify `state` so it can be post-messaged as a transferrable.
     let stringified;

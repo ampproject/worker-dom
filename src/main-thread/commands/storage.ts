@@ -72,7 +72,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
   return {
     execute(mutations: Uint16Array, startPosition: number): number {
       if (allowedExecution) {
-        const getOrSet = mutations[startPosition + StorageMutationIndex.GetOrSet];
+        const operation = mutations[startPosition + StorageMutationIndex.Operation];
         const location = mutations[startPosition + StorageMutationIndex.Location];
         const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
         const valueIndex = mutations[startPosition + StorageMutationIndex.Value];
@@ -82,9 +82,9 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
         const key = keyIndex > 0 ? strings.get(keyIndex) : null;
         const value = valueIndex > 0 ? strings.get(valueIndex) : null;
 
-        if (getOrSet === GetOrSet.GET) {
+        if (operation === GetOrSet.GET) {
           get(location, key);
-        } else if (getOrSet === GetOrSet.SET) {
+        } else if (operation === GetOrSet.SET) {
           set(location, key, value);
         }
       }
@@ -92,7 +92,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
       return startPosition + StorageMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number): Object {
-      const getOrSet = mutations[startPosition + StorageMutationIndex.GetOrSet];
+      const operation = mutations[startPosition + StorageMutationIndex.Operation];
       const location = mutations[startPosition + StorageMutationIndex.Location];
       const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
       const valueIndex = mutations[startPosition + StorageMutationIndex.Value];
@@ -102,7 +102,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
 
       return {
         type: 'STORAGE',
-        getOrSet,
+        operation,
         location,
         key,
         value,
