@@ -899,7 +899,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Window.innerWidth                                   | ✖️     |                                                  | 
 | Window.isSecureContext                              | ✖️     |                                                  | 
 | Window.length                                       | ✖️     |                                                  | 
-| Window.localStorage                                 | ✖️     |                                                  | 
+| Window.localStorage                                 | ✔️     |                                                  | 
 | Window.locationbar                                  | ✖️     |                                                  | 
 | Window.matchMedia()                                 | ✖️     |                                                  | 
 | Window.maximize()                                   | ✖️     |                                                  | 
@@ -945,7 +945,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Window.scrollTo()                                   | ✖️     |                                                  | 
 | Window.scrollX                                      | ✖️     |                                                  | 
 | Window.scrollY                                      | ✖️     |                                                  | 
-| Window.sessionStorage                               | ✖️     |                                                  | 
+| Window.sessionStorage                               | ✔️     |                                                  | 
 | Window.setCursor()  (top-level XUL windows only)    | ✖️     |                                                  | 
 | Window.setImmediate()                               | ✖️     |                                                  | 
 | Window.setResizable()                               | ✖️     |                                                  | 
