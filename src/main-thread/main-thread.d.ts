@@ -31,7 +31,7 @@ declare interface Sanitizer {
    * @param value
    * @return True if attribute change was applied.
    */
-  changeAttribute(node: Node, attr: string, value: string | null): boolean;
+  setAttribute(node: Node, attr: string, value: string | null): boolean;
 
   /**
    * Requests a node property change.
@@ -40,24 +40,27 @@ declare interface Sanitizer {
    * @param value
    * @return True if property change was applied.
    */
-  changeProperty(node: Node, prop: string, value: string): boolean;
+  setProperty(node: Node, prop: string, value: string): boolean;
 
   /**
    * Retrieves the current localStorage or sessionStorage data.
-   * @param location 0 for localStorage, 1 for sessionStorage.
+   * @param location `0` for localStorage, `1` for sessionStorage, `2` for AMP state.
+   * @param key A storage item key (optional). To get all keys, pass `undefined` here.
    * @return
    */
-  getStorage(location: number): { [key: string]: string };
+  getStorage(location: number, key?: string | null): Promise<StorageValue>;
 
   /**
    * Requests a change in localStorage or sessionStorage.
-   * @param location 0 for localStorage, 1 for sessionStorage.
+   * @param location `0` for localStorage, `1` for sessionStorage, `2` for AMP state.
    * @param key A storage item key. To change all keys, pass `null` here.
    * @param value A storage value. To remove a key, pass `null` here.
    * @return True if storage change was applied.
    */
-  changeStorage(location: number, key: string | null, value: string | null): boolean;
+  setStorage(location: number, key: string | null, value: string | null): boolean;
 }
+
+type StorageValue = { [key: string]: string };
 
 // OffscreenCanvas not yet available in TypeScript - 'transferControlToOffscreen' would not be
 // detected as a Canvas method unless this is here

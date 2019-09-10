@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-import { HTMLElement } from './dom/HTMLElement';
-import { SVGElement } from './dom/SVGElement';
+import { AMP } from './amp/amp';
+import { CharacterData } from './dom/CharacterData';
+import { Comment } from './dom/Comment';
+import { DOMTokenList } from './dom/DOMTokenList';
+import { Document } from './dom/Document';
+import { DocumentFragment } from './dom/DocumentFragment';
+import { Element } from './dom/Element';
+import { Event as WorkerDOMEvent } from './Event';
+import { GlobalScope, WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
 import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { HTMLDataElement } from './dom/HTMLDataElement';
+import { HTMLDataListElement } from './dom/HTMLDataListElement';
+import { HTMLElement } from './dom/HTMLElement';
 import { HTMLEmbedElement } from './dom/HTMLEmbedElement';
 import { HTMLFieldSetElement } from './dom/HTMLFieldSetElement';
 import { HTMLFormElement } from './dom/HTMLFormElement';
@@ -45,19 +54,11 @@ import { HTMLTableElement } from './dom/HTMLTableElement';
 import { HTMLTableRowElement } from './dom/HTMLTableRowElement';
 import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
-import { Document } from './dom/Document';
-import { GlobalScope } from './WorkerDOMGlobalScope';
+import { MutationObserver } from './MutationObserver';
+import { SVGElement } from './dom/SVGElement';
+import { Text } from './dom/Text';
 import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
-import { MutationObserver } from './MutationObserver';
-import { Event as WorkerDOMEvent } from './Event';
-import { Text } from './dom/Text';
-import { HTMLDataListElement } from './dom/HTMLDataListElement';
-import { CharacterData } from './dom/CharacterData';
-import { DOMTokenList } from './dom/DOMTokenList';
-import { Comment } from './dom/Comment';
-import { DocumentFragment } from './dom/DocumentFragment';
-import { Element } from './dom/Element';
 
 const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
   Array: true,
@@ -197,7 +198,7 @@ const noop = () => void 0;
 
 // WorkerDOM.Document.defaultView ends up being the window object.
 // React requires the classes to exist off the window object for instanceof checks.
-export const workerDOM = (function(postMessage, addEventListener, removeEventListener) {
+export const workerDOM: WorkerDOMGlobalScope = (function(postMessage, addEventListener, removeEventListener) {
   const document = new Document(globalScope);
   // TODO(choumx): Avoid polluting Document's public API.
   document.postMessage = postMessage;
@@ -216,30 +217,8 @@ export const workerDOM = (function(postMessage, addEventListener, removeEventLis
   return document.defaultView;
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
-/**
- * Instruments relevant calls to work via LongTask API.
- * @param global
- */
-function updateLongTask(global: WorkerGlobalScope) {
-  const originalFetch = global['fetch'];
-  if (originalFetch) {
-    try {
-      Object.defineProperty(global, 'fetch', {
-        enumerable: true,
-        writable: true,
-        configurable: true,
-        value: longTaskWrap(workerDOM.document, originalFetch.bind(global)),
-      });
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-}
-
-/**
- * @param global
- */
-function updateGlobals(global: WorkerGlobalScope) {
+// Modify global scope by removing disallowed properties and wrapping `fetch()`.
+(function(global: WorkerGlobalScope) {
   /**
    * @param object
    * @param property
@@ -270,9 +249,22 @@ function updateGlobals(global: WorkerGlobalScope) {
     current = Object.getPrototypeOf(current);
   }
   // Wrap global.fetch() with our longTask API.
-  updateLongTask(global);
-}
+  const originalFetch = global['fetch'];
+  if (originalFetch) {
+    try {
+      Object.defineProperty(global, 'fetch', {
+        enumerable: true,
+        writable: true,
+        configurable: true,
+        value: longTaskWrap(workerDOM.document, originalFetch.bind(global)),
+      });
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+})(self);
 
-updateGlobals(self);
+// Offer APIs like AMP.setState() on the global scope.
+(self as any).AMP = new AMP(workerDOM.document);
 
 export const hydrate = initialize;

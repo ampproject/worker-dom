@@ -150,7 +150,7 @@ export const enum LongTaskMutationIndex {
 /**
  * OffscreenCanvas Mutations
  * [
- *   TransferableMutationType.OFFSCREEN_CANVAS_INSTANCE,
+ *   TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE,
  *   Target.index,
  * ]
  */
@@ -162,7 +162,7 @@ export const enum OffscreenCanvasMutationIndex {
 /**
  * ImageBitmap Mutations
  * [
- *   TransferableMutationType.IMAGE_BITMAP_INSTANCE,
+ *   TransferrableMutationType.IMAGE_BITMAP_INSTANCE,
  *   Target.index,
  * ]
  */
@@ -175,7 +175,7 @@ export const enum ImageBitmapMutationIndex {
 /**
  * ObjectMutation Mutations
  * [
- *   TransferableMutationType.IMAGE_BITMAP_INSTANCE,
+ *   TransferrableMutationType.IMAGE_BITMAP_INSTANCE,
  *   Target.index,
  * ]
  * // TODO(choumx): Fix naming inconsistency.
@@ -190,7 +190,7 @@ export const enum ObjectMutationIndex {
 /**
  * ObjectCreation Mutations
  * [
- *   TransferableMutationType.IMAGE_BITMAP_INSTANCE,
+ *   TransferrableMutationType.IMAGE_BITMAP_INSTANCE,
  *   Target.index,
  * ]
  * // TODO(choumx): Fix naming inconsistency.
@@ -220,15 +220,17 @@ export const enum TransferrableObjectType {
 /**
  * Storage Mutations
  * [
- *   TransferableMutationType.STORAGE,
+ *   TransferrableMutationType.STORAGE,
+ *   GetOrSet,
  *   StorageLocation,
  *   string(key),
  *   string(value),
  * ]
  */
 export const enum StorageMutationIndex {
-  Location = 1,
-  Key = 2,
-  Value = 3,
-  End = 4,
+  Operation = 1,
+  Location = 2,
+  Key = 3,
+  Value = 4,
+  End = 5,
 }
