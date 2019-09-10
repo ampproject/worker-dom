@@ -48,7 +48,7 @@ declare interface Sanitizer {
    * @param key A storage item key (optional). To get all keys, pass `undefined` here.
    * @return
    */
-  getStorage(location: number, key?: string | null): { [key: string]: string };
+  getStorage(location: number, key?: string | null): Promise<StorageValue>;
 
   /**
    * Requests a change in localStorage or sessionStorage.
@@ -59,6 +59,8 @@ declare interface Sanitizer {
    */
   setStorage(location: number, key: string | null, value: string | null): boolean;
 }
+
+type StorageValue = { [key: string]: string };
 
 // OffscreenCanvas not yet available in TypeScript - 'transferControlToOffscreen' would not be
 // detected as a Canvas method unless this is here

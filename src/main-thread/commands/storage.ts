@@ -25,14 +25,15 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
 
   const get = (location: StorageLocation, key: string | null): void => {
     if (config.sanitizer && location === StorageLocation.AmpState) {
-      const value = config.sanitizer.getStorage(location, key);
-      const message: StorageValueToWorker = {
-        [TransferrableKeys.type]: MessageType.GET_STORAGE,
-        [TransferrableKeys.storageKey]: key || '',
-        [TransferrableKeys.storageLocation]: location,
-        [TransferrableKeys.value]: value,
-      };
-      workerContext.messageToWorker(message);
+      config.sanitizer.getStorage(location, key).then(value => {
+        const message: StorageValueToWorker = {
+          [TransferrableKeys.type]: MessageType.GET_STORAGE,
+          [TransferrableKeys.storageKey]: key || '',
+          [TransferrableKeys.storageLocation]: location,
+          [TransferrableKeys.value]: value,
+        };
+        workerContext.messageToWorker(message);
+      });
     } else {
       console.error(`STORAGE: Sanitizer not found or unsupported location:`, location);
     }
