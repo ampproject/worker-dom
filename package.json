@@ -1,6 +1,6 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.17.0",
+  "version": "0.18.1",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/main",
   "files": [
@@ -41,16 +41,16 @@
   },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.10.0",
-    "@babel/cli": "7.5.5",
-    "@babel/core": "7.5.5",
+    "@babel/cli": "7.6.0",
+    "@babel/core": "7.6.0",
     "@babel/plugin-proposal-class-properties": "7.5.5",
     "@babel/plugin-proposal-object-rest-spread": "7.5.5",
-    "@babel/preset-env": "7.5.5",
+    "@babel/preset-env": "7.6.0",
     "@types/node": "11.13.19",
     "@types/sinon": "7.0.13",
     "acorn": "7.0.0",
     "acorn-walk": "7.0.0",
-    "ava": "2.2.0",
+    "ava": "2.3.0",
     "babel-plugin-minify-replace": "0.5.0",
     "babel-plugin-transform-remove-console": "6.9.4",
     "bundlesize": "0.18.0",
@@ -97,7 +97,7 @@
     {
       "path": "./dist/worker/worker.js",
       "compression": "brotli",
-      "maxSize": "12.4 kB"
+      "maxSize": "12.5 kB"
     },
     {
       "path": "./dist/main.mjs",
