@@ -15,6 +15,7 @@
  */
 
 import { Document } from './dom/Document';
+import { GetOrSet } from '../transfer/Messages';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { store } from './strings';
@@ -65,7 +66,7 @@ export function createStorage(document: Document, location: StorageLocation, dat
       const stringValue = String(value);
       this[key] = stringValue;
 
-      transfer(document, [TransferrableMutationType.STORAGE, location, store(key), store(stringValue)]);
+      transfer(document, [TransferrableMutationType.STORAGE, GetOrSet.SET, location, store(key), store(stringValue)]);
     },
   });
   define(storage, 'removeItem', {
@@ -74,6 +75,7 @@ export function createStorage(document: Document, location: StorageLocation, dat
 
       transfer(document, [
         TransferrableMutationType.STORAGE,
+        GetOrSet.SET,
         location,
         store(key),
         0, // value == 0 represents deletion.
@@ -88,6 +90,7 @@ export function createStorage(document: Document, location: StorageLocation, dat
 
       transfer(document, [
         TransferrableMutationType.STORAGE,
+        GetOrSet.SET,
         location,
         0, // key == 0 represents all keys.
         0, // value == 0 represents deletion.

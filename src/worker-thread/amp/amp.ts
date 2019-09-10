@@ -49,14 +49,18 @@ export class AMP {
 
       this.document.addGlobalEventListener('message', messageHandler);
       transfer(this.document, [TransferrableMutationType.STORAGE, GetOrSet.GET, StorageLocation.AmpState, /* key */ store(key), /* value */ 0]);
-      setTimeout(resolve, 5000, null); // TODO: Why a magical constant, define and explain.
+      setTimeout(resolve, 500, null); // TODO: Why a magical constant, define and explain.
     });
   }
 
   setState(state: {}): void {
     // Stringify `state` so it can be post-messaged as a transferrable.
-    // TODO: try/catch?
-    const stringified = JSON.stringify(state);
+    let stringified;
+    try {
+      stringified = JSON.stringify(state);
+    } catch (e) {
+      throw new Error(`AMP.setState only accepts valid JSON as input.`);
+    }
     transfer(this.document, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.AmpState, /* key */ 0, /* value */ store(stringified)]);
   }
 }

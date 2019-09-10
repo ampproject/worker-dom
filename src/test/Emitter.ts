@@ -26,9 +26,11 @@ export interface Emitter {
   unsubscribe(callback: Subscriber): void;
 }
 
-// This has to persist across multiple emitter() and expectMutations() calls since
-// mutation transfer state is also stored at the module-level. This can be changed
-// if we refactor transfer state to be scoped to the Document.
+/**
+ * This has to persist across multiple emitter() calls since
+ * mutation transfer state is also stored at the module-level.
+ * TODO: Remove this and replace with strings.getForTesting() at call sites.
+ */
 const strings: Array<string> = [];
 
 /**
@@ -70,18 +72,18 @@ export function emitter(document: Document): Emitter {
   };
 }
 
-type ExpectMutationsCallback = (mutations: number[], strings: string[]) => void;
+type ExpectMutationsCallback = (mutations: number[]) => void;
 
 /**
  * Stubs `document.postMessage` to invoke `callback`.
+ * @note Use strings.getForTesting() to verify indices of stored strings.
  * @param document
  * @param callback
  */
 export const expectMutations = (document: Document, callback: ExpectMutationsCallback): void => {
   document[TransferrableKeys.observe]();
-  document.postMessage = (message: MutationFromWorker, buffers: Array<ArrayBuffer>) => {
-    strings.push(...message[TransferrableKeys.strings]);
+  document.postMessage = (message: MutationFromWorker) => {
     const mutations = Array.from(new Uint16Array(message[TransferrableKeys.mutations]));
-    callback(mutations, strings);
+    callback(mutations);
   };
 };
