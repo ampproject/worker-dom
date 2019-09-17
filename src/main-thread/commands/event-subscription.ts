@@ -31,12 +31,12 @@ const shouldTrackChanges = (node: HTMLElement): boolean => node && 'value' in no
 
 /**
  * When a node that has a value needing synced doesn't already have an event listener
- * listening for changed values, ensure the value is synced with a default listener.
+ * listening for input values, ensure the value is synced with a default listener.
  * @param worker whom to dispatch value toward.
  * @param node node to listen to value changes on.
  */
-const applyDefaultChangeListener = (workerContext: WorkerContext, node: RenderableElement): void => {
-  shouldTrackChanges(node as HTMLElement) && node.onchange === null && (node.onchange = () => fireValueChange(workerContext, node));
+export const applyDefaultInputListener = (workerContext: WorkerContext, node: RenderableElement): void => {
+  shouldTrackChanges(node as HTMLElement) && node.oninput === null && (node.oninput = () => fireValueChange(workerContext, node));
 };
 
 /**
@@ -143,22 +143,22 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
       return;
     }
 
-    let changeEventSubscribed: boolean = target.onchange !== null;
+    let inputEventSubscribed: boolean = target.oninput !== null;
     const isChangeEvent = type === 'change';
     if (addEvent) {
       if (isChangeEvent) {
-        changeEventSubscribed = true;
+        inputEventSubscribed = true;
         target.onchange = null;
       }
       (target as HTMLElement).addEventListener(type, (knownListeners[index] = eventHandler(target._index_)));
     } else {
       if (isChangeEvent) {
-        changeEventSubscribed = false;
+        inputEventSubscribed = false;
       }
       (target as HTMLElement).removeEventListener(type, knownListeners[index]);
     }
-    if (shouldTrackChanges(target as HTMLElement) && !changeEventSubscribed) {
-      applyDefaultChangeListener(workerContext, target as RenderableElement);
+    if (shouldTrackChanges(target as HTMLElement) && !inputEventSubscribed) {
+      applyDefaultInputListener(workerContext, target as RenderableElement);
     }
   };
 
