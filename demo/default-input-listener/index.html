@@ -20,7 +20,13 @@
   <!-- <script src="./dist/main.js" defer></script> -->
 </head>
 <body>
-  <div src="/default-input-listener/author.js" id="upgrade-me"></div>
+  <div src="/default-input-listener/author.js" id="upgrade-me">
+    <div>
+      <p>Worker Thread Implementation, Default Syntax</p>
+      <input id="default-syntax-input" />
+      <p id="default-syntax-output"></p>
+    </div>
+  </div>
   <script type="module">
     import {upgradeElement} from '/dist/main.mjs';
     upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');

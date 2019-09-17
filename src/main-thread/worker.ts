@@ -38,7 +38,7 @@ export class WorkerContext {
     this.nodeContext = nodeContext;
     this.config = config;
 
-    const { skeleton, strings } = createHydrateableRootNode(baseElement, config);
+    const { skeleton, strings } = createHydrateableRootNode(baseElement, config, this);
 
     const cssKeys: Array<string> = [];
     for (const key in baseElement.style) {
@@ -71,7 +71,7 @@ export class WorkerContext {
       //# sourceURL=${encodeURI(config.authorURL)}`;
     this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
     if (WORKER_DOM_DEBUG) {
-      console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config));
+      console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config, this));
     }
     if (config.onCreateWorker) {
       config.onCreateWorker(baseElement, strings, skeleton, cssKeys);
