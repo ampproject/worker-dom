@@ -18,6 +18,8 @@ import { HydrateableNode, NodeType } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { NumericBoolean } from '../utils';
 import { WorkerDOMConfiguration, HydrationFilterPredicate } from './configuration';
+import { applyDefaultInputListener } from './commands/event-subscription';
+import { WorkerContext } from './worker';
 
 const NODES_ALLOWED_TO_TRANSMIT_TEXT_CONTENT = [NodeType.COMMENT_NODE, NodeType.TEXT_NODE];
 
@@ -30,6 +32,7 @@ function createHydrateableNode(
   element: RenderableElement,
   minimizeString: (value: string) => number,
   hydrateFilter: HydrationFilterPredicate,
+  workerContext: WorkerContext,
 ): HydrateableNode {
   const filteredChildNodes = [].slice.call(element.childNodes).filter(hydrateFilter);
   const hydrated: HydrateableNode = {
@@ -37,7 +40,9 @@ function createHydrateableNode(
     [TransferrableKeys.transferred]: NumericBoolean.FALSE,
     [TransferrableKeys.nodeType]: element.nodeType,
     [TransferrableKeys.localOrNodeName]: minimizeString(element.localName || element.nodeName),
-    [TransferrableKeys.childNodes]: filteredChildNodes.map((child: RenderableElement) => createHydrateableNode(child, minimizeString, hydrateFilter)),
+    [TransferrableKeys.childNodes]: filteredChildNodes.map((child: RenderableElement) =>
+      createHydrateableNode(child, minimizeString, hydrateFilter, workerContext),
+    ),
     [TransferrableKeys.attributes]: [].map.call(element.attributes || [], (attribute: Attr) => [
       minimizeString(attribute.namespaceURI || 'null'),
       minimizeString(attribute.name),
@@ -50,6 +55,7 @@ function createHydrateableNode(
   if (NODES_ALLOWED_TO_TRANSMIT_TEXT_CONTENT.includes(element.nodeType) && (element as Text).textContent !== null) {
     hydrated[TransferrableKeys.textContent] = minimizeString(element.textContent as string);
   }
+  applyDefaultInputListener(workerContext, element);
   return hydrated;
 }
 
@@ -59,6 +65,7 @@ function createHydrateableNode(
 export function createHydrateableRootNode(
   element: RenderableElement,
   config: WorkerDOMConfiguration,
+  workerContext: WorkerContext,
 ): { skeleton: HydrateableNode; strings: Array<string> } {
   const hydrateFilter: HydrationFilterPredicate = config.hydrateFilter || (() => true);
   const strings: Array<string> = [];
@@ -73,15 +80,19 @@ export function createHydrateableRootNode(
     strings.push(value);
     return count;
   };
-  const skeleton = createHydrateableNode(element, storeString, hydrateFilter);
+  const skeleton = createHydrateableNode(element, storeString, hydrateFilter, workerContext);
   return { skeleton, strings };
 }
 
 /**
  * @param element
  */
-export function createReadableHydrateableRootNode(element: RenderableElement, config: WorkerDOMConfiguration): HydrateableNode {
+export function createReadableHydrateableRootNode(
+  element: RenderableElement,
+  config: WorkerDOMConfiguration,
+  workerContext: WorkerContext,
+): HydrateableNode {
   // "Readable" variant doesn't do any string minimization so we can output it for debugging purposes.
   // Note that this intentionally breaks the type contract of createHydrateableNode() and HydrateableNode.
-  return createHydrateableNode(element, ((value: string): string => value) as any, config.hydrateFilter || (() => true));
+  return createHydrateableNode(element, ((value: string): string => value) as any, config.hydrateFilter || (() => true), workerContext);
 }

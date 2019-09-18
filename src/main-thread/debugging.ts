@@ -30,12 +30,13 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
 import { createReadableHydrateableRootNode } from './serialize';
 import { WorkerDOMConfiguration } from './configuration';
+import { WorkerContext } from './worker';
 
 /**
  * @param element
  */
-export const readableHydrateableRootNode = (element: RenderableElement, config: WorkerDOMConfiguration): Object =>
-  readableHydrateableNode(createReadableHydrateableRootNode(element, config));
+export const readableHydrateableRootNode = (element: RenderableElement, config: WorkerDOMConfiguration, workerContext: WorkerContext): Object =>
+  readableHydrateableNode(createReadableHydrateableRootNode(element, config, workerContext));
 /**
  * @param nodeContext {NodeContext}
  * @param node {TransferredNode}

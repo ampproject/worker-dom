@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Default Change Listener</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/demo.css" rel="stylesheet">
+  <style>
+    input {
+      font-size: 1em;
+      margin-top: 0.2em;
+      border: 1px solid #ccc;
+      display: block;
+    }
+  </style>
+  <script src="/dist/main.mjs" type="module"></script>
+  <script src="/dist/main.js" nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/main.js" defer></script> -->
+</head>
+<body>
+  <div src="/default-input-listener/author.js" id="upgrade-me">
+    <div>
+      <p>Worker Thread Implementation, Default Syntax</p>
+      <input id="default-syntax-input" />
+      <p id="default-syntax-output"></p>
+    </div>
+  </div>
+  <script type="module">
+    import {upgradeElement} from '/dist/main.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
+  </script>
+  <script nomodule async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
+    }, false);
+  </script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
+    }, false);
+  </script> -->
+  <div id="main-thread-area">
+    <p>Main Thread Implementation</p>
+    <script>
+      const parent = document.getElementById('main-thread-area');
+      const input = document.createElement('input');
+      const valueOut = document.createElement('p');
+
+      parent.appendChild(input);
+      parent.appendChild(valueOut)
+
+      setInterval(_ => valueOut.textContent = input.value, 500);
+    </script>
+
+  </div>
+</body>
+</html>
