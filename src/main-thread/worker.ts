@@ -39,15 +39,20 @@ export class WorkerContext {
     this.config = config;
 
     const { skeleton, strings } = createHydrateableRootNode(baseElement, config, this);
-
     const cssKeys: Array<string> = [];
-    for (const key in baseElement.style) {
-      cssKeys.push(key);
-    }
-
+    const globalEventHandlerKeys: Array<string> = [];
     // TODO(choumx): Sync read of all localStorage and sessionStorage a possible performance bottleneck?
     const localStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Local) : window.localStorage;
     const sessionStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Session) : window.sessionStorage;
+
+    for (const key in baseElement.style) {
+      cssKeys.push(key);
+    }
+    for (const key in baseElement) {
+      if (key.startsWith('on')) {
+        globalEventHandlerKeys.push(key);
+      }
+    }
 
     const code = `
       'use strict';
@@ -60,6 +65,7 @@ export class WorkerContext {
           ${JSON.stringify(strings)},
           ${JSON.stringify(skeleton)},
           ${JSON.stringify(cssKeys)},
+          ${JSON.stringify(globalEventHandlerKeys)},
           [${window.innerWidth}, ${window.innerHeight}],
           ${JSON.stringify(localStorageData)},
           ${JSON.stringify(sessionStorageData)}
