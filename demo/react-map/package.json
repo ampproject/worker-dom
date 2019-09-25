@@ -14,8 +14,8 @@
     "react-dom": "16.9.0"
   },
   "devDependencies": {
-    "@babel/core": "7.6.0",
-    "@babel/preset-env": "7.6.0",
+    "@babel/core": "7.6.2",
+    "@babel/preset-env": "7.6.2",
     "@babel/plugin-transform-react-jsx": "7.3.0",
     "babel-loader": "8.0.6",
     "css-loader": "3.2.0",
