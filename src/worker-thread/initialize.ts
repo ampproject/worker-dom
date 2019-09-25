@@ -21,17 +21,20 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
 import { createStorage } from './Storage';
 import { StorageLocation } from '../transfer/TransferrableStorage';
+import { appendGlobalEventProperties } from './dom/HTMLElement';
 
 export function initialize(
   document: Document,
   strings: Array<string>,
   hydrateableNode: HydrateableNode,
   cssKeys: Array<string>,
+  globalEventHandlerKeys: Array<string>,
   [innerWidth, innerHeight]: [number, number],
   localStorageData: { [key: string]: string },
   sessionStorageData: { [key: string]: string },
 ): void {
   addCssKeys(cssKeys);
+  appendGlobalEventProperties(globalEventHandlerKeys);
   strings.forEach(storeString);
   (hydrateableNode[TransferrableKeys.childNodes] || []).forEach(child =>
     document.body.appendChild(document[TransferrableKeys.hydrateNode](strings, child)),
