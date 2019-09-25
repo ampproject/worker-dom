@@ -20,7 +20,33 @@ import { matchNearestParent, tagNameConditionPredicate } from './matchElements';
 import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
+export const appendGlobalEventProperties = (keys: Array<string>): void => {
+  const keysToAppend = keys.filter(key => !HTMLElement.prototype.hasOwnProperty(key));
+  if (keysToAppend.length <= 0) {
+    return;
+  }
+
+  keysToAppend.forEach((key: string): void => {
+    const normalizedKey = key.replace(/on/, '');
+    Object.defineProperty(HTMLElement.prototype, key, {
+      enumerable: true,
+      get(): string {
+        return this[TransferrableKeys.propertyEventHandlers][normalizedKey] || null;
+      },
+      set(value) {
+        const stored = this[TransferrableKeys.propertyEventHandlers][normalizedKey];
+        if (stored) {
+          this.removeEventListener(normalizedKey, stored);
+        }
+        this.addEventListener(normalizedKey, value);
+        this[TransferrableKeys.propertyEventHandlers][normalizedKey] = value;
+      },
+    });
+  });
+};
+
 export class HTMLElement extends Element {
+  public [TransferrableKeys.propertyEventHandlers]: { [key: string]: Function } = {};
   /**
    * Find the nearest parent form element.
    * Implemented in HTMLElement since so many extensions of HTMLElement repeat this functionality. This is not to spec.

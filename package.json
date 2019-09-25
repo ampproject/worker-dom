@@ -92,7 +92,7 @@
     {
       "path": "./dist/worker/worker.mjs",
       "compression": "brotli",
-      "maxSize": "11.2 kB"
+      "maxSize": "11.3 kB"
     },
     {
       "path": "./dist/worker/worker.js",
