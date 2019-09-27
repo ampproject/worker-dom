@@ -94,6 +94,10 @@ Local development of WorkerDOM assumes the following:
 2. Latest LTS release of Node (10 at time of writing) available.
 3. Comfort with TypeScript, the codebase and tests are entirely written in TypeScript.
 
+## Release Log
+
+Each release includes a log of changes with the newly released version. You can find the log here: https://github.com/ampproject/worker-dom/releases
+
 ## Security disclosures
 
 The AMP Project accepts responsible security disclosures through the [Google Application Security program](https://www.google.com/about/appsecurity/).
