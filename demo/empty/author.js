@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-// <div>Hello World!<span>spaner</span><input /></div>
 const span = document.createElement('span');
 const div = document.createElement('div');
 const input = document.createElement('input');
+const button = document.createElement('button');
 
 input.value = '';
 
@@ -27,6 +27,8 @@ function toggle() {
 }
 
 span.addEventListener('click', toggle, false);
+
+button.addEventListener('click', _ => (input.value = ''));
 
 input.addEventListener(
   'input',
@@ -40,10 +42,12 @@ input.addEventListener(
   false,
 );
 
+button.appendChild(document.createTextNode('Reset Value'));
 div.appendChild(document.createTextNode('Hello Originally Empty World!'));
 span.appendChild(document.createTextNode('spaner'));
 div.appendChild(span);
 div.appendChild(input);
+div.appendChild(button);
 document.body.appendChild(div);
 
 div.addEventListener('touchmove', e => console.log('touchmove event', e, e.touches.item(0), e.touches.item(1)));
