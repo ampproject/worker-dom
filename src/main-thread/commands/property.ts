@@ -21,8 +21,9 @@ import { NumericBoolean } from '../../utils';
 export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.PROPERTIES);
 
-  const getValue = (isBooleanProperty: boolean, value: number): boolean | string | null => {
-    if (isBooleanProperty) {
+  const getValue = (mutations: Uint16Array, startPosition: number): boolean | string | null => {
+    const value = mutations[startPosition + PropertyMutationIndex.Value];
+    if (mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE) {
       return value === NumericBoolean.TRUE;
     }
     if (value !== 0) {
@@ -37,10 +38,7 @@ export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext
         const targetIndex = mutations[startPosition + PropertyMutationIndex.Target];
         const target = nodeContext.getNode(targetIndex);
         const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
-        const value = getValue(
-          mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE,
-          mutations[startPosition + PropertyMutationIndex.Value],
-        );
+        const value = getValue(mutations, startPosition);
 
         if (target) {
           if (name && value != null) {
@@ -64,10 +62,7 @@ export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext
       const targetIndex = mutations[startPosition + PropertyMutationIndex.Target];
       const target = nodeContext.getNode(targetIndex);
       const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
-      const value = getValue(
-        mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE,
-        mutations[startPosition + PropertyMutationIndex.Value],
-      );
+      const value = getValue(mutations, startPosition);
 
       return {
         target,
