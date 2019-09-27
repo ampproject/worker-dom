@@ -21,17 +21,26 @@ import { NumericBoolean } from '../../utils';
 export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.PROPERTIES);
 
+  const getValue = (isBooleanProperty: boolean, value: number): boolean | string | null => {
+    if (isBooleanProperty) {
+      return value === NumericBoolean.TRUE;
+    }
+    if (value !== 0) {
+      return strings.get(value);
+    }
+    return null;
+  };
+
   return {
     execute(mutations: Uint16Array, startPosition: number): number {
       if (allowedExecution) {
         const targetIndex = mutations[startPosition + PropertyMutationIndex.Target];
         const target = nodeContext.getNode(targetIndex);
         const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
-        const isBooleanProperty = mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE;
-        const value = isBooleanProperty
-          ? mutations[startPosition + PropertyMutationIndex.Value] === NumericBoolean.TRUE
-          : (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) ||
-            null;
+        const value = getValue(
+          mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE,
+          mutations[startPosition + PropertyMutationIndex.Value],
+        );
 
         if (target) {
           if (name && value != null) {
@@ -55,11 +64,10 @@ export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext
       const targetIndex = mutations[startPosition + PropertyMutationIndex.Target];
       const target = nodeContext.getNode(targetIndex);
       const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
-      const isBooleanProperty = mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE;
-      const value = isBooleanProperty
-        ? mutations[startPosition + PropertyMutationIndex.Value] === NumericBoolean.TRUE
-        : (mutations[startPosition + PropertyMutationIndex.Value] !== 0 && strings.get(mutations[startPosition + PropertyMutationIndex.Value])) ||
-          null;
+      const value = getValue(
+        mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE,
+        mutations[startPosition + PropertyMutationIndex.Value],
+      );
 
       return {
         target,
