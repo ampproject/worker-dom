@@ -23,11 +23,11 @@
     "@babel/core": "^7.0.0-0"
   },
   "devDependencies": {
-    "@babel/cli": "7.6.0",
-    "@babel/core": "7.6.0",
-    "@babel/register": "7.6.0",
-    "ava": "2.3.0",
-    "lint-staged": "9.2.5",
+    "@babel/cli": "7.6.2",
+    "@babel/core": "7.6.2",
+    "@babel/register": "7.6.2",
+    "ava": "2.4.0",
+    "lint-staged": "9.3.0",
     "prettier": "1.18.2",
     "rimraf": "2.7.1"
   },
