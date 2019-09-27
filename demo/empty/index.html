@@ -23,8 +23,8 @@
       display: block;
     }
   </style>
-  <script src="/dist/debug/main.mjs" type="module"></script>
-  <script src="/dist/debug/main.js" nomodule defer></script>
+  <script src="/dist/main.mjs" type="module"></script>
+  <script src="/dist/main.js" nomodule defer></script>
   <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
   <!-- Comment either block to enable module/nomodule or disable it. -->
   <!-- <script src="./dist/main.js" defer></script> -->
@@ -32,12 +32,12 @@
 <body>
   <div src="/empty/author.js" id="upgrade-me"></div>
   <script type="module">
-    import {upgradeElement} from '/dist/debug/main.mjs';
-    upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.mjs');
+    import {upgradeElement} from '/dist/main.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
   </script>
   <script nomodule async=false defer>
     document.addEventListener('DOMContentLoaded', function() {
-      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.js');
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
     }, false);
   </script>
   <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
