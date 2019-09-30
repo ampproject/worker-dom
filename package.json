@@ -107,7 +107,7 @@
     {
       "path": "./dist/main.js",
       "compression": "brotli",
-      "maxSize": "3.9 kB"
+      "maxSize": "4.0 kB"
     }
   ],
   "esm": {

@@ -18,7 +18,7 @@ import { HydrateableNode, NodeType } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { NumericBoolean } from '../utils';
 import { WorkerDOMConfiguration, HydrationFilterPredicate } from './configuration';
-import { applyDefaultInputListener } from './commands/event-subscription';
+import { applyDefaultInputListener, applyDefaultMutationObservation } from './commands/event-subscription';
 import { WorkerContext } from './worker';
 
 const NODES_ALLOWED_TO_TRANSMIT_TEXT_CONTENT = [NodeType.COMMENT_NODE, NodeType.TEXT_NODE];
@@ -56,6 +56,7 @@ function createHydrateableNode(
     hydrated[TransferrableKeys.textContent] = minimizeString(element.textContent as string);
   }
   applyDefaultInputListener(workerContext, element);
+  applyDefaultMutationObservation(workerContext, element);
   return hydrated;
 }
 
