@@ -22,6 +22,13 @@ import { CommandExecutorInterface } from './interface';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
 /**
+ * Monitoring Nodes attribute changes requires a Mutation Observer.
+ * We store the nodes being monitored to avoid creating more than one Observer
+ * per Element.
+ */
+const monitoredNodes: Map<RenderableElement, boolean> = new Map();
+
+/**
  * Instead of a whitelist of elements that need their value tracked, use the existence
  * of a property called value to drive the decision.
  * @param node node to check if values should be tracked.
@@ -37,6 +44,20 @@ const shouldTrackChanges = (node: HTMLElement): boolean => node && 'value' in no
  */
 export const applyDefaultInputListener = (workerContext: WorkerContext, node: RenderableElement): void => {
   shouldTrackChanges(node as HTMLElement) && node.oninput === null && (node.oninput = () => fireValueChange(workerContext, node));
+};
+
+/**
+ * Use a MutationObserver to capture value changes based on Attribute modification (frequently used by frameworks).
+ * @param worker whom to dispatch value toward.
+ * @param node node to listen to value changes on.
+ */
+export const sendValueChangeOnAttributeMutation = (workerContext: WorkerContext, node: RenderableElement): void => {
+  if (shouldTrackChanges(node as HTMLElement) && !monitoredNodes.get(node)) {
+    new MutationObserver((mutations: Array<MutationRecord>) =>
+      mutations.map(mutation => fireValueChange(workerContext, mutation.target as RenderableElement)),
+    ).observe(node, { attributes: true });
+    monitoredNodes.set(node, true);
+  }
 };
 
 /**
@@ -157,8 +178,9 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
       }
       (target as HTMLElement).removeEventListener(type, knownListeners[index]);
     }
-    if (shouldTrackChanges(target as HTMLElement) && !inputEventSubscribed) {
-      applyDefaultInputListener(workerContext, target as RenderableElement);
+    if (shouldTrackChanges(target as HTMLElement)) {
+      if (!inputEventSubscribed) applyDefaultInputListener(workerContext, target as RenderableElement);
+      sendValueChangeOnAttributeMutation(workerContext, target as RenderableElement);
     }
   };
 
