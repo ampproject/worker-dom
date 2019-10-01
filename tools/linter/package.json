@@ -27,7 +27,7 @@
     "@babel/core": "7.6.2",
     "@babel/register": "7.6.2",
     "ava": "2.4.0",
-    "lint-staged": "9.3.0",
+    "lint-staged": "9.4.1",
     "prettier": "1.18.2",
     "rimraf": "2.7.1"
   },

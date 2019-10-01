@@ -17,7 +17,7 @@
 import { ChildListMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 import { NodeContext } from '../nodes';
-import { applyDefaultInputListener } from './event-subscription';
+import { applyDefaultInputListener, sendValueChangeOnAttributeMutation } from './event-subscription';
 
 export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode }: NodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHILD_LIST);
@@ -56,6 +56,7 @@ export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode 
                   // Transferred nodes that are not stored were previously removed by the sanitizer.
                   target.insertBefore(newNode, (nextSibling && getNode(nextSibling)) || null);
                   applyDefaultInputListener(workerContext, newNode);
+                  sendValueChangeOnAttributeMutation(workerContext, newNode);
                 }
               });
           }
