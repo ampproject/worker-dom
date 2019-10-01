@@ -52,7 +52,7 @@ export const applyDefaultInputListener = (workerContext: WorkerContext, node: Re
  * @param node node to listen to value changes on.
  */
 export const sendValueChangeOnAttributeMutation = (workerContext: WorkerContext, node: RenderableElement): void => {
-  if (shouldTrackChanges(node as HTMLElement) && !!!monitoredNodes.get(node)) {
+  if (shouldTrackChanges(node as HTMLElement) && !monitoredNodes.get(node)) {
     new MutationObserver((mutations: Array<MutationRecord>) =>
       mutations.map(mutation => fireValueChange(workerContext, mutation.target as RenderableElement)),
     ).observe(node, { attributes: true });
