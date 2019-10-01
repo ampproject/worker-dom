@@ -47,7 +47,7 @@
     "@babel/plugin-proposal-object-rest-spread": "7.6.2",
     "@babel/preset-env": "7.6.2",
     "@types/node": "11.13.21",
-    "@types/sinon": "7.0.13",
+    "@types/sinon": "7.5.0",
     "acorn": "7.1.0",
     "acorn-walk": "7.0.0",
     "ava": "2.4.0",
