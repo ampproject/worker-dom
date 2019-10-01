@@ -51,7 +51,7 @@ export const applyDefaultInputListener = (workerContext: WorkerContext, node: Re
  * @param worker whom to dispatch value toward.
  * @param node node to listen to value changes on.
  */
-export const applyDefaultMutationObservation = (workerContext: WorkerContext, node: RenderableElement): void => {
+export const sendValueChangeOnAttributeMutation = (workerContext: WorkerContext, node: RenderableElement): void => {
   if (shouldTrackChanges(node as HTMLElement) && !!!monitoredNodes.get(node)) {
     new MutationObserver((mutations: Array<MutationRecord>) =>
       mutations.map(mutation => fireValueChange(workerContext, mutation.target as RenderableElement)),
@@ -180,7 +180,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
     }
     if (shouldTrackChanges(target as HTMLElement)) {
       if (!inputEventSubscribed) applyDefaultInputListener(workerContext, target as RenderableElement);
-      applyDefaultMutationObservation(workerContext, target as RenderableElement);
+      sendValueChangeOnAttributeMutation(workerContext, target as RenderableElement);
     }
   };
 
