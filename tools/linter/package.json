@@ -23,8 +23,8 @@
     "@babel/core": "^7.0.0-0"
   },
   "devDependencies": {
-    "@babel/cli": "7.6.2",
-    "@babel/core": "7.6.2",
+    "@babel/cli": "7.6.4",
+    "@babel/core": "7.6.4",
     "@babel/register": "7.6.2",
     "ava": "2.4.0",
     "lint-staged": "9.4.1",
