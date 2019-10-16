@@ -42,7 +42,9 @@ export class NodeContext {
     baseElement._index_ = 2;
     // Lastly, it's important while initializing the document that we store
     // the default nodes present in the server rendered document.
-    baseElement.childNodes.forEach(n => this.storeNodes(n));
+    // IE11 doesn't support NodeList.prototype.forEach
+    // https://developer.mozilla.org/en-US/docs/Web/API/NodeList/forEach
+    Array.prototype.forEach.call(baseElement.childNodes, (n: ChildNode) => this.storeNodes(n));
   }
 
   public createNodes = (buffer: ArrayBuffer, sanitizer?: Sanitizer): void => {
@@ -107,7 +109,9 @@ export class NodeContext {
    */
   private storeNodes = (node: Node): void => {
     this.storeNode(node, ++this.count);
-    node.childNodes.forEach(n => this.storeNodes(n));
+    // IE11 doesn't support NodeList.prototype.forEach
+    // https://developer.mozilla.org/en-US/docs/Web/API/NodeList/forEach
+    Array.prototype.forEach.call(node.childNodes, (n: ChildNode) => this.storeNodes(n));
   };
 
   /**
