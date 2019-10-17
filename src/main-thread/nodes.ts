@@ -17,6 +17,14 @@
 import { NodeType, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
 import { StringContext } from './strings';
 
+/**
+ * IE11 doesn't support NodeList.prototype.forEach
+ * https://developer.mozilla.org/en-US/docs/Web/API/NodeList/forEach
+ * @param list NodeList to iterate over
+ * @param callback method to call with each node
+ */
+const nodeListEach = (list: NodeList, callback: (value: Node, key: number) => any): void => Array.prototype.forEach.call(list, callback);
+
 export class NodeContext {
   public baseElement: HTMLElement;
   private stringContext: StringContext;
@@ -42,7 +50,7 @@ export class NodeContext {
     baseElement._index_ = 2;
     // Lastly, it's important while initializing the document that we store
     // the default nodes present in the server rendered document.
-    baseElement.childNodes.forEach(n => this.storeNodes(n));
+    nodeListEach(baseElement.childNodes, (n: ChildNode) => this.storeNodes(n));
   }
 
   public createNodes = (buffer: ArrayBuffer, sanitizer?: Sanitizer): void => {
@@ -107,7 +115,7 @@ export class NodeContext {
    */
   private storeNodes = (node: Node): void => {
     this.storeNode(node, ++this.count);
-    node.childNodes.forEach(n => this.storeNodes(n));
+    nodeListEach(node.childNodes, (n: ChildNode) => this.storeNodes(n));
   };
 
   /**
