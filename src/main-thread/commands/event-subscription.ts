@@ -16,10 +16,17 @@
 
 import { MessageType } from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { EVENT_SUBSCRIPTION_LENGTH, EventSubscriptionMutationIndex, TransferrableTouchList } from '../../transfer/TransferrableEvent';
+import {
+  ADD_EVENT_SUBSCRIPTION_LENGTH,
+  REMOVE_EVENT_SUBSCRIPTION_LENGTH,
+  EventSubscriptionMutationIndex,
+  TransferrableTouchList,
+  AddEventRegistrationIndex,
+} from '../../transfer/TransferrableEvent';
 import { WorkerContext } from '../worker';
 import { CommandExecutorInterface } from './interface';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { BASE_ELEMENT_INDEX } from '../nodes';
 
 /**
  * Monitoring Nodes attribute changes requires a Mutation Observer.
@@ -112,7 +119,11 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
    * @param index node index the event comes from (used to dispatchEvent in worker thread).
    * @return eventHandler function consuming event and dispatching to worker thread
    */
-  const eventHandler = (index: number) => (event: Event | KeyboardEvent | MouseEvent | TouchEvent): void => {
+  const eventHandler = (index: number, preventDefault: boolean) => (event: Event | KeyboardEvent | MouseEvent | TouchEvent): void => {
+    if (preventDefault) {
+      event.preventDefault();
+    }
+
     if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
       fireValueChange(workerContext, event.currentTarget as RenderableElement);
     } else if (event.type === 'resize') {
@@ -155,12 +166,20 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
    * ensure that only a single 'change' event is attached to prevent sending values multiple times.
    * @param target node to change listeners on
    * @param addEvent is this an 'addEvent' or 'removeEvent' change
-   * @param type event type requested to change
-   * @param index number in the listeners array this event corresponds to.
+   * @param mutations Uint16Array for this set of changes
+   * @param iterator current location in array to perform this change on
    */
-  const processListenerChange = (target: RenderableElement, addEvent: boolean, type: string, index: number): void => {
+  const processListenerChange = (target: RenderableElement, addEvent: boolean, mutations: Uint16Array, iterator: number): void => {
+    const type = strings.get(mutations[iterator]);
+    const eventIndex = mutations[iterator + AddEventRegistrationIndex.Index];
+
     if (target === nodeContext.baseElement) {
-      addEvent ? addEventListener(type, (knownListeners[index] = eventHandler(1))) : removeEventListener(type, knownListeners[index]);
+      if (addEvent) {
+        const preventDefault = Boolean(mutations[iterator + AddEventRegistrationIndex.WorkerDOMPreventDefault]);
+        addEventListener(type, (knownListeners[eventIndex] = eventHandler(BASE_ELEMENT_INDEX, preventDefault)));
+      } else {
+        removeEventListener(type, knownListeners[eventIndex]);
+      }
       return;
     }
 
@@ -171,12 +190,13 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
         inputEventSubscribed = true;
         target.onchange = null;
       }
-      (target as HTMLElement).addEventListener(type, (knownListeners[index] = eventHandler(target._index_)));
+      const preventDefault = Boolean(mutations[iterator + AddEventRegistrationIndex.WorkerDOMPreventDefault]);
+      (target as HTMLElement).addEventListener(type, (knownListeners[eventIndex] = eventHandler(target._index_, preventDefault)));
     } else {
       if (isChangeEvent) {
         inputEventSubscribed = false;
       }
-      (target as HTMLElement).removeEventListener(type, knownListeners[index]);
+      (target as HTMLElement).removeEventListener(type, knownListeners[eventIndex]);
     }
     if (shouldTrackChanges(target as HTMLElement)) {
       if (!inputEventSubscribed) applyDefaultInputListener(workerContext, target as RenderableElement);
@@ -188,17 +208,24 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
     execute(mutations: Uint16Array, startPosition: number): number {
       const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
       const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
-      const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;
+      const addEventListenersPosition =
+        startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
       const endPosition =
-        startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
+        startPosition +
+        EventSubscriptionMutationIndex.Events +
+        addEventListenerCount * ADD_EVENT_SUBSCRIPTION_LENGTH +
+        removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
 
       if (allowedExecution) {
         const targetIndex = mutations[startPosition + EventSubscriptionMutationIndex.Target];
         const target = nodeContext.getNode(targetIndex);
 
         if (target) {
-          for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
-            processListenerChange(target, iterator <= addEventListenersPosition, strings.get(mutations[iterator]), mutations[iterator + 1]);
+          let iterator = startPosition + EventSubscriptionMutationIndex.Events;
+          while (iterator < endPosition) {
+            const isRemoveEvent = iterator <= addEventListenersPosition;
+            processListenerChange(target, isRemoveEvent, mutations, iterator); // strings.get(mutations[iterator]), mutations[iterator + 1], );
+            iterator += isRemoveEvent ? REMOVE_EVENT_SUBSCRIPTION_LENGTH : ADD_EVENT_SUBSCRIPTION_LENGTH;
           }
         } else {
           console.error(`getNode(${targetIndex}) is null.`);
@@ -208,29 +235,29 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
       return endPosition;
     },
     print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
-      const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
-      const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
-      const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;
-      const endPosition =
-        startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
+      return {};
+      // const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
+      // const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
+      // const addEventListenersPosition = startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * EVENT_SUBSCRIPTION_LENGTH;
+      // const endPosition = startPosition + EventSubscriptionMutationIndex.Events + (addEventListenerCount + removeEventListenerCount) * EVENT_SUBSCRIPTION_LENGTH;
 
-      let removedEventListeners: Array<{ type: string; index: number }> = [];
-      let addedEventListeners: Array<{ type: string; index: number }> = [];
+      // let removedEventListeners: Array<{ type: string; index: number }> = [];
+      // let addedEventListeners: Array<{ type: string; index: number }> = [];
 
-      for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
-        const eventList = iterator <= addEventListenersPosition ? addedEventListeners : removedEventListeners;
-        eventList.push({
-          type: strings.get(mutations[iterator]),
-          index: mutations[iterator + 1],
-        });
-      }
+      // for (let iterator = startPosition + EventSubscriptionMutationIndex.Events; iterator < endPosition; iterator += EVENT_SUBSCRIPTION_LENGTH) {
+      //   const eventList = iterator <= addEventListenersPosition ? addedEventListeners : removedEventListeners;
+      //   eventList.push({
+      //     type: strings.get(mutations[iterator]),
+      //     index: mutations[iterator + 1],
+      //   });
+      // }
 
-      return {
-        target,
-        allowedExecution,
-        removedEventListeners,
-        addedEventListeners,
-      };
+      // return {
+      //   target,
+      //   allowedExecution,
+      //   removedEventListeners,
+      //   addedEventListeners,
+      // };
     },
   };
 };
