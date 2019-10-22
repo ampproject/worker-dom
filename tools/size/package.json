@@ -1,0 +1,35 @@
+{
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "bytes": "3.1.0",
+    "kleur": "3.0.3",
+    "mri": "1.1.4"
+  },
+  "devDependencies": {
+    "@types/bytes": "3.0.0",
+    "@types/mri": "1.1.0",
+    "typescript": "3.6.4"
+  },
+  "volta": {
+    "node": "12.13.0"
+  },
+  "bundlesize": [
+    {
+      "path": "./dist/index.js",
+      "compression": "brotli",
+      "maxSize": "3 kB"
+    },
+    {
+      "path": "./dist/index.js",
+      "compression": "gzip",
+      "maxSize": "3 kB"
+    },
+    {
+      "path": "./dist/index.js",
+      "compression": "none",
+      "maxSize": "3 kB"
+    }
+  ]
+}

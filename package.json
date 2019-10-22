@@ -35,7 +35,7 @@
     "demo": "node -r esm demo/server.js",
     "build": "cross-env MINIFY_BUNDLE=true npm run ~rollup",
     "presize": "npm run build",
-    "size": "bundlesize",
+    "size": "node tools/size/dist/index.js",
     "release": "np",
     "prepublishOnly": "npm-run-all clean build"
   },
@@ -53,8 +53,6 @@
     "ava": "2.4.0",
     "babel-plugin-minify-replace": "0.5.0",
     "babel-plugin-transform-remove-console": "6.9.4",
-    "brotli-size": "4.0.0",
-    "bundlesize": "0.18.0",
     "cross-env": "6.0.3",
     "cross-var": "1.1.0",
     "esm": "3.2.25",
