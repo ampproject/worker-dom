@@ -35,7 +35,7 @@
     "demo": "node -r esm demo/server.js",
     "build": "cross-env MINIFY_BUNDLE=true npm run ~rollup",
     "presize": "npm run build",
-    "size": "node tools/size/dist/index.js",
+    "size": "filesize",
     "release": "np",
     "prepublishOnly": "npm-run-all clean build"
   },
@@ -46,6 +46,7 @@
     "@babel/plugin-proposal-class-properties": "7.5.5",
     "@babel/plugin-proposal-object-rest-spread": "7.6.2",
     "@babel/preset-env": "7.6.3",
+    "@kristoferbaxter/filesize": "0.0.2",
     "@types/node": "11.13.22",
     "@types/sinon": "7.5.0",
     "acorn": "7.1.0",
@@ -87,7 +88,7 @@
       "pre-push": "npm-run-all clean test clean size"
     }
   },
-  "bundlesize": [
+  "filesize": [
     {
       "path": "./dist/worker/worker.mjs",
       "compression": "brotli",
