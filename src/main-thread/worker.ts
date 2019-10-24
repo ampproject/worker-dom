@@ -42,8 +42,8 @@ export class WorkerContext {
     const cssKeys: Array<string> = [];
     const globalEventHandlerKeys: Array<string> = [];
     // TODO(choumx): Sync read of all localStorage and sessionStorage a possible performance bottleneck?
-    const localStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Local) : window.localStorage;
-    const sessionStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Session) : window.sessionStorage;
+    const localStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Local) : Promise.resolve(window.localStorage);
+    const sessionStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Session) : Promise.resolve(window.sessionStorage);
 
     for (const key in baseElement.style) {
       cssKeys.push(key);
@@ -54,34 +54,39 @@ export class WorkerContext {
       }
     }
 
-    const code = `
-      'use strict';
-      (function(){
-        ${workerDOMScript}
-        self['window'] = self;
-        var workerDOM = WorkerThread.workerDOM;
-        WorkerThread.hydrate(
-          workerDOM.document,
-          ${JSON.stringify(strings)},
-          ${JSON.stringify(skeleton)},
-          ${JSON.stringify(cssKeys)},
-          ${JSON.stringify(globalEventHandlerKeys)},
-          [${window.innerWidth}, ${window.innerHeight}],
-          ${JSON.stringify(localStorageData)},
-          ${JSON.stringify(sessionStorageData)}
-        );
-        workerDOM.document[${TransferrableKeys.observe}](this);
-        Object.keys(workerDOM).forEach(function(k){self[k]=workerDOM[k]});
-      }).call(self);
-      ${authorScript}
-      //# sourceURL=${encodeURI(config.authorURL)}`;
-    this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
-    if (WORKER_DOM_DEBUG) {
-      console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config, this));
-    }
-    if (config.onCreateWorker) {
-      config.onCreateWorker(baseElement, strings, skeleton, cssKeys);
-    }
+    Promise.all([localStorageData, sessionStorageData]).then(([ local, session ]) => {
+      const code = `
+        'use strict';
+        (function(){
+          ${workerDOMScript}
+          self['window'] = self;
+          var workerDOM = WorkerThread.workerDOM;
+          WorkerThread.hydrate(
+            workerDOM.document,
+            ${JSON.stringify(strings)},
+            ${JSON.stringify(skeleton)},
+            ${JSON.stringify(cssKeys)},
+            ${JSON.stringify(globalEventHandlerKeys)},
+            [${window.innerWidth}, ${window.innerHeight}],
+            ${JSON.stringify(local)},
+            ${JSON.stringify(session)}
+          );
+          workerDOM.document[${TransferrableKeys.observe}](this);
+          Object.keys(workerDOM).forEach(function(k){self[k]=workerDOM[k]});
+        }).call(self);
+        ${authorScript}
+        //# sourceURL=${encodeURI(config.authorURL)}
+      `;
+
+      this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
+      if (WORKER_DOM_DEBUG) {
+        console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config, this));
+      }
+
+      if (config.onCreateWorker) {
+        config.onCreateWorker(baseElement, strings, skeleton, cssKeys);
+      }
+    })
   }
 
   /**
