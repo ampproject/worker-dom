@@ -59,6 +59,37 @@ export interface TransferrableEvent {
 }
 
 /**
+ * Add Event Registration Transfer
+ *
+ * [
+ *   type,
+ *   index,
+ *   capture,
+ *   once,
+ *   passive,
+ *   workerDOMPreventDefault
+ * ]
+ */
+export const enum AddEventRegistrationIndex {
+  Type = 0,
+  Index = 1,
+  Capture = 2,
+  Once = 3,
+  Passive = 4,
+  WorkerDOMPreventDefault = 5,
+}
+export const ADD_EVENT_SUBSCRIPTION_LENGTH = 6;
+
+/**
+ * Remove Event Registration Transfer
+ */
+export const enum RemoveEventRegistrationIndex {
+  Type = 0,
+  Index = 1,
+}
+export const REMOVE_EVENT_SUBSCRIPTION_LENGTH = 2;
+
+/**
  * Event Subscription Transfer
  *
  * [
@@ -66,8 +97,8 @@ export interface TransferrableEvent {
  *   Target.index,
  *   RemoveEventListener.count,
  *   AddEventListener.count,
- *   ...RemoveEvent<[ EventRegistration.type, EventRegistration.index ]>,
- *   ...AddEvent<[ EventRegistration.type, EventRegistration.index ]>,
+ *   ...RemoveEvent<RemoveEventRegistration>,
+ *   ...AddEvent<AddEventRegistration>,
  * ]
  */
 export const enum EventSubscriptionMutationIndex {
@@ -77,4 +108,3 @@ export const enum EventSubscriptionMutationIndex {
   Events = 4,
   End = 4,
 }
-export const EVENT_SUBSCRIPTION_LENGTH = 2;

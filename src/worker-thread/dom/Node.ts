@@ -15,7 +15,7 @@
  */
 
 import { store as storeNodeMapping, storeOverride as storeOverrideNodeMapping } from '../nodes';
-import { Event, EventHandler } from '../Event';
+import { Event, EventHandler, AddEventListenerOptions } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
@@ -386,7 +386,7 @@ export abstract class Node {
    * @param type Event Type (i.e 'click')
    * @param handler Function called when event is dispatched.
    */
-  public addEventListener(type: string, handler: EventHandler): void {
+  public addEventListener(type: string, handler: EventHandler, options: AddEventListenerOptions | undefined = {}): void {
     const lowerType = toLower(type);
     const storedType = storeString(lowerType);
     const handlers: EventHandler[] = this[TransferrableKeys.handlers][lowerType];
@@ -397,7 +397,18 @@ export abstract class Node {
       this[TransferrableKeys.handlers][lowerType] = [handler];
     }
 
-    transfer(this.ownerDocument as Document, [TransferrableMutationType.EVENT_SUBSCRIPTION, this[TransferrableKeys.index], 0, 1, storedType, index]);
+    transfer(this.ownerDocument as Document, [
+      TransferrableMutationType.EVENT_SUBSCRIPTION,
+      this[TransferrableKeys.index],
+      0,
+      1,
+      storedType,
+      index,
+      Number(Boolean(options.capture)),
+      Number(Boolean(options.once)),
+      Number(Boolean(options.passive)),
+      Number(Boolean(options.workerDOMPreventDefault)),
+    ]);
   }
 
   /**
