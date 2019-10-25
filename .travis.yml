@@ -6,15 +6,27 @@ sudo: required
 node_js:
   - "lts/*"
 before_install:
-  - unset _JAVA_OPTIONS  # JVM heap sizes break closure compiler
+  - unset _JAVA_OPTIONS  # JVM heap sizes break closure comp
 install:
   - npm install
-script: 
-  - npm run test
-  - npm run size
 branches:
   only:
     - master
 cache:
   directories:
     - node_modules
+    
+jobs:
+  include:
+    - stage: "Tests"
+      name: "OSX Unit Tests"
+      script: npm run test
+      os: osx
+    - stage: "Tests"
+      name: "Linux Unit Tests"
+      script: npm run test
+      os: linux
+    - stage: "Size"
+      name: "Sizing Validation"
+      script: npm run size
+      os: linux
