@@ -1,6 +1,3 @@
-os: 
-  - osx
-  - linux
 language: node_js
 sudo: required
 node_js:
@@ -9,12 +6,24 @@ before_install:
   - unset _JAVA_OPTIONS  # JVM heap sizes break closure compiler
 install:
   - npm install
-script: 
-  - npm run test
-  - npm run size
 branches:
   only:
     - master
 cache:
   directories:
     - node_modules
+
+jobs:
+  include:
+    - stage: "Tests"
+      name: "OSX Unit Tests"
+      script: npm run test
+      os: osx
+    - stage: "Tests"
+      name: "Linux Unit Tests"
+      script: npm run test
+      os: linux
+    - stage: "Tests"
+      name: "Sizing Validation"
+      script: npm run size
+      os: linux
