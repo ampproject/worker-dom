@@ -6,7 +6,7 @@ sudo: required
 node_js:
   - "lts/*"
 before_install:
-  - unset _JAVA_OPTIONS  # JVM heap sizes break closure comp
+  - unset _JAVA_OPTIONS  # JVM heap sizes break closure compiler
 install:
   - npm install
 branches:
@@ -15,7 +15,7 @@ branches:
 cache:
   directories:
     - node_modules
-    
+
 jobs:
   include:
     - stage: "Tests"
