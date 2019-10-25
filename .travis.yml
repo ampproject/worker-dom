@@ -23,7 +23,7 @@ jobs:
       name: "Linux Unit Tests"
       script: npm run test
       os: linux
-    - stage: "Size"
+    - stage: "Tests"
       name: "Sizing Validation"
       script: npm run size
       os: linux
