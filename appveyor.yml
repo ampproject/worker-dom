@@ -15,8 +15,6 @@ install:
 test_script:
   # NPM execute test suite
   - npm run test
-  # NPM execute size task (ensures the build system works)
-  - npm run size
 
 # Don't actually build.
 build: off
