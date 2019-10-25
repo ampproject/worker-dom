@@ -35,6 +35,13 @@ interface EventOptions {
 
 export type EventHandler = (event: Event) => any;
 
+export interface AddEventListenerOptions {
+  capture?: boolean;
+  once?: boolean;
+  passive?: boolean;
+  workerDOMPreventDefault?: boolean;
+}
+
 interface Touch {
   readonly identifier: number;
   readonly screenX: number;

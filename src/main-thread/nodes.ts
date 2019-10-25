@@ -25,6 +25,8 @@ import { StringContext } from './strings';
  */
 const nodeListEach = (list: NodeList, callback: (value: Node, key: number) => any): void => Array.prototype.forEach.call(list, callback);
 
+export const BASE_ELEMENT_INDEX = 1;
+
 export class NodeContext {
   public baseElement: HTMLElement;
   private stringContext: StringContext;
@@ -43,7 +45,7 @@ export class NodeContext {
 
     // The nodes map is populated with two default values pointing to baseElement.
     // These are [document, document.body] from the worker.
-    this.nodes = new Map([[1, baseElement], [2, baseElement]]);
+    this.nodes = new Map([[BASE_ELEMENT_INDEX, baseElement], [2, baseElement]]);
     this.baseElement = baseElement as HTMLElement;
     // To ensure a lookup works correctly from baseElement
     // add an index equal to the background thread document.body.
