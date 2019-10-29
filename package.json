@@ -46,7 +46,7 @@
     "@babel/plugin-proposal-class-properties": "7.5.5",
     "@babel/plugin-proposal-object-rest-spread": "7.6.2",
     "@babel/preset-env": "7.6.3",
-    "@kristoferbaxter/filesize": "0.1.1",
+    "@kristoferbaxter/filesize": "0.2.0",
     "@types/node": "11.13.22",
     "@types/sinon": "7.5.0",
     "acorn": "7.1.0",
