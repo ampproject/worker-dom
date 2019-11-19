@@ -40,7 +40,7 @@
     "prepublishOnly": "npm-run-all clean build"
   },
   "devDependencies": {
-    "@ampproject/rollup-plugin-closure-compiler": "0.12.1",
+    "@ampproject/rollup-plugin-closure-compiler": "0.12.2",
     "@babel/cli": "7.6.4",
     "@babel/core": "7.6.4",
     "@babel/plugin-proposal-class-properties": "7.5.5",
