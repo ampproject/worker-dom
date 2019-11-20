@@ -48,7 +48,7 @@
     "@babel/preset-env": "7.6.3",
     "@kristoferbaxter/filesize": "0.2.0",
     "@types/node": "11.13.22",
-    "@types/sinon": "7.5.0",
+    "@types/sinon": "7.5.1",
     "acorn": "7.1.0",
     "acorn-walk": "7.0.0",
     "ava": "2.4.0",
