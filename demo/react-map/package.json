@@ -14,9 +14,9 @@
     "react-dom": "16.11.0"
   },
   "devDependencies": {
-    "@babel/core": "7.6.4",
-    "@babel/preset-env": "7.6.3",
-    "@babel/plugin-transform-react-jsx": "7.3.0",
+    "@babel/core": "7.7.4",
+    "@babel/preset-env": "7.7.4",
+    "@babel/plugin-transform-react-jsx": "7.7.4",
     "babel-loader": "8.0.6",
     "css-loader": "3.2.0",
     "mini-css-extract-plugin": "0.8.0",
