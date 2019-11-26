@@ -1,6 +1,6 @@
 # WorkerDOM
 
-An in-progress (as in very-alpha) implementation of the DOM API intended to run within a Web Worker. 
+An in-progress implementation of the DOM API intended to run within a Web Worker. 
 
 **Purpose**: Move complexity of intermediate work related to DOM mutations to a background thread, sending only the necessary manipulations to a foreground thread.
 
@@ -86,6 +86,14 @@ This script will build the current version of WorkerDOM and start up a local [we
 ## Which JavaScript APIs can I use?
 
 Currently, most DOM elements and their properties are supported. DOM query APIs like `querySelector` have partial support. Browser APIs like History are not implemented yet. Please see the API support matrix [here](web_compat_table.md).
+
+## Which Browsers are supported?
+
+In general we support the latest two versions of major browsers like Chrome, Firefox, Edge, Safari, Opera and UC Browser. We support desktop, phone, tablet and the web view version of these respective browsers.
+
+Beyond that, we aim for very wide browser support and we accept fixes for all browsers with market share greater than 1 percent.
+
+In particular, we try to maintain "it might not be perfect but isn't broken"-support for IE 11, iOS 8, the Android 4.0 system browser and Chrome 41.
 
 ## Local Development
 
