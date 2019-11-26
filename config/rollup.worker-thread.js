@@ -16,7 +16,7 @@
 
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
-import replace from 'rollup-plugin-replace';
+import replace from '@rollup/plugin-replace';
 import copy from 'rollup-plugin-copy';
 import { babelPlugin } from './rollup.plugins.js';
 
