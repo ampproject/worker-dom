@@ -63,7 +63,6 @@ import { wrap as longTaskWrap } from './long-task';
 const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
   Array: true,
   ArrayBuffer: true,
-  Blob: true,
   BigInt: true,
   BigInt64Array: true,
   BigUint64Array: true,
