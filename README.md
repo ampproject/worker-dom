@@ -53,7 +53,7 @@ The nomodule format exposes the global `MainThread`, and could upgrade the `div`
 
 ### AMP Distribution for `amp-script`
 
-WorkerDOM has a special output variant that supplies additional hooks for includes safety features e.g. HTML sanitization and a web worker sandbox. This variant is distributed under the amp folder for main and worker thread binaries:
+WorkerDOM has a special output variant that supplies additional hooks for safety features e.g. HTML sanitization. This variant is distributed under the amp folder for main and worker thread binaries:
 
 ```
 amp/main.mjs
