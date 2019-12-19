@@ -34,7 +34,7 @@
     "predemo": "cross-env DEBUG_BUNDLE=true npm-run-all ~rollup",
     "demo": "node -r esm demo/server.js",
     "build": "cross-env MINIFY_BUNDLE=true npm-run-all ~rollup",
-    "presize": "npm run build",
+    "presize": "npm-run-all build",
     "size": "filesize",
     "release": "np",
     "prepublishOnly": "npm-run-all clean build"
