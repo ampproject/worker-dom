@@ -113,8 +113,10 @@ export class MutatorProcessor {
    * Investigations in using asyncFlush to resolve are worth considering.
    *
    * TODO(amphtml): Consider returning the disallowed mutations for better error messaging.
+   *
+   * @param allowVisibleMutations
    */
-  private syncFlush = (allowVisibleMutations: boolean): void => {
+  private syncFlush = (allowVisibleMutations: boolean = true): void => {
     if (WORKER_DOM_DEBUG) {
       console.group('Mutations');
     }
