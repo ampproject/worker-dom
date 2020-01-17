@@ -21,8 +21,8 @@ export const CharacterDataProcessor: CommandExecutorInterface = (strings, nodes,
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHARACTER_DATA);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number): number {
-      if (allowedExecution) {
+    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
+      if (allowedExecution && allowedMutation) {
         const targetIndex = mutations[startPosition + CharacterDataMutationIndex.Target];
         const target = nodes.getNode(targetIndex);
         const value = mutations[startPosition + CharacterDataMutationIndex.Value];

@@ -23,8 +23,8 @@ export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, node
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number): number {
-      if (allowedExecution) {
+    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
+      if (allowedExecution && allowedMutation) {
         const targetIndex = mutations[startPosition + OffscreenCanvasMutationIndex.Target];
         const target = nodeContext.getNode(targetIndex);
         if (target) {

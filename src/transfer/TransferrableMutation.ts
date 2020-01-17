@@ -30,6 +30,24 @@ export const enum TransferrableMutationType {
   STORAGE = 12,
 }
 
+/**
+ * Returns true if the mutation type can cause a user-visible change to the DOM.
+ * @param type
+ */
+export const isUserVisibleMutation = (type: TransferrableMutationType): boolean => {
+  switch (type) {
+    case TransferrableMutationType.EVENT_SUBSCRIPTION:
+    case TransferrableMutationType.GET_BOUNDING_CLIENT_RECT:
+    case TransferrableMutationType.LONG_TASK_START:
+    case TransferrableMutationType.LONG_TASK_END:
+    case TransferrableMutationType.STORAGE:
+    case TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE:
+      return false;
+    default:
+      return true;
+  }
+};
+
 export const DefaultAllowedMutations = [
   TransferrableMutationType.ATTRIBUTES,
   TransferrableMutationType.CHARACTER_DATA,

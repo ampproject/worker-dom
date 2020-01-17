@@ -18,7 +18,7 @@ import { NodeContext } from './nodes';
 import { StringContext } from './strings';
 import { WorkerContext } from './worker';
 import { OffscreenCanvasProcessor } from './commands/offscreen-canvas';
-import { TransferrableMutationType, ReadableMutationType } from '../transfer/TransferrableMutation';
+import { TransferrableMutationType, ReadableMutationType, isUserVisibleMutation } from '../transfer/TransferrableMutation';
 import { EventSubscriptionProcessor } from './commands/event-subscription';
 import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
 import { ChildListProcessor } from './commands/child-list';
@@ -111,8 +111,10 @@ export class MutatorProcessor {
    * mutations to apply in a single frame.
    *
    * Investigations in using asyncFlush to resolve are worth considering.
+   *
+   * TODO(amphtml): Consider returning the disallowed mutations for better error messaging.
    */
-  private syncFlush = (): void => {
+  private syncFlush = (allowVisibleMutations: boolean): void => {
     if (WORKER_DOM_DEBUG) {
       console.group('Mutations');
     }
@@ -122,11 +124,13 @@ export class MutatorProcessor {
 
       while (operationStart < length) {
         const mutationType = mutationArray[operationStart];
+        // TODO(amphtml): Hoist `skip` up to entry point (index.amp.ts) for configurability?
+        const allow = allowVisibleMutations || !isUserVisibleMutation(mutationType);
         const executor = this.executors[mutationType];
         if (WORKER_DOM_DEBUG) {
-          console.log(ReadableMutationType[mutationType], executor.print(mutationArray, operationStart));
+          console.log(allow ? '' : '[disallowed]', ReadableMutationType[mutationType], executor.print(mutationArray, operationStart));
         }
-        operationStart = executor.execute(mutationArray, operationStart);
+        operationStart = executor.execute(mutationArray, operationStart, allow);
       }
     });
     if (WORKER_DOM_DEBUG) {
