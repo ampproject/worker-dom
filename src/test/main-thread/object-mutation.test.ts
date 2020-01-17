@@ -264,7 +264,7 @@ test('Mutation starts at a non-zero offset', t => {
 
   // add three values to the start of the mutation and change the offset
   const mutationsArray = new Uint16Array([1, 2, 3].concat(mutation));
-  objectMutationProcessor.execute(mutationsArray, 3);
+  objectMutationProcessor.execute(mutationsArray, 3, /* allow */ true);
 
   t.true(stub.withArgs(...args).calledOnce);
 });
@@ -304,7 +304,7 @@ test('Returns correct end offset', t => {
   ];
 
   const mutationsArray = new Uint16Array([1, 2, 3].concat(mutation));
-  const endOffset = objectMutationProcessor.execute(mutationsArray, 3);
+  const endOffset = objectMutationProcessor.execute(mutationsArray, 3, /* allow */ true);
 
   t.is(mutationsArray[endOffset], 32);
 });
@@ -328,6 +328,7 @@ function executeCall(
       ...serializedArgs,
     ]),
     0,
+    /* allow */ true,
   );
 }
 

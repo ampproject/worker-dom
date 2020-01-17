@@ -115,6 +115,7 @@ test('Object creation with mutation at a zero offset', t => {
       ...serializedArgs,
     ]),
     0,
+    /* allow */ true,
   );
 
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
@@ -162,7 +163,7 @@ test('Object creation with mutation at non-zero offset', t => {
 
   // add three values to the start of the mutation and change the offset
   const mutationsArray = new Uint16Array([1, 2, 3].concat(mutation));
-  objectCreationProcessor.execute(mutationsArray, 3);
+  objectCreationProcessor.execute(mutationsArray, 3, /* allow */ true);
 
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
   t.is(objectContext.get(objectId), gradientObject);
@@ -204,7 +205,7 @@ test('Returns correct end offset', t => {
   ];
 
   const mutationsArray = new Uint16Array([1, 2, 3].concat(mutation));
-  const endOffset = objectCreationProcessor.execute(mutationsArray, 3);
+  const endOffset = objectCreationProcessor.execute(mutationsArray, 3, /* allow */ true);
 
   t.is(mutationsArray[endOffset], 32);
 });

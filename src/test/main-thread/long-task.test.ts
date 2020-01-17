@@ -94,20 +94,20 @@ test.serial('should tolerate no callback', t => {
     }),
   );
 
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0);
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
   t.is(longTasks.length, 0);
 });
 
 test.serial('should create and release a long task', t => {
   const { executor, longTasks, baseElement } = t.context;
 
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
   t.is(longTasks.length, 1);
   t.true(executor.active);
 
   // Ensure the promise is resolved in the end.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
   t.is(longTasks.length, 1);
   t.false(executor.active);
   return longTasks[0];
@@ -116,22 +116,22 @@ test.serial('should create and release a long task', t => {
 test.serial('should nest long tasks', t => {
   const { executor, longTasks, baseElement } = t.context;
 
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
   t.is(longTasks.length, 1);
   t.true(executor.active);
 
   // Nested: no new promise/task created.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
   t.is(longTasks.length, 1);
   t.true(executor.active);
 
   // Unnest: the task is still active.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
   t.is(longTasks.length, 1);
   t.true(executor.active);
 
   // Ensure the promise is resolved in the end.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
   t.is(longTasks.length, 1);
   t.false(executor.active);
   return longTasks[0];
@@ -141,22 +141,22 @@ test.serial('should restart a next long tasks', t => {
   const { executor, longTasks, baseElement } = t.context;
 
   // Start 1st task.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
   t.is(longTasks.length, 1);
   t.true(executor.active);
 
   // End 1st task.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
   t.is(longTasks.length, 1);
   t.false(executor.active);
 
   // Start 2nd task.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
   t.is(longTasks.length, 2);
   t.true(executor.active);
 
   // End 2nd task.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0);
+  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
   t.is(longTasks.length, 2);
   t.false(executor.active);
 
