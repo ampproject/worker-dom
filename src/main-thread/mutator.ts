@@ -112,22 +112,27 @@ export class MutatorProcessor {
    *
    * Investigations in using asyncFlush to resolve are worth considering.
    *
-   * TODO(amphtml): Consider returning the disallowed mutations for better error messaging.
-   *
    * @param allowVisibleMutations
+   * @return Array of mutation types that were disallowed.
    */
-  private syncFlush = (allowVisibleMutations: boolean = true): void => {
+  private syncFlush = (allowVisibleMutations: boolean = true): TransferrableMutationType[] => {
     if (WORKER_DOM_DEBUG) {
       console.group('Mutations');
     }
+    const disallowedMutations: TransferrableMutationType[] = [];
     this.mutationQueue.forEach(mutationArray => {
       let operationStart: number = 0;
       let length: number = mutationArray.length;
 
       while (operationStart < length) {
+        // TransferrableMutationType is always at position 0.
         const mutationType = mutationArray[operationStart];
-        // TODO(amphtml): Hoist `skip` up to entry point (index.amp.ts) for configurability?
+        // TODO(worker-dom): Hoist `allow` up to entry point (index.amp.ts) to avoid bundling `isUserVisibleMutation`.
         const allow = allowVisibleMutations || !isUserVisibleMutation(mutationType);
+        if (!allow) {
+          // TODO(worker-dom): Consider returning the strings from executor.print() for better error messaging.
+          disallowedMutations.push(mutationType);
+        }
         const executor = this.executors[mutationType];
         if (WORKER_DOM_DEBUG) {
           console.log(allow ? '' : '[disallowed]', ReadableMutationType[mutationType], executor.print(mutationArray, operationStart));
@@ -140,5 +145,6 @@ export class MutatorProcessor {
     }
     this.mutationQueue = [];
     this.pendingMutations = false;
+    return disallowedMutations;
   };
 }
