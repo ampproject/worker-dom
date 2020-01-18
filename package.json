@@ -74,7 +74,7 @@
     "sinon": "8.1.0",
     "sirv": "0.4.2",
     "tslint": "5.20.1",
-    "typescript": "3.7.4"
+    "typescript": "3.7.5"
   },
   "lint-staged": {
     "*.{js,ts}": [
