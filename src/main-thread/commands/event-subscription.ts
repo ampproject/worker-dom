@@ -205,7 +205,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
   };
 
   return {
-    execute(mutations: Uint16Array, startPosition: number): number {
+    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
       const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
       const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
       const addEventListenersPosition =
@@ -216,7 +216,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
         addEventListenerCount * ADD_EVENT_SUBSCRIPTION_LENGTH +
         removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
 
-      if (allowedExecution) {
+      if (allowedExecution && allowedMutation) {
         const targetIndex = mutations[startPosition + EventSubscriptionMutationIndex.Target];
         const target = nodeContext.getNode(targetIndex);
 

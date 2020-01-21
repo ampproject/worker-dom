@@ -23,8 +23,8 @@ export const ImageBitmapProcessor: CommandExecutorInterface = (strings, nodeCont
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.IMAGE_BITMAP_INSTANCE);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number): number {
-      if (allowedExecution) {
+    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
+      if (allowedExecution && allowedMutation) {
         const targetIndex = mutations[startPosition + ImageBitmapMutationIndex.Target];
         const target = nodeContext.getNode(targetIndex);
         if (target) {

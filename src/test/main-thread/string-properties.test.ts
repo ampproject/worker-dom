@@ -89,6 +89,7 @@ test('setting property to a new string', t => {
   propertyProcessor.execute(
     new Uint16Array([TransferrableMutationType.PROPERTIES, inputElement._index_, storedValueKey, NumericBoolean.FALSE, storedNewValue]),
     0,
+    /* allow */ true,
   );
   t.is(inputElement.value, newValue);
 });
@@ -104,12 +105,14 @@ test('setting property back to an empty string', t => {
   propertyProcessor.execute(
     new Uint16Array([TransferrableMutationType.PROPERTIES, inputElement._index_, storedValueKey, NumericBoolean.FALSE, storedFirstUpdateValue]),
     0,
+    /* allow */ true,
   );
   t.is(inputElement.value, firstUpdateValue);
 
   propertyProcessor.execute(
     new Uint16Array([TransferrableMutationType.PROPERTIES, inputElement._index_, storedValueKey, NumericBoolean.FALSE, storedSecondUpdateValue]),
     0,
+    /* allow */ true,
   );
   t.is(inputElement.value, secondUpdateValue);
 });

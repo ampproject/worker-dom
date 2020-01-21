@@ -102,12 +102,12 @@
     {
       "path": "./dist/main.mjs",
       "compression": "brotli",
-      "maxSize": "3.4 kB"
+      "maxSize": "3.5 kB"
     },
     {
       "path": "./dist/main.js",
       "compression": "brotli",
-      "maxSize": "4.0 kB"
+      "maxSize": "4.1 kB"
     }
   ],
   "esm": {

@@ -71,8 +71,8 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
   };
 
   return {
-    execute(mutations: Uint16Array, startPosition: number): number {
-      if (allowedExecution) {
+    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
+      if (allowedExecution && allowedMutation) {
         const operation = mutations[startPosition + StorageMutationIndex.Operation];
         const location = mutations[startPosition + StorageMutationIndex.Location];
         const keyIndex = mutations[startPosition + StorageMutationIndex.Key];

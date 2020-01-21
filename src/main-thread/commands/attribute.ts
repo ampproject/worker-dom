@@ -32,8 +32,8 @@ export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, wor
   };
 
   return {
-    execute(mutations: Uint16Array, startPosition: number): number {
-      if (allowedExecution) {
+    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
+      if (allowedExecution && allowedMutation) {
         const targetIndex = mutations[startPosition + AttributeMutationIndex.Target];
         const target = nodes.getNode(targetIndex);
 

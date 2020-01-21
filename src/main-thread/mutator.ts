@@ -18,7 +18,7 @@ import { NodeContext } from './nodes';
 import { StringContext } from './strings';
 import { WorkerContext } from './worker';
 import { OffscreenCanvasProcessor } from './commands/offscreen-canvas';
-import { TransferrableMutationType, ReadableMutationType } from '../transfer/TransferrableMutation';
+import { TransferrableMutationType, ReadableMutationType, isUserVisibleMutation } from '../transfer/TransferrableMutation';
 import { EventSubscriptionProcessor } from './commands/event-subscription';
 import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
 import { ChildListProcessor } from './commands/child-list';
@@ -111,22 +111,33 @@ export class MutatorProcessor {
    * mutations to apply in a single frame.
    *
    * Investigations in using asyncFlush to resolve are worth considering.
+   *
+   * @param allowVisibleMutations
+   * @return Array of mutation types that were disallowed.
    */
-  private syncFlush = (): void => {
+  private syncFlush = (allowVisibleMutations: boolean = true): TransferrableMutationType[] => {
     if (WORKER_DOM_DEBUG) {
       console.group('Mutations');
     }
+    const disallowedMutations: TransferrableMutationType[] = [];
     this.mutationQueue.forEach(mutationArray => {
       let operationStart: number = 0;
       let length: number = mutationArray.length;
 
       while (operationStart < length) {
+        // TransferrableMutationType is always at position 0.
         const mutationType = mutationArray[operationStart];
+        // TODO(worker-dom): Hoist `allow` up to entry point (index.amp.ts) to avoid bundling `isUserVisibleMutation`.
+        const allow = allowVisibleMutations || !isUserVisibleMutation(mutationType);
+        if (!allow) {
+          // TODO(worker-dom): Consider returning the strings from executor.print() for better error messaging.
+          disallowedMutations.push(mutationType);
+        }
         const executor = this.executors[mutationType];
         if (WORKER_DOM_DEBUG) {
-          console.log(ReadableMutationType[mutationType], executor.print(mutationArray, operationStart));
+          console.log(allow ? '' : '[disallowed]', ReadableMutationType[mutationType], executor.print(mutationArray, operationStart));
         }
-        operationStart = executor.execute(mutationArray, operationStart);
+        operationStart = executor.execute(mutationArray, operationStart, allow);
       }
     });
     if (WORKER_DOM_DEBUG) {
@@ -134,5 +145,6 @@ export class MutatorProcessor {
     }
     this.mutationQueue = [];
     this.pendingMutations = false;
+    return disallowedMutations;
   };
 }

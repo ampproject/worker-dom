@@ -26,7 +26,7 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
   }
 
   return {
-    execute(mutations: Uint16Array, startPosition: number): number {
+    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
       const functionName = strings.get(mutations[startPosition + ObjectCreationIndex.FunctionName]);
       const objectId = mutations[startPosition + ObjectCreationIndex.ObjectId];
       const argCount = mutations[startPosition + ObjectCreationIndex.ArgumentCount];
@@ -43,7 +43,7 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
 
       const { offset: argsOffset, args } = deserializeTransferrableObject(mutations, targetOffset, argCount, strings, nodeContext, objectContext);
 
-      if (allowedExecution) {
+      if (allowedExecution && allowedMutation) {
         if (functionName === 'new') {
           // deal with constructor case here
         } else {

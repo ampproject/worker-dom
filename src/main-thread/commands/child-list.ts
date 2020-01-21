@@ -23,10 +23,10 @@ export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode 
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHILD_LIST);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number): number {
+    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
       const appendNodeCount = mutations[startPosition + ChildListMutationIndex.AppendedNodeCount];
       const removeNodeCount = mutations[startPosition + ChildListMutationIndex.RemovedNodeCount];
-      if (allowedExecution) {
+      if (allowedExecution && allowedMutation) {
         const targetIndex = mutations[startPosition + ChildListMutationIndex.Target];
         const target = getNode(targetIndex);
         if (target) {
