@@ -48,7 +48,7 @@
     "@babel/preset-env": "7.8.3",
     "@kristoferbaxter/filesize": "0.2.0",
     "@rollup/plugin-replace": "2.3.0",
-    "@types/node": "12.12.24",
+    "@types/node": "12.12.25",
     "@types/sinon": "7.5.1",
     "acorn": "7.1.0",
     "acorn-walk": "7.0.0",
@@ -58,7 +58,7 @@
     "cross-env": "6.0.3",
     "cross-var": "1.1.0",
     "esm": "3.2.25",
-    "husky": "4.0.7",
+    "husky": "4.0.10",
     "jsdom": "15.2.1",
     "lint-staged": "9.5.0",
     "magic-string": "0.25.6",
@@ -69,12 +69,12 @@
     "rimraf": "3.0.0",
     "rollup": "1.29.0",
     "rollup-plugin-babel": "4.3.3",
-    "rollup-plugin-copy": "3.1.0",
+    "rollup-plugin-copy": "3.2.0",
     "rollup-plugin-terser": "5.2.0",
-    "sinon": "8.0.4",
+    "sinon": "8.1.0",
     "sirv": "0.4.2",
     "tslint": "5.20.1",
-    "typescript": "3.7.4"
+    "typescript": "3.7.5"
   },
   "lint-staged": {
     "*.{js,ts}": [
