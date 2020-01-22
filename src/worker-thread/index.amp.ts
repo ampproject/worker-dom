@@ -228,9 +228,7 @@ export const workerDOM: WorkerDOMGlobalScope = (function(postMessage, addEventLi
       try {
         delete object[property];
         return true;
-      } catch (e) {
-        console.warn(e);
-      }
+      } catch (e) {}
     }
     return false;
   };
@@ -239,12 +237,18 @@ export const workerDOM: WorkerDOMGlobalScope = (function(postMessage, addEventLi
   let current = global;
   while (current && current.constructor !== EventTarget) {
     const deleted: string[] = [];
+    const failedToDelete: string[] = [];
     Object.getOwnPropertyNames(current).forEach(prop => {
       if (deleteUnsafe(current, prop)) {
         deleted.push(prop);
+      } else {
+        failedToDelete.push(prop);
       }
     });
     console.info(`Removed ${deleted.length} references from`, current, ':', deleted);
+    if (failedToDelete.length) {
+      console.info(`Failed to remove ${failedToDelete.length} references from`, current, ':', failedToDelete);
+    }
     current = Object.getPrototypeOf(current);
   }
   // Wrap global.fetch() with our longTask API.
