@@ -1,4 +1,4 @@
-name: Unit Tests
+name: Size
 
 on: [pull_request]
 
