@@ -40,7 +40,7 @@
     "prepublishOnly": "npm-run-all clean build"
   },
   "devDependencies": {
-    "@ampproject/filesize": "1.0.1",
+    "@ampproject/filesize": "2.0.1",
     "@ampproject/rollup-plugin-closure-compiler": "0.20.0",
     "@babel/cli": "7.8.3",
     "@babel/core": "7.8.3",
@@ -87,28 +87,20 @@
       "pre-push": "npm-run-all clean test clean size"
     }
   },
-  "filesize": [
-    {
-      "path": "./dist/worker/worker.mjs",
-      "compression": "brotli",
-      "maxSize": "11.4 kB"
+  "filesize": {
+    "./dist/worker/worker.mjs": {
+      "brotli": "11.4 kB"
     },
-    {
-      "path": "./dist/worker/worker.js",
-      "compression": "brotli",
-      "maxSize": "12.6 kB"
+    "./dist/worker/worker.js": {
+      "brotli": "12.6 kB"
     },
-    {
-      "path": "./dist/main.mjs",
-      "compression": "brotli",
-      "maxSize": "3.5 kB"
+    "./dist/main.mjs": {
+      "brotli": "3.5 kB"
     },
-    {
-      "path": "./dist/main.js",
-      "compression": "brotli",
-      "maxSize": "4.1 kB"
+    "./dist/main.js": {
+      "brotli": "4.1 kB"
     }
-  ],
+  },
   "esm": {
     "cjs": true
   },
