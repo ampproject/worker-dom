@@ -74,7 +74,7 @@ test('valueAsDate', t => {
 
   const error = t.throws(() => {
     input.valueAsDate = 'notADate' as any;
-  }, TypeError);
+  }, null);
   t.is(error.message, 'The provided value is not a Date.');
 });
 

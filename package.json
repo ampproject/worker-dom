@@ -40,38 +40,38 @@
     "prepublishOnly": "npm-run-all clean build"
   },
   "devDependencies": {
-    "@ampproject/filesize": "2.0.1",
-    "@ampproject/rollup-plugin-closure-compiler": "0.20.0",
-    "@babel/cli": "7.8.3",
-    "@babel/core": "7.8.3",
+    "@ampproject/filesize": "3.0.2",
+    "@ampproject/rollup-plugin-closure-compiler": "0.22.2",
+    "@babel/cli": "7.8.4",
+    "@babel/core": "7.8.4",
     "@babel/plugin-proposal-class-properties": "7.8.3",
     "@babel/plugin-proposal-object-rest-spread": "7.8.3",
-    "@babel/preset-env": "7.8.3",
-    "@rollup/plugin-replace": "2.3.0",
-    "@types/node": "12.12.25",
+    "@babel/preset-env": "7.8.4",
+    "@rollup/plugin-replace": "2.3.1",
+    "@types/node": "13.7.1",
     "@types/sinon": "7.5.1",
     "acorn": "7.1.0",
-    "acorn-walk": "7.0.0",
-    "ava": "2.4.0",
+    "acorn-walk": "7.1.1",
+    "ava": "3.3.0",
     "babel-plugin-minify-replace": "0.5.0",
     "babel-plugin-transform-remove-console": "6.9.4",
-    "cross-env": "6.0.3",
+    "cross-env": "7.0.0",
     "cross-var": "1.1.0",
     "esm": "3.2.25",
-    "husky": "4.2.0",
+    "husky": "4.2.3",
     "jsdom": "15.2.1",
-    "lint-staged": "10.0.2",
+    "lint-staged": "10.0.7",
     "magic-string": "0.25.6",
     "np": "5.2.1",
     "npm-run-all": "4.1.5",
     "polka": "0.5.2",
     "prettier": "1.19.1",
-    "rimraf": "3.0.0",
-    "rollup": "1.29.1",
+    "rimraf": "3.0.2",
+    "rollup": "1.31.1",
     "rollup-plugin-babel": "4.3.3",
-    "rollup-plugin-copy": "3.2.0",
+    "rollup-plugin-copy": "3.3.0",
     "rollup-plugin-terser": "5.2.0",
-    "sinon": "8.1.0",
+    "sinon": "8.1.1",
     "sirv": "0.4.2",
     "tslint": "5.20.1",
     "typescript": "3.7.5"
@@ -88,6 +88,7 @@
     }
   },
   "filesize": {
+    "track": ["./dist/**/*.js", "./dist/**/*.mjs"],
     "./dist/worker/worker.mjs": {
       "brotli": "11.4 kB"
     },
@@ -108,7 +109,6 @@
     "require": [
       "esm"
     ],
-    "babel": false,
     "files": [
       "output/test/**/*.test.js"
     ]
