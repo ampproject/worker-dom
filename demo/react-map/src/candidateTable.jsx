@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import objstr from 'obj-str';
+import React from "react";
+import objstr from "obj-str";
 
-import styles from './candidateTable.css';
+import styles from "./candidateTable.css";
 
-const numberFormatter = new Intl.NumberFormat('en-US');
-const percentFormatter = new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 1 });
+const numberFormatter = new Intl.NumberFormat("en-US");
+const percentFormatter = new Intl.NumberFormat("en-US", {
+  style: "percent",
+  maximumFractionDigits: 1
+});
 const shortParty = party => {
   switch (party) {
-    case 'Republican':
-      return 'Rep.';
-    case 'Democrat':
-      return 'Dem.';
-    case 'Independent':
-      return 'Ind.';
+    case "Republican":
+      return "Rep.";
+    case "Democrat":
+      return "Dem.";
+    case "Independent":
+      return "Ind.";
     default:
-      return '-';
+      return "-";
   }
 };
 
@@ -44,7 +47,7 @@ const Candidate = ({ victor, name, party, votes, percent }) => {
           height="24"
           className={objstr({
             [styles.victor]: true,
-            [styles.displayVictor]: victor,
+            [styles.displayVictor]: victor
           })}
         >
           <path d="M20.285 2L9 13.567 3.714 8.556 0 12.272 9 21 24 5.715z" />
@@ -56,7 +59,7 @@ const Candidate = ({ victor, name, party, votes, percent }) => {
         <span
           className={objstr({
             [styles.party]: true,
-            [styles.shortParty]: true,
+            [styles.shortParty]: true
           })}
         >
           {shortParty(party)}
@@ -66,15 +69,26 @@ const Candidate = ({ victor, name, party, votes, percent }) => {
         <span className={styles.votes}>{numberFormatter.format(votes)}</span>
       </td>
       <td>
-        <span className={styles.percent}>{percentFormatter.format(percent)}</span>
+        <span className={styles.percent}>
+          {percentFormatter.format(percent)}
+        </span>
       </td>
     </tr>
   );
 };
 
-export const CandidateTable = ({ victor, totalData, regionData, votes, focusedRegion }) => {
-  const focusedRegionData = focusedRegion !== null && regionData[focusedRegion].candidates;
-  const winnerIndex = focusedRegionData && focusedRegionData.indexOf(Math.max(...focusedRegionData));
+export const CandidateTable = ({
+  victor,
+  totalData,
+  regionData,
+  votes,
+  focusedRegion
+}) => {
+  const focusedRegionData =
+    focusedRegion !== null && regionData[focusedRegion].candidates;
+  const winnerIndex =
+    focusedRegionData &&
+    focusedRegionData.indexOf(Math.max(...focusedRegionData));
   return (
     <table>
       <thead>
@@ -87,8 +101,18 @@ export const CandidateTable = ({ victor, totalData, regionData, votes, focusedRe
       </thead>
       <tbody>
         {totalData.map((candidate, index) => {
-          const isVictor = focusedRegion !== null ? winnerIndex === index : candidate.victor;
-          return <Candidate victor={isVictor} key={candidate.name} name={candidate.name} party={candidate.party} votes={candidate.votes} percent={candidate.votes / votes} />;
+          const isVictor =
+            focusedRegion !== null ? winnerIndex === index : candidate.victor;
+          return (
+            <Candidate
+              victor={isVictor}
+              key={candidate.name}
+              name={candidate.name}
+              party={candidate.party}
+              votes={candidate.votes}
+              percent={candidate.votes / votes}
+            />
+          );
         })}
       </tbody>
     </table>

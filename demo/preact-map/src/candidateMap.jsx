@@ -15,86 +15,85 @@
  */
 
 import { h, Component } from 'preact';
+import {useState} from 'preact/hooks';
 import objstr from 'obj-str';
 
 import styles from './candidateMap.css';
 
-class CandidateZone extends Component {
-  constructor(props, context) {
-    super(props, context);
+function CandidateZone({ index, focusRegion, x, y }) {
+  const [fill, setFill] = useState("red");
 
-    this.state = {
-      fill: 'red',
-    };
-    this.handleMouseEnter = this.handleMouseEnter.bind(this);
-    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+  function handleMouseEnter() {
+    setFill("black");
+    focusRegion(index);
   }
 
-  handleMouseEnter() {
-    this.setState({
-      fill: 'black',
-    });
-    this.props.focusRegion(this.props.index);
+  function handleMouseLeave() {
+    setFill("red");
+    focusRegion(null);
   }
 
-  handleMouseLeave() {
-    this.setState({
-      fill: 'red',
-    });
-    this.props.focusRegion(null);
-  }
-
-  render(props, state) {
-    return <rect x={props.x} y={props.y} width="180" height="180" fill={state.fill} stroke="black" onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />;
-  }
+  return (
+    <rect
+      x={x}
+      y={y}
+      width="180"
+      height="180"
+      fill={fill}
+      stroke="black"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    />
+  );
 }
 
-export class CandidateMap extends Component {
-  constructor(props) {
-    super(props);
+export function CandidateMap({ focusRegion, regionData, totalData }) {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [focusedRegion, setFocusedRegion] = useState(null);
 
-    this.state = {
-      showTooltip: false,
-      focusedRegion: null,
-    };
-
-    this.handleMouseLeave = this.handleMouseLeave.bind(this);
-    this.focusRegion = this.focusRegion.bind(this);
+  function handleMouseLeave() {
+    localFocusRegion(null);
   }
 
-  handleMouseLeave() {
-    this.focusRegion(null);
+  function localFocusRegion(region) {
+    setShowTooltip(region !== null);
+    setFocusedRegion(region !== null ? region : null);
+
+    focusRegion(region);
   }
 
-  focusRegion(region) {
-    this.setState({
-      showTooltip: region !== null,
-      focusedRegion: region !== null ? region : null,
-    });
+  const focusedRegionData =
+    focusedRegion !== null && regionData[focusedRegion].candidates;
+  const winner =
+    focusedRegionData &&
+    totalData[focusedRegionData.indexOf(Math.max(...focusedRegionData))];
 
-    this.props.focusRegion(region);
-  }
-
-  render(props, state) {
-    const focusedRegionData = state.focusedRegion !== null && props.regionData[state.focusedRegion].candidates;
-    const winner = focusedRegionData && props.totalData[focusedRegionData.indexOf(Math.max(...focusedRegionData))];
-    return (
-      <div class={styles.wrapper}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" onMouseLeave={this.handleMouseLeave}>
-          <CandidateZone x={0} y={0} index={0} focusRegion={this.focusRegion} />
-          <CandidateZone x={180} y={0} index={1} focusRegion={this.focusRegion} />
-          <CandidateZone x={0} y={180} index={2} focusRegion={this.focusRegion} />
-          <CandidateZone x={180} y={180} index={3} focusRegion={this.focusRegion} />
-        </svg>
-        <p
-          class={objstr({
-            [styles.tooltip]: true,
-            [styles.showTooltip]: state.showTooltip,
-          })}
-        >
-          Region winner {!!winner && winner.name}
-        </p>
-      </div>
-    );
-  }
+  return (
+    <div className={styles.wrapper}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="360"
+        height="360"
+        onMouseLeave={handleMouseLeave}
+      >
+        <CandidateZone x={0} y={0} index={0} focusRegion={localFocusRegion} />
+        <CandidateZone x={180} y={0} index={1} focusRegion={localFocusRegion} />
+        <CandidateZone x={0} y={180} index={2} focusRegion={localFocusRegion} />
+        <CandidateZone
+          x={180}
+          y={180}
+          index={3}
+          focusRegion={localFocusRegion}
+        />
+      </svg>
+      <p
+        className={objstr({
+          [styles.tooltip]: true,
+          [styles.showTooltip]: showTooltip
+        })}
+      >
+        Region winner {!!winner && winner.name}
+      </p>
+    </div>
+  );
 }

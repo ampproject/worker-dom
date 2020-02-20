@@ -50,8 +50,10 @@ module.exports = {
             options: {
               modules: true,
               importLoaders: 1,
-              localIdentName: '[name]_[local]',
               sourceMap: true,
+              modules: {
+                localIdentName: '[name]_[local]',
+              },
             },
           },
         ],
