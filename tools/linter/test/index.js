@@ -16,8 +16,7 @@
 
 import test from 'ava';
 import path from 'path';
-import fs from 'fs';
-import { transformFileSync } from 'babel-core';
+import { transformFileSync } from '@babel/core';
 
 const FIXTURES_DIR = path.join(__dirname, 'fixtures');
 
@@ -88,7 +87,6 @@ test.serial('test matching-ok', t => {
   process('matching-ok');
 
   const { warnings } = t.context;
-  console.log(warnings);
   t.is(warnings.length, 0);
 });
 
