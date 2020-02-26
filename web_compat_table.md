@@ -81,9 +81,9 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Document.fullscreenElement                          | ✖️     |                                                  | 
 | Document.getAnimations()                            | ✖️     |                                                  | 
 | document.getElementById(String id)                  | ✔️     |                                                  | 
-| Document.getElementsByClassName()                   | ✖️     |                                                  | 
+| Document.getElementsByClassName()                   | ✔️     |                                                  | 
 | document.getElementsByName()                        | ✖️     |                                                  | 
-| Document.getElementsByTagName()                     | ✖️     |                                                  | 
+| Document.getElementsByTagName()                     | ✔️     |                                                  | 
 | Document.getElementsByTagNameNS()                   | ✖️     |                                                  | 
 | document.hasFocus()                                 | ✖️     |                                                  | 
 | Document.hasStorageAccess()                         | ✖️     |                                                  | 
