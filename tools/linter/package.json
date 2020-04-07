@@ -24,8 +24,8 @@
   },
   "devDependencies": {
     "@babel/cli": "7.8.4",
-    "@babel/core": "7.8.4",
-    "@babel/register": "7.8.3",
+    "@babel/core": "7.9.0",
+    "@babel/register": "7.9.0",
     "ava": "3.3.0",
     "esm": "3.2.25",
     "lint-staged": "10.0.7",
