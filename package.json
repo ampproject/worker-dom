@@ -35,6 +35,7 @@
     "demo": "node -r esm demo/server.js",
     "build": "cross-env MINIFY_BUNDLE=true npm-run-all ~rollup",
     "presize": "npm-run-all build",
+    "size": "filesize",
     "release": "np --no-2fa",
     "prepublishOnly": "npm-run-all clean build"
   },
@@ -82,7 +83,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "npm-run-all clean test clean size"
+      "pre-push": "npm-run-all clean test clean filesize"
     }
   },
   "filesize": {
