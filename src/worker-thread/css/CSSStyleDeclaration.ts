@@ -61,23 +61,21 @@ export const appendKeys = (keys: Array<string>): void => {
     });
   }
 
-  keysToAppend.forEach(
-    (key: string, index: number): void => {
-      const hyphenatedKey = hyphenateKey(key);
-      CSSStyleDeclaration.prototype[index + previousPrototypeLength] = hyphenatedKey;
+  keysToAppend.forEach((key: string, index: number): void => {
+    const hyphenatedKey = hyphenateKey(key);
+    CSSStyleDeclaration.prototype[index + previousPrototypeLength] = hyphenatedKey;
 
-      Object.defineProperties(CSSStyleDeclaration.prototype, {
-        [key]: {
-          get(): string {
-            return this.getPropertyValue(hyphenatedKey);
-          },
-          set(value) {
-            this.setProperty(hyphenatedKey, value);
-          },
+    Object.defineProperties(CSSStyleDeclaration.prototype, {
+      [key]: {
+        get(): string {
+          return this.getPropertyValue(hyphenatedKey);
         },
-      });
-    },
-  );
+        set(value) {
+          this.setProperty(hyphenatedKey, value);
+        },
+      },
+    });
+  });
 };
 
 export class CSSStyleDeclaration implements StyleDeclaration {
@@ -140,7 +138,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
   get cssText(): string {
     let value: string;
     let returnValue: string = '';
-    for (let key in this[TransferrableKeys.properties]) {
+    for (const key in this[TransferrableKeys.properties]) {
       if ((value = this.getPropertyValue(key)) !== '') {
         returnValue += `${key}: ${value}; `;
       }

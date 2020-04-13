@@ -45,24 +45,24 @@ export function createStorage(document: Document, location: StorageLocation, dat
   // it behaves more like normal objects, e.g. bracket notation and JSON.stringify.
   const define = Object.defineProperty;
   define(storage, 'length', {
-    get: function() {
+    get() {
       return Object.keys(this).length;
     },
   });
   define(storage, 'key', {
-    value: function(n: number) {
+    value(n: number) {
       const keys = Object.keys(this);
       return n >= 0 && n < keys.length ? keys[n] : null;
     },
   });
   define(storage, 'getItem', {
-    value: function(key: string): string | null {
+    value(key: string): string | null {
       const value = this[key];
       return value ? value : null;
     },
   });
   define(storage, 'setItem', {
-    value: function(key: string, value: string): void {
+    value(key: string, value: string): void {
       const stringValue = String(value);
       this[key] = stringValue;
 
@@ -70,7 +70,7 @@ export function createStorage(document: Document, location: StorageLocation, dat
     },
   });
   define(storage, 'removeItem', {
-    value: function(key: string): void {
+    value(key: string): void {
       delete this[key];
 
       transfer(document, [
@@ -83,7 +83,7 @@ export function createStorage(document: Document, location: StorageLocation, dat
     },
   });
   define(storage, 'clear', {
-    value: function(): void {
+    value(): void {
       Object.keys(this).forEach(key => {
         delete this[key];
       });

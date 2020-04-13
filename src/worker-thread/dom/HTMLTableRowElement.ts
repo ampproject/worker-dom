@@ -61,7 +61,9 @@ export class HTMLTableRowElement extends HTMLElement {
    */
   public deleteCell(index: number) {
     const cell = this.cells[index];
-    cell && cell.remove();
+    if (cell) {
+      cell.remove();
+    }
   }
 
   /**

@@ -66,7 +66,7 @@ export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode 
       }
       return startPosition + ChildListMutationIndex.End + appendNodeCount + removeNodeCount;
     },
-    print(mutations: Uint16Array, startPosition: number): Object {
+    print(mutations: Uint16Array, startPosition: number): {} {
       const targetIndex = mutations[startPosition + ChildListMutationIndex.Target];
       const target = getNode(targetIndex);
       const appendNodeCount = mutations[startPosition + ChildListMutationIndex.AppendedNodeCount];

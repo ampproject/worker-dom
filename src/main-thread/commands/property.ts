@@ -58,7 +58,7 @@ export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext
 
       return startPosition + PropertyMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number): Object {
+    print(mutations: Uint16Array, startPosition: number): {} {
       const targetIndex = mutations[startPosition + PropertyMutationIndex.Target];
       const target = nodeContext.getNode(targetIndex);
       const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);

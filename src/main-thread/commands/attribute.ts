@@ -61,7 +61,7 @@ export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, wor
       }
       return startPosition + AttributeMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number): Object {
+    print(mutations: Uint16Array, startPosition: number): {} {
       const targetIndex = mutations[startPosition + AttributeMutationIndex.Target];
       const target = nodes.getNode(targetIndex);
       const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);

@@ -23,7 +23,10 @@ export type ConditionPredicate = (element: Element) => boolean;
 // To future authors: It would be great if we could enforce that elements are not modified by a ConditionPredicate.
 
 export const tagNameConditionPredicate = (tagNames: Array<string>): ConditionPredicate => (element: Element): boolean => {
-  console.assert(tagNames.every(t => t === toUpper(t)), 'tagNames must be all uppercase.');
+  console.assert(
+    tagNames.every(t => t === toUpper(t)),
+    'tagNames must be all uppercase.',
+  );
   return tagNames.includes(element.tagName);
 };
 
@@ -82,7 +85,7 @@ export const matchAttrReference = (attrSelector: string | null, element: Element
   const equalPos: number = attrSelector.indexOf('=');
   const selectorLength: number = attrSelector.length;
   const caseInsensitive = attrSelector.charAt(selectorLength - 2) === 'i';
-  let endPos = caseInsensitive ? selectorLength - 3 : selectorLength - 1;
+  const endPos = caseInsensitive ? selectorLength - 3 : selectorLength - 1;
   if (equalPos !== -1) {
     const equalSuffix: string = attrSelector.charAt(equalPos - 1);
     const possibleSuffixes: string[] = ['~', '|', '$', '^', '*'];

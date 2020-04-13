@@ -53,7 +53,7 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
 
       return argsOffset;
     },
-    print(mutations: Uint16Array, startPosition: number): Object {
+    print(mutations: Uint16Array, startPosition: number): {} {
       const functionName = strings.get(mutations[startPosition + ObjectCreationIndex.FunctionName]);
       const objectId = mutations[startPosition + ObjectCreationIndex.ObjectId];
       const argCount = mutations[startPosition + ObjectCreationIndex.ArgumentCount];

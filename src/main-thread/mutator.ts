@@ -121,8 +121,8 @@ export class MutatorProcessor {
     }
     const disallowedMutations: TransferrableMutationType[] = [];
     this.mutationQueue.forEach(mutationArray => {
+      const length: number = mutationArray.length;
       let operationStart: number = 0;
-      let length: number = mutationArray.length;
 
       while (operationStart < length) {
         // TransferrableMutationType is always at position 0.

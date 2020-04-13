@@ -38,7 +38,7 @@ export interface PropertyPair {
 
 export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element): void => {
   properties.forEach(pair => {
-    for (let property in pair) {
+    for (const property in pair) {
       const { 0: defaultValue, 1: attributeName = toLower(property), 2: keywords } = pair[property];
       // Boolean attributes only care about presence, not attribute value.
       // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attributes

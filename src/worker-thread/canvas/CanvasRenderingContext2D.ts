@@ -169,7 +169,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   private delegateSetter(name: string, args: any[]) {
     (this.implementation as any)[name] = args[0];
     if (!this.upgraded) {
-      this.queue.push({ fnName: name, args: args, isSetter: true });
+      this.queue.push({ fnName: name, args, isSetter: true });
     }
   }
 

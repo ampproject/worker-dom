@@ -49,7 +49,7 @@ export const BoundingClientRectProcessor: CommandExecutorInterface = (strings, n
 
       return startPosition + BoundClientRectMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number): Object {
+    print(mutations: Uint16Array, startPosition: number): {} {
       const targetIndex = mutations[startPosition + BoundClientRectMutationIndex.Target];
       const target = nodes.getNode(targetIndex);
       return {

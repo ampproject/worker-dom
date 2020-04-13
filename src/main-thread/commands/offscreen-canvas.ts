@@ -44,7 +44,7 @@ export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, node
 
       return startPosition + OffscreenCanvasMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): Object {
+    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): {} {
       return {
         type: 'OFFSCREEN_CANVAS_INSTANCE',
         target,

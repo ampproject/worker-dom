@@ -30,7 +30,7 @@ export interface CommandExecutor {
    */
   execute(mutations: Uint16Array, startPosition: number, allow: boolean): number;
 
-  print(mutations: Uint16Array, startPosition: number): Object;
+  print(mutations: Uint16Array, startPosition: number): {};
 }
 
 export interface CommandExecutorInterface {

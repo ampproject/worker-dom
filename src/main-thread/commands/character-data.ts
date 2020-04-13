@@ -37,7 +37,7 @@ export const CharacterDataProcessor: CommandExecutorInterface = (strings, nodes,
       }
       return startPosition + CharacterDataMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number): Object {
+    print(mutations: Uint16Array, startPosition: number): {} {
       const targetIndex = mutations[startPosition + CharacterDataMutationIndex.Target];
       const target = nodes.getNode(targetIndex);
       return {

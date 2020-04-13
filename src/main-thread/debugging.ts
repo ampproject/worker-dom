@@ -35,19 +35,19 @@ import { WorkerContext } from './worker';
 /**
  * @param element
  */
-export const readableHydrateableRootNode = (element: RenderableElement, config: WorkerDOMConfiguration, workerContext: WorkerContext): Object =>
+export const readableHydrateableRootNode = (element: RenderableElement, config: WorkerDOMConfiguration, workerContext: WorkerContext): {} =>
   readableHydrateableNode(createReadableHydrateableRootNode(element, config, workerContext));
 /**
  * @param nodeContext {NodeContext}
  * @param node {TransferredNode}
  */
-export const readableTransferredNode = (nodeContext: NodeContext, node: TransferredNode): Object | number | null =>
+export const readableTransferredNode = (nodeContext: NodeContext, node: TransferredNode): {} | number | null =>
   (node != null && nodeContext.getNode(node[TransferrableNodeIndex.Index])) || node;
 
 /**
  * @param node
  */
-function readableHydrateableNode(node: HydrateableNode): Object {
+function readableHydrateableNode(node: HydrateableNode): {} {
   const out: any = {
     nodeType: node[TransferrableKeys.nodeType],
     name: node[TransferrableKeys.localOrNodeName],
@@ -83,8 +83,8 @@ const isBoundingClientRect = (message: MessageToWorker): message is BoundingClie
  * @param nodeContext {NodeContext}
  * @param event {TransferrableEvent}
  */
-function readableTransferrableEvent(nodeContext: NodeContext, event: TransferrableEvent): Object {
-  const value = (item?: null | number | boolean | TransferredNode): number | boolean | Object | null => {
+function readableTransferrableEvent(nodeContext: NodeContext, event: TransferrableEvent): {} {
+  const value = (item?: null | number | boolean | TransferredNode): number | boolean | {} | null => {
     if (typeof item === 'number' || typeof item === 'boolean') {
       return item !== undefined ? item : null;
     }
@@ -111,7 +111,7 @@ function readableTransferrableEvent(nodeContext: NodeContext, event: Transferrab
  * @param nodeContext {NodeContext}
  * @param value {TransferrableSyncValue}
  */
-function readableTransferrableSyncValue(nodeContext: NodeContext, value: TransferrableSyncValue): Object {
+function readableTransferrableSyncValue(nodeContext: NodeContext, value: TransferrableSyncValue): {} {
   const index = value[TransferrableKeys.index];
   return {
     target: nodeContext.getNode(index) || index,
@@ -122,7 +122,7 @@ function readableTransferrableSyncValue(nodeContext: NodeContext, value: Transfe
 /**
  * @param message
  */
-export function readableMessageToWorker(nodeContext: NodeContext, message: MessageToWorker): Object {
+export function readableMessageToWorker(nodeContext: NodeContext, message: MessageToWorker): {} {
   if (isEvent(message)) {
     const event = message[TransferrableKeys.event];
     return {

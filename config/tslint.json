@@ -3,15 +3,12 @@
     "variable-name": [
       true, 
       "ban-keywords",
-      "check-format",
       "allow-trailing-underscore",
       "allow-leading-underscore"
     ],
-    "triple-equals": [true, "allow-null-check"],
     "prefer-const": true,
     "use-isnan": true,
     "radix": true,
-    "only-arrow-functions": [true, "allow-declarations", "allow-named-functions"],
     "object-literal-shorthand": true,
     "no-debugger": true,
     "no-duplicate-variable": true,
@@ -22,8 +19,6 @@
     "ban": [
       true,
       "alert",
-      {"name": "parseInt", "message": "tsstyle#type-coercion"},
-      {"name": "parseFloat", "message": "tsstyle#type-coercion"},
       {"name": "Array", "message": "tsstyle#array-constructor"}
     ],
     "ban-types": [true,

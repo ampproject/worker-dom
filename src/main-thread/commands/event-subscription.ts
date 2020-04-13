@@ -50,7 +50,9 @@ const shouldTrackChanges = (node: HTMLElement): boolean => node && 'value' in no
  * @param node node to listen to value changes on.
  */
 export const applyDefaultInputListener = (workerContext: WorkerContext, node: RenderableElement): void => {
-  shouldTrackChanges(node as HTMLElement) && node.oninput === null && (node.oninput = () => fireValueChange(workerContext, node));
+  if (shouldTrackChanges(node as HTMLElement) && node.oninput === null) {
+    node.oninput = () => fireValueChange(workerContext, node);
+  }
 };
 
 /**
@@ -234,7 +236,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
 
       return endPosition;
     },
-    print(mutations: Uint16Array, startPosition: number): Object {
+    print(mutations: Uint16Array, startPosition: number): {} {
       const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
       const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
       const addEventListenersPosition =
@@ -244,12 +246,10 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
         EventSubscriptionMutationIndex.Events +
         addEventListenerCount * ADD_EVENT_SUBSCRIPTION_LENGTH +
         removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
-
       const targetIndex = mutations[startPosition + EventSubscriptionMutationIndex.Target];
       const target = nodeContext.getNode(targetIndex);
-
-      let removedEventListeners: Array<{ type: string; index: number }> = [];
-      let addedEventListeners: Array<{ type: string; index: number }> = [];
+      const removedEventListeners: Array<{ type: string; index: number }> = [];
+      const addedEventListeners: Array<{ type: string; index: number }> = [];
 
       let iterator = startPosition + EventSubscriptionMutationIndex.Events;
       while (iterator < endPosition) {

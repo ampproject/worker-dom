@@ -72,12 +72,12 @@ export interface BoundingClientRectToWorker {
 export interface OffscreenCanvasToWorker {
   [TransferrableKeys.type]: MessageType.OFFSCREEN_CANVAS_INSTANCE;
   [TransferrableKeys.target]: TransferredNode;
-  [TransferrableKeys.data]: Object; // This will be an OffscreenCanvas
+  [TransferrableKeys.data]: {}; // This will be an OffscreenCanvas
 }
 export interface ImageBitmapToWorker {
   [TransferrableKeys.type]: MessageType.IMAGE_BITMAP_INSTANCE;
   [TransferrableKeys.callIndex]: number; // number that indicates the number of the image bitmap call
-  [TransferrableKeys.data]: Object; // This will be an ImageBitmap object
+  [TransferrableKeys.data]: {}; // This will be an ImageBitmap object
 }
 export interface ResizeSyncToWorker {
   [TransferrableKeys.type]: MessageType.RESIZE;

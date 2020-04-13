@@ -48,7 +48,7 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
 
       return argsOffset;
     },
-    print(mutations: Uint16Array, startPosition: number): Object {
+    print(mutations: Uint16Array, startPosition: number): {} {
       const functionName = strings.get(mutations[startPosition + ObjectMutationIndex.FunctionName]);
       const { args: deserializedTarget } = deserializeTransferrableObject(
         mutations,
@@ -71,7 +71,7 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
   };
 };
 
-function isSetter(object: Object, name: string): boolean {
+function isSetter(object: {}, name: string): boolean {
   if (!object) {
     throw new Error(`Property ${name} does not exist on ${object}.`);
   }

@@ -45,7 +45,7 @@ export const ImageBitmapProcessor: CommandExecutorInterface = (strings, nodeCont
 
       return startPosition + ImageBitmapMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number): Object {
+    print(mutations: Uint16Array, startPosition: number): {} {
       const targetIndex = mutations[startPosition + ImageBitmapMutationIndex.Target];
       const target = nodeContext.getNode(targetIndex);
       return {

@@ -65,7 +65,7 @@ export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
       }
       return startPosition + LongTaskMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number): Object {
+    print(mutations: Uint16Array, startPosition: number): {} {
       return {
         type: ReadableMutationType[mutations[startPosition]],
         allowedExecution,
