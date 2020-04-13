@@ -1,6 +1,6 @@
 {
   "plugins": [
-    ["../../src", {
+    ["../../lib", {
       "transforms": [{
         "transform": "transform-lib"
       }]
