@@ -377,7 +377,9 @@ export abstract class Node {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/remove
    */
   public remove(): void {
-    this.parentNode?.removeChild(this);
+    if (this.parentNode) {
+      this.parentNode.removeChild(this);
+    }
   }
 
   /**
