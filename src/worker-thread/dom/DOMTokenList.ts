@@ -23,6 +23,8 @@ import { TransferrableMutationType } from '../../transfer/TransferrableMutation'
 import { store as storeString } from '../strings';
 import { Document } from './Document';
 
+const WHITESPACE_REGEX = /\s/;
+
 /**
  * Synchronizes the string getter/setter with the actual DOMTokenList instance.
  * @param defineOn Element or class extension to define getter/setter pair for token list access.
@@ -133,7 +135,7 @@ export class DOMTokenList {
     this[TransferrableKeys.tokens].splice(
       0,
       this[TransferrableKeys.tokens].length,
-      ...new Set(this[TransferrableKeys.tokens].filter(token => !tokens.includes(token))),
+      ...new Set(this[TransferrableKeys.tokens].filter((token) => !tokens.includes(token))),
     );
     this[TransferrableKeys.mutated](oldValue, this.value);
   }
@@ -169,6 +171,10 @@ export class DOMTokenList {
    * @return true if the token is in the list following mutation, false if not.
    */
   public toggle(token: string, force?: boolean): boolean {
+    if (WHITESPACE_REGEX.test(token)) {
+      throw new TypeError('Uncaught DOMException');
+    }
+
     if (!this[TransferrableKeys.tokens].includes(token)) {
       if (force !== false) {
         // Note, this will add the token if force is undefined (not passed into the method), or true.

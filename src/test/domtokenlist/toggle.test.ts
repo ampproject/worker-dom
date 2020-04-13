@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
   tokenList: DOMTokenList;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -30,7 +30,7 @@ test.beforeEach(t => {
   };
 });
 
-test('toggle off a token', t => {
+test('toggle off a token', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo';
@@ -38,7 +38,7 @@ test('toggle off a token', t => {
   t.is(tokenList.value, '');
 });
 
-test('toggle on a token', t => {
+test('toggle on a token', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = '';
@@ -46,7 +46,7 @@ test('toggle on a token', t => {
   t.is(tokenList.value, 'foo');
 });
 
-test('toggle off a token removes duplicates', t => {
+test('toggle off a token removes duplicates', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo foo';
@@ -54,7 +54,7 @@ test('toggle off a token removes duplicates', t => {
   t.is(tokenList.value, '');
 });
 
-test('toggle off a token removes duplicates and leaves other values', t => {
+test('toggle off a token removes duplicates and leaves other values', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo foo bar';
@@ -66,7 +66,7 @@ test('toggle off a token removes duplicates and leaves other values', t => {
   t.is(tokenList.value, 'bar');
 });
 
-test('toggle on a token removes duplicates and leaves other values', t => {
+test('toggle on a token removes duplicates and leaves other values', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo foo bar';
@@ -78,7 +78,20 @@ test('toggle on a token removes duplicates and leaves other values', t => {
   t.is(tokenList.value, 'foo bar baz');
 });
 
-test('toggle a token with force=false value', t => {
+test('toggle of multiple values throws an exception', (t) => {
+  const { tokenList } = t.context;
+  tokenList.value = 'one';
+
+  const error = t.throws(
+    () => {
+      tokenList.toggle('one two');
+    },
+    { instanceOf: TypeError },
+  );
+  t.is(error.message, 'Uncaught DOMException');
+});
+
+test('toggle a token with force=false value', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo foo bar';
@@ -90,7 +103,7 @@ test('toggle a token with force=false value', t => {
   t.is(tokenList.value, 'bar');
 });
 
-test('toggle a token with force=true value', t => {
+test('toggle a token with force=true value', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo foo bar';
