@@ -113,7 +113,7 @@
     ]
   },
   "volta": {
-    "node": "12.16.1",
+    "node": "12.16.2",
     "yarn": "1.22.0"
   },
   "publishConfig": {
