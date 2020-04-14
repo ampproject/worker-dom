@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
   element: HTMLInputElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -30,7 +30,7 @@ test.beforeEach(t => {
   };
 });
 
-test('value', t => {
+test('value', (t) => {
   const { element: input } = t.context;
 
   t.is(input.value, '', 'Default value should be empty string.');
@@ -45,7 +45,7 @@ test('value', t => {
   t.is(input.value, '123');
 });
 
-test('valueAsNumber', t => {
+test('valueAsNumber', (t) => {
   const { element: input } = t.context;
 
   t.is(input.valueAsNumber, NaN, 'Default valueAsNumber should be NaN.');
@@ -59,7 +59,7 @@ test('valueAsNumber', t => {
   t.is(input.valueAsNumber, NaN);
 });
 
-test('valueAsDate', t => {
+test('valueAsDate', (t) => {
   const { element: input } = t.context;
 
   t.is(input.valueAsDate, null, 'Default valueAsDate should be null.');
@@ -78,7 +78,7 @@ test('valueAsDate', t => {
   t.is(error.message, 'The provided value is not a Date.');
 });
 
-test('checked', t => {
+test('checked', (t) => {
   const { element: input } = t.context;
 
   t.false(input.checked, 'Default checked should be false.');

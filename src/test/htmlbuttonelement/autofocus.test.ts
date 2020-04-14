@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
   element: HTMLButtonElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -30,20 +30,20 @@ test.beforeEach(t => {
   };
 });
 
-test('autofocus should be false by default', t => {
+test('autofocus should be false by default', (t) => {
   const { element } = t.context;
 
   t.is(element.autofocus, false);
 });
 
-test('autofocus should be settable to a single value', t => {
+test('autofocus should be settable to a single value', (t) => {
   const { element } = t.context;
 
   element.autofocus = true;
   t.is(element.autofocus, true);
 });
 
-test('autofocus property change should be reflected in attribute', t => {
+test('autofocus property change should be reflected in attribute', (t) => {
   const { element } = t.context;
 
   element.autofocus = true;
@@ -53,7 +53,7 @@ test('autofocus property change should be reflected in attribute', t => {
   t.false(element.hasAttribute('autofocus'));
 });
 
-test('autofocus attribute change should be reflected in property', t => {
+test('autofocus attribute change should be reflected in property', (t) => {
   const { element } = t.context;
 
   element.setAttribute('autofocus', '');

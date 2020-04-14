@@ -34,7 +34,7 @@ const test = anyTest as TestInterface<{
   objectContext: ObjectContext;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const env = new Env();
 
   const { document } = env;
@@ -60,12 +60,12 @@ test.beforeEach(t => {
   };
 });
 
-test.afterEach(t => {
+test.afterEach((t) => {
   const { env } = t.context;
   env.dispose();
 });
 
-test.serial('batch mutations', t => {
+test.serial('batch mutations', (t) => {
   const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;
   const mutator = new MutatorProcessor(
@@ -130,7 +130,7 @@ test.serial('batch mutations', t => {
   t.is(baseElement.getAttribute('data-two'), 'data-two');
 });
 
-test.serial('batch mutations with custom pump', t => {
+test.serial('batch mutations with custom pump', (t) => {
   const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;
 
@@ -203,7 +203,7 @@ test.serial('batch mutations with custom pump', t => {
   t.is(baseElement.getAttribute('data-two'), 'data-two');
 });
 
-test.serial('leverage allowlist to exclude mutation type', t => {
+test.serial('leverage allowlist to exclude mutation type', (t) => {
   const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;
   const mutator = new MutatorProcessor(
@@ -251,7 +251,7 @@ test.serial('leverage allowlist to exclude mutation type', t => {
   t.is(baseElement.getAttribute('data-one'), null);
 });
 
-test.serial('split strings from mutations', t => {
+test.serial('split strings from mutations', (t) => {
   const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;
   const mutator = new MutatorProcessor(

@@ -22,9 +22,9 @@ import styles from "./candidateTable.css";
 const numberFormatter = new Intl.NumberFormat("en-US");
 const percentFormatter = new Intl.NumberFormat("en-US", {
   style: "percent",
-  maximumFractionDigits: 1
+  maximumFractionDigits: 1,
 });
-const shortParty = party => {
+const shortParty = (party) => {
   switch (party) {
     case "Republican":
       return "Rep.";
@@ -47,7 +47,7 @@ const Candidate = ({ victor, name, party, votes, percent }) => {
           height="24"
           className={objstr({
             [styles.victor]: true,
-            [styles.displayVictor]: victor
+            [styles.displayVictor]: victor,
           })}
         >
           <path d="M20.285 2L9 13.567 3.714 8.556 0 12.272 9 21 24 5.715z" />
@@ -59,7 +59,7 @@ const Candidate = ({ victor, name, party, votes, percent }) => {
         <span
           className={objstr({
             [styles.party]: true,
-            [styles.shortParty]: true
+            [styles.shortParty]: true,
           })}
         >
           {shortParty(party)}
@@ -82,7 +82,7 @@ export const CandidateTable = ({
   totalData,
   regionData,
   votes,
-  focusedRegion
+  focusedRegion,
 }) => {
   const focusedRegionData =
     focusedRegion !== null && regionData[focusedRegion].candidates;

@@ -33,7 +33,7 @@ const test = anyTest as TestInterface<{
   div: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -45,13 +45,13 @@ test.beforeEach(t => {
   };
 });
 
-test.serial('control should be null by default', t => {
+test.serial('control should be null by default', (t) => {
   const { label } = t.context;
 
   t.is(label.control, null);
 });
 
-test.serial('control should be sibling element with matching id to "for" attribute', t => {
+test.serial('control should be sibling element with matching id to "for" attribute', (t) => {
   const { document, label, div, input } = t.context;
 
   div.appendChild(label);
@@ -63,7 +63,7 @@ test.serial('control should be sibling element with matching id to "for" attribu
   t.is(label.control, input);
 });
 
-test('control should be null when there is no matching element to the id in "for" attribute', t => {
+test('control should be null when there is no matching element to the id in "for" attribute', (t) => {
   const { document, label } = t.context;
 
   label.htmlFor = 'identifier';
@@ -72,7 +72,7 @@ test('control should be null when there is no matching element to the id in "for
   t.is(label.control, null);
 });
 
-test('control should be element with matching id to "for" attribute', t => {
+test('control should be element with matching id to "for" attribute', (t) => {
   const { document, label, form, div, input } = t.context;
 
   form.appendChild(label);
@@ -84,7 +84,7 @@ test('control should be element with matching id to "for" attribute', t => {
   t.is(label.control, input);
 });
 
-test('control should be input element child when no "for" attribute is specified', t => {
+test('control should be input element child when no "for" attribute is specified', (t) => {
   const { document, label, form, input } = t.context;
 
   form.appendChild(label);
@@ -93,7 +93,7 @@ test('control should be input element child when no "for" attribute is specified
   t.is(label.control, input);
 });
 
-test('control should be null when no "for" attribute is specified, and there are no child input elements', t => {
+test('control should be null when no "for" attribute is specified, and there are no child input elements', (t) => {
   const { document, label, form } = t.context;
 
   form.appendChild(label);

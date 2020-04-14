@@ -29,7 +29,7 @@ const test = anyTest as TestInterface<{
   childText: Text;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -41,13 +41,13 @@ test.beforeEach(t => {
   };
 });
 
-test('textContent getter returns empty string when there are no text childNodes.', t => {
+test('textContent getter returns empty string when there are no text childNodes.', (t) => {
   const { node } = t.context;
 
   t.is(node.textContent, '');
 });
 
-test('textContent getter returns the value of direct childNodes when there are no children', t => {
+test('textContent getter returns the value of direct childNodes when there are no children', (t) => {
   const { node, nodeText } = t.context;
 
   node.appendChild(nodeText);
@@ -55,7 +55,7 @@ test('textContent getter returns the value of direct childNodes when there are n
   t.is(node.textContent, 'text in node');
 });
 
-test('textContent getter returns the value of all depths childNodes even when there are children with no textContent', t => {
+test('textContent getter returns the value of all depths childNodes even when there are children with no textContent', (t) => {
   const { node, child, nodeText } = t.context;
 
   node.appendChild(nodeText);
@@ -64,7 +64,7 @@ test('textContent getter returns the value of all depths childNodes even when th
   t.is(node.textContent, 'text in node');
 });
 
-test('textContent returns the value of all depths childNodes when there are children', t => {
+test('textContent returns the value of all depths childNodes when there are children', (t) => {
   const { node, child, nodeText, childText } = t.context;
 
   child.appendChild(childText);
@@ -74,7 +74,7 @@ test('textContent returns the value of all depths childNodes when there are chil
   t.is(node.textContent, 'text in node text in child');
 });
 
-test('textContent setter removes other child element nodes', t => {
+test('textContent setter removes other child element nodes', (t) => {
   const { node, child } = t.context;
   child.textContent = 'foo';
   node.appendChild(child);
@@ -88,7 +88,7 @@ test('textContent setter removes other child element nodes', t => {
   t.is(node.childNodes[0].nodeType, NodeType.TEXT_NODE);
 });
 
-test('textContent setter removes other child text nodes', t => {
+test('textContent setter removes other child text nodes', (t) => {
   const { node, document } = t.context;
   node.appendChild(document.createTextNode('f'));
   node.appendChild(document.createTextNode('o'));

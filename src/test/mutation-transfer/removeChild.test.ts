@@ -27,7 +27,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -36,7 +36,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('Node.removeChild transfer only child', t => {
+test.serial.cb('Node.removeChild transfer only child', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
@@ -56,7 +56,7 @@ test.serial.cb('Node.removeChild transfer only child', t => {
   });
 });
 
-test.serial.cb('Node.removeChild transfer, one of siblings', t => {
+test.serial.cb('Node.removeChild transfer, one of siblings', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');
@@ -78,7 +78,7 @@ test.serial.cb('Node.removeChild transfer, one of siblings', t => {
   });
 });
 
-test.serial.cb('Node.removeChild transfer, multiple sibling nodes', t => {
+test.serial.cb('Node.removeChild transfer, multiple sibling nodes', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');
@@ -118,7 +118,7 @@ test.serial.cb('Node.removeChild transfer, multiple sibling nodes', t => {
   });
 });
 
-test.serial.cb('Node.removeChild transfer, tree > 1 depth', t => {
+test.serial.cb('Node.removeChild transfer, tree > 1 depth', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');

@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
   tokenList: DOMTokenList;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -30,7 +30,7 @@ test.beforeEach(t => {
   };
 });
 
-test('getting position zero should return the correct value', t => {
+test('getting position zero should return the correct value', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo';
@@ -43,7 +43,7 @@ test('getting position zero should return the correct value', t => {
   t.is(tokenList.item(0), 'bar');
 });
 
-test('getting last position should return the correct value', t => {
+test('getting last position should return the correct value', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo';
@@ -56,7 +56,7 @@ test('getting last position should return the correct value', t => {
   t.is(tokenList.item(tokenList.length - 1), 'foo');
 });
 
-test('getting middle positions should return the correct value', t => {
+test('getting middle positions should return the correct value', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo bar foo';

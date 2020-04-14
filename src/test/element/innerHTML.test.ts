@@ -29,7 +29,7 @@ const test = anyTest as TestInterface<{
   comment: Comment;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -40,7 +40,7 @@ test.beforeEach(t => {
   };
 });
 
-test('element with no children', t => {
+test('element with no children', (t) => {
   const { node } = t.context;
 
   t.is(node.innerHTML, '');
@@ -48,41 +48,41 @@ test('element with no children', t => {
   t.is(node.innerHTML, '');
 });
 
-test('element with a child', t => {
+test('element with a child', (t) => {
   const { node, child } = t.context;
 
   node.appendChild(child);
   t.is(node.innerHTML, '<div></div>');
 });
 
-test('element with text', t => {
+test('element with text', (t) => {
   const { node, text } = t.context;
 
   node.appendChild(text);
   t.is(node.innerHTML, 'text');
 });
 
-test('element with comment', t => {
+test('element with comment', (t) => {
   const { node, comment } = t.context;
 
   node.appendChild(comment);
   t.is(node.innerHTML, '<!--comment-->');
 });
 
-test('set nothing', t => {
+test('set nothing', (t) => {
   const { node } = t.context;
   node.innerHTML = '';
   t.is(node.hasChildNodes(), false);
 });
 
-test('set replaces children', t => {
+test('set replaces children', (t) => {
   const { node, child } = t.context;
   node.appendChild(child);
   node.innerHTML = '';
   t.is(node.hasChildNodes(), false);
 });
 
-test('set an element node', t => {
+test('set an element node', (t) => {
   const { node } = t.context;
   node.innerHTML = '<div></div>';
   t.is(node.childNodes.length, 1);
@@ -92,7 +92,7 @@ test('set an element node', t => {
   t.is(child.nodeName, 'DIV');
 });
 
-test('set a text node', t => {
+test('set a text node', (t) => {
   const { node } = t.context;
   const testString = 'Hello, World!';
   node.innerHTML = testString;
@@ -103,7 +103,7 @@ test('set a text node', t => {
   t.is(child.textContent, testString);
 });
 
-test('set comment node', t => {
+test('set comment node', (t) => {
   const { node } = t.context;
   const testString = 'this is a comment';
   node.innerHTML = '<!--' + testString + '-->';
@@ -114,7 +114,7 @@ test('set comment node', t => {
   t.is(child.textContent, testString);
 });
 
-test('set nested elements', t => {
+test('set nested elements', (t) => {
   const { node } = t.context;
   node.innerHTML = '<div><div></div></div>';
   t.is(node.childNodes.length, 1);
@@ -123,13 +123,13 @@ test('set nested elements', t => {
   t.is(child.childNodes.length, 1);
 });
 
-test('set non-nested elements', t => {
+test('set non-nested elements', (t) => {
   const { node } = t.context;
   node.innerHTML = '<div></div><div></div>';
   t.is(node.childNodes.length, 2);
 });
 
-test('set element with attributes', t => {
+test('set element with attributes', (t) => {
   const { node } = t.context;
   node.innerHTML = '<div hi="hello"></div>';
   const child = node.firstChild!;
@@ -138,7 +138,7 @@ test('set element with attributes', t => {
   t.is(child.attributes[0].value, 'hello');
 });
 
-test('set self closing tags', t => {
+test('set self closing tags', (t) => {
   const { node } = t.context;
   node.innerHTML = '<br>';
   const child = node.firstChild!;
@@ -146,13 +146,13 @@ test('set self closing tags', t => {
   t.is(child.nodeName, 'BR');
 });
 
-test('set invalid html throws', t => {
+test('set invalid html throws', (t) => {
   const { node } = t.context;
   // Use an unclosed tag.
   t.throws(() => (node.innerHTML = '<div>'));
 });
 
-test('set closes tags by closing others', t => {
+test('set closes tags by closing others', (t) => {
   const { node } = t.context;
   node.innerHTML = '<div><a></div>';
   let child = node.firstChild!;
@@ -167,7 +167,7 @@ test('set closes tags by closing others', t => {
 // Some tags will automatically close others. Set innerHTML should consider this behavior, yet
 // it should not apply for the root element's tags:
 // https://github.com/ampproject/worker-dom/issues/372
-test("set will alter root element's contents, not the element itself", t => {
+test("set will alter root element's contents, not the element itself", (t) => {
   const document = createTestingDocument();
   const pNode = document.createElement('p');
 
@@ -175,7 +175,7 @@ test("set will alter root element's contents, not the element itself", t => {
   t.is(pNode.textContent, 'Hello World!');
 });
 
-test('set takes all block text element content as text', t => {
+test('set takes all block text element content as text', (t) => {
   const { node } = t.context;
   node.innerHTML = '<style><div></div></style>';
   const child = node.firstChild!; // style node
@@ -183,7 +183,7 @@ test('set takes all block text element content as text', t => {
   t.is(childContent.nodeType, NodeType.TEXT_NODE);
 });
 
-test('set normalizes html namespace tag names', t => {
+test('set normalizes html namespace tag names', (t) => {
   const { node } = t.context;
   node.innerHTML = '<Div></Div>';
   const child = node.firstChild!;
@@ -191,21 +191,21 @@ test('set normalizes html namespace tag names', t => {
   t.is(child.nodeName, 'DIV');
 });
 
-test('set creates correct types of HTML elements', t => {
+test('set creates correct types of HTML elements', (t) => {
   const { node } = t.context;
   node.innerHTML = '<input>';
   const child = node.firstChild!;
   t.true(child instanceof HTMLInputElement);
 });
 
-test('set has svg tag live in SVG namespace', t => {
+test('set has svg tag live in SVG namespace', (t) => {
   const { node } = t.context;
   node.innerHTML = '<svg></svg>';
   const child = node.firstChild!;
   t.is(child.namespaceURI, SVG_NAMESPACE);
 });
 
-test("set keeps localName's case for tags in SVG namespace", t => {
+test("set keeps localName's case for tags in SVG namespace", (t) => {
   const { node } = t.context;
   node.innerHTML = '<svg><feImage></feImage></svg>';
   const svgWrapper = node.firstChild!;
@@ -214,14 +214,14 @@ test("set keeps localName's case for tags in SVG namespace", t => {
   t.is(child.namespaceURI, SVG_NAMESPACE);
 });
 
-test('set resets namespace', t => {
+test('set resets namespace', (t) => {
   const { node } = t.context;
   node.innerHTML = '<svg></svg><div></div>';
   const htmlChild = node.lastChild!;
   t.is(htmlChild.namespaceURI, HTML_NAMESPACE);
 });
 
-test('set handles foreignObject tags correctly', t => {
+test('set handles foreignObject tags correctly', (t) => {
   const { node } = t.context;
   node.innerHTML = '<svg><foreignObject><div></div></foreignObject></svg>';
   const svgWrapper = node.firstChild!;
@@ -235,7 +235,7 @@ test('set handles foreignObject tags correctly', t => {
   t.is(foreignObjectChild.namespaceURI, HTML_NAMESPACE);
 });
 
-test('set resets namespace after foreignObject end tag', t => {
+test('set resets namespace after foreignObject end tag', (t) => {
   const { node } = t.context;
   node.innerHTML = '<svg><foreignObject></foreignObject><div></div></svg>';
 
@@ -244,7 +244,7 @@ test('set resets namespace after foreignObject end tag', t => {
   t.is(foreignObjectSibling.namespaceURI, SVG_NAMESPACE);
 });
 
-test('set throws for unsupported namespaces', t => {
+test('set throws for unsupported namespaces', (t) => {
   const { node } = t.context;
   node.namespaceURI = 'http://www.w3.org/TR/2010/REC-MathML3-20101021/';
   t.throws(() => {

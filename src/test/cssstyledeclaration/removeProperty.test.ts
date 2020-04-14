@@ -23,7 +23,7 @@ const test = anyTest as TestInterface<{
   node: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -31,7 +31,7 @@ test.beforeEach(t => {
   };
 });
 
-test('removing a value stored eliminates the stored value', t => {
+test('removing a value stored eliminates the stored value', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['width']);
@@ -41,7 +41,7 @@ test('removing a value stored eliminates the stored value', t => {
   t.is(declaration.width, '');
 });
 
-test('removing a value stored returns the previously stored value', t => {
+test('removing a value stored returns the previously stored value', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['width']);

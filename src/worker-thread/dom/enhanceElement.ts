@@ -37,7 +37,7 @@ export interface PropertyPair {
 // TODO: Do enumerated attributes with non-boolean properties exist?
 
 export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element): void => {
-  properties.forEach(pair => {
+  properties.forEach((pair) => {
     for (const property in pair) {
       const { 0: defaultValue, 1: attributeName = toLower(property), 2: keywords } = pair[property];
       // Boolean attributes only care about presence, not attribute value.

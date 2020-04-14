@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
   z: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -36,7 +36,7 @@ test.beforeEach(t => {
   };
 });
 
-test('replacing the same child results in no changes', t => {
+test('replacing the same child results in no changes', (t) => {
   const { parent, x } = t.context;
 
   parent.appendChild(x);
@@ -49,7 +49,7 @@ test('replacing the same child results in no changes', t => {
   t.deepEqual(parent.childNodes, [x]);
 });
 
-test('replacing a child with another when there is only a single child', t => {
+test('replacing a child with another when there is only a single child', (t) => {
   const { parent, x, y } = t.context;
 
   parent.appendChild(x);
@@ -64,7 +64,7 @@ test('replacing a child with another when there is only a single child', t => {
   t.deepEqual(parent.childNodes, [y]);
 });
 
-test('replacing a child with another when there are multiple children', t => {
+test('replacing a child with another when there are multiple children', (t) => {
   const { parent, x, y, z } = t.context;
 
   parent.appendChild(x);
@@ -80,7 +80,7 @@ test('replacing a child with another when there are multiple children', t => {
   t.deepEqual(parent.childNodes, [x, z]);
 });
 
-test('replacing a child with next sibling', t => {
+test('replacing a child with next sibling', (t) => {
   const { parent, x, y } = t.context;
 
   parent.appendChild(x);
@@ -96,7 +96,7 @@ test('replacing a child with next sibling', t => {
   t.deepEqual(parent.childNodes, [y]);
 });
 
-test('replacing a child with previous sibling', t => {
+test('replacing a child with previous sibling', (t) => {
   const { parent, x, y } = t.context;
 
   parent.appendChild(x);
@@ -112,7 +112,7 @@ test('replacing a child with previous sibling', t => {
   t.deepEqual(parent.childNodes, [x]);
 });
 
-test('replacing a child with an ancestor', t => {
+test('replacing a child with an ancestor', (t) => {
   const { parent, x: child, y: grandchild } = t.context;
 
   parent.appendChild(child);

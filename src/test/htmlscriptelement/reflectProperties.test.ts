@@ -23,7 +23,7 @@ const test = anyTest as TestInterface<{
   element: HTMLScriptElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {

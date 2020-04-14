@@ -31,7 +31,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   const div = document.createElement('div');
 
@@ -47,7 +47,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('Node.removeEventListener transfers an event subscription', t => {
+test.serial.cb('Node.removeEventListener transfers an event subscription', (t) => {
   const { div, eventHandler, emitter } = t.context;
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
@@ -66,7 +66,7 @@ test.serial.cb('Node.removeEventListener transfers an event subscription', t => 
   });
 });
 
-test.serial.cb('Node.removeEventListener transfers the correct subscription when multiple exist', t => {
+test.serial.cb('Node.removeEventListener transfers the correct subscription when multiple exist', (t) => {
   const { div, eventHandler, emitter } = t.context;
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
@@ -78,7 +78,7 @@ test.serial.cb('Node.removeEventListener transfers the correct subscription when
     t.end();
   }
 
-  div.addEventListener('click', e => console.log('0th listener'));
+  div.addEventListener('click', (e) => console.log('0th listener'));
   div.addEventListener('click', eventHandler);
   Promise.resolve().then(() => {
     emitter.once(transmitted);

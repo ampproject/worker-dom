@@ -27,7 +27,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -36,7 +36,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('document.createElementNS creation format is valid', t => {
+test.serial.cb('document.createElementNS creation format is valid', (t) => {
   const { document, emitter } = t.context;
   const svg = document.createElement('svg');
 

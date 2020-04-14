@@ -45,7 +45,7 @@ interface StyleDeclaration {
 const hyphenateKey = (key: string): string => toLower(key.replace(/(webkit|ms|moz|khtml)/g, '-$1').replace(/([a-zA-Z])(?=[A-Z])/g, '$1-'));
 
 export const appendKeys = (keys: Array<string>): void => {
-  const keysToAppend = keys.filter(key => isNaN(key as any) && !CSSStyleDeclaration.prototype.hasOwnProperty(key));
+  const keysToAppend = keys.filter((key) => isNaN(key as any) && !CSSStyleDeclaration.prototype.hasOwnProperty(key));
   if (keysToAppend.length <= 0) {
     return;
   }

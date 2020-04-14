@@ -24,7 +24,7 @@ const test = anyTest as TestInterface<{
   childTwo: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -34,7 +34,7 @@ test.beforeEach(t => {
   };
 });
 
-test('when a parent contains two children, the next sibling of the first is the second', t => {
+test('when a parent contains two children, the next sibling of the first is the second', (t) => {
   const { node, child, childTwo } = t.context;
 
   node.appendChild(child);
@@ -42,13 +42,13 @@ test('when a parent contains two children, the next sibling of the first is the 
   t.deepEqual(child.nextSibling, childTwo);
 });
 
-test('when a node does not have a parent, its next sibling is null', t => {
+test('when a node does not have a parent, its next sibling is null', (t) => {
   const { node } = t.context;
 
   t.is(node.nextSibling, null);
 });
 
-test('when a node is the last child of a parent, the next sibling is null', t => {
+test('when a node is the last child of a parent, the next sibling is null', (t) => {
   const { node, child, childTwo } = t.context;
 
   node.appendChild(child);

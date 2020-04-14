@@ -24,7 +24,7 @@ const test = anyTest as TestInterface<{
   childTwo: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -34,7 +34,7 @@ test.beforeEach(t => {
   };
 });
 
-test('single direct child with one classname', t => {
+test('single direct child with one classname', (t) => {
   const { node, child } = t.context;
 
   child.className = 'foo';
@@ -45,7 +45,7 @@ test('single direct child with one classname', t => {
   t.deepEqual(node.getElementsByClassName('foo'), [child]);
 });
 
-test('multiple direct children with two classnames', t => {
+test('multiple direct children with two classnames', (t) => {
   const { node, child } = t.context;
 
   child.className = 'foo bar';
@@ -60,7 +60,7 @@ test('multiple direct children with two classnames', t => {
   t.deepEqual(node.getElementsByClassName('bar'), [child]);
 });
 
-test('tree with depth > 1', t => {
+test('tree with depth > 1', (t) => {
   const { node, child, childTwo } = t.context;
 
   childTwo.className = child.className = 'foo';

@@ -28,7 +28,7 @@ const test = anyTest as TestInterface<{
   objectContext: ObjectContext;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const env = new Env();
   const { document } = env;
   const baseElement = document.createElement('div');
@@ -44,7 +44,7 @@ test.beforeEach(t => {
   };
 });
 
-test('Deserializes int arguments', t => {
+test('Deserializes int arguments', (t) => {
   const { stringContext, nodeContext } = t.context;
 
   const serializedArgs = [TransferrableObjectType.SmallInt, 1];
@@ -54,7 +54,7 @@ test('Deserializes int arguments', t => {
   t.deepEqual(deserializedArgs, [1]);
 });
 
-test('Deserializes float arguments', t => {
+test('Deserializes float arguments', (t) => {
   const { stringContext, nodeContext } = t.context;
 
   const f32 = new Float32Array(1);
@@ -68,7 +68,7 @@ test('Deserializes float arguments', t => {
   t.true(approx(1.23, deserializedArgs[0] as number));
 });
 
-test('Deserializes string arguments', t => {
+test('Deserializes string arguments', (t) => {
   const { stringContext, nodeContext } = t.context;
 
   const serializedArgs = [TransferrableObjectType.String, storeString(stringContext, 'textArg')];
@@ -78,7 +78,7 @@ test('Deserializes string arguments', t => {
   t.deepEqual(deserializedArgs, ['textArg']);
 });
 
-test('Deserializes array argument', t => {
+test('Deserializes array argument', (t) => {
   const { stringContext, nodeContext } = t.context;
 
   const serializedArgs = [
@@ -98,7 +98,7 @@ test('Deserializes array argument', t => {
   t.deepEqual(deserializedArgs, [[1, 2, 3]]);
 });
 
-test('Deserializes object argument', t => {
+test('Deserializes object argument', (t) => {
   const { stringContext, nodeContext, objectContext } = t.context;
 
   const id = 5; // example object id
@@ -112,7 +112,7 @@ test('Deserializes object argument', t => {
   t.deepEqual(deserializedArgs, [obj]);
 });
 
-test('Deserializes varying types', t => {
+test('Deserializes varying types', (t) => {
   const { stringContext, nodeContext, objectContext } = t.context;
 
   // argument 1: SmallInt
@@ -142,7 +142,7 @@ test('Deserializes varying types', t => {
   t.deepEqual(deserializedArgs, [smallInt, stringArg, object]);
 });
 
-test('Deserializes from different offset', t => {
+test('Deserializes from different offset', (t) => {
   const { stringContext, nodeContext } = t.context;
 
   const serializedArgs = [TransferrableObjectType.SmallInt, 1];
@@ -152,7 +152,7 @@ test('Deserializes from different offset', t => {
   t.deepEqual(deserializedArgs, [1]);
 });
 
-test('Returns the correct end offset', t => {
+test('Returns the correct end offset', (t) => {
   const { stringContext, nodeContext } = t.context;
 
   const serializedArgs = [

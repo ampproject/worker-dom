@@ -24,7 +24,7 @@ const test = anyTest as TestInterface<{
   text: Text;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -33,7 +33,7 @@ test.beforeEach(t => {
   };
 });
 
-test('label should be Node.textContent by default', t => {
+test('label should be Node.textContent by default', (t) => {
   const { option, text } = t.context;
 
   t.is(option.label, '');
@@ -41,7 +41,7 @@ test('label should be Node.textContent by default', t => {
   t.is(option.label, 'sample text');
 });
 
-test('label is reflected from attribute when present', t => {
+test('label is reflected from attribute when present', (t) => {
   const { option, text } = t.context;
 
   option.setAttribute('label', 'label attribute');
@@ -50,7 +50,7 @@ test('label is reflected from attribute when present', t => {
   t.is(option.label, 'label attribute');
 });
 
-test('label is Node.textContent when attribute is removed', t => {
+test('label is Node.textContent when attribute is removed', (t) => {
   const { option, text } = t.context;
 
   option.setAttribute('label', 'label attribute');

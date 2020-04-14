@@ -24,7 +24,11 @@ import { createTestingDocument } from '../DocumentCreation';
 const test = anyTest as TestInterface<{
   canvas: HTMLCanvasElement;
   context2d: CanvasRenderingContext2DShim<HTMLCanvasElement>;
-  deferredUpgrade: { resolve: (instance: FakeOffscreenCanvas) => void; reject: (errorMsg: string) => void; upgradePromise: Promise<void> };
+  deferredUpgrade: {
+    resolve: (instance: FakeOffscreenCanvas) => void;
+    reject: (errorMsg: string) => void;
+    upgradePromise: Promise<void>;
+  };
   sandbox: sinon.SinonSandbox;
   unUpgradedOffscreenContext: CanvasRenderingContext2D;
 }>;
@@ -49,7 +53,7 @@ class ImageBitmap {
   close() {}
 }
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const sandbox = sinon.createSandbox();
 
   const unUpgradedOffscreen = new FakeOffscreenCanvas();
@@ -69,13 +73,13 @@ test.beforeEach(t => {
   };
 });
 
-test.afterEach(t => {
+test.afterEach((t) => {
   const { sandbox } = t.context;
   sandbox.restore();
 });
 
 // describe clearRect
-test('context calls clearRect', t => {
+test('context calls clearRect', (t) => {
   const { context2d, sandbox, unUpgradedOffscreenContext } = t.context;
 
   // should call method in the un-upgraded version
@@ -85,7 +89,7 @@ test('context calls clearRect', t => {
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
 });
 
-test('context only calls upgraded clearRect if available', async t => {
+test('context only calls upgraded clearRect if available', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   // stub out method in context of un-upgraded OffscreenCanvas
@@ -106,7 +110,7 @@ test('context only calls upgraded clearRect if available', async t => {
   });
 });
 
-test('context calls both versions of clearRect when called before upgrade', async t => {
+test('context calls both versions of clearRect when called before upgrade', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   // stub out method in context of un-upgraded OffscreenCanvas
@@ -129,7 +133,7 @@ test('context calls both versions of clearRect when called before upgrade', asyn
 });
 
 // describe fillText
-test('context calls fillText', t => {
+test('context calls fillText', (t) => {
   const { context2d, sandbox, unUpgradedOffscreenContext } = t.context;
 
   // should call method in the un-upgraded version
@@ -139,7 +143,7 @@ test('context calls fillText', t => {
   t.true(stub.withArgs('hello, world', 1, 2).calledOnce);
 });
 
-test('context only calls upgraded fillText if available', async t => {
+test('context only calls upgraded fillText if available', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedStub = (unUpgradedOffscreenContext['fillText'] = sandbox.stub());
@@ -156,7 +160,7 @@ test('context only calls upgraded fillText if available', async t => {
   });
 });
 
-test('context calls both versions of fillText when called before upgrade', async t => {
+test('context calls both versions of fillText when called before upgrade', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedStub = (unUpgradedOffscreenContext['fillText'] = sandbox.stub());
@@ -175,7 +179,7 @@ test('context calls both versions of fillText when called before upgrade', async
 });
 
 // describe lineWidth
-test('context calls set lineWidth', t => {
+test('context calls set lineWidth', (t) => {
   const { context2d, sandbox, unUpgradedOffscreenContext } = t.context;
   const setter = sandbox.spy();
 
@@ -189,7 +193,7 @@ test('context calls set lineWidth', t => {
   t.true(setter.withArgs(100).calledOnce);
 });
 
-test('context calls get lineWidth', t => {
+test('context calls get lineWidth', (t) => {
   const { context2d, sandbox, unUpgradedOffscreenContext } = t.context;
   const getter = sandbox.spy();
 
@@ -203,7 +207,7 @@ test('context calls get lineWidth', t => {
   t.true(getter.calledOnce);
 });
 
-test('context only calls upgraded set lineWidth if available', async t => {
+test('context only calls upgraded set lineWidth if available', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedSetter = sandbox.spy();
@@ -224,7 +228,7 @@ test('context only calls upgraded set lineWidth if available', async t => {
   });
 });
 
-test('context only calls upgraded get lineWidth if available', async t => {
+test('context only calls upgraded get lineWidth if available', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedGetter = sandbox.spy();
@@ -245,7 +249,7 @@ test('context only calls upgraded get lineWidth if available', async t => {
   });
 });
 
-test('context calls both versions of set lineWidth when called before upgrade', async t => {
+test('context calls both versions of set lineWidth when called before upgrade', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedSetter = sandbox.spy();
@@ -268,7 +272,7 @@ test('context calls both versions of set lineWidth when called before upgrade', 
 });
 
 // describe lineCap
-test('context calls set lineCap', t => {
+test('context calls set lineCap', (t) => {
   const { context2d, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const setter = sandbox.spy();
@@ -280,7 +284,7 @@ test('context calls set lineCap', t => {
   t.true(setter.withArgs('butt').calledOnce);
 });
 
-test('context calls get lineCap', t => {
+test('context calls get lineCap', (t) => {
   const { context2d, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const getter = sandbox.spy();
@@ -292,7 +296,7 @@ test('context calls get lineCap', t => {
   t.true(getter.calledOnce);
 });
 
-test('context only calls upgraded set lineCap if available', async t => {
+test('context only calls upgraded set lineCap if available', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedSetter = sandbox.spy();
@@ -313,7 +317,7 @@ test('context only calls upgraded set lineCap if available', async t => {
   });
 });
 
-test('context only calls upgraded get lineCap if available', async t => {
+test('context only calls upgraded get lineCap if available', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedGetter = sandbox.spy();
@@ -334,7 +338,7 @@ test('context only calls upgraded get lineCap if available', async t => {
   });
 });
 
-test('context calls both versions of set lineCap when called before upgrade', async t => {
+test('context calls both versions of set lineCap when called before upgrade', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedSetter = sandbox.spy();
@@ -357,7 +361,7 @@ test('context calls both versions of set lineCap when called before upgrade', as
 });
 
 // describe setLineDash
-test('context calls setLineDash', t => {
+test('context calls setLineDash', (t) => {
   const { context2d, sandbox, unUpgradedOffscreenContext } = t.context;
 
   // should call method in the un-upgraded version
@@ -367,7 +371,7 @@ test('context calls setLineDash', t => {
   t.true(stub.withArgs([1, 2, 3, 4]).calledOnce);
 });
 
-test('context only calls upgraded setLineDash if available', async t => {
+test('context only calls upgraded setLineDash if available', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedStub = (unUpgradedOffscreenContext['setLineDash'] = sandbox.stub());
@@ -384,7 +388,7 @@ test('context only calls upgraded setLineDash if available', async t => {
   });
 });
 
-test('context calls both versions of setLineDash when called before upgrade', async t => {
+test('context calls both versions of setLineDash when called before upgrade', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedStub = (unUpgradedOffscreenContext['setLineDash'] = sandbox.stub());
@@ -403,7 +407,7 @@ test('context calls both versions of setLineDash when called before upgrade', as
 });
 
 // describe drawImage
-test('context calls drawImage', t => {
+test('context calls drawImage', (t) => {
   const { context2d, sandbox, unUpgradedOffscreenContext } = t.context;
 
   // should call method in the un-upgraded version
@@ -416,7 +420,7 @@ test('context calls drawImage', t => {
   t.true(stub.withArgs(imageBitmap, 10, 10).calledOnce);
 });
 
-test('context only calls upgraded drawImage if available', async t => {
+test('context only calls upgraded drawImage if available', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedStub = ((unUpgradedOffscreenContext['drawImage'] as sinon.SinonStub) = sandbox.stub());
@@ -434,7 +438,7 @@ test('context only calls upgraded drawImage if available', async t => {
   });
 });
 
-test('context calls both versions of drawImage when called before upgrade', async t => {
+test('context calls both versions of drawImage when called before upgrade', async (t) => {
   const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedStub = ((unUpgradedOffscreenContext['drawImage'] as sinon.SinonStub) = sandbox.stub());

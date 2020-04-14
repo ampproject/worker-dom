@@ -29,7 +29,7 @@ span.addEventListener('click', toggle, false);
 
 input.addEventListener(
   'input',
-  event => {
+  (event) => {
     if (/change/.test(event.currentTarget.value)) {
       toggle();
     } else if (/remove/.test(event.currentTarget.value)) {

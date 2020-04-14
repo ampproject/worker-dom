@@ -24,7 +24,7 @@ const test = anyTest as TestInterface<{
   childTwo: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -34,20 +34,20 @@ test.beforeEach(t => {
   };
 });
 
-test('return false when node contains no children', t => {
+test('return false when node contains no children', (t) => {
   const { node } = t.context;
 
   t.is(node.hasChildNodes(), false);
 });
 
-test('return true when node contains a child', t => {
+test('return true when node contains a child', (t) => {
   const { node, child } = t.context;
 
   node.appendChild(child);
   t.is(node.hasChildNodes(), true);
 });
 
-test('return true when node contains multiple children', t => {
+test('return true when node contains multiple children', (t) => {
   const { node, child, childTwo } = t.context;
 
   node.appendChild(child);

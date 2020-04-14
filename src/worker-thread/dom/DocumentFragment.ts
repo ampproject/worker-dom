@@ -34,7 +34,7 @@ export class DocumentFragment extends ParentNode {
   public cloneNode(deep: boolean = false): DocumentFragment {
     const clone: DocumentFragment = this.ownerDocument.createDocumentFragment();
     if (deep) {
-      this.childNodes.forEach(child => clone.appendChild(child.cloneNode(deep)));
+      this.childNodes.forEach((child) => clone.appendChild(child.cloneNode(deep)));
     }
     return clone;
   }

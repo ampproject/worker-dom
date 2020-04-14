@@ -23,7 +23,7 @@ const test = anyTest as TestInterface<{
 }>;
 
 export function testReflectedProperties(propertyPairs: Array<PropertyPair>) {
-  propertyPairs.forEach(pair => {
+  propertyPairs.forEach((pair) => {
     testReflectedProperty(pair);
   });
 }
@@ -35,18 +35,18 @@ export function testReflectedProperty(propertyPair: PropertyPair, overrideValueT
   const keywords = propertyPair[propertyName][2];
   const valueToTest = deriveValueToTest(overrideValueToTest !== null ? overrideValueToTest : defaultValue);
 
-  test(`${propertyName} should be ${defaultValue} by default`, t => {
+  test(`${propertyName} should be ${defaultValue} by default`, (t) => {
     const { element } = t.context;
     t.is(element[propertyName], defaultValue);
   });
 
-  test(`${propertyName} should be settable to a single value`, t => {
+  test(`${propertyName} should be settable to a single value`, (t) => {
     const { element } = t.context;
     element[propertyName] = valueToTest;
     t.is(element[propertyName], valueToTest);
   });
 
-  test(`${propertyName} property change should be reflected in attribute`, t => {
+  test(`${propertyName} property change should be reflected in attribute`, (t) => {
     const { element } = t.context;
     element[propertyName] = valueToTest;
     if (keywords) {
@@ -61,7 +61,7 @@ export function testReflectedProperty(propertyPair: PropertyPair, overrideValueT
     }
   });
 
-  test(`${propertyName} attribute change should be reflected in property`, t => {
+  test(`${propertyName} attribute change should be reflected in property`, (t) => {
     const { element } = t.context;
     element.setAttribute(attributeName, String(valueToTest));
     t.is(element[propertyName], valueToTest);

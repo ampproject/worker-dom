@@ -32,7 +32,7 @@ export class Env {
     const workers: Array<WorkerImpl> = (this.workers = []);
     Object.defineProperty(global, 'Worker', {
       configurable: true,
-      value: function(url: string, options: any = {}) {
+      value: function (url: string, options: any = {}) {
         const worker = new WorkerImpl(url, options);
         workers.push(worker);
         return worker;
@@ -44,7 +44,7 @@ export class Env {
       value: BlobImpl,
     });
     if (!(global as any)['URL']) {
-      const URL = function() {};
+      const URL = function () {};
       Object.defineProperty(global, 'URL', {
         configurable: true,
         value: URL,
@@ -52,7 +52,7 @@ export class Env {
     }
     Object.defineProperty((global as any)['URL'], 'createObjectURL', {
       configurable: true,
-      value: function(obj: any) {
+      value: function (obj: any) {
         return obj.toString();
       },
     });

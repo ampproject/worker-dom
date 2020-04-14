@@ -86,11 +86,14 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   private getOffscreenCanvasAsync(canvas: ElementType): Promise<void> {
     this.unresolvedCalls++;
 
-    const deferred: { resolve?: (value?: {} | PromiseLike<{}>) => void; upgradePromise?: Promise<void> } = {};
+    const deferred: {
+      resolve?: (value?: {} | PromiseLike<{}>) => void;
+      upgradePromise?: Promise<void>;
+    } = {};
     const document = this.canvasElement.ownerDocument;
     const isTestMode = !document.addGlobalEventListener;
 
-    const upgradePromise = new Promise(resolve => {
+    const upgradePromise = new Promise((resolve) => {
       const messageHandler = ({ data }: { data: OffscreenCanvasToWorker }) => {
         if (
           data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE &&
@@ -98,7 +101,11 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
         ) {
           document.removeGlobalEventListener('message', messageHandler);
           const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
-          resolve(transferredOffscreenCanvas as { getContext(c: '2d'): CanvasRenderingContext2D });
+          resolve(
+            transferredOffscreenCanvas as {
+              getContext(c: '2d'): CanvasRenderingContext2D;
+            },
+          );
         }
       };
 
@@ -319,7 +326,11 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
       // This case occurs only when an un-upgraded pattern is passed into a different (already
       // upgraded) canvas context.
       if (!value[TransferrableKeys.patternUpgraded]) {
-        this.queue.push({ fnName: 'strokeStyle', args: [value], isSetter: true });
+        this.queue.push({
+          fnName: 'strokeStyle',
+          args: [value],
+          isSetter: true,
+        });
 
         this.degradeImplementation();
         value[TransferrableKeys.patternUpgradePromise].then(() => {

@@ -36,7 +36,7 @@ export function initialize(
   addCssKeys(cssKeys);
   appendGlobalEventProperties(globalEventHandlerKeys);
   strings.forEach(storeString);
-  (hydrateableNode[TransferrableKeys.childNodes] || []).forEach(child =>
+  (hydrateableNode[TransferrableKeys.childNodes] || []).forEach((child) =>
     document.body.appendChild(document[TransferrableKeys.hydrateNode](strings, child)),
   );
   const window = document.defaultView;

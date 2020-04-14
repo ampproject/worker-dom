@@ -32,7 +32,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   const div = document.createElement('div');
 
@@ -48,7 +48,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('Node.addEventListener transfers an event subscription', t => {
+test.serial.cb('Node.addEventListener transfers an event subscription', (t) => {
   const { div, eventHandler, emitter } = t.context;
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
@@ -77,7 +77,7 @@ test.serial.cb('Node.addEventListener transfers an event subscription', t => {
   });
 });
 
-test.serial.cb('Node.addEventListener(..., {capture: true}) transfers an event subscription', t => {
+test.serial.cb('Node.addEventListener(..., {capture: true}) transfers an event subscription', (t) => {
   const { div, eventHandler, emitter } = t.context;
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
@@ -106,7 +106,7 @@ test.serial.cb('Node.addEventListener(..., {capture: true}) transfers an event s
   });
 });
 
-test.serial.cb('Node.addEventListener(..., {once: true}) transfers an event subscription', t => {
+test.serial.cb('Node.addEventListener(..., {once: true}) transfers an event subscription', (t) => {
   const { div, eventHandler, emitter } = t.context;
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
@@ -135,7 +135,7 @@ test.serial.cb('Node.addEventListener(..., {once: true}) transfers an event subs
   });
 });
 
-test.serial.cb('Node.addEventListener(..., {passive: true}) transfers an event subscription', t => {
+test.serial.cb('Node.addEventListener(..., {passive: true}) transfers an event subscription', (t) => {
   const { div, eventHandler, emitter } = t.context;
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
@@ -164,7 +164,7 @@ test.serial.cb('Node.addEventListener(..., {passive: true}) transfers an event s
   });
 });
 
-test.serial.cb('Node.addEventListener(..., {workerDOMPreventDefault: true}) transfers an event subscription', t => {
+test.serial.cb('Node.addEventListener(..., {workerDOMPreventDefault: true}) transfers an event subscription', (t) => {
   const { div, eventHandler, emitter } = t.context;
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
@@ -189,6 +189,8 @@ test.serial.cb('Node.addEventListener(..., {workerDOMPreventDefault: true}) tran
 
   Promise.resolve().then(() => {
     emitter.once(transmitted);
-    div.addEventListener('click', eventHandler, { workerDOMPreventDefault: true });
+    div.addEventListener('click', eventHandler, {
+      workerDOMPreventDefault: true,
+    });
   });
 });

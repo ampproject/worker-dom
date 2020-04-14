@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
   tokenList: DOMTokenList;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -30,7 +30,7 @@ test.beforeEach(t => {
   };
 });
 
-test('remove a single value', t => {
+test('remove a single value', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo';
@@ -54,7 +54,7 @@ test('remove a single value', t => {
   );
 });
 
-test('removing multiple values', t => {
+test('removing multiple values', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo bar';

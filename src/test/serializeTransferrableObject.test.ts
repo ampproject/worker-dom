@@ -24,27 +24,27 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 const test = anyTest as TestInterface<{}>;
 
-test('Serializes Integers', t => {
+test('Serializes Integers', (t) => {
   const serialized = serializeTransferrableObject([1]);
   t.deepEqual(serialized, [TransferrableObjectType.SmallInt, 1]);
 });
 
-test('Serializes Floats', t => {
+test('Serializes Floats', (t) => {
   const serialized = serializeTransferrableObject([1.23]);
   t.deepEqual(serialized, [TransferrableObjectType.Float, 28836, 16285]);
 });
 
-test('Serializes Strings', t => {
+test('Serializes Strings', (t) => {
   const serialized = serializeTransferrableObject(['hello']);
   t.deepEqual(serialized, [TransferrableObjectType.String, store('hello')]);
 });
 
-test('Serializes Arrays', t => {
+test('Serializes Arrays', (t) => {
   const serialized = serializeTransferrableObject([[1, 2, 3]]);
   t.deepEqual(serialized, [TransferrableObjectType.Array, 3 /* array length */, ...serializeTransferrableObject([1, 2, 3])]);
 });
 
-test('Serializes Transferable Objects', t => {
+test('Serializes Transferable Objects', (t) => {
   // use a CanvasGradient as an example
   const gradient = {} as CanvasGradient;
 

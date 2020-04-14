@@ -28,7 +28,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -37,7 +37,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('HTMLOptionElement.selected transfers updated truthy property', t => {
+test.serial.cb('HTMLOptionElement.selected transfers updated truthy property', (t) => {
   const { document, emitter } = t.context;
   const el = document.createElement('option');
 
@@ -56,7 +56,7 @@ test.serial.cb('HTMLOptionElement.selected transfers updated truthy property', t
   });
 });
 
-test.serial.cb('HTMLOptionElement.selected transfers updated falsy property', t => {
+test.serial.cb('HTMLOptionElement.selected transfers updated falsy property', (t) => {
   const { document, emitter } = t.context;
   const el = document.createElement('option');
 
@@ -75,7 +75,7 @@ test.serial.cb('HTMLOptionElement.selected transfers updated falsy property', t 
   });
 });
 
-test.serial.cb('HTMLOptionElement.selected transfers updated true boolean property', t => {
+test.serial.cb('HTMLOptionElement.selected transfers updated true boolean property', (t) => {
   const { document, emitter } = t.context;
   const el = document.createElement('option');
 
@@ -94,7 +94,7 @@ test.serial.cb('HTMLOptionElement.selected transfers updated true boolean proper
   });
 });
 
-test.serial.cb('HTMLOptionElement.selected transfers updated false boolean property', t => {
+test.serial.cb('HTMLOptionElement.selected transfers updated false boolean property', (t) => {
   const { document, emitter } = t.context;
   const el = document.createElement('option');
 
@@ -113,7 +113,7 @@ test.serial.cb('HTMLOptionElement.selected transfers updated false boolean prope
   });
 });
 
-test.serial.cb('HTMLInputElement.value transfers updated empty string', t => {
+test.serial.cb('HTMLInputElement.value transfers updated empty string', (t) => {
   const { document, emitter } = t.context;
   const el = document.createElement('input');
 

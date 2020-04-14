@@ -89,7 +89,7 @@ export function removeDebugCommandExecutors() {
       context = this;
       toDiscover = fs
         .readdirSync(path.join(path.dirname(options.input), 'commands'))
-        .filter(file => path.extname(file) !== '.map' && path.basename(file, '.js') !== 'interface').length;
+        .filter((file) => path.extname(file) !== '.map' && path.basename(file, '.js') !== 'interface').length;
     },
     renderChunk(code) {
       const source = new MagicString(code);
@@ -97,7 +97,7 @@ export function removeDebugCommandExecutors() {
 
       walk.simple(program, {
         ObjectExpression(node) {
-          const propertyNames = (node.properties && node.properties.map(property => property.key.name)) || [];
+          const propertyNames = (node.properties && node.properties.map((property) => property.key.name)) || [];
           const validPropertyRanges = [];
 
           if (propertyNames.includes('execute') && propertyNames.includes('print')) {

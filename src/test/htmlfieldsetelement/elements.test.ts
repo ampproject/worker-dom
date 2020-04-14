@@ -31,7 +31,7 @@ const test = anyTest as TestInterface<{
   div: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -47,20 +47,20 @@ test.beforeEach(t => {
   };
 });
 
-test('elements should be empty by default', t => {
+test('elements should be empty by default', (t) => {
   const { element } = t.context;
 
   t.deepEqual(element.elements, []);
 });
 
-test('elements should contain a button element', t => {
+test('elements should contain a button element', (t) => {
   const { element, button } = t.context;
 
   element.appendChild(button);
   t.deepEqual(element.elements, [button]);
 });
 
-test('elements should contain two button elements', t => {
+test('elements should contain two button elements', (t) => {
   const { element, button, buttonTwo } = t.context;
 
   element.appendChild(button);
@@ -68,7 +68,7 @@ test('elements should contain two button elements', t => {
   t.deepEqual(element.elements, [button, buttonTwo]);
 });
 
-test('elements should contain button element deeply nested, filtering invalid childNodes', t => {
+test('elements should contain button element deeply nested, filtering invalid childNodes', (t) => {
   const { element, button, div } = t.context;
 
   div.appendChild(button);
@@ -78,7 +78,7 @@ test('elements should contain button element deeply nested, filtering invalid ch
   t.deepEqual(element.elements, [button]);
 });
 
-test('elements should contain all valid elements, filtering invalid childNodes', t => {
+test('elements should contain all valid elements, filtering invalid childNodes', (t) => {
   const { element, button, fieldset, input, output, select, textarea, div } = t.context;
 
   element.appendChild(button);

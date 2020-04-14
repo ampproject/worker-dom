@@ -27,7 +27,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -36,7 +36,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('Node.appendChild transfers new node', t => {
+test.serial.cb('Node.appendChild transfers new node', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
@@ -55,7 +55,7 @@ test.serial.cb('Node.appendChild transfers new node', t => {
   });
 });
 
-test.serial.cb('Node.appendChild transfers new node, sibling node', t => {
+test.serial.cb('Node.appendChild transfers new node, sibling node', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');
@@ -84,7 +84,7 @@ test.serial.cb('Node.appendChild transfers new node, sibling node', t => {
   });
 });
 
-test.serial.cb('Node.appendChild transfers new node, tree > 1 depth', t => {
+test.serial.cb('Node.appendChild transfers new node, tree > 1 depth', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');

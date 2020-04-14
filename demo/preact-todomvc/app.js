@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-(function() {
+(function () {
   'use strict';
 
   function _extends() {
     _extends =
       Object.assign ||
-      function(target) {
+      function (target) {
         for (var i = 1; i < arguments.length; i++) {
           var source = arguments[i];
 
@@ -1054,7 +1054,7 @@
       cache = component.__lsc || (component.__lsc = {});
     return (
       cache[key + eventPath] ||
-      (cache[key + eventPath] = function(e) {
+      (cache[key + eventPath] = function (e) {
         var t = (e && e.target) || this,
           state = {},
           obj = state,
@@ -1097,7 +1097,7 @@
 
   var TodoModel =
     /*#__PURE__*/
-    (function() {
+    (function () {
       function TodoModel(key, sub) {
         this.key = key;
         this.todos = store(key) || [];
@@ -1108,7 +1108,7 @@
 
       _proto.inform = function inform() {
         store(this.key, this.todos);
-        this.onChanges.forEach(function(cb) {
+        this.onChanges.forEach(function (cb) {
           return cb();
         });
       };
@@ -1123,7 +1123,7 @@
       };
 
       _proto.toggleAll = function toggleAll(completed) {
-        this.todos = this.todos.map(function(todo) {
+        this.todos = this.todos.map(function (todo) {
           return _extends({}, todo, {
             completed: completed,
           });
@@ -1132,7 +1132,7 @@
       };
 
       _proto.toggle = function toggle(todoToToggle) {
-        this.todos = this.todos.map(function(todo) {
+        this.todos = this.todos.map(function (todo) {
           return todo !== todoToToggle
             ? todo
             : _extends({}, todo, {
@@ -1143,14 +1143,14 @@
       };
 
       _proto.destroy = function destroy(todo) {
-        this.todos = this.todos.filter(function(t) {
+        this.todos = this.todos.filter(function (t) {
           return t !== todo;
         });
         this.inform();
       };
 
       _proto.save = function save(todoToSave, title) {
-        this.todos = this.todos.map(function(todo) {
+        this.todos = this.todos.map(function (todo) {
           return todo !== todoToSave
             ? todo
             : _extends({}, todo, {
@@ -1161,7 +1161,7 @@
       };
 
       _proto.clearCompleted = function clearCompleted() {
-        this.todos = this.todos.filter(function(todo) {
+        this.todos = this.todos.filter(function (todo) {
           return !todo.completed;
         });
         this.inform();
@@ -1172,7 +1172,7 @@
 
   var TodoFooter =
     /*#__PURE__*/
-    (function(_Component) {
+    (function (_Component) {
       _inheritsLoose(TodoFooter, _Component);
 
       function TodoFooter() {
@@ -1263,7 +1263,7 @@
 
   var TodoItem =
     /*#__PURE__*/
-    (function(_Component) {
+    (function (_Component) {
       _inheritsLoose(TodoItem, _Component);
 
       function TodoItem() {
@@ -1434,7 +1434,7 @@
 
   var App =
     /*#__PURE__*/
-    (function(_Component) {
+    (function (_Component) {
       _inheritsLoose(App, _Component);
 
       function App() {
@@ -1526,7 +1526,7 @@
             _this.model.clearCompleted();
           },
         });
-        _this.model = new TodoModel('preact-todos', function() {
+        _this.model = new TodoModel('preact-todos', function () {
           return _this.setState({});
         });
         addEventListener('hashchange', _this.handleRoute.bind(_assertThisInitialized(_this)));
@@ -1561,7 +1561,7 @@
           editing = _ref.editing;
         var todos = this.model.todos,
           shownTodos = todos.filter(FILTERS[nowShowing]),
-          activeTodoCount = todos.reduce(function(a, todo) {
+          activeTodoCount = todos.reduce(function (a, todo) {
             return a + (todo.completed ? 0 : 1);
           }, 0),
           completedCount = todos.length - activeTodoCount;
@@ -1600,7 +1600,7 @@
                   {
                     class: 'todo-list',
                   },
-                  shownTodos.map(function(todo) {
+                  shownTodos.map(function (todo) {
                     return h(TodoItem, {
                       todo: todo,
                       onToggle: _this2.toggle,
