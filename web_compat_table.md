@@ -82,7 +82,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Document.getAnimations()                            | ✖️     |                                                  | 
 | document.getElementById(String id)                  | ✔️     |                                                  | 
 | Document.getElementsByClassName()                   | ✔️     |                                                  | 
-| document.getElementsByName()                        | ✖️     |                                                  | 
+| document.getElementsByName()                        | ✔️     |                                                  | 
 | Document.getElementsByTagName()                     | ✔️     |                                                  | 
 | Document.getElementsByTagNameNS()                   | ✖️     |                                                  | 
 | document.hasFocus()                                 | ✖️     |                                                  | 

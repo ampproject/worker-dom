@@ -196,7 +196,7 @@ export class Element extends ParentNode {
 
     if (childNodes.length) {
       return childNodes
-        .map(child => {
+        .map((child) => {
           switch (child.nodeType) {
             case NodeType.TEXT_NODE:
               return child.textContent;
@@ -219,7 +219,7 @@ export class Element extends ParentNode {
     const root = parse(html, this);
 
     // remove previous children
-    this.childNodes.forEach(n => {
+    this.childNodes.forEach((n) => {
       propagate(n, 'isConnected', false);
       propagate(n, TransferrableKeys.scopingRoot, n);
     });
@@ -238,7 +238,7 @@ export class Element extends ParentNode {
         0,
         0,
         this.childNodes.length,
-        ...this.childNodes.map(node => node[TransferrableKeys.index]),
+        ...this.childNodes.map((node) => node[TransferrableKeys.index]),
       ],
     );
 
@@ -452,12 +452,12 @@ export class Element extends ParentNode {
    * @param names contains one more more classnames to match on. Multiples are space seperated, indicating an AND operation.
    * @return Element array with matching classnames
    */
-  public getElementsByClassName(names: string): Element[] {
+  public getElementsByClassName(names: string): Array<Element> {
     const inputClassList = names.split(' ');
     // TODO(KB) – Compare performance of [].some(value => DOMTokenList.contains(value)) and regex.
     // const classRegex = new RegExp(classNames.split(' ').map(name => `(?=.*${name})`).join(''));
 
-    return matchChildrenElements(this, element => inputClassList.some(inputClassName => element.classList.contains(inputClassName)));
+    return matchChildrenElements(this, (element) => inputClassList.some((inputClassName) => element.classList.contains(inputClassName)));
   }
 
   /**
@@ -465,14 +465,23 @@ export class Element extends ParentNode {
    * @param tagName the qualified name to look for. The special string "*" represents all elements.
    * @return Element array with matching tagnames
    */
-  public getElementsByTagName(tagName: string): Element[] {
+  public getElementsByTagName(tagName: string): Array<Element> {
     const lowerTagName = toLower(tagName);
     return matchChildrenElements(
       this,
       tagName === '*'
-        ? _ => true
-        : element => (element.namespaceURI === HTML_NAMESPACE ? element.localName === lowerTagName : element.tagName === tagName),
+        ? (_) => true
+        : (element) => (element.namespaceURI === HTML_NAMESPACE ? element.localName === lowerTagName : element.tagName === tagName),
     );
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByName
+   * @param name value of name attribute elements must have to be returned
+   * @return Element array with matching name attributes
+   */
+  public getElementsByName(name: string): Array<Element> {
+    return matchChildrenElements(this, (element) => element.getAttributeNS(HTML_NAMESPACE, 'name') === name);
   }
 
   /**
@@ -485,7 +494,7 @@ export class Element extends ParentNode {
       this.namespaceURI,
       this.namespaceURI === HTML_NAMESPACE ? toLower(this.tagName) : this.tagName,
     );
-    this.attributes.forEach(attr => clone.setAttribute(attr.name, attr.value));
+    this.attributes.forEach((attr) => clone.setAttribute(attr.name, attr.value));
     if (deep) {
       this.childNodes.forEach((child: Node) => clone.appendChild(child.cloneNode(deep)));
     }
@@ -511,7 +520,7 @@ export class Element extends ParentNode {
       height: 0,
     };
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const messageHandler = ({ data }: { data: MessageToWorker }) => {
         if (
           data[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT &&
