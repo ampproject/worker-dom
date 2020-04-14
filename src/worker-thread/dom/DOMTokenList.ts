@@ -170,19 +170,19 @@ export class DOMTokenList {
    * @param force changes toggle into a one way-only operation. true => token added. false => token removed.
    * @return true if the token is in the list following mutation, false if not.
    */
-  public toggle(token: string, force?: boolean): boolean {
+  public toggle(token: string, force?: any): boolean {
     if (WHITESPACE_REGEX.test(token)) {
       throw new TypeError('Uncaught DOMException');
     }
 
     if (!this[TransferrableKeys.tokens].includes(token)) {
-      if (force !== false) {
-        // Note, this will add the token if force is undefined (not passed into the method), or true.
+      if (force === undefined || !!force) {
+        // Note, this will add the token if force is undefined (not passed into the method), or truthy.
         this.add(token);
       }
       return true;
-    } else if (force !== true) {
-      // Note, this will remove the token if force is undefined (not passed into the method), or false.
+    } else if (!force) {
+      // Note, this will remove the token if force is undefined (not passed into the method), or falsey.
       this.remove(token);
       return false;
     }

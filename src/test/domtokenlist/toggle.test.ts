@@ -114,3 +114,19 @@ test('toggle a token with force=true value', (t) => {
   t.is(tokenList.toggle('foo', true), true);
   t.is(tokenList.value, 'foo foo bar bar');
 });
+
+test('toggle off token with falsey force value', (t) => {
+  const { tokenList } = t.context;
+
+  tokenList.value = 'foo foo bar';
+  t.is(tokenList.toggle('foo', ''), false);
+  t.is(tokenList.value, 'bar');
+});
+
+test('toggle on a token with truthy force value', (t) => {
+  const { tokenList } = t.context;
+
+  tokenList.value = 'foo foo bar';
+  t.is(tokenList.toggle('foo', []), true);
+  t.is(tokenList.value, 'foo foo bar');
+});
