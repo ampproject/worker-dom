@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
   element: HTMLIFrameElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -30,14 +30,14 @@ test.beforeEach(t => {
   };
 });
 
-test('sandbox should be empty by default', t => {
+test('sandbox should be empty by default', (t) => {
   const { element } = t.context;
 
   t.is(element.sandbox.value, '');
   t.is(element.getAttribute('sandbox'), null);
 });
 
-test('setAttribute should modify sandbox property', t => {
+test('setAttribute should modify sandbox property', (t) => {
   const { element } = t.context;
 
   element.setAttribute('sandbox', 'allow-forms allow-modals');
@@ -45,7 +45,7 @@ test('setAttribute should modify sandbox property', t => {
   t.is(element.getAttribute('sandbox'), 'allow-forms allow-modals');
 });
 
-test('sandbox.add of a single value should only add one class', t => {
+test('sandbox.add of a single value should only add one class', (t) => {
   const { element } = t.context;
 
   element.sandbox.add('allow-forms');
@@ -53,7 +53,7 @@ test('sandbox.add of a single value should only add one class', t => {
   t.is(element.getAttribute('sandbox'), 'allow-forms');
 });
 
-test('sandbox.add of a multiple value should only add all classes', t => {
+test('sandbox.add of a multiple value should only add all classes', (t) => {
   const { element } = t.context;
 
   element.sandbox.add('allow-forms', 'allow-modals', 'allow-orientation-lock');
@@ -61,7 +61,7 @@ test('sandbox.add of a multiple value should only add all classes', t => {
   t.is(element.getAttribute('sandbox'), 'allow-forms allow-modals allow-orientation-lock');
 });
 
-test('sandbox.remove of a single value should only remove one class', t => {
+test('sandbox.remove of a single value should only remove one class', (t) => {
   const { element } = t.context;
 
   element.sandbox.value = 'allow-forms allow-modals';
@@ -70,7 +70,7 @@ test('sandbox.remove of a single value should only remove one class', t => {
   t.is(element.getAttribute('sandbox'), 'allow-modals');
 });
 
-test('sandbox.remove of a multiple values should remove all values', t => {
+test('sandbox.remove of a multiple values should remove all values', (t) => {
   const { element } = t.context;
 
   element.sandbox.value = 'allow-forms allow-modals allow-orientation-lock';
@@ -79,7 +79,7 @@ test('sandbox.remove of a multiple values should remove all values', t => {
   t.is(element.getAttribute('sandbox'), 'allow-orientation-lock');
 });
 
-test('sandbox.toggle should add a value that is not present already', t => {
+test('sandbox.toggle should add a value that is not present already', (t) => {
   const { element } = t.context;
 
   element.sandbox.toggle('allow-forms');
@@ -87,7 +87,7 @@ test('sandbox.toggle should add a value that is not present already', t => {
   t.is(element.getAttribute('sandbox'), 'allow-forms');
 });
 
-test('sandbox.toggle should remove a value that is present already', t => {
+test('sandbox.toggle should remove a value that is present already', (t) => {
   const { element } = t.context;
 
   element.sandbox.value = 'allow-forms';

@@ -25,7 +25,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
 
   const get = (location: StorageLocation, key: string | null): void => {
     if (config.sanitizer && location === StorageLocation.AmpState) {
-      config.sanitizer.getStorage(location, key).then(value => {
+      config.sanitizer.getStorage(location, key).then((value) => {
         const message: StorageValueToWorker = {
           [TransferrableKeys.type]: MessageType.GET_STORAGE,
           [TransferrableKeys.storageKey]: key || '',

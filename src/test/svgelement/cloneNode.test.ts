@@ -27,7 +27,7 @@ const test = anyTest as TestInterface<{
   path: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -40,32 +40,32 @@ test.beforeEach(t => {
   document.body.appendChild(t.context.parent);
 });
 
-test('cloneNode should create a new node with the same type', t => {
+test('cloneNode should create a new node with the same type', (t) => {
   const { svg } = t.context;
 
   t.is(svg.cloneNode().namespaceURI, svg.namespaceURI);
 });
 
-test('cloneNode should create a new node with the same tagName', t => {
+test('cloneNode should create a new node with the same tagName', (t) => {
   const { svg } = t.context;
 
   t.is(svg.cloneNode().tagName, svg.tagName);
 });
 
-test('cloneNode should create a new node with a different index', t => {
+test('cloneNode should create a new node with a different index', (t) => {
   const { svg } = t.context;
 
   t.not(svg.cloneNode()[TransferrableKeys.index], svg[TransferrableKeys.index]);
 });
 
-test('cloneNode should create a new node with the same attribute', t => {
+test('cloneNode should create a new node with the same attribute', (t) => {
   const { svg } = t.context;
   svg.setAttribute('fancy', 'yes');
 
   t.is(svg.cloneNode().getAttribute('fancy'), 'yes');
 });
 
-test('cloneNode should create a new node with the same attributes', t => {
+test('cloneNode should create a new node with the same attributes', (t) => {
   const { svg } = t.context;
   svg.setAttribute('fancy', 'yes');
   svg.setAttribute('virtual', 'no');
@@ -74,7 +74,7 @@ test('cloneNode should create a new node with the same attributes', t => {
   t.is(svg.cloneNode().getAttribute('virtual'), 'no');
 });
 
-test('cloneNode should create a new node with the same attributes, but not preserve attributes across the instances', t => {
+test('cloneNode should create a new node with the same attributes, but not preserve attributes across the instances', (t) => {
   const { svg } = t.context;
   svg.setAttribute('fancy', 'yes');
   const clone = svg.cloneNode();
@@ -84,21 +84,21 @@ test('cloneNode should create a new node with the same attributes, but not prese
   t.is(svg.getAttribute('fancy'), 'no');
 });
 
-test('cloneNode should create a new node without the same properties', t => {
+test('cloneNode should create a new node without the same properties', (t) => {
   const { svg } = t.context;
   svg.value = 'property value';
 
   t.not(svg.cloneNode().value, 'property value');
 });
 
-test('cloneNode should create a new node without the same children when the deep flag is not set', t => {
+test('cloneNode should create a new node without the same children when the deep flag is not set', (t) => {
   const { svg } = t.context;
   const clone = svg.cloneNode();
 
   t.is(clone.childNodes.length, 0);
 });
 
-test('cloneNode should create a new node with the same children when the deep flag is set', t => {
+test('cloneNode should create a new node with the same children when the deep flag is set', (t) => {
   const { svg, path } = t.context;
   svg.appendChild(path);
   const clone = svg.cloneNode(true);

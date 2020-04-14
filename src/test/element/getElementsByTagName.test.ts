@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
   childThree: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -36,7 +36,7 @@ test.beforeEach(t => {
   };
 });
 
-test('single direct child', t => {
+test('single direct child', (t) => {
   const { node, child } = t.context;
 
   node.appendChild(child);
@@ -48,7 +48,7 @@ test('single direct child', t => {
   t.deepEqual(node.getElementsByTagName('*'), [child]);
 });
 
-test('multiple direct children', t => {
+test('multiple direct children', (t) => {
   const { node, child, childTwo } = t.context;
 
   node.appendChild(child);
@@ -63,7 +63,7 @@ test('multiple direct children', t => {
   t.deepEqual(node.getElementsByTagName('*'), [child, childTwo]);
 });
 
-test('tree with depth > 1', t => {
+test('tree with depth > 1', (t) => {
   const { node, child, childTwo, childThree } = t.context;
 
   child.appendChild(childTwo);

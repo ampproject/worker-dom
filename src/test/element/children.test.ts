@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
   childTwo: Text;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -35,14 +35,14 @@ test.beforeEach(t => {
   };
 });
 
-test('children should be an empty array when there are no childNodes', t => {
+test('children should be an empty array when there are no childNodes', (t) => {
   const { node } = t.context;
 
   t.is(node.children.length, 0);
   t.deepEqual(node.children, []);
 });
 
-test('children should contain all childNodes when all are the correct NodeType', t => {
+test('children should contain all childNodes when all are the correct NodeType', (t) => {
   const { node, child } = t.context;
 
   node.appendChild(child);
@@ -50,7 +50,7 @@ test('children should contain all childNodes when all are the correct NodeType',
   t.deepEqual(node.children, [child]);
 });
 
-test('children should contain only childNodes of NodeType.ELEMENT_NODE', t => {
+test('children should contain only childNodes of NodeType.ELEMENT_NODE', (t) => {
   const { node, child, childTwo } = t.context;
 
   node.appendChild(child);
@@ -59,7 +59,7 @@ test('children should contain only childNodes of NodeType.ELEMENT_NODE', t => {
   t.deepEqual(node.children, [child]);
 });
 
-test('children should be an empty array when there are no childNodes of NodeType.ELEMENT_NODE', t => {
+test('children should be an empty array when there are no childNodes of NodeType.ELEMENT_NODE', (t) => {
   const { node, childTwo } = t.context;
 
   node.appendChild(childTwo);

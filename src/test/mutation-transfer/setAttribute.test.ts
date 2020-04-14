@@ -28,7 +28,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -37,7 +37,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('Element.setAttribute transfers new attribute', t => {
+test.serial.cb('Element.setAttribute transfers new attribute', (t) => {
   const { document, emitter } = t.context;
   const el = document.createElement('div');
 
@@ -62,7 +62,7 @@ test.serial.cb('Element.setAttribute transfers new attribute', t => {
   });
 });
 
-test.serial.cb('Element.setAttribute transfers attribute overwrite', t => {
+test.serial.cb('Element.setAttribute transfers attribute overwrite', (t) => {
   const { document, emitter } = t.context;
   const el = document.createElement('div');
   el.setAttribute('data-foo', 'bar');
@@ -88,7 +88,7 @@ test.serial.cb('Element.setAttribute transfers attribute overwrite', t => {
   });
 });
 
-test.serial.cb('Element.setAttribute transfers new attribute with namespace', t => {
+test.serial.cb('Element.setAttribute transfers new attribute with namespace', (t) => {
   const { document, emitter } = t.context;
   const el = document.createElement('div');
 
@@ -113,7 +113,7 @@ test.serial.cb('Element.setAttribute transfers new attribute with namespace', t 
   });
 });
 
-test.serial.cb('Element.setAttribute transfers attribute overwrite with namespace', t => {
+test.serial.cb('Element.setAttribute transfers attribute overwrite with namespace', (t) => {
   const { document, emitter } = t.context;
   const el = document.createElement('div');
   el.setAttributeNS('namespace', 'data-foo', 'bar');

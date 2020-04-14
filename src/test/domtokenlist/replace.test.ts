@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
   tokenList: DOMTokenList;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -30,7 +30,7 @@ test.beforeEach(t => {
   };
 });
 
-test('replace a single value', t => {
+test('replace a single value', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo';
@@ -54,7 +54,7 @@ test('replace a single value', t => {
   t.is(tokenList.value, 'foo bar');
 });
 
-test('replace an invalid value', t => {
+test('replace an invalid value', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo';

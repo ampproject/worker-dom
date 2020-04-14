@@ -25,8 +25,10 @@ const test = anyTest as TestInterface<{
   element: HTMLCanvasElement;
 }>;
 
-test.beforeEach(t => {
-  const document = createTestingDocument({ OffscreenCanvas: FakeOffscreenCanvas });
+test.beforeEach((t) => {
+  const document = createTestingDocument({
+    OffscreenCanvas: FakeOffscreenCanvas,
+  });
 
   t.context = {
     element: document.createElement('canvas') as HTMLCanvasElement,
@@ -42,20 +44,20 @@ class FakeOffscreenCanvas {
 testReflectedProperty({ width: [0] });
 testReflectedProperty({ height: [0] });
 
-test('getContext throws for unsupported types of context', t => {
+test('getContext throws for unsupported types of context', (t) => {
   const { element } = t.context;
   t.throws(() => {
     element.getContext('webgl');
   });
 });
 
-test('getContext retrieves 2D context', t => {
+test('getContext retrieves 2D context', (t) => {
   const { element } = t.context;
   const ctx = element.getContext('2d');
   t.true(ctx instanceof CanvasRenderingContext2DShim);
 });
 
-test('getContext will retrieve same instance always', t => {
+test('getContext will retrieve same instance always', (t) => {
   const { element } = t.context;
   const firstRetrieval = element.getContext('2d');
   const secondRetrieval = element.getContext('2d');

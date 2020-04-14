@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
   comment: Comment;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -30,13 +30,13 @@ test.beforeEach(t => {
   };
 });
 
-test('get textContent', t => {
+test('get textContent', (t) => {
   const { comment } = t.context;
 
   t.is(comment.textContent, 'default value');
 });
 
-test('set textContent', t => {
+test('set textContent', (t) => {
   const { comment } = t.context;
 
   t.is(comment.textContent, 'default value');
@@ -44,7 +44,7 @@ test('set textContent', t => {
   t.is(comment.textContent, 'new value');
 });
 
-test('textContent matches data', t => {
+test('textContent matches data', (t) => {
   const { comment } = t.context;
 
   t.is(comment.data, 'default value');

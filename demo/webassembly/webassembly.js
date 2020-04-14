@@ -26,7 +26,7 @@ const wasmBrowserInstantiate = async () => {
     response = await WebAssembly.instantiateStreaming(fetch(wasmModuleUrl), importObject);
   } else {
     const fetchAndInstantiateTask = async () => {
-      const wasmArrayBuffer = await fetch(wasmModuleUrl).then(response => response.arrayBuffer());
+      const wasmArrayBuffer = await fetch(wasmModuleUrl).then((response) => response.arrayBuffer());
       return WebAssembly.instantiate(wasmArrayBuffer, importObject);
     };
     response = await fetchAndInstantiateTask();
@@ -53,7 +53,7 @@ aInput.addEventListener('keyup', inputHandler.bind(undefined, 'a'));
 bInput.addEventListener('keyup', inputHandler.bind(undefined, 'b'));
 
 btn.addEventListener('click', async () => {
-  wasmModulePromise.then(module => {
+  wasmModulePromise.then((module) => {
     const wasmAdd = module.instance.exports.add(addValues.a, addValues.b);
     result.textContent = 'Result: ' + wasmAdd;
   });

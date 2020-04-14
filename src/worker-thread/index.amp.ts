@@ -197,7 +197,7 @@ const noop = () => void 0;
 
 // WorkerDOM.Document.defaultView ends up being the window object.
 // React requires the classes to exist off the window object for instanceof checks.
-export const workerDOM: WorkerDOMGlobalScope = (function(postMessage, addEventListener, removeEventListener) {
+export const workerDOM: WorkerDOMGlobalScope = (function (postMessage, addEventListener, removeEventListener) {
   const document = new Document(globalScope);
   // TODO(choumx): Avoid polluting Document's public API.
   document.postMessage = postMessage;
@@ -217,7 +217,7 @@ export const workerDOM: WorkerDOMGlobalScope = (function(postMessage, addEventLi
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
 // Modify global scope by removing disallowed properties and wrapping `fetch()`.
-(function(global: WorkerGlobalScope) {
+(function (global: WorkerGlobalScope) {
   /**
    * @param object
    * @param property
@@ -238,7 +238,7 @@ export const workerDOM: WorkerDOMGlobalScope = (function(postMessage, addEventLi
   while (current && current.constructor !== EventTarget) {
     const deleted: string[] = [];
     const failedToDelete: string[] = [];
-    Object.getOwnPropertyNames(current).forEach(prop => {
+    Object.getOwnPropertyNames(current).forEach((prop) => {
       if (deleteUnsafe(current, prop)) {
         deleted.push(prop);
       } else {

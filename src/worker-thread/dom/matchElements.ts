@@ -24,7 +24,7 @@ export type ConditionPredicate = (element: Element) => boolean;
 
 export const tagNameConditionPredicate = (tagNames: Array<string>): ConditionPredicate => (element: Element): boolean => {
   console.assert(
-    tagNames.every(t => t === toUpper(t)),
+    tagNames.every((t) => t === toUpper(t)),
     'tagNames must be all uppercase.',
   );
   return tagNames.includes(element.tagName);
@@ -34,7 +34,7 @@ export const elementPredicate = (node: Node): boolean => node.nodeType === NodeT
 
 export const matchChildrenElements = (node: Node, conditionPredicate: ConditionPredicate): Element[] => {
   const matchingElements: Element[] = [];
-  node.childNodes.forEach(child => {
+  node.childNodes.forEach((child) => {
     if (elementPredicate(child)) {
       if (conditionPredicate(child as Element)) {
         matchingElements.push(child as Element);
@@ -47,7 +47,7 @@ export const matchChildrenElements = (node: Node, conditionPredicate: ConditionP
 
 export const matchChildElement = (element: Element, conditionPredicate: ConditionPredicate): Element | null => {
   let returnValue: Element | null = null;
-  element.children.some(child => {
+  element.children.some((child) => {
     if (conditionPredicate(child)) {
       returnValue = child;
       return true;

@@ -28,11 +28,11 @@ function toggle() {
 
 span.addEventListener('click', toggle, false);
 
-button.addEventListener('click', _ => (input.value = ''));
+button.addEventListener('click', (_) => (input.value = ''));
 
 input.addEventListener(
   'input',
-  event => {
+  (event) => {
     if (/change/.test(event.currentTarget.value)) {
       toggle();
     } else if (/remove/.test(event.currentTarget.value)) {
@@ -50,4 +50,4 @@ div.appendChild(input);
 div.appendChild(button);
 document.body.appendChild(div);
 
-div.addEventListener('touchmove', e => console.log('touchmove event', e, e.touches.item(0), e.touches.item(1)));
+div.addEventListener('touchmove', (e) => console.log('touchmove event', e, e.touches.item(0), e.touches.item(1)));

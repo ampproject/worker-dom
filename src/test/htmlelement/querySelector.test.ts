@@ -30,7 +30,7 @@ const test = anyTest as TestInterface<{
   div: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   const parentDiv = document.createElement('div');
   parentDiv.setAttribute('id', PARENT_DIV_ID);
@@ -48,19 +48,19 @@ test.beforeEach(t => {
   };
 });
 
-test('test Element.querySelector on id selectors', t => {
+test('test Element.querySelector on id selectors', (t) => {
   const { document, div } = t.context;
 
   t.deepEqual(document.querySelector(`#${DIV_ID}`), div);
 });
 
-test('test Element.querySelector on class selectors', t => {
+test('test Element.querySelector on class selectors', (t) => {
   const { document, div } = t.context;
 
   t.deepEqual(document.querySelector(`.${DIV_CLASS}`), div);
 });
 
-test('test Element.querySelector on tag selectors', t => {
+test('test Element.querySelector on tag selectors', (t) => {
   const { document, parentDiv, div } = t.context;
 
   t.deepEqual(document.querySelector('div'), parentDiv);
@@ -68,7 +68,7 @@ test('test Element.querySelector on tag selectors', t => {
   t.deepEqual(parentDiv.querySelector('div'), div);
 });
 
-test('test Element.querySelector is case insensitive with regards to tags', t => {
+test('test Element.querySelector is case insensitive with regards to tags', (t) => {
   const { document, parentDiv, div } = t.context;
 
   t.deepEqual(document.querySelector('div'), parentDiv);

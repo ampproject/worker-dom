@@ -3,7 +3,7 @@
  * @author jetienne / http://jetienne.com/
  * @author paulirish / http://paulirish.com/
  */
-var MemoryStats = function() {
+var MemoryStats = function () {
   var msMin = 100;
   var msMax = 0;
 
@@ -33,7 +33,7 @@ var MemoryStats = function() {
     msGraph.appendChild(bar);
   }
 
-  var updateGraph = function(dom, height, color) {
+  var updateGraph = function (dom, height, color) {
     var child = dom.appendChild(dom.firstChild);
     child.style.height = height + 'px';
     if (color) child.style.backgroundColor = color;
@@ -62,7 +62,7 @@ var MemoryStats = function() {
   return {
     domElement: container,
 
-    update: function() {
+    update: function () {
       // refresh only 30time per second
       if (Date.now() - lastTime < 1000 / 30) return;
       lastTime = Date.now();
@@ -92,7 +92,7 @@ var MemoryStats = function() {
   };
 };
 
-(function() {
+(function () {
   var stats = new MemoryStats();
   stats.domElement.style.position = 'fixed';
   stats.domElement.style.right = '0px';

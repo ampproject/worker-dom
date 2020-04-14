@@ -57,7 +57,7 @@ function readableHydrateableNode(node: HydrateableNode): {} {
 
   const attributes = node[TransferrableKeys.attributes];
   if (attributes) {
-    out.attributes = attributes.map(attr => ({
+    out.attributes = attributes.map((attr) => ({
       name: attr[1],
       value: attr[2],
     }));

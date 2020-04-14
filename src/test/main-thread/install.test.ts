@@ -23,7 +23,7 @@ const test = anyTest as TestInterface<{
   baseElement: HTMLElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const env = new Env();
   const { document } = env;
   const baseElement = document.createElement('div');
@@ -35,11 +35,11 @@ test.beforeEach(t => {
   };
 });
 
-test.afterEach(t => {
+test.afterEach((t) => {
   t.context.env.dispose();
 });
 
-test.serial('terminate the worker-dom', t => {
+test.serial('terminate the worker-dom', (t) => {
   const { env, baseElement } = t.context;
 
   const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);

@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
   text: Text;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -37,19 +37,19 @@ test.beforeEach(t => {
   document.body.appendChild(t.context.parent);
 });
 
-test('cloneNode should create a new node with the same tagName', t => {
+test('cloneNode should create a new node with the same tagName', (t) => {
   const { text } = t.context;
 
   t.is(text.cloneNode().tagName, text.tagName);
 });
 
-test('cloneNode should create a new node with a different index', t => {
+test('cloneNode should create a new node with a different index', (t) => {
   const { text } = t.context;
 
   t.not(text.cloneNode()[TransferrableKeys.index], text[TransferrableKeys.index]);
 });
 
-test('cloneNode should create a new node with the same children when the deep flag is set', t => {
+test('cloneNode should create a new node with the same children when the deep flag is set', (t) => {
   const { parent, text } = t.context;
   const clone = parent.cloneNode(true);
 

@@ -45,7 +45,10 @@ export class NodeContext {
 
     // The nodes map is populated with two default values pointing to baseElement.
     // These are [document, document.body] from the worker.
-    this.nodes = new Map([[BASE_ELEMENT_INDEX, baseElement], [2, baseElement]]);
+    this.nodes = new Map([
+      [BASE_ELEMENT_INDEX, baseElement],
+      [2, baseElement],
+    ]);
     this.baseElement = baseElement as HTMLElement;
     // To ensure a lookup works correctly from baseElement
     // add an index equal to the background thread document.body.

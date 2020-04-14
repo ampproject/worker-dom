@@ -27,7 +27,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -36,7 +36,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('Element.classList.add transfer single value', t => {
+test.serial.cb('Element.classList.add transfer single value', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
@@ -56,7 +56,7 @@ test.serial.cb('Element.classList.add transfer single value', t => {
   });
 });
 
-test.serial.cb('Element.classList.add transfer single override value', t => {
+test.serial.cb('Element.classList.add transfer single override value', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
@@ -77,7 +77,7 @@ test.serial.cb('Element.classList.add transfer single override value', t => {
   });
 });
 
-test.serial.cb('Element.classList.add transfer multiple values', t => {
+test.serial.cb('Element.classList.add transfer multiple values', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
@@ -97,7 +97,7 @@ test.serial.cb('Element.classList.add transfer multiple values', t => {
   });
 });
 
-test.serial.cb('Element.classList.add mutation observed, multiple value to existing values', t => {
+test.serial.cb('Element.classList.add mutation observed, multiple value to existing values', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 

@@ -31,7 +31,7 @@ const test = anyTest as TestInterface<{
   div: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -47,13 +47,13 @@ test.beforeEach(t => {
   };
 });
 
-test('length should be 0 by default', t => {
+test('length should be 0 by default', (t) => {
   const { form } = t.context;
 
   t.is(form.length, 0);
 });
 
-test('length should contain all valid elements', t => {
+test('length should contain all valid elements', (t) => {
   const { form, button, fieldset, input, output, select, textarea } = t.context;
 
   form.appendChild(button);
@@ -66,7 +66,7 @@ test('length should contain all valid elements', t => {
   t.is(form.length, 6);
 });
 
-test('length should contain all valid elements, filtering invalid elements', t => {
+test('length should contain all valid elements, filtering invalid elements', (t) => {
   const { form, button, fieldset, input, output, select, textarea, div } = t.context;
 
   form.appendChild(button);

@@ -36,7 +36,7 @@ export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode 
                 startPosition + ChildListMutationIndex.Nodes + appendNodeCount,
                 startPosition + ChildListMutationIndex.Nodes + appendNodeCount + removeNodeCount,
               )
-              .forEach(removeId => {
+              .forEach((removeId) => {
                 const node = getNode(removeId);
                 if (node) {
                   node.remove();
@@ -48,7 +48,7 @@ export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode 
           if (appendNodeCount > 0) {
             mutations
               .slice(startPosition + ChildListMutationIndex.Nodes, startPosition + ChildListMutationIndex.Nodes + appendNodeCount)
-              .forEach(addId => {
+              .forEach((addId) => {
                 const nextSibling = mutations[startPosition + ChildListMutationIndex.NextSibling];
                 const newNode = getNode(addId);
                 if (newNode) {
@@ -76,10 +76,10 @@ export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode 
           startPosition + ChildListMutationIndex.Nodes + appendNodeCount,
           startPosition + ChildListMutationIndex.Nodes + appendNodeCount + removeNodeCount,
         ),
-      ).map(index => getNode(index) || index);
+      ).map((index) => getNode(index) || index);
       const addedNodes = Array.from(
         mutations.slice(startPosition + ChildListMutationIndex.Nodes, startPosition + ChildListMutationIndex.Nodes + appendNodeCount),
-      ).map(index => getNode(index) || index);
+      ).map((index) => getNode(index) || index);
 
       return {
         target,

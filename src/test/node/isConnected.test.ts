@@ -24,7 +24,7 @@ const test = anyTest as TestInterface<{
   childTwo: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -34,13 +34,13 @@ test.beforeEach(t => {
   };
 });
 
-test('without a connected parent, tree depth 1 nodes are not connected', t => {
+test('without a connected parent, tree depth 1 nodes are not connected', (t) => {
   const { node } = t.context;
 
   t.is(node.isConnected, false);
 });
 
-test('without a connected parent, tree depth > 1 are not connected', t => {
+test('without a connected parent, tree depth > 1 are not connected', (t) => {
   const { node, child } = t.context;
 
   node.appendChild(child);
@@ -49,7 +49,7 @@ test('without a connected parent, tree depth > 1 are not connected', t => {
   t.is(child.isConnected, false);
 });
 
-test('with a connected parent, nodes are connected during append', t => {
+test('with a connected parent, nodes are connected during append', (t) => {
   const { node, child, childTwo } = t.context;
 
   node.isConnected = true;
@@ -61,7 +61,7 @@ test('with a connected parent, nodes are connected during append', t => {
   t.is(childTwo.isConnected, true);
 });
 
-test('nodes are disconnected during removal', t => {
+test('nodes are disconnected during removal', (t) => {
   const { node, child, childTwo } = t.context;
 
   node.isConnected = true;

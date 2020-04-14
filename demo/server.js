@@ -25,13 +25,13 @@ polka()
   .use(
     sirv(path.resolve(__dirname, '..'), {
       dev: true,
-      setHeaders: res => res.setHeader('AMP-Access-Control-Allow-Source-Origin', `http://localhost:${PORT}`),
+      setHeaders: (res) => res.setHeader('AMP-Access-Control-Allow-Source-Origin', `http://localhost:${PORT}`),
     }),
   )
   .use(
     sirv(path.resolve(__dirname), {
       dev: true,
-      setHeaders: res => res.setHeader('AMP-Access-Control-Allow-Source-Origin', `http://localhost:${PORT}`),
+      setHeaders: (res) => res.setHeader('AMP-Access-Control-Allow-Source-Origin', `http://localhost:${PORT}`),
     }),
   )
   .get('/health', (req, res) => {
@@ -42,6 +42,6 @@ polka()
     const file = fs.readFileSync(path.resolve(__dirname, reqPath));
     setTimeout(() => res.end(file), 6000);
   })
-  .listen(PORT, _ => {
+  .listen(PORT, (_) => {
     console.log(`> Running on http://localhost:${PORT}`);
   });

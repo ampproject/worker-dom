@@ -33,7 +33,7 @@ const test = anyTest as TestInterface<{
   div: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   const parentFragment = document.createDocumentFragment();
   const parentDiv = document.createElement('div');
@@ -53,26 +53,26 @@ test.beforeEach(t => {
   };
 });
 
-test('test Element.querySelectorAll on id selectors', t => {
+test('test Element.querySelectorAll on id selectors', (t) => {
   const { parentFragment, div } = t.context;
 
   t.deepEqual(parentFragment.querySelectorAll(`#${DIV_ID}`), [div]);
 });
 
-test('test Element.querySelectorAll on class selectors', t => {
+test('test Element.querySelectorAll on class selectors', (t) => {
   const { parentFragment, div } = t.context;
 
   t.deepEqual(parentFragment.querySelectorAll(`.${DIV_CLASS}`), [div]);
 });
 
-test('test Element.querySelectorAll on tag selectors', t => {
+test('test Element.querySelectorAll on tag selectors', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   t.deepEqual(parentFragment.querySelectorAll('div'), [parentDiv, div]);
   t.deepEqual(parentDiv.querySelectorAll('div'), [div]);
 });
 
-test('test Element.querySelectorAll on attr selectors [attr]', t => {
+test('test Element.querySelectorAll on attr selectors [attr]', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   t.deepEqual(parentFragment.querySelectorAll(`[${FAKE_ATTR}]`), [parentDiv, div]);
@@ -81,7 +81,7 @@ test('test Element.querySelectorAll on attr selectors [attr]', t => {
   t.deepEqual(parentFragment.querySelectorAll(`.${DIV_CLASS}[${FAKE_ATTR}]`), [div]);
 });
 
-test('test Element.querySelectorAll on attr selectors [attr=value]', t => {
+test('test Element.querySelectorAll on attr selectors [attr=value]', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   t.deepEqual(parentFragment.querySelectorAll(`[${FAKE_ATTR}=${FAKE_ATTR_VALUE}]`), [parentDiv, div]);
@@ -90,7 +90,7 @@ test('test Element.querySelectorAll on attr selectors [attr=value]', t => {
   t.deepEqual(parentFragment.querySelectorAll(`.${DIV_CLASS}[${FAKE_ATTR}=${FAKE_ATTR_VALUE}]`), [div]);
 });
 
-test('test Element.querySelectorAll on attr selectors [attr=value i]', t => {
+test('test Element.querySelectorAll on attr selectors [attr=value i]', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   t.deepEqual(parentFragment.querySelectorAll(`[${FAKE_ATTR}=${toLower(FAKE_ATTR_VALUE)} i]`), [parentDiv, div]);
@@ -105,7 +105,7 @@ test('test Element.querySelectorAll on attr selectors [attr=value i]', t => {
   t.deepEqual(parentFragment.querySelectorAll(`.${DIV_CLASS}[${FAKE_ATTR}=${FAKE_ATTR_VALUE} i]`), [div]);
 });
 
-test('test Element.querySelectorAll on attr selectors [attr~=value]', t => {
+test('test Element.querySelectorAll on attr selectors [attr~=value]', (t) => {
   const { document, parentFragment, parentDiv, div } = t.context;
   const otherDiv = document.createElement('div');
 
@@ -119,7 +119,7 @@ test('test Element.querySelectorAll on attr selectors [attr~=value]', t => {
   t.deepEqual(parentFragment.querySelectorAll(`.${DIV_CLASS}[${FAKE_ATTR}~=${FAKE_ATTR_VALUE}]`), [div]);
 });
 
-test('test Element.querySelectorAll on attr selectors [attr~=value i]', t => {
+test('test Element.querySelectorAll on attr selectors [attr~=value i]', (t) => {
   const { document, parentFragment, parentDiv, div } = t.context;
   const otherDiv = document.createElement('div');
 
@@ -141,7 +141,7 @@ test('test Element.querySelectorAll on attr selectors [attr~=value i]', t => {
   t.deepEqual(parentFragment.querySelectorAll(`.${DIV_CLASS}[${FAKE_ATTR}~=${toLower(FAKE_ATTR_VALUE)} i]`), [div]);
 });
 
-test('test Element.querySelectorAll on attr selectors [attr^=value]', t => {
+test('test Element.querySelectorAll on attr selectors [attr^=value]', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   div.setAttribute(FAKE_ATTR, `${FAKE_ATTR_VALUE} JUST_ANOTHER_FAKE`);
@@ -152,7 +152,7 @@ test('test Element.querySelectorAll on attr selectors [attr^=value]', t => {
   t.deepEqual(parentFragment.querySelectorAll(`.${DIV_CLASS}[${FAKE_ATTR}^=${FAKE_ATTR_VALUE}]`), [div]);
 });
 
-test('test Element.querySelectorAll on attr selectors [attr^=value i]', t => {
+test('test Element.querySelectorAll on attr selectors [attr^=value i]', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   div.setAttribute(FAKE_ATTR, `${FAKE_ATTR_VALUE} JUST_ANOTHER_FAKE`);
@@ -170,7 +170,7 @@ test('test Element.querySelectorAll on attr selectors [attr^=value i]', t => {
   t.deepEqual(parentFragment.querySelectorAll(`.${DIV_CLASS}[${FAKE_ATTR}^=${toLower(FAKE_ATTR_VALUE)} i]`), [div]);
 });
 
-test('test Element.querySelectorAll on attr selectors [attr$=value]', t => {
+test('test Element.querySelectorAll on attr selectors [attr$=value]', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   div.setAttribute(FAKE_ATTR, `JUST_ANOTHER_FAKE ${FAKE_ATTR_VALUE}`);
@@ -181,7 +181,7 @@ test('test Element.querySelectorAll on attr selectors [attr$=value]', t => {
   t.deepEqual(parentFragment.querySelectorAll(`.${DIV_CLASS}[${FAKE_ATTR}$=${FAKE_ATTR_VALUE}]`), [div]);
 });
 
-test('test Element.querySelectorAll on attr selectors [attr$=value i]', t => {
+test('test Element.querySelectorAll on attr selectors [attr$=value i]', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   div.setAttribute(FAKE_ATTR, `JUST_ANOTHER_FAKE ${FAKE_ATTR_VALUE}`);
@@ -199,7 +199,7 @@ test('test Element.querySelectorAll on attr selectors [attr$=value i]', t => {
   t.deepEqual(parentFragment.querySelectorAll(`.${DIV_CLASS}[${FAKE_ATTR}$=${toLower(FAKE_ATTR_VALUE)} i]`), [div]);
 });
 
-test('test Element.querySelectorAll on attr selectors [attr*=value]', t => {
+test('test Element.querySelectorAll on attr selectors [attr*=value]', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   div.setAttribute(FAKE_ATTR, `JUST_ANOTHER_FAKE ${FAKE_ATTR_VALUE}`);
@@ -210,7 +210,7 @@ test('test Element.querySelectorAll on attr selectors [attr*=value]', t => {
   t.deepEqual(parentFragment.querySelectorAll(`.${DIV_CLASS}[${FAKE_ATTR}*=${FAKE_ATTR_VALUE}]`), [div]);
 });
 
-test('test Element.querySelectorAll on attr selectors [attr*=value i]', t => {
+test('test Element.querySelectorAll on attr selectors [attr*=value i]', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   div.setAttribute(FAKE_ATTR, `JUST_ANOTHER_FAKE ${FAKE_ATTR_VALUE}`);
@@ -228,7 +228,7 @@ test('test Element.querySelectorAll on attr selectors [attr*=value i]', t => {
   t.deepEqual(parentFragment.querySelectorAll(`.${DIV_CLASS}[${FAKE_ATTR}*=${toLower(FAKE_ATTR_VALUE)} i]`), [div]);
 });
 
-test('test Element.querySelectorAll is case insensitive with regards to tags', t => {
+test('test Element.querySelectorAll is case insensitive with regards to tags', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   t.deepEqual(parentFragment.querySelectorAll('div'), [parentDiv, div]);
@@ -240,7 +240,7 @@ test('test Element.querySelectorAll is case insensitive with regards to tags', t
   t.deepEqual(parentDiv.querySelectorAll('div'), parentDiv.querySelectorAll('DIV'));
 });
 
-test('test Element.querySelector returns the first result of Element.querySelectorAll', t => {
+test('test Element.querySelector returns the first result of Element.querySelectorAll', (t) => {
   const { parentFragment, parentDiv } = t.context;
 
   let querySelectorAllResults = parentFragment.querySelectorAll('div');

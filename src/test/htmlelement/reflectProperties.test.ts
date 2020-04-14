@@ -23,7 +23,7 @@ const test = anyTest as TestInterface<{
   element: HTMLElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -40,6 +40,8 @@ testReflectedProperties([
   { draggable: [false] },
   { hidden: [false] },
   { noModule: [false] },
-  { spellcheck: [true, /* attr */ undefined, /* keywords */ ['true', 'false']] },
+  {
+    spellcheck: [true, /* attr */ undefined, /* keywords */ ['true', 'false']],
+  },
   { translate: [true, /* attr */ undefined, /* keywords */ ['yes', 'no']] },
 ]);

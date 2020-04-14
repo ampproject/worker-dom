@@ -28,7 +28,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -37,7 +37,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('Element.style transfer single value', t => {
+test.serial.cb('Element.style transfer single value', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
@@ -59,7 +59,7 @@ test.serial.cb('Element.style transfer single value', t => {
   });
 });
 
-test.serial.cb('Element.style transfer single value, via setProperty', t => {
+test.serial.cb('Element.style transfer single value, via setProperty', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
@@ -81,7 +81,7 @@ test.serial.cb('Element.style transfer single value, via setProperty', t => {
   });
 });
 
-test.serial.cb('Element.style transfer single value, via removeProperty', t => {
+test.serial.cb('Element.style transfer single value, via removeProperty', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
@@ -103,7 +103,7 @@ test.serial.cb('Element.style transfer single value, via removeProperty', t => {
   });
 });
 
-test.cb('Element.style transfer single value, via cssText', t => {
+test.cb('Element.style transfer single value, via cssText', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 

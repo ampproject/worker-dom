@@ -47,6 +47,6 @@ export class StringContext {
    * @param values
    */
   storeValues(values: Array<string>): void {
-    values.forEach(v => this.store(v));
+    values.forEach((v) => this.store(v));
   }
 }

@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
   baseElement: HTMLElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const env = new Env();
   const { document } = env;
   const baseElement = document.createElement('div');
@@ -37,11 +37,11 @@ test.beforeEach(t => {
   };
 });
 
-test.afterEach(t => {
+test.afterEach((t) => {
   t.context.env.dispose();
 });
 
-test.serial.cb('initialize an empty element', t => {
+test.serial.cb('initialize an empty element', (t) => {
   const { baseElement } = t.context;
 
   const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
@@ -64,7 +64,7 @@ test.serial.cb('initialize an empty element', t => {
   }).then();
 });
 
-test.serial.cb('initialize a single element', t => {
+test.serial.cb('initialize a single element', (t) => {
   const { env, baseElement } = t.context;
   const div = env.document.createElement('div');
   baseElement.appendChild(div);
@@ -99,7 +99,7 @@ test.serial.cb('initialize a single element', t => {
   }).then();
 });
 
-test.serial.cb('initialize a single svg element', t => {
+test.serial.cb('initialize a single svg element', (t) => {
   const { env, baseElement } = t.context;
   const svg = env.document.createElementNS(SVG_NAMESPACE, 'svg');
   baseElement.appendChild(svg);
@@ -134,7 +134,7 @@ test.serial.cb('initialize a single svg element', t => {
   }).then();
 });
 
-test.serial.cb('initialize a single text node', t => {
+test.serial.cb('initialize a single text node', (t) => {
   const { env, baseElement } = t.context;
   const text = env.document.createTextNode('foo');
   baseElement.appendChild(text);
@@ -169,7 +169,7 @@ test.serial.cb('initialize a single text node', t => {
   }).then();
 });
 
-test.serial.cb('initialize a single comment node', t => {
+test.serial.cb('initialize a single comment node', (t) => {
   const { env, baseElement } = t.context;
   const text = env.document.createComment('foo');
   baseElement.appendChild(text);
@@ -204,7 +204,7 @@ test.serial.cb('initialize a single comment node', t => {
   }).then();
 });
 
-test.serial.cb('initialize sibling elements', t => {
+test.serial.cb('initialize sibling elements', (t) => {
   const { env, baseElement } = t.context;
   const div = env.document.createElement('div');
   const span = env.document.createElement('span');
@@ -250,7 +250,7 @@ test.serial.cb('initialize sibling elements', t => {
   }).then();
 });
 
-test.serial.cb('initialize sibling text nodes', t => {
+test.serial.cb('initialize sibling text nodes', (t) => {
   const { env, baseElement } = t.context;
   const text = env.document.createTextNode('foo');
   const textTwo = env.document.createTextNode('bar');
@@ -296,7 +296,7 @@ test.serial.cb('initialize sibling text nodes', t => {
   }).then();
 });
 
-test.serial.cb('initialize sibling comment nodes', t => {
+test.serial.cb('initialize sibling comment nodes', (t) => {
   const { env, baseElement } = t.context;
   const comment = env.document.createComment('foo');
   const commentTwo = env.document.createComment('bar');

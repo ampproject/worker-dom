@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
   element: HTMLAnchorElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -30,14 +30,14 @@ test.beforeEach(t => {
   };
 });
 
-test('relList should be empty by default', t => {
+test('relList should be empty by default', (t) => {
   const { element } = t.context;
 
   t.is(element.relList.value, '');
   t.is(element.getAttribute('rel'), null);
 });
 
-test('relList.add of a single value should only add one class', t => {
+test('relList.add of a single value should only add one class', (t) => {
   const { element } = t.context;
 
   element.relList.add('foo');
@@ -46,7 +46,7 @@ test('relList.add of a single value should only add one class', t => {
   t.is(element.getAttribute('rel'), 'foo');
 });
 
-test('relList.add of a multiple value should only add all classes', t => {
+test('relList.add of a multiple value should only add all classes', (t) => {
   const { element } = t.context;
 
   element.relList.add('foo', 'bar', 'baz');
@@ -55,7 +55,7 @@ test('relList.add of a multiple value should only add all classes', t => {
   t.is(element.getAttribute('rel'), 'foo bar baz');
 });
 
-test('relList.remove of a single value should only remove one class', t => {
+test('relList.remove of a single value should only remove one class', (t) => {
   const { element } = t.context;
 
   element.rel = 'foo bar';
@@ -65,7 +65,7 @@ test('relList.remove of a single value should only remove one class', t => {
   t.is(element.getAttribute('rel'), 'bar');
 });
 
-test('relList.remove of a multiple values should remove all values', t => {
+test('relList.remove of a multiple values should remove all values', (t) => {
   const { element } = t.context;
 
   element.rel = 'foo bar baz';
@@ -75,7 +75,7 @@ test('relList.remove of a multiple values should remove all values', t => {
   t.is(element.getAttribute('rel'), 'baz');
 });
 
-test('relList.toggle should add a value that is not present already', t => {
+test('relList.toggle should add a value that is not present already', (t) => {
   const { element } = t.context;
 
   element.relList.toggle('foo');
@@ -84,7 +84,7 @@ test('relList.toggle should add a value that is not present already', t => {
   t.is(element.getAttribute('rel'), 'foo');
 });
 
-test('relList.toggle should remove a value that is present already', t => {
+test('relList.toggle should remove a value that is present already', (t) => {
   const { element } = t.context;
 
   element.rel = 'foo';

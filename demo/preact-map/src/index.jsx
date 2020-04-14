@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-import { Component, h, render } from 'preact';
-import { CandidateTable } from './candidateTable.jsx';
-import { CandidateMap } from './candidateMap.jsx';
+import { Component, h, render } from "preact";
+import { CandidateTable } from "./candidateTable.jsx";
+import { CandidateMap } from "./candidateMap.jsx";
 
 const TOTAL_VOTES = 226628056;
 const CANDIDATE_DATA = [
-  { victor: true, name: 'Elaine Barrish', party: 'Republican', votes: 123818000 },
-  { victor: false, name: 'Steven Armstrong', party: 'Democrat', votes: 102810012 },
-  { victor: false, name: 'Benjamin Arthur', party: 'Independent', votes: 42 },
+  {
+    victor: true,
+    name: "Elaine Barrish",
+    party: "Republican",
+    votes: 123818000,
+  },
+  {
+    victor: false,
+    name: "Steven Armstrong",
+    party: "Democrat",
+    votes: 102810012,
+  },
+  { victor: false, name: "Benjamin Arthur", party: "Independent", votes: 42 },
 ];
 const REGION_DATA = [
   { total: 1000, candidates: [100, 900, 0] },
@@ -51,9 +61,18 @@ class App extends Component {
   render(props, state) {
     return (
       <div>
-        <CandidateTable votes={TOTAL_VOTES} totalData={CANDIDATE_DATA} regionData={REGION_DATA} focusedRegion={state.focusedRegion} />
+        <CandidateTable
+          votes={TOTAL_VOTES}
+          totalData={CANDIDATE_DATA}
+          regionData={REGION_DATA}
+          focusedRegion={state.focusedRegion}
+        />
         <h1>Precinct Map</h1>
-        <CandidateMap regionData={REGION_DATA} totalData={CANDIDATE_DATA} focusRegion={this.handleRegionFocus} />
+        <CandidateMap
+          regionData={REGION_DATA}
+          totalData={CANDIDATE_DATA}
+          focusRegion={this.handleRegionFocus}
+        />
       </div>
     );
   }

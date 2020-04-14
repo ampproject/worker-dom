@@ -24,7 +24,7 @@ const test = anyTest as TestInterface<{
   event: Event;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   const node = document.createElement('div');
   const event = new Event('click', {});
@@ -36,7 +36,7 @@ test.beforeEach(t => {
   };
 });
 
-test('calls handler functions registered with addEventListener', t => {
+test('calls handler functions registered with addEventListener', (t) => {
   const { node, event } = t.context;
 
   node.addEventListener('click', (event: Event) => {
@@ -46,7 +46,7 @@ test('calls handler functions registered with addEventListener', t => {
   t.true(node.dispatchEvent(event));
 });
 
-test('does not call handler functions removed with removeEventListener', t => {
+test('does not call handler functions removed with removeEventListener', (t) => {
   const { node, event } = t.context;
   const functionRemoved = (event: Event) => t.fail('removeEventListener function handler was called');
 
@@ -55,7 +55,7 @@ test('does not call handler functions removed with removeEventListener', t => {
   t.true(node.dispatchEvent(event));
 });
 
-test('calls handler functions for only specified type of event', t => {
+test('calls handler functions for only specified type of event', (t) => {
   const { node, event } = t.context;
 
   node.addEventListener('click', (event: Event) => {

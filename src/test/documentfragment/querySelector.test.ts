@@ -30,7 +30,7 @@ const test = anyTest as TestInterface<{
   div: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   const parentFragment = document.createDocumentFragment();
   const parentDiv = document.createElement('div');
@@ -49,26 +49,26 @@ test.beforeEach(t => {
   };
 });
 
-test('test Element.querySelector on id selectors', t => {
+test('test Element.querySelector on id selectors', (t) => {
   const { parentFragment, div } = t.context;
 
   t.deepEqual(parentFragment.querySelector(`#${DIV_ID}`), div);
 });
 
-test('test Element.querySelector on class selectors', t => {
+test('test Element.querySelector on class selectors', (t) => {
   const { parentFragment, div } = t.context;
 
   t.deepEqual(parentFragment.querySelector(`.${DIV_CLASS}`), div);
 });
 
-test('test Element.querySelector on tag selectors', t => {
+test('test Element.querySelector on tag selectors', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   t.deepEqual(parentFragment.querySelector('div'), parentDiv);
   t.deepEqual(parentDiv.querySelector('div'), div);
 });
 
-test('test Element.querySelector is case insensitive with regards to tags', t => {
+test('test Element.querySelector is case insensitive with regards to tags', (t) => {
   const { parentFragment, parentDiv, div } = t.context;
 
   t.deepEqual(parentFragment.querySelector('div'), parentDiv);

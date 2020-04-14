@@ -26,7 +26,7 @@ export class HTMLMapElement extends HTMLElement {
    * @return area elements associated to this map.
    */
   get areas(): Array<Element> {
-    return matchChildrenElements(this as Element, element => element.tagName === 'AREA');
+    return matchChildrenElements(this as Element, (element) => element.tagName === 'AREA');
   }
 }
 registerSubclass('map', HTMLMapElement);

@@ -88,7 +88,7 @@ export function CandidateMap({ focusRegion, regionData, totalData }) {
       <p
         className={objstr({
           [styles.tooltip]: true,
-          [styles.showTooltip]: showTooltip
+          [styles.showTooltip]: showTooltip,
         })}
       >
         Region winner {!!winner && winner.name}

@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
   callbackTwo: () => false;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -35,7 +35,7 @@ test.beforeEach(t => {
   };
 });
 
-test('removing the only registered callback retains array with zero length', t => {
+test('removing the only registered callback retains array with zero length', (t) => {
   const { node, callback } = t.context;
 
   node.addEventListener('click', callback);
@@ -43,7 +43,7 @@ test('removing the only registered callback retains array with zero length', t =
   t.deepEqual(node[TransferrableKeys.handlers]['click'], []);
 });
 
-test('removing a specific callback from list with more than one callback reduces the list to the remaining callback', t => {
+test('removing a specific callback from list with more than one callback reduces the list to the remaining callback', (t) => {
   const { node, callback, callbackTwo } = t.context;
 
   node.addEventListener('click', callback);
@@ -53,7 +53,7 @@ test('removing a specific callback from list with more than one callback reduces
   t.deepEqual(node[TransferrableKeys.handlers]['click'], [callbackTwo]);
 });
 
-test('removing an unknown callback when callbacks are registerd to a type does nothing', t => {
+test('removing an unknown callback when callbacks are registerd to a type does nothing', (t) => {
   const { node, callback, callbackTwo } = t.context;
 
   node.addEventListener('click', callback);
@@ -63,7 +63,7 @@ test('removing an unknown callback when callbacks are registerd to a type does n
   t.deepEqual(node[TransferrableKeys.handlers]['click'], [callback, callbackTwo]);
 });
 
-test('removing an unknown callback for a unknown type does nothing', t => {
+test('removing an unknown callback for a unknown type does nothing', (t) => {
   const { node } = t.context;
 
   node.removeEventListener('click', () => undefined);

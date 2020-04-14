@@ -72,6 +72,8 @@ interface Node {
   _index_: number;
 }
 
-type RenderableElement = (HTMLElement | SVGElement | Text | Comment) & { [index: string]: any };
+type RenderableElement = (HTMLElement | SVGElement | Text | Comment) & {
+  [index: string]: any;
+};
 
 declare const WORKER_DOM_DEBUG: boolean;

@@ -27,7 +27,7 @@ const test = anyTest as TestInterface<{
   text: Text;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -38,20 +38,20 @@ test.beforeEach(t => {
   };
 });
 
-test('should return 0 when no elements are appended', t => {
+test('should return 0 when no elements are appended', (t) => {
   const { parentFragment } = t.context;
 
   t.is(parentFragment.childElementCount, 0);
 });
 
-test('should return 1 when only one Element is appended', t => {
+test('should return 1 when only one Element is appended', (t) => {
   const { parentFragment, node } = t.context;
 
   parentFragment.appendChild(node);
   t.is(parentFragment.childElementCount, 1);
 });
 
-test('should return only the number of Elements, not childNodes', t => {
+test('should return only the number of Elements, not childNodes', (t) => {
   const { parentFragment, node, text } = t.context;
 
   parentFragment.appendChild(node);
@@ -59,7 +59,7 @@ test('should return only the number of Elements, not childNodes', t => {
   t.is(parentFragment.childElementCount, 1);
 });
 
-test('should return 0 when an Element only contains Nodes of other types', t => {
+test('should return 0 when an Element only contains Nodes of other types', (t) => {
   const { parentFragment, text } = t.context;
 
   parentFragment.appendChild(text);

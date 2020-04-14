@@ -24,31 +24,29 @@ const test = anyTest as TestInterface<{
   document: Document;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   t.context = {
     document: createTestingDocument(),
   };
 });
 
-test.serial.cb('Element.style.width mutation observed, single value', t => {
+test.serial.cb('Element.style.width mutation observed, single value', (t) => {
   const { document } = t.context;
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver(
-    (mutations: MutationRecord[]): void => {
-      t.deepEqual(mutations, [
-        {
-          type: MutationRecordType.ATTRIBUTES,
-          attributeName: 'style',
+  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
+    t.deepEqual(mutations, [
+      {
+        type: MutationRecordType.ATTRIBUTES,
+        attributeName: 'style',
 
-          target: el,
-          value: 'width: 12px;',
-          oldValue: 'width: 10px;',
-        },
-      ]);
-      observer.disconnect();
-      t.end();
-    },
-  );
+        target: el,
+        value: 'width: 12px;',
+        oldValue: 'width: 10px;',
+      },
+    ]);
+    observer.disconnect();
+    t.end();
+  });
 
   document.body.appendChild(el);
   appendKeys(['width']);
@@ -57,25 +55,23 @@ test.serial.cb('Element.style.width mutation observed, single value', t => {
   el.style.width = '12px';
 });
 
-test.serial.cb('Element.style.width mutation observed, multiple values', t => {
+test.serial.cb('Element.style.width mutation observed, multiple values', (t) => {
   const { document } = t.context;
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver(
-    (mutations: MutationRecord[]): void => {
-      t.deepEqual(mutations, [
-        {
-          type: MutationRecordType.ATTRIBUTES,
-          attributeName: 'style',
+  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
+    t.deepEqual(mutations, [
+      {
+        type: MutationRecordType.ATTRIBUTES,
+        attributeName: 'style',
 
-          target: el,
-          value: 'width: 14px; height: 12px;',
-          oldValue: 'width: 10px; height: 12px;',
-        },
-      ]);
-      observer.disconnect();
-      t.end();
-    },
-  );
+        target: el,
+        value: 'width: 14px; height: 12px;',
+        oldValue: 'width: 10px; height: 12px;',
+      },
+    ]);
+    observer.disconnect();
+    t.end();
+  });
 
   document.body.appendChild(el);
   appendKeys(['width', 'height']);
@@ -85,24 +81,22 @@ test.serial.cb('Element.style.width mutation observed, multiple values', t => {
   el.style.width = '14px';
 });
 
-test.serial.cb('Element.style.width mutation observed, single value, setProperty', t => {
+test.serial.cb('Element.style.width mutation observed, single value, setProperty', (t) => {
   const { document } = t.context;
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver(
-    (mutations: MutationRecord[]): void => {
-      t.deepEqual(mutations, [
-        {
-          type: MutationRecordType.ATTRIBUTES,
-          attributeName: 'style',
-          target: el,
-          value: 'width: 12px;',
-          oldValue: 'width: 10px;',
-        },
-      ]);
-      observer.disconnect();
-      t.end();
-    },
-  );
+  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
+    t.deepEqual(mutations, [
+      {
+        type: MutationRecordType.ATTRIBUTES,
+        attributeName: 'style',
+        target: el,
+        value: 'width: 12px;',
+        oldValue: 'width: 10px;',
+      },
+    ]);
+    observer.disconnect();
+    t.end();
+  });
 
   document.body.appendChild(el);
   appendKeys(['width']);
@@ -111,24 +105,22 @@ test.serial.cb('Element.style.width mutation observed, single value, setProperty
   el.style.setProperty('width', '12px');
 });
 
-test.serial.cb('Element.style.width mutation observed, multiple values, via cssText', t => {
+test.serial.cb('Element.style.width mutation observed, multiple values, via cssText', (t) => {
   const { document } = t.context;
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver(
-    (mutations: MutationRecord[]): void => {
-      t.deepEqual(mutations, [
-        {
-          type: MutationRecordType.ATTRIBUTES,
-          attributeName: 'style',
-          target: el,
-          value: 'width: 12px; height: 14px;',
-          oldValue: 'width: 10px; height: 12px;',
-        },
-      ]);
-      observer.disconnect();
-      t.end();
-    },
-  );
+  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
+    t.deepEqual(mutations, [
+      {
+        type: MutationRecordType.ATTRIBUTES,
+        attributeName: 'style',
+        target: el,
+        value: 'width: 12px; height: 14px;',
+        oldValue: 'width: 10px; height: 12px;',
+      },
+    ]);
+    observer.disconnect();
+    t.end();
+  });
 
   document.body.appendChild(el);
   appendKeys(['width', 'height']);

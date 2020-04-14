@@ -23,7 +23,7 @@ const test = anyTest as TestInterface<{
   node: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -31,7 +31,7 @@ test.beforeEach(t => {
   };
 });
 
-test('setting a value stores the value for a getter', t => {
+test('setting a value stores the value for a getter', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   t.is(declaration.width, undefined);

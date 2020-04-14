@@ -110,23 +110,23 @@ function querySelectorAll(node: Node, selector: string): Element[] | null {
   // Second, find all the matching elements on the Document
   let matcher: (element: Element) => boolean;
   if (selector[0] === '[') {
-    matcher = element => matchAttrReference(selector, element);
+    matcher = (element) => matchAttrReference(selector, element);
   } else if (elementSelector[0] === '#') {
     matcher = selectorHasAttr
-      ? element => element.id === elementSelector.substr(1) && matchAttrReference(attrSelector, element)
-      : element => element.id === elementSelector.substr(1);
+      ? (element) => element.id === elementSelector.substr(1) && matchAttrReference(attrSelector, element)
+      : (element) => element.id === elementSelector.substr(1);
   } else if (elementSelector[0] === '.') {
     matcher = selectorHasAttr
-      ? element => element.classList.contains(elementSelector.substr(1)) && matchAttrReference(attrSelector, element)
-      : element => element.classList.contains(elementSelector.substr(1));
+      ? (element) => element.classList.contains(elementSelector.substr(1)) && matchAttrReference(attrSelector, element)
+      : (element) => element.classList.contains(elementSelector.substr(1));
   } else {
     matcher = selectorHasAttr
-      ? element => element.localName === toLower(elementSelector) && matchAttrReference(attrSelector, element)
-      : element => element.localName === toLower(elementSelector);
+      ? (element) => element.localName === toLower(elementSelector) && matchAttrReference(attrSelector, element)
+      : (element) => element.localName === toLower(elementSelector);
   }
 
   // Third, filter to return elements that exist within the querying element's descendants.
   return matcher
-    ? matchChildrenElements(node[TransferrableKeys.scopingRoot], matcher).filter(element => node !== element && node.contains(element))
+    ? matchChildrenElements(node[TransferrableKeys.scopingRoot], matcher).filter((element) => node !== element && node.contains(element))
     : [];
 }

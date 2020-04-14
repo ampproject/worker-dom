@@ -118,7 +118,7 @@ export class Document extends Element {
         const constructor = NS_NAME_TO_CLASS[`${namespaceURI}:${localName}`] || HTMLElement;
         const node = new constructor(NodeType.ELEMENT_NODE, localName, namespaceURI, this, skeleton[TransferrableKeys.index]);
 
-        (skeleton[TransferrableKeys.attributes] || []).forEach(attribute =>
+        (skeleton[TransferrableKeys.attributes] || []).forEach((attribute) =>
           // AttributeNamespaceURI = strings[attribute[0]] !== 'null' ? strings[attribute[0]] : HTML_NAMESPACE
           node.setAttributeNS(
             strings[attribute[0]] !== 'null' ? strings[attribute[0]] : HTML_NAMESPACE,
@@ -126,7 +126,7 @@ export class Document extends Element {
             strings[attribute[2]],
           ),
         );
-        (skeleton[TransferrableKeys.childNodes] || []).forEach(child => node.appendChild(this[TransferrableKeys.hydrateNode](strings, child)));
+        (skeleton[TransferrableKeys.childNodes] || []).forEach((child) => node.appendChild(this[TransferrableKeys.hydrateNode](strings, child)));
         return node;
     }
   }
@@ -165,6 +165,6 @@ export class Document extends Element {
    * @return Element with matching id attribute.
    */
   public getElementById(id: string): Element | null {
-    return matchChildElement(this.body, element => element.id === id);
+    return matchChildElement(this.body, (element) => element.id === id);
   }
 }

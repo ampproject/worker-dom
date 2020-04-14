@@ -26,7 +26,7 @@ const test = anyTest as TestInterface<{
   text: Text;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -36,7 +36,7 @@ test.beforeEach(t => {
   };
 });
 
-test('text setter adds a child text node to HTMLAnchorElement.', t => {
+test('text setter adds a child text node to HTMLAnchorElement.', (t) => {
   const { element } = t.context;
 
   t.is(element.childNodes.length, 0);
@@ -44,7 +44,7 @@ test('text setter adds a child text node to HTMLAnchorElement.', t => {
   t.is(element.childNodes.length, 1);
 });
 
-test('clearing text via setter removes value stored as text inside element', t => {
+test('clearing text via setter removes value stored as text inside element', (t) => {
   const { element, text } = t.context;
 
   element.appendChild(text);
@@ -54,7 +54,7 @@ test('clearing text via setter removes value stored as text inside element', t =
   t.is(element.childNodes[0].data, '');
 });
 
-test('text setter replaces childNodes with single text node.', t => {
+test('text setter replaces childNodes with single text node.', (t) => {
   const { element, child, text } = t.context;
 
   child.appendChild(text);
