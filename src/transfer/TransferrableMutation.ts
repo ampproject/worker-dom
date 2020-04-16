@@ -28,25 +28,27 @@ export const enum TransferrableMutationType {
   OBJECT_CREATION = 10,
   IMAGE_BITMAP_INSTANCE = 11,
   STORAGE = 12,
+  SELECT = 13,
+  FOCUS = 14,
+  BLUR = 15,
 }
+
+const INVISIBLE_MUTATIONS = new Set([
+  TransferrableMutationType.EVENT_SUBSCRIPTION,
+  TransferrableMutationType.GET_BOUNDING_CLIENT_RECT,
+  TransferrableMutationType.LONG_TASK_START,
+  TransferrableMutationType.LONG_TASK_END,
+  TransferrableMutationType.STORAGE,
+  TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE,
+  TransferrableMutationType.SELECT,
+  TransferrableMutationType.BLUR,
+]);
 
 /**
  * Returns true if the mutation type can cause a user-visible change to the DOM.
  * @param type
  */
-export const isUserVisibleMutation = (type: TransferrableMutationType): boolean => {
-  switch (type) {
-    case TransferrableMutationType.EVENT_SUBSCRIPTION:
-    case TransferrableMutationType.GET_BOUNDING_CLIENT_RECT:
-    case TransferrableMutationType.LONG_TASK_START:
-    case TransferrableMutationType.LONG_TASK_END:
-    case TransferrableMutationType.STORAGE:
-    case TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE:
-      return false;
-    default:
-      return true;
-  }
-};
+export const isUserVisibleMutation = (type: TransferrableMutationType): boolean => !INVISIBLE_MUTATIONS.has(type);
 
 export const DefaultAllowedMutations = [
   TransferrableMutationType.ATTRIBUTES,
@@ -62,6 +64,8 @@ export const DefaultAllowedMutations = [
   TransferrableMutationType.OBJECT_CREATION,
   TransferrableMutationType.IMAGE_BITMAP_INSTANCE,
   TransferrableMutationType.STORAGE,
+  TransferrableMutationType.SELECT,
+  TransferrableMutationType.FOCUS,
 ];
 
 export const ReadableMutationType: { [key: number]: string } = {
@@ -78,6 +82,8 @@ export const ReadableMutationType: { [key: number]: string } = {
   10: 'OBJECT_CREATION',
   11: 'IMAGE_BITMAP_INSTANCE',
   12: 'STORAGE',
+  13: 'SELECT',
+  14: 'FOCUS',
 };
 
 /**

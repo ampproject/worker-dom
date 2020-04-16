@@ -17,8 +17,10 @@
 import { Element } from './Element';
 import { reflectProperties } from './enhanceElement';
 import { matchNearestParent, tagNameConditionPredicate } from './matchElements';
-import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
+import { TransferrableObjectType, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { transfer } from '../MutationTransfer';
+import { Document } from './Document';
 
 export const appendGlobalEventProperties = (keys: Array<string>): void => {
   const keysToAppend = keys.filter((key) => !HTMLElement.prototype.hasOwnProperty(key));
@@ -49,6 +51,7 @@ export class HTMLElement extends Element {
   public [TransferrableKeys.propertyEventHandlers]: {
     [key: string]: Function;
   } = {};
+
   /**
    * Find the nearest parent form element.
    * Implemented in HTMLElement since so many extensions of HTMLElement repeat this functionality. This is not to spec.
@@ -61,6 +64,25 @@ export class HTMLElement extends Element {
 
   [TransferrableKeys.serializeAsTransferrableObject](): number[] {
     return [TransferrableObjectType.HTMLElement, this[TransferrableKeys.index]];
+  }
+
+  /**
+   * Focus the HTMLElement
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLOrForeignElement/focus
+   * @param options {preventScroll?: Boolean value instructing browser to scroll the document to the newly-focused element}
+   * @return void
+   */
+  public focus(options?: { preventScroll?: boolean }): void {
+    transfer(this.ownerDocument as Document, [TransferrableMutationType.FOCUS, this[TransferrableKeys.index]]);
+  }
+
+  /**
+   * Blur the HTMLElement.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLOrForeignElement/blur
+   * @return void
+   */
+  public blur(): void {
+    transfer(this.ownerDocument as Document, [TransferrableMutationType.BLUR, this[TransferrableKeys.index]]);
   }
 }
 
