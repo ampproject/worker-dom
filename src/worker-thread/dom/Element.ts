@@ -480,8 +480,9 @@ export class Element extends ParentNode {
    * @param name value of name attribute elements must have to be returned
    * @return Element array with matching name attributes
    */
-  public getElementsByName(name: string): Array<Element> {
-    return matchChildrenElements(this, (element) => element.getAttributeNS(HTML_NAMESPACE, 'name') === name);
+  public getElementsByName(name: any): Array<Element> {
+    const stringName = '' + name;
+    return matchChildrenElements(this, (element) => element.getAttribute('name') === stringName);
   }
 
   /**

@@ -45,6 +45,26 @@ test('single direct child with matching name', (t) => {
   t.deepEqual(node.getElementsByName('foo'), [child]);
 });
 
+test('single direct child, calling with name null', (t) => {
+  const { node, child } = t.context;
+  node.appendChild(child);
+
+  t.is(node.getElementsByName(null).length, 0);
+  t.is(node.getElementsByName('null').length, 0);
+
+  child.setAttribute('name', null);
+  t.is(node.getElementsByName(null).length, 1);
+  t.is(node.getElementsByName('null').length, 1);
+  t.deepEqual(node.getElementsByName(null), [child]);
+  t.deepEqual(node.getElementsByName('null'), [child]);
+
+  child.setAttribute('name', 'null');
+  t.is(node.getElementsByName(null).length, 1);
+  t.is(node.getElementsByName('null').length, 1);
+  t.deepEqual(node.getElementsByName(null), [child]);
+  t.deepEqual(node.getElementsByName('null'), [child]);
+});
+
 test('multiple direct children with matching name', (t) => {
   const { node, child, childTwo } = t.context;
 
