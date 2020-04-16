@@ -452,7 +452,7 @@ export class Element extends ParentNode {
    * @param names contains one more more classnames to match on. Multiples are space seperated, indicating an AND operation.
    * @return Element array with matching classnames
    */
-  public getElementsByClassName(names: string): Element[] {
+  public getElementsByClassName(names: string): Array<Element> {
     const inputClassList = names.split(' ');
     // TODO(KB) – Compare performance of [].some(value => DOMTokenList.contains(value)) and regex.
     // const classRegex = new RegExp(classNames.split(' ').map(name => `(?=.*${name})`).join(''));
@@ -465,7 +465,7 @@ export class Element extends ParentNode {
    * @param tagName the qualified name to look for. The special string "*" represents all elements.
    * @return Element array with matching tagnames
    */
-  public getElementsByTagName(tagName: string): Element[] {
+  public getElementsByTagName(tagName: string): Array<Element> {
     const lowerTagName = toLower(tagName);
     return matchChildrenElements(
       this,
@@ -473,6 +473,16 @@ export class Element extends ParentNode {
         ? (_) => true
         : (element) => (element.namespaceURI === HTML_NAMESPACE ? element.localName === lowerTagName : element.tagName === tagName),
     );
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByName
+   * @param name value of name attribute elements must have to be returned
+   * @return Element array with matching name attributes
+   */
+  public getElementsByName(name: any): Array<Element> {
+    const stringName = '' + name;
+    return matchChildrenElements(this, (element) => element.getAttribute('name') === stringName);
   }
 
   /**
