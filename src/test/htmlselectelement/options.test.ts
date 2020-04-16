@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
   select: HTMLSelectElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   const select = document.createElement('select') as HTMLSelectElement;
 
@@ -35,13 +35,13 @@ test.beforeEach(t => {
   };
 });
 
-test('options returns empty array by default', t => {
+test('options returns empty array by default', (t) => {
   const { select } = t.context;
 
   t.deepEqual(select.options, []);
 });
 
-test('options returns singular array for single option child', t => {
+test('options returns singular array for single option child', (t) => {
   const { document, select } = t.context;
   const option = document.createElement('option') as HTMLOptionElement;
 
@@ -50,7 +50,7 @@ test('options returns singular array for single option child', t => {
   t.deepEqual(select.options, [option]);
 });
 
-test('options returns array for multiple option child', t => {
+test('options returns array for multiple option child', (t) => {
   const { document, select } = t.context;
   const option = document.createElement('option') as HTMLOptionElement;
   const optionTwo = document.createElement('option') as HTMLOptionElement;
@@ -61,7 +61,7 @@ test('options returns array for multiple option child', t => {
   t.deepEqual(select.options, [option, optionTwo]);
 });
 
-test('options returns ordered array for multiple option child', t => {
+test('options returns ordered array for multiple option child', (t) => {
   const { document, select } = t.context;
   const option = document.createElement('option') as HTMLOptionElement;
   const optionTwo = document.createElement('option') as HTMLOptionElement;

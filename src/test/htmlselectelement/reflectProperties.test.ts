@@ -23,7 +23,7 @@ const test = anyTest as TestInterface<{
   element: HTMLSelectElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {

@@ -27,7 +27,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -36,7 +36,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('Text, set data', t => {
+test.serial.cb('Text, set data', (t) => {
   const { document, emitter } = t.context;
   const text = document.createTextNode('original text');
 
@@ -55,7 +55,7 @@ test.serial.cb('Text, set data', t => {
   });
 });
 
-test.serial.cb('Text, set textContent', t => {
+test.serial.cb('Text, set textContent', (t) => {
   const { document, emitter } = t.context;
   const text = document.createTextNode('original text');
 

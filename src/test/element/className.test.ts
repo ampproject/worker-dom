@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
   node: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -30,20 +30,20 @@ test.beforeEach(t => {
   };
 });
 
-test('className should be empty by default', t => {
+test('className should be empty by default', (t) => {
   const { node } = t.context;
 
   t.is(node.className, '');
 });
 
-test('className should be settable to a single value', t => {
+test('className should be settable to a single value', (t) => {
   const { node } = t.context;
 
   node.className = 'foo';
   t.is(node.className, 'foo');
 });
 
-test('className should be settable to multiple values', t => {
+test('className should be settable to multiple values', (t) => {
   const { node } = t.context;
 
   node.className = 'foo bar baz';

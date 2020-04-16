@@ -1,7 +1,7 @@
 const defaultInput = document.getElementById('default-syntax-input');
 const defaultOut = document.getElementById('default-syntax-output');
 
-setInterval(_ => (defaultOut.textContent = defaultInput.value), 500);
+setInterval((_) => (defaultOut.textContent = defaultInput.value), 500);
 
 const desc = document.createElement('p');
 const input = document.createElement('input');
@@ -12,4 +12,4 @@ document.body.appendChild(desc);
 document.body.appendChild(input);
 document.body.appendChild(valueOut);
 
-setInterval(_ => (valueOut.textContent = input.value), 500);
+setInterval((_) => (valueOut.textContent = input.value), 500);

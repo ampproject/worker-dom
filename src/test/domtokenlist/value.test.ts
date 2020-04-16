@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
   tokenList: DOMTokenList;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -30,13 +30,13 @@ test.beforeEach(t => {
   };
 });
 
-test('getter should be empty by default', t => {
+test('getter should be empty by default', (t) => {
   const { tokenList } = t.context;
 
   t.is(tokenList.value, '');
 });
 
-test('should accept new total values via setter', t => {
+test('should accept new total values via setter', (t) => {
   const { tokenList } = t.context;
 
   tokenList.value = 'foo';

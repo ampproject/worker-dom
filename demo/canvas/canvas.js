@@ -26,7 +26,7 @@ function draw(e) {
   myCtx.stroke();
 }
 
-myCanvas.addEventListener('mousedown', e => {
+myCanvas.addEventListener('mousedown', (e) => {
   const gradient = myCtx.createRadialGradient(250, 250, 0, 250, 250, 250);
   gradient.addColorStop(0, 'red');
   gradient.addColorStop(0.2, 'orange');
@@ -42,7 +42,7 @@ myCanvas.addEventListener('mousedown', e => {
   myCanvas.addEventListener('mousemove', draw);
 });
 
-myCanvas.addEventListener('mouseup', e => {
+myCanvas.addEventListener('mouseup', (e) => {
   myCanvas.removeEventListener('mousemove', draw);
 });
 

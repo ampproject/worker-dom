@@ -43,7 +43,7 @@ const pushMutation = (observer: MutationObserver, record: MutationRecord): void 
     pendingMutations = true;
     Promise.resolve().then((): void => {
       pendingMutations = false;
-      observers.forEach(observer => observer.callback(observer.takeRecords()));
+      observers.forEach((observer) => observer.callback(observer.takeRecords()));
     });
   }
 };
@@ -58,7 +58,7 @@ export function mutate(document: Document, record: MutationRecord, transferable:
   transfer(document, transferable);
 
   // The MutationRecord is only used for external callers of MutationObserver.
-  observers.forEach(observer => {
+  observers.forEach((observer) => {
     for (let t: Node | null = record.target; t; t = t.parentNode) {
       if (matchesIndex(observer.target, t)) {
         pushMutation(observer, record);

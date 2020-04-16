@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
   child: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -35,7 +35,7 @@ test.beforeEach(t => {
   };
 });
 
-test('element with no children', t => {
+test('element with no children', (t) => {
   const { node } = t.context;
 
   t.is(node.outerHTML, '<div></div>');
@@ -43,14 +43,14 @@ test('element with no children', t => {
   t.is(node.outerHTML, '<div class="test"></div>');
 });
 
-test('element with a child', t => {
+test('element with a child', (t) => {
   const { node, child } = t.context;
 
   node.appendChild(child);
   t.is(node.outerHTML, '<div><div></div></div>');
 });
 
-test('void elements without children', t => {
+test('void elements without children', (t) => {
   const { document } = t.context;
 
   t.is(document.createElement('area').outerHTML, '<area>');
@@ -69,7 +69,7 @@ test('void elements without children', t => {
   t.is(document.createElement('wbr').outerHTML, '<wbr>');
 });
 
-test('void elements with children', t => {
+test('void elements with children', (t) => {
   const { document, child } = t.context;
 
   const input = document.createElement('input');

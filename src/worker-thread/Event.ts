@@ -137,7 +137,7 @@ const touchListFromTransfer = (
       },
     };
 
-    touchListKeys.forEach(touchListKey => {
+    touchListKeys.forEach((touchListKey) => {
       const numericKey = Number(touchListKey);
       const transferredTouch = (event[key] as TransferrableTouchList)[numericKey];
       list[numericKey] = {
@@ -176,7 +176,10 @@ export function propagate(global: WorkerDOMGlobalScope): void {
     if (node !== null) {
       node.dispatchEvent(
         Object.assign(
-          new Event(event[TransferrableKeys.type], { bubbles: event[TransferrableKeys.bubbles], cancelable: event[TransferrableKeys.cancelable] }),
+          new Event(event[TransferrableKeys.type], {
+            bubbles: event[TransferrableKeys.bubbles],
+            cancelable: event[TransferrableKeys.cancelable],
+          }),
           {
             cancelBubble: event[TransferrableKeys.cancelBubble],
             defaultPrevented: event[TransferrableKeys.defaultPrevented],

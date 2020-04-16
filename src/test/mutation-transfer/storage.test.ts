@@ -30,7 +30,7 @@ const test = anyTest as TestInterface<{
   storage: Storage;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   const storage = createStorage(document, StorageLocation.Local, {});
 
@@ -40,7 +40,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('Storage.getItem', t => {
+test.serial.cb('Storage.getItem', (t) => {
   const { document, storage } = t.context;
 
   let postMessageCalled = false;
@@ -55,10 +55,10 @@ test.serial.cb('Storage.getItem', t => {
   }, 0);
 });
 
-test.serial.cb('Storage.setItem', t => {
+test.serial.cb('Storage.setItem', (t) => {
   const { document, storage } = t.context;
 
-  expectMutations(document, mutations => {
+  expectMutations(document, (mutations) => {
     t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, getForTesting('foo'), getForTesting('bar')]);
     t.end();
   });
@@ -66,10 +66,10 @@ test.serial.cb('Storage.setItem', t => {
   storage.setItem('foo', 'bar');
 });
 
-test.serial.cb('Storage.removeItem', t => {
+test.serial.cb('Storage.removeItem', (t) => {
   const { document, storage } = t.context;
 
-  expectMutations(document, mutations => {
+  expectMutations(document, (mutations) => {
     t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, getForTesting('foo'), 0]);
     t.end();
   });
@@ -77,10 +77,10 @@ test.serial.cb('Storage.removeItem', t => {
   storage.removeItem('foo');
 });
 
-test.serial.cb('Storage.clear', t => {
+test.serial.cb('Storage.clear', (t) => {
   const { document, storage } = t.context;
 
-  expectMutations(document, mutations => {
+  expectMutations(document, (mutations) => {
     t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, 0, 0]);
     t.end();
   });

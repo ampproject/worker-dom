@@ -35,7 +35,7 @@ const test = anyTest as TestInterface<{
   baseElement: HTMLElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const env = new Env();
   const { document } = env;
   const longTasks: Array<Promise<any>> = [];
@@ -76,12 +76,12 @@ test.beforeEach(t => {
   };
 });
 
-test.afterEach(t => {
+test.afterEach((t) => {
   const { env } = t.context;
   env.dispose();
 });
 
-test.serial('should tolerate no callback', t => {
+test.serial('should tolerate no callback', (t) => {
   const { longTasks, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
   const executor = LongTaskExecutor(
     stringContext,
@@ -99,7 +99,7 @@ test.serial('should tolerate no callback', t => {
   t.is(longTasks.length, 0);
 });
 
-test.serial('should create and release a long task', t => {
+test.serial('should create and release a long task', (t) => {
   const { executor, longTasks, baseElement } = t.context;
 
   executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
@@ -113,7 +113,7 @@ test.serial('should create and release a long task', t => {
   return longTasks[0];
 });
 
-test.serial('should nest long tasks', t => {
+test.serial('should nest long tasks', (t) => {
   const { executor, longTasks, baseElement } = t.context;
 
   executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
@@ -137,7 +137,7 @@ test.serial('should nest long tasks', t => {
   return longTasks[0];
 });
 
-test.serial('should restart a next long tasks', t => {
+test.serial('should restart a next long tasks', (t) => {
   const { executor, longTasks, baseElement } = t.context;
 
   // Start 1st task.

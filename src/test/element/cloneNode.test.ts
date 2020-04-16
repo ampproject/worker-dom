@@ -30,7 +30,7 @@ const test = anyTest as TestInterface<{
   document: Document;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -47,32 +47,32 @@ test.beforeEach(t => {
   document.body.appendChild(t.context.parent);
 });
 
-test('cloneNode should create a new node with the same tagName', t => {
+test('cloneNode should create a new node with the same tagName', (t) => {
   const { parent } = t.context;
 
   t.is(parent.cloneNode().tagName, parent.tagName);
 });
 
-test('cloneNode should create a new node with the same nodeName', t => {
+test('cloneNode should create a new node with the same nodeName', (t) => {
   const { parent } = t.context;
 
   t.is(parent.cloneNode().nodeName, parent.nodeName);
 });
 
-test('cloneNode should create a new node with a different index', t => {
+test('cloneNode should create a new node with a different index', (t) => {
   const { parent } = t.context;
 
   t.not(parent.cloneNode()[TransferrableKeys.index], parent[TransferrableKeys.index]);
 });
 
-test('cloneNode should create a new node with the same attribute', t => {
+test('cloneNode should create a new node with the same attribute', (t) => {
   const { parent } = t.context;
   parent.setAttribute('fancy', 'yes');
 
   t.is(parent.cloneNode().getAttribute('fancy'), 'yes');
 });
 
-test('cloneNode should create a new node with the same attributes', t => {
+test('cloneNode should create a new node with the same attributes', (t) => {
   const { parent } = t.context;
   parent.setAttribute('fancy', 'yes');
   parent.setAttribute('virtual', 'no');
@@ -81,7 +81,7 @@ test('cloneNode should create a new node with the same attributes', t => {
   t.is(parent.cloneNode().getAttribute('virtual'), 'no');
 });
 
-test('cloneNode should create a new node with the same attributes, but not preserve attributes across the instances', t => {
+test('cloneNode should create a new node with the same attributes, but not preserve attributes across the instances', (t) => {
   const { parent } = t.context;
   parent.setAttribute('fancy', 'yes');
   const clone = parent.cloneNode();
@@ -91,21 +91,21 @@ test('cloneNode should create a new node with the same attributes, but not prese
   t.is(parent.getAttribute('fancy'), 'no');
 });
 
-test('cloneNode should create a new node without the same properties', t => {
+test('cloneNode should create a new node without the same properties', (t) => {
   const { parent } = t.context;
   parent.value = 'property value';
 
   t.not(parent.cloneNode().value, 'property value');
 });
 
-test('cloneNode should create a new node without the same children when the deep flag is not set', t => {
+test('cloneNode should create a new node without the same children when the deep flag is not set', (t) => {
   const { parent } = t.context;
   const clone = parent.cloneNode();
 
   t.is(clone.childNodes.length, 0);
 });
 
-test('cloneNode should create a new node with the same children when the deep flag is set', t => {
+test('cloneNode should create a new node with the same children when the deep flag is set', (t) => {
   const { parent } = t.context;
   const clone = parent.cloneNode(true);
 
@@ -114,7 +114,7 @@ test('cloneNode should create a new node with the same children when the deep fl
   t.is(parent.childNodes[0].childNodes[0].textContent, clone.childNodes[0].childNodes[0].textContent);
 });
 
-test('cloneNode should return a new instance of the the same type as the input', t => {
+test('cloneNode should return a new instance of the the same type as the input', (t) => {
   const { document } = t.context;
   const element = document.createElement('a');
   const clone = element.cloneNode();

@@ -28,7 +28,7 @@ export const ImageBitmapProcessor: CommandExecutorInterface = (strings, nodeCont
         const targetIndex = mutations[startPosition + ImageBitmapMutationIndex.Target];
         const target = nodeContext.getNode(targetIndex);
         if (target) {
-          self.createImageBitmap(target as HTMLImageElement | HTMLCanvasElement).then(imageBitmap => {
+          self.createImageBitmap(target as HTMLImageElement | HTMLCanvasElement).then((imageBitmap) => {
             workerContext.messageToWorker(
               {
                 [TransferrableKeys.type]: MessageType.IMAGE_BITMAP_INSTANCE,

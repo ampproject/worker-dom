@@ -32,7 +32,7 @@ export function transfer(document: Document, mutation: Array<number>): void {
     pending = true;
     pendingMutations = pendingMutations.concat(mutation);
 
-    Promise.resolve().then(_ => {
+    Promise.resolve().then((_) => {
       if (pending) {
         const nodes = new Uint16Array(
           consumeNodes().reduce((acc: Array<number>, node: Node) => acc.concat(node[TransferrableKeys.creationFormat]), []),

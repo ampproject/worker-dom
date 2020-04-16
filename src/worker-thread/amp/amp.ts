@@ -34,7 +34,7 @@ export class AMP {
    * @param key
    */
   getState(key: string): Promise<{} | null> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const messageHandler = (event: MessageEvent) => {
         const message: MessageToWorker = event.data;
         if (message[TransferrableKeys.type] !== MessageType.GET_STORAGE) {

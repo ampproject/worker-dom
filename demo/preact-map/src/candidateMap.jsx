@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { h, Component } from 'preact';
-import {useState} from 'preact/hooks';
-import objstr from 'obj-str';
+import { h, Component } from "preact";
+import { useState } from "preact/hooks";
+import objstr from "obj-str";
 
-import styles from './candidateMap.css';
+import styles from "./candidateMap.css";
 
 function CandidateZone({ index, focusRegion, x, y }) {
   const [fill, setFill] = useState("red");
@@ -89,7 +89,7 @@ export function CandidateMap({ focusRegion, regionData, totalData }) {
       <p
         className={objstr({
           [styles.tooltip]: true,
-          [styles.showTooltip]: showTooltip
+          [styles.showTooltip]: showTooltip,
         })}
       >
         Region winner {!!winner && winner.name}

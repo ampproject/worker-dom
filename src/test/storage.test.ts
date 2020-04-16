@@ -23,25 +23,27 @@ const test = anyTest as TestInterface<{
   storage: Storage;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   t.context = {
-    storage: createStorage(document, StorageLocation.Local, { existingKey: 'existingValue' }),
+    storage: createStorage(document, StorageLocation.Local, {
+      existingKey: 'existingValue',
+    }),
   };
 });
 
-test('can access existing data', t => {
+test('can access existing data', (t) => {
   const { storage } = t.context;
   t.is(storage.getItem('existingKey'), 'existingValue');
 });
 
-test('cannot access Object.prototype keys', t => {
+test('cannot access Object.prototype keys', (t) => {
   const { storage } = t.context;
   t.is(storage.getItem('constructor'), null);
   t.is(storage.getItem('toString'), null);
 });
 
-test('can access data with bracket notation', t => {
+test('can access data with bracket notation', (t) => {
   const { storage } = t.context;
   const s = storage as any;
   t.is(s['existingKey'], 'existingValue');
@@ -53,7 +55,7 @@ test('can access data with bracket notation', t => {
   t.is(storage.getItem('bar'), 'foo');
 });
 
-test('can be JSON-stringified', t => {
+test('can be JSON-stringified', (t) => {
   const { storage } = t.context;
   t.is(JSON.stringify(storage), '{"existingKey":"existingValue"}');
 
@@ -61,7 +63,7 @@ test('can be JSON-stringified', t => {
   t.is(JSON.stringify(storage), '{"existingKey":"existingValue","foo":"bar"}');
 });
 
-test('length', t => {
+test('length', (t) => {
   const { storage } = t.context;
   t.is(storage.length, 1);
 
@@ -69,7 +71,7 @@ test('length', t => {
   t.is(storage.length, 2);
 });
 
-test('key()', t => {
+test('key()', (t) => {
   const { storage } = t.context;
   t.is(storage.key(0), 'existingKey');
 
@@ -80,7 +82,7 @@ test('key()', t => {
   t.is(storage.key(2), null);
 });
 
-test('getItem() and setItem()', t => {
+test('getItem() and setItem()', (t) => {
   const { storage } = t.context;
   storage.setItem('foo', 'bar');
   t.is(storage.getItem('foo'), 'bar');
@@ -91,20 +93,20 @@ test('getItem() and setItem()', t => {
   t.is(storage.getItem('doesNotExist'), null);
 });
 
-test('modifying a readonly property', t => {
+test('modifying a readonly property', (t) => {
   const { storage } = t.context;
   t.throws(() => storage.setItem('setItem', 'shouldThrow'));
   t.throws(() => storage.removeItem('removeItem'));
 });
 
-test('removeItem()', t => {
+test('removeItem()', (t) => {
   const { storage } = t.context;
 
   storage.removeItem('existingKey');
   t.is(storage.getItem('existingKey'), null);
 });
 
-test('clear()', t => {
+test('clear()', (t) => {
   const { storage } = t.context;
   storage.clear();
   t.is(storage.length, 0);

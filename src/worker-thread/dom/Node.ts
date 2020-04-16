@@ -37,7 +37,7 @@ export type NamespaceURI = string;
  */
 export const propagate = (node: Node, property: string | number, value: any): void => {
   node[property] = value;
-  node.childNodes.forEach(child => propagate(child, property, value));
+  node.childNodes.forEach((child) => propagate(child, property, value));
 };
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Node
@@ -109,7 +109,7 @@ export abstract class Node {
     const childNodes = this.childNodes;
 
     if (childNodes.length) {
-      childNodes.forEach(childNode => (textContent += childNode.textContent));
+      childNodes.forEach((childNode) => (textContent += childNode.textContent));
       return textContent;
     }
     return '';
@@ -179,7 +179,7 @@ export abstract class Node {
       if (this.childNodes.includes(this)) {
         return true;
       }
-      return this.childNodes.some(child => child.contains(otherNode));
+      return this.childNodes.some((child) => child.contains(otherNode));
     }
     return false;
   }

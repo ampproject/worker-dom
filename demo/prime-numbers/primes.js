@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const sieveOfEratosthenes = limit => {
+const sieveOfEratosthenes = (limit) => {
   const sieve = [];
   const primes = [];
   let k;
@@ -34,7 +34,7 @@ const sieveOfEratosthenes = limit => {
     }
   }
 
-  sieve.forEach(function(value, key) {
+  sieve.forEach(function (value, key) {
     if (value) {
       this.push(key);
     }

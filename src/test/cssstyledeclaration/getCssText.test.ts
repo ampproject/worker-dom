@@ -23,7 +23,7 @@ const test = anyTest as TestInterface<{
   node: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -31,13 +31,13 @@ test.beforeEach(t => {
   };
 });
 
-test('cssText is empty by default', t => {
+test('cssText is empty by default', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   t.is(declaration.cssText, '');
 });
 
-test('cssText contains single mutated property', t => {
+test('cssText contains single mutated property', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['width']);
@@ -45,7 +45,7 @@ test('cssText contains single mutated property', t => {
   t.is(declaration.cssText, 'width: 100px;');
 });
 
-test('cssText hyphenates only capitals after lowercase letters', t => {
+test('cssText hyphenates only capitals after lowercase letters', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['linebreakFoo']);
@@ -53,7 +53,7 @@ test('cssText hyphenates only capitals after lowercase letters', t => {
   t.is(declaration.cssText, 'linebreak-foo: normal;');
 });
 
-test('cssText contains multiple mutated properties', t => {
+test('cssText contains multiple mutated properties', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['height', 'position']);
@@ -62,7 +62,7 @@ test('cssText contains multiple mutated properties', t => {
   t.is(declaration.cssText, 'height: 100px; position: absolute;');
 });
 
-test('cssText contains webkit vendor prefixed property', t => {
+test('cssText contains webkit vendor prefixed property', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['webkitLineBreak']);
@@ -70,7 +70,7 @@ test('cssText contains webkit vendor prefixed property', t => {
   t.is(declaration.cssText, '-webkit-line-break: normal;');
 });
 
-test('cssText contains ms vendor prefixed property', t => {
+test('cssText contains ms vendor prefixed property', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['msLineBreak']);
@@ -78,7 +78,7 @@ test('cssText contains ms vendor prefixed property', t => {
   t.is(declaration.cssText, '-ms-line-break: normal;');
 });
 
-test('cssText contains moz vendor prefixed propertiy', t => {
+test('cssText contains moz vendor prefixed propertiy', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['mozLineBreak']);
@@ -86,7 +86,7 @@ test('cssText contains moz vendor prefixed propertiy', t => {
   t.is(declaration.cssText, '-moz-line-break: normal;');
 });
 
-test('cssText contains khtml vendor prefixed propertiy', t => {
+test('cssText contains khtml vendor prefixed propertiy', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['khtmlLineBreak']);
@@ -94,7 +94,7 @@ test('cssText contains khtml vendor prefixed propertiy', t => {
   t.is(declaration.cssText, '-khtml-line-break: normal;');
 });
 
-test('cssText does not prefix hyphenated keys containing vendor prefixes not in the first position', t => {
+test('cssText does not prefix hyphenated keys containing vendor prefixes not in the first position', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['lineKhtmlBreak']);

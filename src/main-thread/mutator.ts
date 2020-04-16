@@ -120,7 +120,7 @@ export class MutatorProcessor {
       console.group('Mutations');
     }
     const disallowedMutations: TransferrableMutationType[] = [];
-    this.mutationQueue.forEach(mutationArray => {
+    this.mutationQueue.forEach((mutationArray) => {
       const length: number = mutationArray.length;
       let operationStart: number = 0;
 

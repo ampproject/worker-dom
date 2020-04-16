@@ -29,7 +29,7 @@ const test = anyTest as TestInterface<{
   amp: AMP;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   const amp = new AMP(document);
 
@@ -39,7 +39,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('AMP.getState()', t => {
+test.serial.cb('AMP.getState()', (t) => {
   const { document, amp } = t.context;
 
   let addGlobalEventListenerCalled = false;
@@ -47,7 +47,7 @@ test.serial.cb('AMP.getState()', t => {
     addGlobalEventListenerCalled = true;
   };
 
-  expectMutations(document, mutations => {
+  expectMutations(document, (mutations) => {
     t.true(addGlobalEventListenerCalled);
     t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.GET, StorageLocation.AmpState, getForTesting('foo'), 0]);
     t.end();
@@ -56,10 +56,10 @@ test.serial.cb('AMP.getState()', t => {
   amp.getState('foo');
 });
 
-test.serial.cb('AMP.setState()', t => {
+test.serial.cb('AMP.setState()', (t) => {
   const { document, amp } = t.context;
 
-  expectMutations(document, mutations => {
+  expectMutations(document, (mutations) => {
     t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.AmpState, 0, getForTesting('{"foo":"bar"}')]);
     t.end();
   });

@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
   childTwo: Text;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -35,20 +35,20 @@ test.beforeEach(t => {
   };
 });
 
-test('should return null when an Element does not have any childNodes.', t => {
+test('should return null when an Element does not have any childNodes.', (t) => {
   const { node } = t.context;
 
   t.is(node.lastElementChild, null);
 });
 
-test('should return the only child when only one Element is appended', t => {
+test('should return the only child when only one Element is appended', (t) => {
   const { node, child } = t.context;
 
   node.appendChild(child);
   t.deepEqual(node.lastElementChild, child);
 });
 
-test('should return the only Element in Node.childNodes, not another Node', t => {
+test('should return the only Element in Node.childNodes, not another Node', (t) => {
   const { node, child, childTwo } = t.context;
 
   node.appendChild(child);
@@ -56,7 +56,7 @@ test('should return the only Element in Node.childNodes, not another Node', t =>
   t.deepEqual(node.lastElementChild, child);
 });
 
-test('should return null when an Element only contains Node childNodes', t => {
+test('should return null when an Element only contains Node childNodes', (t) => {
   const { node, childTwo } = t.context;
 
   node.appendChild(childTwo);

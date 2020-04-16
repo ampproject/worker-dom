@@ -63,7 +63,7 @@ export const applyDefaultInputListener = (workerContext: WorkerContext, node: Re
 export const sendValueChangeOnAttributeMutation = (workerContext: WorkerContext, node: RenderableElement): void => {
   if (shouldTrackChanges(node as HTMLElement) && !monitoredNodes.get(node)) {
     new MutationObserver((mutations: Array<MutationRecord>) =>
-      mutations.map(mutation => fireValueChange(workerContext, mutation.target as RenderableElement)),
+      mutations.map((mutation) => fireValueChange(workerContext, mutation.target as RenderableElement)),
     ).observe(node, { attributes: true });
     monitoredNodes.set(node, true);
   }
@@ -99,7 +99,7 @@ const fireResizeChange = (workerContext: WorkerContext, cachedWindowSize: [numbe
  * @param touchList
  */
 const createTransferrableTouchList = (touchList: TouchList): TransferrableTouchList =>
-  Object.values(touchList).map(touch => [
+  Object.values(touchList).map((touch) => [
     touch.identifier,
     touch.screenX,
     touch.screenY,

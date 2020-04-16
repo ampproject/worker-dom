@@ -28,7 +28,7 @@ export function retrieveImageBitmap(image: HTMLImageElement | HTMLCanvasElement,
   const callIndex = indexTracker++;
   const document = canvas.ownerDocument as Document;
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const messageHandler = ({ data }: { data: ImageBitmapToWorker }) => {
       if (data[TransferrableKeys.type] === MessageType.IMAGE_BITMAP_INSTANCE && data[TransferrableKeys.callIndex] === callIndex) {
         document.removeGlobalEventListener('message', messageHandler);

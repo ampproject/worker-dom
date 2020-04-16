@@ -24,7 +24,7 @@ const test = anyTest as TestInterface<{
   childTwo: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -34,14 +34,14 @@ test.beforeEach(t => {
   };
 });
 
-test('return only child', t => {
+test('return only child', (t) => {
   const { node, child } = t.context;
 
   node.appendChild(child);
   t.deepEqual(node.lastChild, child);
 });
 
-test('return last child when more than one child is available', t => {
+test('return last child when more than one child is available', (t) => {
   const { node, child, childTwo } = t.context;
 
   node.appendChild(child);

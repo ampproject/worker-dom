@@ -34,7 +34,7 @@ const test = anyTest as TestInterface<{
   inputElement: HTMLInputElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const sandbox = sinon.createSandbox();
   const stringContext = new StringContext();
   const objectContext = new ObjectContext();
@@ -80,7 +80,7 @@ test.beforeEach(t => {
   };
 });
 
-test('setting property to a new string', t => {
+test('setting property to a new string', (t) => {
   const { stringContext, propertyProcessor, inputElement } = t.context;
   const newValue = 'new value';
   const storedValueKey = storeString(stringContext, 'value');
@@ -94,7 +94,7 @@ test('setting property to a new string', t => {
   t.is(inputElement.value, newValue);
 });
 
-test('setting property back to an empty string', t => {
+test('setting property back to an empty string', (t) => {
   const { stringContext, propertyProcessor, inputElement } = t.context;
   const firstUpdateValue = 'new value';
   const secondUpdateValue = '';

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-(function() {
+(function () {
   'use strict';
 
   /** Virtual DOM Node */
@@ -1024,14 +1024,14 @@
 
   var ENV =
     ENV ||
-    (function() {
+    (function () {
       var counter = 0;
       var data;
 
       var _base;
 
       (_base = String.prototype).lpad ||
-        (_base.lpad = function(padding, toLength) {
+        (_base.lpad = function (padding, toLength) {
           return padding.repeat((toLength - this.length) / padding.length).concat(this);
         });
 
@@ -1259,7 +1259,7 @@
 
   var Query =
     /*#__PURE__*/
-    (function(_Component) {
+    (function (_Component) {
       _inheritsLoose(Query, _Component);
 
       function Query() {
@@ -1306,7 +1306,7 @@
 
   var Database =
     /*#__PURE__*/
-    (function(_Component2) {
+    (function (_Component2) {
       _inheritsLoose(Database, _Component2);
 
       function Database() {
@@ -1347,7 +1347,7 @@
               lastSample.nbQueries,
             ),
           ),
-          lastSample.topFiveQueries.map(function(query, index) {
+          lastSample.topFiveQueries.map(function (query, index) {
             return h(Query, {
               key: index,
               query: query.query,
@@ -1364,7 +1364,7 @@
 
   var Databases =
     /*#__PURE__*/
-    (function(_Component3) {
+    (function (_Component3) {
       _inheritsLoose(Databases, _Component3);
 
       function Databases() {
@@ -1410,7 +1410,7 @@
         return h(
           'tbody',
           null,
-          state.databases.map(function(database) {
+          state.databases.map(function (database) {
             return h(Database, {
               key: database.dbname,
               lastMutationId: database.lastMutationId,
@@ -1427,7 +1427,7 @@
 
   var DBMon =
     /*#__PURE__*/
-    (function(_Component4) {
+    (function (_Component4) {
       _inheritsLoose(DBMon, _Component4);
 
       function DBMon() {
@@ -1539,7 +1539,7 @@
 
   var Hello =
     /*#__PURE__*/
-    (function(_Component) {
+    (function (_Component) {
       _inheritsLoose(Hello, _Component);
 
       function Hello(props) {
@@ -1584,7 +1584,7 @@
     return h(
       'ul',
       null,
-      props.items.map(function(item) {
+      props.items.map(function (item) {
         return h(
           'li',
           {
@@ -1598,7 +1598,7 @@
 
   var TodoApp =
     /*#__PURE__*/
-    (function(_Component2) {
+    (function (_Component2) {
       _inheritsLoose(TodoApp, _Component2);
 
       function TodoApp() {
@@ -1658,7 +1658,7 @@
                 return;
               }
 
-              _this2.setState(function(prevState) {
+              _this2.setState(function (prevState) {
                 return {
                   items: prevState.items.concat({
                     text: text,
@@ -1706,7 +1706,7 @@
 
   var Timer =
     /*#__PURE__*/
-    (function(_Component3) {
+    (function (_Component3) {
       _inheritsLoose(Timer, _Component3);
 
       function Timer() {
@@ -1731,7 +1731,7 @@
             enumerable: true,
             writable: true,
             value: function value() {
-              _this3.setState(function(prevState) {
+              _this3.setState(function (prevState) {
                 return {
                   seconds: prevState.seconds + 1,
                 };

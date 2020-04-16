@@ -23,7 +23,7 @@ const test = anyTest as TestInterface<{
   node: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -31,7 +31,7 @@ test.beforeEach(t => {
   };
 });
 
-test('setting cssText to empty from empty', t => {
+test('setting cssText to empty from empty', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
 
   t.is(declaration.cssText, '');
@@ -39,7 +39,7 @@ test('setting cssText to empty from empty', t => {
   t.is(declaration.cssText, '');
 });
 
-test('setting cssText to empty makes cssText empty', t => {
+test('setting cssText to empty makes cssText empty', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['width']);
   declaration.width = '10px';
@@ -49,7 +49,7 @@ test('setting cssText to empty makes cssText empty', t => {
   t.is(declaration.cssText, '');
 });
 
-test('setting cssText to empty removes stored values', t => {
+test('setting cssText to empty removes stored values', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['width']);
   declaration.width = '10px';
@@ -59,7 +59,7 @@ test('setting cssText to empty removes stored values', t => {
   t.is(declaration.width, '');
 });
 
-test('setting cssText with a value stores the value', t => {
+test('setting cssText with a value stores the value', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['width']);
 
@@ -68,7 +68,7 @@ test('setting cssText with a value stores the value', t => {
   t.is(declaration.width, '10px');
 });
 
-test('setting cssText with multiple values stores the values', t => {
+test('setting cssText with multiple values stores the values', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['width', 'height']);
 
@@ -78,7 +78,7 @@ test('setting cssText with multiple values stores the values', t => {
   t.is(declaration.height, '12px');
 });
 
-test('setting cssText with a single value requiring key conversion', t => {
+test('setting cssText with a single value requiring key conversion', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['lineHeight']);
 
@@ -87,7 +87,7 @@ test('setting cssText with a single value requiring key conversion', t => {
   t.is(declaration.lineHeight, '10px');
 });
 
-test('setting cssText with a single value requiring key conversion with vendor prefix', t => {
+test('setting cssText with a single value requiring key conversion with vendor prefix', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['webkitLineHeight']);
 
@@ -96,7 +96,7 @@ test('setting cssText with a single value requiring key conversion with vendor p
   t.is(declaration.webkitLineHeight, '10px');
 });
 
-test('setting cssText with a single miscapitalized value requiring key conversion with vendor prefix', t => {
+test('setting cssText with a single miscapitalized value requiring key conversion with vendor prefix', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['webkitLineHeight']);
 
@@ -105,7 +105,7 @@ test('setting cssText with a single miscapitalized value requiring key conversio
   t.is(declaration.webkitLineHeight, '10px');
 });
 
-test('setting cssText with a non-string should set empty string instead', t => {
+test('setting cssText with a non-string should set empty string instead', (t) => {
   const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['width']);
   t.is(declaration.cssText, '');

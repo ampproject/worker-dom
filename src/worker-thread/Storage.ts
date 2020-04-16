@@ -84,7 +84,7 @@ export function createStorage(document: Document, location: StorageLocation, dat
   });
   define(storage, 'clear', {
     value(): void {
-      Object.keys(this).forEach(key => {
+      Object.keys(this).forEach((key) => {
         delete this[key];
       });
 

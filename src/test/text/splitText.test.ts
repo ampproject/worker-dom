@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
   paragraph: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -35,7 +35,7 @@ test.beforeEach(t => {
   };
 });
 
-test('unmounted text splitting', t => {
+test('unmounted text splitting', (t) => {
   const { text } = t.context;
 
   const offsetNode: Text = text.splitText(3);
@@ -45,7 +45,7 @@ test('unmounted text splitting', t => {
   t.is(offsetNode.previousSibling, null);
 });
 
-test('tree mounted text splitting', t => {
+test('tree mounted text splitting', (t) => {
   const { text, element } = t.context;
 
   element.appendChild(text);
@@ -57,7 +57,7 @@ test('tree mounted text splitting', t => {
   t.is(offsetNode.previousSibling, text);
 });
 
-test('tree with siblings mounted text splitting', t => {
+test('tree with siblings mounted text splitting', (t) => {
   const { text, element, paragraph } = t.context;
 
   element.appendChild(text);

@@ -26,7 +26,7 @@ const test = anyTest as TestInterface<{
   select: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -37,20 +37,20 @@ test.beforeEach(t => {
   };
 });
 
-test('index should be 0 by default', t => {
+test('index should be 0 by default', (t) => {
   const { option } = t.context;
 
   t.is(option.index, 0);
 });
 
-test('index should be 0 for single item', t => {
+test('index should be 0 for single item', (t) => {
   const { option, select } = t.context;
 
   select.appendChild(option);
   t.is(option.index, 0);
 });
 
-test('index should be 0 and 1 for two items', t => {
+test('index should be 0 and 1 for two items', (t) => {
   const { option, optionTwo, select } = t.context;
 
   select.appendChild(option);
@@ -59,7 +59,7 @@ test('index should be 0 and 1 for two items', t => {
   t.is(optionTwo.index, 1);
 });
 
-test('index should be the live index when moved', t => {
+test('index should be the live index when moved', (t) => {
   const { option, optionTwo, optionThree, select } = t.context;
 
   select.appendChild(option);

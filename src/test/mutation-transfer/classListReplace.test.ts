@@ -27,7 +27,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -36,7 +36,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('Element.classList.replace transfer single pre-existing value', t => {
+test.serial.cb('Element.classList.replace transfer single pre-existing value', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
@@ -57,7 +57,7 @@ test.serial.cb('Element.classList.replace transfer single pre-existing value', t
   });
 });
 
-test.serial.cb('Element.classList.replace transfer multiple pre-existing values', t => {
+test.serial.cb('Element.classList.replace transfer multiple pre-existing values', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 

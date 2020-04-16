@@ -27,7 +27,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -36,7 +36,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('Node.replaceChild transfer only node', t => {
+test.serial.cb('Node.replaceChild transfer only node', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');
@@ -66,7 +66,7 @@ test.serial.cb('Node.replaceChild transfer only node', t => {
   });
 });
 
-test.serial.cb('Node.replaceChild transfer replace first with second', t => {
+test.serial.cb('Node.replaceChild transfer replace first with second', (t) => {
   const { document, emitter } = t.context;
   const first = document.createElement('first');
   const second = document.createElement('second');
@@ -98,7 +98,7 @@ test.serial.cb('Node.replaceChild transfer replace first with second', t => {
   });
 });
 
-test.serial.cb('Node.replaceChild transfer replace third with second', t => {
+test.serial.cb('Node.replaceChild transfer replace third with second', (t) => {
   const { document, emitter } = t.context;
   const first = document.createElement('first');
   const second = document.createElement('second');
@@ -130,7 +130,7 @@ test.serial.cb('Node.replaceChild transfer replace third with second', t => {
   });
 });
 
-test.serial.cb('Node.replaceChild transfer remove sibling node', t => {
+test.serial.cb('Node.replaceChild transfer remove sibling node', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
   const p = document.createElement('p');

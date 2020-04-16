@@ -24,7 +24,7 @@ const test = anyTest as TestInterface<{
   childTwo: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -34,7 +34,7 @@ test.beforeEach(t => {
   };
 });
 
-test('remove only child Node from parent', t => {
+test('remove only child Node from parent', (t) => {
   const { node, child } = t.context;
 
   node.appendChild(child);
@@ -43,7 +43,7 @@ test('remove only child Node from parent', t => {
   t.is(child.parentNode, null, 'removed node has no parentNode');
 });
 
-test('remove child Node from parent with multiple children', t => {
+test('remove child Node from parent with multiple children', (t) => {
   const { node, child, childTwo } = t.context;
 
   node.appendChild(child);

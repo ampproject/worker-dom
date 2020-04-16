@@ -23,12 +23,12 @@ const test = anyTest as TestInterface<{
   document: Document;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   t.context = { document };
 });
 
-test('createEvent()', t => {
+test('createEvent()', (t) => {
   const { document } = t.context;
 
   const e = document.createEvent('foo');
@@ -37,7 +37,7 @@ test('createEvent()', t => {
   t.false(e.cancelable);
 });
 
-test('Event constructor', t => {
+test('Event constructor', (t) => {
   let e = new Event('foo', {});
   t.is(e.type, 'foo');
   t.false(e.bubbles);

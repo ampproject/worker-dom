@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
   select: HTMLSelectElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   const select = document.createElement('select') as HTMLSelectElement;
 
@@ -35,13 +35,13 @@ test.beforeEach(t => {
   };
 });
 
-test('value should be an empty string by default', t => {
+test('value should be an empty string by default', (t) => {
   const { select } = t.context;
 
   t.is(select.value, '');
 });
 
-test('value should be settable with string coercion', t => {
+test('value should be settable with string coercion', (t) => {
   const { document, select } = t.context;
   const option = document.createElement('option') as HTMLOptionElement;
   const optionTwo = document.createElement('option') as HTMLOptionElement;
@@ -57,7 +57,7 @@ test('value should be settable with string coercion', t => {
   t.is(optionTwo.selected, true);
 });
 
-test('singular select: value should be settable to invalid value', t => {
+test('singular select: value should be settable to invalid value', (t) => {
   const { document, select } = t.context;
   const option = document.createElement('option') as HTMLOptionElement;
   const optionTwo = document.createElement('option') as HTMLOptionElement;
@@ -73,7 +73,7 @@ test('singular select: value should be settable to invalid value', t => {
   t.is(optionTwo.selected, false);
 });
 
-test('multiple select: value should be settable to invalid value', t => {
+test('multiple select: value should be settable to invalid value', (t) => {
   const { document, select } = t.context;
   select.multiple = true;
   const option = document.createElement('option') as HTMLOptionElement;
@@ -90,7 +90,7 @@ test('multiple select: value should be settable to invalid value', t => {
   t.is(optionTwo.selected, false);
 });
 
-test('singular select: value should become the only option appended', t => {
+test('singular select: value should become the only option appended', (t) => {
   const { document, select } = t.context;
   const option = document.createElement('option') as HTMLOptionElement;
 
@@ -101,7 +101,7 @@ test('singular select: value should become the only option appended', t => {
   t.is(option.selected, true);
 });
 
-test('multiple select: value should become the only option appended', t => {
+test('multiple select: value should become the only option appended', (t) => {
   const { document, select } = t.context;
   select.multiple = true;
   const option = document.createElement('option') as HTMLOptionElement;
@@ -113,7 +113,7 @@ test('multiple select: value should become the only option appended', t => {
   t.is(option.selected, true);
 });
 
-test('singular select: value should become the first of many options appended', t => {
+test('singular select: value should become the first of many options appended', (t) => {
   const { document, select } = t.context;
   const option = document.createElement('option') as HTMLOptionElement;
   const optionTwo = document.createElement('option') as HTMLOptionElement;
@@ -128,7 +128,7 @@ test('singular select: value should become the first of many options appended', 
   t.is(optionTwo.selected, false);
 });
 
-test('multiple select: value should become the first of many options appended', t => {
+test('multiple select: value should become the first of many options appended', (t) => {
   const { document, select } = t.context;
   select.multiple = true;
   const option = document.createElement('option') as HTMLOptionElement;
@@ -144,7 +144,7 @@ test('multiple select: value should become the first of many options appended', 
   t.is(optionTwo.selected, false);
 });
 
-test('singular select: value should be overwritten by pre-selected option appended', t => {
+test('singular select: value should be overwritten by pre-selected option appended', (t) => {
   const { document, select } = t.context;
   const option = document.createElement('option') as HTMLOptionElement;
   const optionTwo = document.createElement('option') as HTMLOptionElement;
@@ -160,7 +160,7 @@ test('singular select: value should be overwritten by pre-selected option append
   t.is(optionTwo.selected, true);
 });
 
-test('multiple select: value should not be overwritten by pre-selected option appended', t => {
+test('multiple select: value should not be overwritten by pre-selected option appended', (t) => {
   const { document, select } = t.context;
   select.multiple = true;
   const option = document.createElement('option') as HTMLOptionElement;
@@ -177,7 +177,7 @@ test('multiple select: value should not be overwritten by pre-selected option ap
   t.is(optionTwo.selected, true);
 });
 
-test('single select: value should be default when only option removed', t => {
+test('single select: value should be default when only option removed', (t) => {
   const { document, select } = t.context;
   const option = document.createElement('option') as HTMLOptionElement;
 
@@ -189,7 +189,7 @@ test('single select: value should be default when only option removed', t => {
   t.is(option.selected, true);
 });
 
-test('multiple select: value should be default when only option removed', t => {
+test('multiple select: value should be default when only option removed', (t) => {
   const { document, select } = t.context;
   select.multiple = true;
   const option = document.createElement('option') as HTMLOptionElement;
@@ -202,7 +202,7 @@ test('multiple select: value should be default when only option removed', t => {
   t.is(option.selected, true);
 });
 
-test('single select: value should be first option when selected value removed.', t => {
+test('single select: value should be first option when selected value removed.', (t) => {
   const { document, select } = t.context;
   const option = document.createElement('option') as HTMLOptionElement;
   const optionTwo = document.createElement('option') as HTMLOptionElement;
@@ -218,7 +218,7 @@ test('single select: value should be first option when selected value removed.',
   t.is(optionTwo.selected, true);
 });
 
-test('multple select: value should become the default when selected value removed.', t => {
+test('multple select: value should become the default when selected value removed.', (t) => {
   const { document, select } = t.context;
   select.multiple = true;
   const option = document.createElement('option') as HTMLOptionElement;

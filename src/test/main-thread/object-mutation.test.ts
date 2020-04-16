@@ -35,7 +35,7 @@ const test = anyTest as TestInterface<{
   canvasElement: HTMLCanvasElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const sandbox = sinon.createSandbox();
   const env = new Env();
   const { document } = env;
@@ -45,7 +45,10 @@ test.beforeEach(t => {
   const objectContext = new ObjectContext();
 
   const ctx = {} as CanvasRenderingContext2D;
-  const canvasElement = ({ _index_: 1, getContext: (c: string) => ctx } as unknown) as HTMLCanvasElement;
+  const canvasElement = ({
+    _index_: 1,
+    getContext: (c: string) => ctx,
+  } as unknown) as HTMLCanvasElement;
 
   const nodeContext = new NodeContext(stringContext, baseElement);
   sandbox.stub(nodeContext, 'getNode').returns(canvasElement);
@@ -74,12 +77,12 @@ test.beforeEach(t => {
   };
 });
 
-test.afterEach(t => {
+test.afterEach((t) => {
   const { sandbox } = t.context;
   sandbox.restore();
 });
 
-test('Method call with no arguments', t => {
+test('Method call with no arguments', (t) => {
   const { sandbox, stringContext, objectMutationProcessor, canvasElement } = t.context;
 
   const methodName = 'stroke';
@@ -102,7 +105,7 @@ test('Method call with no arguments', t => {
   t.true(stub.withArgs().calledOnce);
 });
 
-test('Method with arguments', t => {
+test('Method with arguments', (t) => {
   const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'fillRect';
@@ -135,7 +138,7 @@ test('Method with arguments', t => {
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
 });
 
-test('Setter', t => {
+test('Setter', (t) => {
   const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'lineWidth';
@@ -164,7 +167,7 @@ test('Setter', t => {
   t.true(setter.withArgs(5).calledOnce);
 });
 
-test('Method on prototype', t => {
+test('Method on prototype', (t) => {
   const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'fillRect';
@@ -199,7 +202,7 @@ test('Method on prototype', t => {
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
 });
 
-test('Setter on prototype', t => {
+test('Setter on prototype', (t) => {
   const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'lineWidth';
@@ -230,7 +233,7 @@ test('Setter on prototype', t => {
   t.true(setter.withArgs(5).calledOnce);
 });
 
-test('Mutation starts at a non-zero offset', t => {
+test('Mutation starts at a non-zero offset', (t) => {
   const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'fillRect';
@@ -269,7 +272,7 @@ test('Mutation starts at a non-zero offset', t => {
   t.true(stub.withArgs(...args).calledOnce);
 });
 
-test('Returns correct end offset', t => {
+test('Returns correct end offset', (t) => {
   const { stringContext, objectMutationProcessor, canvasElement, sandbox } = t.context;
 
   const targetObject = canvasElement.getContext('2d');

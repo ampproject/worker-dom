@@ -28,7 +28,7 @@ const test = anyTest as TestInterface<{
   emitter: Emitter;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -37,7 +37,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial.cb('Element.removeAttribute transfer', t => {
+test.serial.cb('Element.removeAttribute transfer', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
@@ -58,7 +58,7 @@ test.serial.cb('Element.removeAttribute transfer', t => {
   });
 });
 
-test.serial.cb('Element.removeAttribute transfer, with namespace', t => {
+test.serial.cb('Element.removeAttribute transfer, with namespace', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 

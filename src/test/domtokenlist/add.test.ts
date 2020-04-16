@@ -22,7 +22,7 @@ const test = anyTest as TestInterface<{
   tokenList: DOMTokenList;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -30,7 +30,7 @@ test.beforeEach(t => {
   };
 });
 
-test('adding a single value', t => {
+test('adding a single value', (t) => {
   const { tokenList } = t.context;
 
   tokenList.add('foo');
@@ -55,7 +55,7 @@ test('adding a single value', t => {
   t.is(tokenList.value, 'foo bar', 'adding a duplicate value removes all duplicates');
 });
 
-test('adding multiple values', t => {
+test('adding multiple values', (t) => {
   const { tokenList } = t.context;
 
   tokenList.add('foo', 'bar');

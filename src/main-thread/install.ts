@@ -36,8 +36,8 @@ const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 export function fetchAndInstall(baseElement: HTMLElement, config: InboundWorkerDOMConfiguration): Promise<Worker | null> {
   const fetchPromise = Promise.all([
     // TODO(KB): Fetch Polyfill for IE11.
-    fetch(config.domURL).then(response => response.text()),
-    fetch(config.authorURL).then(response => response.text()),
+    fetch(config.domURL).then((response) => response.text()),
+    fetch(config.authorURL).then((response) => response.text()),
   ]);
   return install(fetchPromise, baseElement, config);
 }

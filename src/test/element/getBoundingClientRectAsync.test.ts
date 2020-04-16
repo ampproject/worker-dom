@@ -24,7 +24,7 @@ const test = anyTest as TestInterface<{
   node: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -33,7 +33,7 @@ test.beforeEach(t => {
   };
 });
 
-test('detached node returns default value', async t => {
+test('detached node returns default value', async (t) => {
   const { node } = t.context;
 
   t.deepEqual(await node.getBoundingClientRectAsync(), {
@@ -48,7 +48,7 @@ test('detached node returns default value', async t => {
   });
 });
 
-test('attached node returns default value in node environment', async t => {
+test('attached node returns default value in node environment', async (t) => {
   const { document, node } = t.context;
 
   document.body.appendChild(node);

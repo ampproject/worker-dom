@@ -50,7 +50,7 @@ export class HTMLSelectElement extends HTMLElement {
     // When this singular value select is appending a child, set the value property for two cases.
     // 1. The inserted child is already selected.
     // 2. The current value of the select is the default ('').
-    if ((!this.multiple && (isOptionPredicate(child as Element) && child.selected)) || this.value === '') {
+    if ((!this.multiple && isOptionPredicate(child as Element) && child.selected) || this.value === '') {
       this.value = child.value;
     }
   }

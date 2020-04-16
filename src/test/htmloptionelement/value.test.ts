@@ -24,7 +24,7 @@ const test = anyTest as TestInterface<{
   option: HTMLOptionElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
   const option = document.createElement('option') as HTMLOptionElement;
 
@@ -34,13 +34,13 @@ test.beforeEach(t => {
   };
 });
 
-test('value should be an empty string by default', t => {
+test('value should be an empty string by default', (t) => {
   const { option } = t.context;
 
   t.is(option.value, '');
 });
 
-test('value should be settable with string coercion', t => {
+test('value should be settable with string coercion', (t) => {
   const { option } = t.context;
 
   option.value = '1931';

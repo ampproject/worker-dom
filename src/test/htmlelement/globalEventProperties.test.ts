@@ -25,7 +25,7 @@ const test = anyTest as TestInterface<{
   element: HTMLElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -34,7 +34,7 @@ test.beforeEach(t => {
   };
 });
 
-test.serial('appending keys mutates existing instance', t => {
+test.serial('appending keys mutates existing instance', (t) => {
   const { element } = t.context;
 
   t.is(element.onclick, undefined);
@@ -42,14 +42,14 @@ test.serial('appending keys mutates existing instance', t => {
   t.is(element.onclick, null);
 });
 
-test.serial('previously appended keys should exist on newly created instances', t => {
+test.serial('previously appended keys should exist on newly created instances', (t) => {
   const { document } = t.context;
   const newElement = document.createElement('div');
 
   t.is(newElement.onclick, null);
 });
 
-test.serial('subscription uses only assigned value', t => {
+test.serial('subscription uses only assigned value', (t) => {
   const { element } = t.context;
   const handler = (e: any) => console.log(e);
 
@@ -58,7 +58,7 @@ test.serial('subscription uses only assigned value', t => {
   t.is(element.onclick, handler);
 });
 
-test.serial('subscription uses only last assigned value', t => {
+test.serial('subscription uses only last assigned value', (t) => {
   const { element } = t.context;
   const handler = (e: any) => console.log('one', e);
   const handlerTwo = (e: any) => console.log('two', e);
@@ -70,7 +70,7 @@ test.serial('subscription uses only last assigned value', t => {
   t.is(element.onclick, handlerTwo);
 });
 
-test('appending keys mutates all known instances', t => {
+test('appending keys mutates all known instances', (t) => {
   const { document } = t.context;
   const firstElement = document.createElement('div');
   const secondElement = document.createElement('div');
@@ -82,7 +82,7 @@ test('appending keys mutates all known instances', t => {
   t.is(secondElement.onmouseenter, null);
 });
 
-test('reappending a key does not cause an error', t => {
+test('reappending a key does not cause an error', (t) => {
   const { element } = t.context;
   appendGlobalEventProperties(['onmouseexit']);
   appendGlobalEventProperties(['onmouseexit']);
@@ -90,7 +90,7 @@ test('reappending a key does not cause an error', t => {
   t.is(element.onmouseexit, null);
 });
 
-test('appending as many keys as there are TransferrableKeys functions', t => {
+test('appending as many keys as there are TransferrableKeys functions', (t) => {
   const { element } = t.context;
   const handler = (e: any) => console.log(e);
   appendGlobalEventProperties(['ontouchmove']);

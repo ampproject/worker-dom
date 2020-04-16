@@ -62,14 +62,14 @@ import { Element } from '../worker-thread/dom/Element';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
-  value: function() {
+  value: function () {
     return {};
   },
 });
 
 Object.defineProperty(global, 'StorageManager', {
   configurable: true,
-  value: function() {
+  value: function () {
     return {};
   },
 });

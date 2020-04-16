@@ -26,7 +26,7 @@ const test = anyTest as TestInterface<{
   childTwo: Element;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
@@ -37,19 +37,19 @@ test.beforeEach(t => {
   };
 });
 
-test('returns true for a node containing itself', t => {
+test('returns true for a node containing itself', (t) => {
   const { node } = t.context;
 
   t.is(node.contains(node), true);
 });
 
-test('returns false for a node not contained by a parent', t => {
+test('returns false for a node not contained by a parent', (t) => {
   const { node, child } = t.context;
 
   t.is(node.contains(child), false);
 });
 
-test('returns true for a node contained in the document', t => {
+test('returns true for a node contained in the document', (t) => {
   const { document, node, child } = t.context;
 
   node.appendChild(child);
@@ -57,7 +57,7 @@ test('returns true for a node contained in the document', t => {
   t.is(document.contains(node), true);
 });
 
-test('returns true for a node contained deeper within a tree', t => {
+test('returns true for a node contained deeper within a tree', (t) => {
   const { node, child, childTwo } = t.context;
 
   child.appendChild(childTwo);
@@ -65,7 +65,7 @@ test('returns true for a node contained deeper within a tree', t => {
   t.is(node.contains(childTwo), true, 'for a node contained deeper within a tree, return true');
 });
 
-test('returns false for a node deep within a tree containing parents', t => {
+test('returns false for a node deep within a tree containing parents', (t) => {
   const { node, child, childTwo } = t.context;
 
   child.appendChild(childTwo);

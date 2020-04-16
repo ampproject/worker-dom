@@ -21,7 +21,7 @@ import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export const appendGlobalEventProperties = (keys: Array<string>): void => {
-  const keysToAppend = keys.filter(key => !HTMLElement.prototype.hasOwnProperty(key));
+  const keysToAppend = keys.filter((key) => !HTMLElement.prototype.hasOwnProperty(key));
   if (keysToAppend.length <= 0) {
     return;
   }
@@ -46,7 +46,9 @@ export const appendGlobalEventProperties = (keys: Array<string>): void => {
 };
 
 export class HTMLElement extends Element {
-  public [TransferrableKeys.propertyEventHandlers]: { [key: string]: Function } = {};
+  public [TransferrableKeys.propertyEventHandlers]: {
+    [key: string]: Function;
+  } = {};
   /**
    * Find the nearest parent form element.
    * Implemented in HTMLElement since so many extensions of HTMLElement repeat this functionality. This is not to spec.
@@ -80,10 +82,14 @@ reflectProperties(
     { dir: [''] },
     { lang: [''] },
     { title: [''] },
-    { draggable: [false, /* attr */ undefined, /* keywords */ ['true', 'false']] },
+    {
+      draggable: [false, /* attr */ undefined, /* keywords */ ['true', 'false']],
+    },
     { hidden: [false, /* attr */ undefined] },
     { noModule: [false] }, // TOOD: Why is this on HTMLElement and not HTMLScriptElement?
-    { spellcheck: [true, /* attr */ undefined, /* keywords */ ['true', 'false']] },
+    {
+      spellcheck: [true, /* attr */ undefined, /* keywords */ ['true', 'false']],
+    },
     { translate: [true, /* attr */ undefined, /* keywords */ ['yes', 'no']] },
   ],
   HTMLElement,

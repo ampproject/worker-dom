@@ -35,7 +35,7 @@ const test = anyTest as TestInterface<{
   canvasElement: HTMLCanvasElement;
 }>;
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const sandbox = sinon.createSandbox();
   const stringContext = new StringContext();
   const objectContext = new ObjectContext();
@@ -62,7 +62,10 @@ test.beforeEach(t => {
   );
 
   const ctx = {} as CanvasRenderingContext2D;
-  const canvasElement = ({ _index_: 1, getContext: (c: string) => ctx } as unknown) as HTMLCanvasElement;
+  const canvasElement = ({
+    _index_: 1,
+    getContext: (c: string) => ctx,
+  } as unknown) as HTMLCanvasElement;
   sandbox.stub(nodeContext, 'getNode').returns(canvasElement);
 
   t.context = {
@@ -74,7 +77,7 @@ test.beforeEach(t => {
   };
 });
 
-test('Object creation with mutation at a zero offset', t => {
+test('Object creation with mutation at a zero offset', (t) => {
   const { stringContext, objectContext, objectCreationProcessor, sandbox, canvasElement } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
@@ -122,7 +125,7 @@ test('Object creation with mutation at a zero offset', t => {
   t.is(objectContext.get(objectId), gradientObject);
 });
 
-test('Object creation with mutation at non-zero offset', t => {
+test('Object creation with mutation at non-zero offset', (t) => {
   const { stringContext, objectContext, objectCreationProcessor, sandbox, canvasElement } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
@@ -169,7 +172,7 @@ test('Object creation with mutation at non-zero offset', t => {
   t.is(objectContext.get(objectId), gradientObject);
 });
 
-test('Returns correct end offset', t => {
+test('Returns correct end offset', (t) => {
   const { stringContext, objectCreationProcessor, canvasElement, sandbox } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
