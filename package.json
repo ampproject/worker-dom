@@ -40,7 +40,7 @@
     "prepublishOnly": "npm-run-all clean build"
   },
   "devDependencies": {
-    "@ampproject/filesize": "3.2.1",
+    "@ampproject/filesize": "3.3.0",
     "@ampproject/rollup-plugin-closure-compiler": "0.25.2",
     "@babel/cli": "7.8.4",
     "@babel/core": "7.9.0",
