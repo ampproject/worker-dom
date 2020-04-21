@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { MessageToWorker } from '../transfer/Messages';
+import { MessageToWorker, FunctionInvocationToWorker, MessageType } from '../transfer/Messages';
 import { WorkerDOMConfiguration } from './configuration';
 import { createHydrateableRootNode } from './serialize';
 import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
 import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { StorageLocation } from '../transfer/TransferrableStorage';
+import { registerPromise } from './commands/function';
 
 export class WorkerContext {
   private [TransferrableKeys.worker]: Worker;
@@ -82,6 +83,24 @@ export class WorkerContext {
     if (config.onCreateWorker) {
       config.onCreateWorker(baseElement, strings, skeleton, cssKeys);
     }
+
+    // TODO: How should this functionality be exposed?
+    // This is probably not the right place for it.
+    // Two ideas:
+    //   1. (this) a specialized function attached to the worker. Probably
+    //      would need to create a new type that extends the Worker interface.
+    //   2. a specific format of message devs can send via postMessage.
+    //      more of an untyped interface.
+    (this.worker as any).invokeFunction = (identifier: string) => {
+      const { promise, index } = registerPromise();
+      const msg: FunctionInvocationToWorker = {
+        [TransferrableKeys.type]: MessageType.FUNCTION,
+        [TransferrableKeys.functionIdentifier]: identifier,
+        [TransferrableKeys.index]: index,
+      };
+      this.messageToWorker(msg);
+      return promise;
+    };
   }
 
   /**

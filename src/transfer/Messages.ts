@@ -35,6 +35,7 @@ export const enum MessageType {
   OFFSCREEN_CANVAS_INSTANCE = 9,
   IMAGE_BITMAP_INSTANCE = 10,
   GET_STORAGE = 11,
+  FUNCTION = 12,
   // NAVIGATION_PUSH_STATE = 8,
   // NAVIGATION_REPLACE_STATE = 9,
   // NAVIGATION_POP_STATE = 10,
@@ -89,6 +90,13 @@ export interface StorageValueToWorker {
   [TransferrableKeys.storageLocation]: StorageLocation;
   [TransferrableKeys.value]: { [key: string]: string };
 }
+
+export interface FunctionInvocationToWorker {
+  [TransferrableKeys.type]: MessageType.FUNCTION;
+  [TransferrableKeys.functionIdentifier]: string;
+  [TransferrableKeys.index]: number;
+}
+
 export type MessageToWorker =
   | EventToWorker
   | ValueSyncToWorker
@@ -96,7 +104,8 @@ export type MessageToWorker =
   | ResizeSyncToWorker
   | OffscreenCanvasToWorker
   | ImageBitmapToWorker
-  | StorageValueToWorker;
+  | StorageValueToWorker
+  | FunctionInvocationToWorker;
 
 /**
  * Can parameterize a method invocation message as a getter or setter.
@@ -104,4 +113,12 @@ export type MessageToWorker =
 export const enum GetOrSet {
   GET = 1,
   SET = 2,
+}
+
+/**
+ * Can parameterize a method invocation value as a resolved or rejected.
+ */
+export const enum ResolveOrReject {
+  RESOLVE = 1,
+  REJECT = 2,
 }

@@ -59,6 +59,7 @@ import { SVGElement } from './dom/SVGElement';
 import { Text } from './dom/Text';
 import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
+import { installEventListener } from './function';
 
 const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
   Array: true,
@@ -269,5 +270,8 @@ export const workerDOM: WorkerDOMGlobalScope = (function (postMessage, addEventL
 
 // Offer APIs like AMP.setState() on the global scope.
 (self as any).AMP = new AMP(workerDOM.document);
+
+// Allows for function invocation
+installEventListener(workerDOM.document);
 
 export const hydrate = initialize;
