@@ -16,22 +16,20 @@
 
 import { CommandExecutorInterface } from './interface';
 import { TransferrableMutationType, FunctionMutationIndex } from '../../transfer/TransferrableMutation';
+import { ResolveOrReject } from '../../transfer/Messages';
 
 let fnCallCount = 0;
 const promiseMap: { [id: number]: any } = {};
 export function registerPromise(): { promise: Promise<any>; index: number } {
   let resolve;
   let reject;
-  const promise = new Promise((resolve, reject) => {
-    resolve = resolve;
-    reject = reject;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
   });
 
   let index = fnCallCount;
   promiseMap[index] = { resolve, reject, promise };
-  const cleanup = () => delete promiseMap[index];
-  promise.then(cleanup, cleanup);
-
   return { promise, index: fnCallCount++ };
 }
 
@@ -41,11 +39,16 @@ export const FunctionProcessor: CommandExecutorInterface = (strings, nodeContext
   return {
     execute(mutations: Uint16Array, startPosition: number): number {
       if (allowedExecution) {
+        const status = mutations[startPosition + FunctionMutationIndex.Status];
         const index = mutations[startPosition + FunctionMutationIndex.Index];
         const value = mutations[startPosition + FunctionMutationIndex.Value];
-        // TODO(samouri): use serializable objects instead of strings?
-        // TODO(samouri): handle rejections
-        promiseMap[index].resolve(strings.get(value));
+
+        if (status === ResolveOrReject.RESOLVE) {
+          promiseMap[index].resolve(strings.get(value));
+        } else {
+          promiseMap[index].reject(strings.get(value));
+        }
+        delete promiseMap[index];
       }
       return startPosition + FunctionMutationIndex.End;
     },
