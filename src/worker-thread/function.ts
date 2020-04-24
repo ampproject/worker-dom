@@ -29,6 +29,7 @@ function functionInvocationMessageHandler(event: MessageEvent, document: Documen
 
   const functionMessage = msg as FunctionInvocationToWorker;
   const fnIdentifier = functionMessage[TransferrableKeys.functionIdentifier];
+  const fnArguments = JSON.parse(functionMessage[TransferrableKeys.functionArguments]);
   const index = functionMessage[TransferrableKeys.index];
 
   const fn = (self as any)[fnIdentifier];
@@ -43,13 +44,20 @@ function functionInvocationMessageHandler(event: MessageEvent, document: Documen
   }
 
   Promise.resolve(fn) // Forcing promise flows allows us to skip a try/catch block.
-    .then((f) => f.call(self))
+    .then((f) => f.apply(null, fnArguments))
     .then(
       (value) => {
         transfer(document, [TransferrableMutationType.FUNCTION_INVOCATION, ResolveOrReject.RESOLVE, index, store(JSON.stringify(value))]);
       },
       (err: any) => {
-        transfer(document, [TransferrableMutationType.FUNCTION_INVOCATION, ResolveOrReject.REJECT, index, store(err.message || JSON.stringify(err))]);
+        const errorMessage = err.message || JSON.stringify(err);
+
+        transfer(document, [
+          TransferrableMutationType.FUNCTION_INVOCATION,
+          ResolveOrReject.REJECT,
+          index,
+          store(`[worker-dom]: Function with identifier: ${fnIdentifier} threw an error with the message: ${errorMessage}`),
+        ]);
       },
     );
 }

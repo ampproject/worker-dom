@@ -93,6 +93,7 @@ export const enum TransferrableKeys {
   storageLocation = 75,
   propertyEventHandlers = 76,
   functionIdentifier = 77,
+  functionArguments = 78,
   // This must always be the last numerically ordered Key, for testing purposes.
-  END = 77,
+  END = 78,
 }

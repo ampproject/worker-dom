@@ -91,11 +91,12 @@ export class WorkerContext {
     //      would need to create a new type that extends the Worker interface.
     //   2. a specific format of message devs can send via postMessage.
     //      more of an untyped interface.
-    (this.worker as any).invokeFunction = (identifier: string) => {
+    (this.worker as any).invokeFunction = (identifier: string, ...fnArguments: Array<any>) => {
       const { promise, index } = registerPromise();
       const msg: FunctionInvocationToWorker = {
         [TransferrableKeys.type]: MessageType.FUNCTION,
         [TransferrableKeys.functionIdentifier]: identifier,
+        [TransferrableKeys.functionArguments]: JSON.stringify(fnArguments),
         [TransferrableKeys.index]: index,
       };
       this.messageToWorker(msg);

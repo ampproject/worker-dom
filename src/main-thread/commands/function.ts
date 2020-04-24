@@ -54,11 +54,13 @@ export const FunctionProcessor: CommandExecutorInterface = (strings, nodeContext
     },
 
     print(mutations: Uint16Array, startPosition: number): Object {
+      const status = mutations[startPosition + FunctionMutationIndex.Status];
       const index = mutations[startPosition + FunctionMutationIndex.Index];
       const value = mutations[startPosition + FunctionMutationIndex.Value];
 
       return {
         type: 'FUNCTION_INVOCATION',
+        status,
         index,
         value: strings.get(value),
         allowedExecution,

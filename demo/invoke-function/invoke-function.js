@@ -1,5 +1,5 @@
 function performComplexMath() {
-  return 42;
+  return Math.random() * 1000;
 }
 
 function getRemoteData() {
@@ -11,5 +11,17 @@ function immediatelyThrow() {
 }
 
 function reject() {
-  return Promise.reject('Unsupported operation: reject()');
+  return Promise.reject('Unsupported operation.');
+}
+
+function add(n1, n2) {
+  return n1 + n2;
+}
+
+function concat() {
+  let combined = [];
+  for (let i = 0; i < arguments.length; i++) {
+    combined = combined.concat(arguments[i]);
+  }
+  return combined;
 }

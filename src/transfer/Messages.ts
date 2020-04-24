@@ -93,8 +93,9 @@ export interface StorageValueToWorker {
 
 export interface FunctionInvocationToWorker {
   [TransferrableKeys.type]: MessageType.FUNCTION;
-  [TransferrableKeys.functionIdentifier]: string;
   [TransferrableKeys.index]: number;
+  [TransferrableKeys.functionIdentifier]: string;
+  [TransferrableKeys.functionArguments]: string;
 }
 
 export type MessageToWorker =

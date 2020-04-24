@@ -1,35 +1,43 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <title>Function Invocation</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="/dist/amp/main.mjs" type="module"></script>
-</head>
-<body>
-  <div src="invoke-function.js" id="upgrade-me"></div>
-  <script type="module">
-    import {upgradeElement} from '/dist/amp/main.mjs';
-    upgradeElement(document.getElementById('upgrade-me'), '/dist/amp/worker/worker.mjs').then(worker => {
-        worker.invokeFunction('performComplexMath').then(
-            result => console.log(`Complex math result: ${result}`)
-        )
-        worker.invokeFunction('getRemoteData').then(
-            result => console.log(`Remote data: ${result}`)
-        )
-        
-        worker.invokeFunction('tooCoolToExist').catch(
-            (err)=> console.error(err) 
-        ); 
-        
-        worker.invokeFunction('immediatelyThrow').catch(
-            (err)=> console.error(err) 
-        );
-        
-        worker.invokeFunction('reject').catch(
-            (err)=> console.error(err) 
-        ); 
-    }); 
-  </script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Function Invocation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/dist/amp/main.mjs" type="module"></script>
+  </head>
+  <body>
+    <div src="invoke-function.js" id="upgrade-me"></div>
+    <script type="module">
+      import { upgradeElement } from "/dist/amp/main.mjs";
+      upgradeElement(
+        document.getElementById("upgrade-me"),
+        "/dist/amp/worker/worker.mjs"
+      ).then((worker) => {
+        worker
+          .invokeFunction("performComplexMath")
+          .then((result) => console.log(`Complex math result: ${result}`));
+        worker
+          .invokeFunction("getRemoteData")
+          .then((result) => console.log(`Remote data: ${result}`));
+        worker
+          .invokeFunction("add", 40, 2)
+          .then((result) => console.log(`Answer to it all: ${result}`));
+
+        worker
+          .invokeFunction("concat", [1, 2, 3], ["4", "5"])
+          .then((result) =>
+            console.log(`concat([1,2,3], ["4", "5"]) is: ${result}`)
+          );
+
+        worker.invokeFunction("reject").catch((err) => console.error(err));
+        worker
+          .invokeFunction("tooCoolToExist")
+          .catch((err) => console.error(err));
+        worker
+          .invokeFunction("immediatelyThrow")
+          .catch((err) => console.error(err));
+      });
+    </script>
+  </body>
 </html>
