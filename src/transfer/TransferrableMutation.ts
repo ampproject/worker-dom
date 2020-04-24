@@ -260,7 +260,8 @@ export const enum StorageMutationIndex {
 /**
  * [
  *   TransferrableMutationType.FunctionInvocation,
- *   functionIdentifier,
+ *   ResolveOrReject,
+ *   index,
  *   string(value)
  * ]
  */
