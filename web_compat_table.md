@@ -2,7 +2,7 @@
 
 ## DOM API Compatibility
 
-This section highlights the DOM APIs that are implemented in WorkerDOM currently. Please [file an issue](https://github.com/ampproject/worker-dom/issues/new) if you would like an API suppported. 
+This section highlights the DOM APIs that are implemented in WorkerDOM currently. Please [file an issue](https://github.com/ampproject/worker-dom/issues/new) if you would like an API supported. 
 
 | API                                                 | Status | Notes                                            | 
 |-----------------------------------------------------|--------|--------------------------------------------------| 
