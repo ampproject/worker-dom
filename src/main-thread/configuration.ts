@@ -46,6 +46,8 @@ export interface InboundWorkerDOMConfiguration {
   hydrateFilter?: HydrationFilterPredicate;
   // Executor Filter, allow list
   executorsAllowed?: Array<number>;
+  // Enable callFunction API
+  callFunctionAllowed?: boolean;
 
   // ---- Optional Callbacks
   // Called when worker consumes the page's initial DOM state.
@@ -66,6 +68,8 @@ export interface WorkerDOMConfiguration {
   mutationPump: MutationPumpFunction;
   // Executor Filter, allow list
   executorsAllowed: Array<number>;
+  // Enable callFunction API
+  callFunctionAllowed?: boolean;
 
   // ---- Optional Overrides
   // Schedules long task.
@@ -90,6 +94,7 @@ export function normalizeConfiguration(config: InboundWorkerDOMConfiguration): W
     {
       mutationPump: requestAnimationFrame.bind(null),
       executorsAllowed: DefaultAllowedMutations,
+      callFunctionAllowed: true,
     },
     config,
   );

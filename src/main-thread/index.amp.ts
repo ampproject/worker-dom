@@ -21,6 +21,7 @@
 import { fetchAndInstall, install } from './install';
 import { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
 import { toLower } from '../utils';
+import { ExportedWorker } from './exported-worker';
 
 /**
  * AMP Element Children need to be filtered from Hydration, to avoid Author Code from manipulating it.
@@ -39,7 +40,12 @@ const hydrateFilter = (element: RenderableElement) => {
  * @param baseElement
  * @param domURL
  */
-export function upgradeElement(baseElement: Element, domURL: string, longTask?: LongTaskFunction, sanitizer?: Sanitizer): Promise<Worker | null> {
+export function upgradeElement(
+  baseElement: Element,
+  domURL: string,
+  longTask?: LongTaskFunction,
+  sanitizer?: Sanitizer,
+): Promise<ExportedWorker | null> {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
     return fetchAndInstall(baseElement as HTMLElement, {
@@ -57,7 +63,11 @@ export function upgradeElement(baseElement: Element, domURL: string, longTask?: 
  * @param baseElement
  * @param fetchPromise Promise that resolves containing worker script, and author script.
  */
-export function upgrade(baseElement: Element, fetchPromise: Promise<[string, string]>, config: WorkerDOMConfiguration): Promise<Worker | null> {
+export function upgrade(
+  baseElement: Element,
+  fetchPromise: Promise<[string, string]>,
+  config: WorkerDOMConfiguration,
+): Promise<ExportedWorker | null> {
   config.hydrateFilter = hydrateFilter;
   return install(fetchPromise, baseElement as HTMLElement, config);
 }

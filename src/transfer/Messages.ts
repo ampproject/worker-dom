@@ -91,7 +91,7 @@ export interface StorageValueToWorker {
   [TransferrableKeys.value]: { [key: string]: string };
 }
 
-export interface FunctionInvocationToWorker {
+export interface FunctionCallToWorker {
   [TransferrableKeys.type]: MessageType.FUNCTION;
   [TransferrableKeys.index]: number;
   [TransferrableKeys.functionIdentifier]: string;
@@ -106,7 +106,7 @@ export type MessageToWorker =
   | OffscreenCanvasToWorker
   | ImageBitmapToWorker
   | StorageValueToWorker
-  | FunctionInvocationToWorker;
+  | FunctionCallToWorker;
 
 /**
  * Can parameterize a method invocation message as a getter or setter.

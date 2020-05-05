@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import { MessageToWorker, FunctionInvocationToWorker, MessageType } from '../transfer/Messages';
+import { MessageToWorker } from '../transfer/Messages';
 import { WorkerDOMConfiguration } from './configuration';
 import { createHydrateableRootNode } from './serialize';
 import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
 import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { StorageLocation } from '../transfer/TransferrableStorage';
-import { registerPromise } from './commands/function';
 
 export class WorkerContext {
   private [TransferrableKeys.worker]: Worker;
@@ -77,37 +76,19 @@ export class WorkerContext {
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;
     this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
+
     if (WORKER_DOM_DEBUG) {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config, this));
     }
     if (config.onCreateWorker) {
       config.onCreateWorker(baseElement, strings, skeleton, cssKeys);
     }
-
-    // TODO: How should this functionality be exposed?
-    // This is probably not the right place for it.
-    // Two ideas:
-    //   1. (this) a specialized function attached to the worker. Probably
-    //      would need to create a new type that extends the Worker interface.
-    //   2. a specific format of message devs can send via postMessage.
-    //      more of an untyped interface.
-    (this.worker as any).invokeFunction = (identifier: string, ...fnArguments: Array<any>) => {
-      const { promise, index } = registerPromise();
-      const msg: FunctionInvocationToWorker = {
-        [TransferrableKeys.type]: MessageType.FUNCTION,
-        [TransferrableKeys.functionIdentifier]: identifier,
-        [TransferrableKeys.functionArguments]: JSON.stringify(fnArguments),
-        [TransferrableKeys.index]: index,
-      };
-      this.messageToWorker(msg);
-      return promise;
-    };
   }
 
   /**
    * Returns the private worker.
    */
-  get worker(): Worker {
+  get worker() {
     return this[TransferrableKeys.worker];
   }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2020 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { Document } from './dom/Document';
-import { MessageToWorker, MessageType, FunctionInvocationToWorker, ResolveOrReject } from '../transfer/Messages';
+import { MessageToWorker, MessageType, FunctionCallToWorker, ResolveOrReject } from '../transfer/Messages';
 import { transfer } from './MutationTransfer';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { store } from './strings';
@@ -27,7 +27,7 @@ function functionInvocationMessageHandler(event: MessageEvent, document: Documen
     return;
   }
 
-  const functionMessage = msg as FunctionInvocationToWorker;
+  const functionMessage = msg as FunctionCallToWorker;
   const fnIdentifier = functionMessage[TransferrableKeys.functionIdentifier];
   const fnArguments = JSON.parse(functionMessage[TransferrableKeys.functionArguments]);
   const index = functionMessage[TransferrableKeys.index];
@@ -38,7 +38,7 @@ function functionInvocationMessageHandler(event: MessageEvent, document: Documen
       TransferrableMutationType.FUNCTION_INVOCATION,
       ResolveOrReject.REJECT,
       index,
-      store(`[worker-dom]: Function with identifier: ${fnIdentifier} does not exist on the global scope.`),
+      store(`[worker-dom]: Function "${fnIdentifier}" does not exist on the global scope.`),
     ]);
     return;
   }
@@ -56,7 +56,7 @@ function functionInvocationMessageHandler(event: MessageEvent, document: Documen
           TransferrableMutationType.FUNCTION_INVOCATION,
           ResolveOrReject.REJECT,
           index,
-          store(`[worker-dom]: Function with identifier: ${fnIdentifier} threw an error with the message: ${errorMessage}`),
+          store(`[worker-dom]: Function "${fnIdentifier}" threw: ${errorMessage}`),
         ]);
       },
     );

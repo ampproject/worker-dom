@@ -28,7 +28,7 @@ export function registerPromise(): { promise: Promise<any>; index: number } {
     reject = rej;
   });
 
-  let index = fnCallCount;
+  const index = fnCallCount;
   promiseMap[index] = { resolve, reject, promise };
   return { promise, index: fnCallCount++ };
 }
@@ -53,7 +53,7 @@ export const FunctionProcessor: CommandExecutorInterface = (strings, nodeContext
       return startPosition + FunctionMutationIndex.End;
     },
 
-    print(mutations: Uint16Array, startPosition: number): Object {
+    print(mutations: Uint16Array, startPosition: number): {} {
       const status = mutations[startPosition + FunctionMutationIndex.Status];
       const index = mutations[startPosition + FunctionMutationIndex.Index];
       const value = mutations[startPosition + FunctionMutationIndex.Value];
