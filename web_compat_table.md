@@ -252,12 +252,12 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Event.composedPath()                                | ✖️     |                                                  | 
 | Event.currentTarget                                 | ✔️     |                                                  | 
 | Event.deepPath                                      | ✖️     |                                                  | 
-| Event.defaultPrevented                              | ✔️     |                                                  | 
+| Event.defaultPrevented                              | ✖️     |                                                  | 
 | Event.eventPhase                                    | ✔️     |                                                  | 
 | Event.explicitOriginalTarget                        | ✖️     |                                                  | 
 | Event.isTrusted                                     | ✔️     |                                                  | 
 | Event.originalTarget                                | ✖️     |                                                  | 
-| Event.preventDefault()                              | ✔️     |                                                  | 
+| Event.preventDefault()                              | ✖️     |                                                  | 
 | Event.returnValue                                   | ✔️     |                                                  | 
 | Event.srcElement                                    | ✖️     |                                                  | 
 | Event.stopImmediatePropagation()                    | ✖️     |                                                  | 
