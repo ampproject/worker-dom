@@ -49,7 +49,7 @@ function functionInvocationMessageHandler(event: MessageEvent, document: Documen
       (value) => {
         transfer(document, [TransferrableMutationType.FUNCTION_INVOCATION, ResolveOrReject.RESOLVE, index, store(JSON.stringify(value))]);
       },
-      (err: any) => {
+      (err: Error) => {
         const errorMessage = err.message || JSON.stringify(err);
 
         transfer(document, [

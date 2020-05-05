@@ -76,7 +76,6 @@ export class WorkerContext {
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;
     this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
-
     if (WORKER_DOM_DEBUG) {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config, this));
     }
@@ -88,7 +87,7 @@ export class WorkerContext {
   /**
    * Returns the private worker.
    */
-  get worker() {
+  get worker(): Worker {
     return this[TransferrableKeys.worker];
   }
 
