@@ -21,7 +21,9 @@ import { transfer } from './MutationTransfer';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { store } from './strings';
 
-function functionInvocationMessageHandler(event: MessageEvent, document: Document) {
+const exportedFunctions: { [fnIdent: string]: Function } = {};
+
+export function callFunctionMessageHandler(event: MessageEvent, document: Document) {
   const msg = event.data as MessageToWorker;
   if (msg[TransferrableKeys.type] !== MessageType.FUNCTION) {
     return;
@@ -32,13 +34,13 @@ function functionInvocationMessageHandler(event: MessageEvent, document: Documen
   const fnArguments = JSON.parse(functionMessage[TransferrableKeys.functionArguments]);
   const index = functionMessage[TransferrableKeys.index];
 
-  const fn = (self as any)[fnIdentifier];
-  if (!fn || typeof fn !== 'function') {
+  const fn = exportedFunctions[fnIdentifier];
+  if (!fn) {
     transfer(document, [
-      TransferrableMutationType.FUNCTION_INVOCATION,
+      TransferrableMutationType.FUNCTION_CALL,
       ResolveOrReject.REJECT,
       index,
-      store(`[worker-dom]: Function "${fnIdentifier}" does not exist on the global scope.`),
+      store(`[worker-dom]: Exported function "${fnIdentifier}" could not be found.`),
     ]);
     return;
   }
@@ -47,22 +49,35 @@ function functionInvocationMessageHandler(event: MessageEvent, document: Documen
     .then((f) => f.apply(null, fnArguments))
     .then(
       (value) => {
-        transfer(document, [TransferrableMutationType.FUNCTION_INVOCATION, ResolveOrReject.RESOLVE, index, store(JSON.stringify(value))]);
+        transfer(document, [TransferrableMutationType.FUNCTION_CALL, ResolveOrReject.RESOLVE, index, store(JSON.stringify(value))]);
       },
       (err: Error) => {
         const errorMessage = err.message || JSON.stringify(err);
 
         transfer(document, [
-          TransferrableMutationType.FUNCTION_INVOCATION,
+          TransferrableMutationType.FUNCTION_CALL,
           ResolveOrReject.REJECT,
           index,
-          store(`[worker-dom]: Function "${fnIdentifier}" threw: ${errorMessage}`),
+          store(`[worker-dom]: Function "${fnIdentifier}" threw: "${errorMessage}"`),
         ]);
       },
     );
 }
+export function exportFunction(name: string, fn: Function) {
+  if (!name || name === '') {
+    throw new Error(`[worker-dom]: Attempt to export function was missing an identifier.`);
+  }
+  if (typeof fn !== 'function') {
+    throw new Error(`[worker-dom]: Attempt to export non-function failed: ("${name}", ${typeof fn}).`);
+  }
+  if (name in exportedFunctions) {
+    throw new Error(`[worker-dom]: Attempt to re-export function failed: "${name}".`);
+  }
+  exportedFunctions[name] = fn;
+}
 
-export function installEventListener(doc: Document) {
-  // TODO(samouri): make this a class so that doc is an ivar, like amp.ts.
-  doc.addGlobalEventListener('message', (evt: MessageEvent) => functionInvocationMessageHandler(evt, doc));
+export function resetForTesting() {
+  for (const key of Object.keys(exportedFunctions)) {
+    delete exportedFunctions[key];
+  }
 }

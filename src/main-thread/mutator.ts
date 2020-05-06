@@ -87,7 +87,7 @@ export class MutatorProcessor {
       [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor.apply(null, args),
       [TransferrableMutationType.IMAGE_BITMAP_INSTANCE]: ImageBitmapProcessor.apply(null, args),
       [TransferrableMutationType.STORAGE]: StorageProcessor.apply(null, args),
-      [TransferrableMutationType.FUNCTION_INVOCATION]: FunctionProcessor.apply(null, args),
+      [TransferrableMutationType.FUNCTION_CALL]: FunctionProcessor.apply(null, args),
     };
   }
 

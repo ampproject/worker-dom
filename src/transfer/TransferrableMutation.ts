@@ -28,7 +28,7 @@ export const enum TransferrableMutationType {
   OBJECT_CREATION = 10,
   IMAGE_BITMAP_INSTANCE = 11,
   STORAGE = 12,
-  FUNCTION_INVOCATION = 13,
+  FUNCTION_CALL = 13,
 }
 
 /**
@@ -43,7 +43,7 @@ export const isUserVisibleMutation = (type: TransferrableMutationType): boolean 
     case TransferrableMutationType.LONG_TASK_END:
     case TransferrableMutationType.STORAGE:
     case TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE:
-    case TransferrableMutationType.FUNCTION_INVOCATION:
+    case TransferrableMutationType.FUNCTION_CALL:
       return false;
     default:
       return true;
@@ -64,7 +64,7 @@ export const DefaultAllowedMutations = [
   TransferrableMutationType.OBJECT_CREATION,
   TransferrableMutationType.IMAGE_BITMAP_INSTANCE,
   TransferrableMutationType.STORAGE,
-  TransferrableMutationType.FUNCTION_INVOCATION,
+  TransferrableMutationType.FUNCTION_CALL,
 ];
 
 export const ReadableMutationType: { [key: number]: string } = {

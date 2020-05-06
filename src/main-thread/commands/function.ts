@@ -34,7 +34,7 @@ export function registerPromise(): { promise: Promise<any>; index: number } {
 }
 
 export const FunctionProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
-  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.FUNCTION_INVOCATION);
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.FUNCTION_CALL);
 
   return {
     execute(mutations: Uint16Array, startPosition: number): number {

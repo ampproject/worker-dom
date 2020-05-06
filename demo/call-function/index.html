@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Call function</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/dist/amp/main.mjs" type="module"></script>
+  </head>
+  <body>
+    <div src="call-function.js" id="upgrade-me"></div>
+    <script type="module">
+      import { upgradeElement } from "/dist/amp/main.mjs";
+      upgradeElement(
+        document.getElementById("upgrade-me"),
+        "/dist/amp/worker/worker.mjs"
+      ).then((worker) => {
+        worker
+          .callFunction("performComplexMath")
+          .then((result) => console.log(`Complex math result: ${result}`));
+        worker
+          .callFunction("getRemoteData")
+          .then((result) => console.log(`Remote data: ${result}`));
+        worker
+          .callFunction("add", 40, 2)
+          .then((result) => console.log(`Answer to it all: ${result}`));
+
+        worker
+          .callFunction("concat", [1, 2, 3], ["4", "5"])
+          .then((result) =>
+            console.log(`concat([1,2,3], ["4", "5"]) is: ${result}`)
+          );
+
+        worker.callFunction("reject").catch((err) => console.error(err));
+        worker
+          .callFunction("tooCoolToExist")
+          .catch((err) => console.error(err));
+        worker
+          .callFunction("immediatelyThrow")
+          .catch((err) => console.error(err));
+      });
+    </script>
+  </body>
+</html>
