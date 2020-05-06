@@ -17,29 +17,35 @@
 import anyTest, { TestInterface } from 'ava';
 import { exportFunction, callFunctionMessageHandler, resetForTesting } from '../../worker-thread/function';
 import { createTestingDocument } from '../DocumentCreation';
-import { emitter, Emitter } from '../Emitter';
 import { MutationFromWorker, ResolveOrReject, MessageType } from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { Document } from '../../worker-thread/dom/Document';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-
-// import * as sinon from 'sinon';
+import { getForTestingPartial } from '../../worker-thread/strings';
+import * as phase from '../../worker-thread/phase';
+import { Phase } from '../../transfer/Phase';
 
 const noop = () => {};
 
 const test = anyTest as TestInterface<{
   document: Document;
-  emitter: Emitter;
+  mutationPromise: Promise<number[]>;
 }>;
 
 test.beforeEach((t) => {
+  phase.set(Phase.Initializing);
   resetForTesting();
   const document = createTestingDocument();
+  document[TransferrableKeys.observe]();
 
-  t.context = {
-    document,
-    emitter: emitter(document),
-  };
+  const mutationPromise: any = new Promise((resolve) => {
+    document.postMessage = (message: MutationFromWorker) => {
+      const mutation = Array.from(new Uint16Array(message[TransferrableKeys.mutations]));
+      resolve(mutation);
+    };
+  });
+
+  t.context = { document, mutationPromise };
 });
 
 const index = 1;
@@ -53,7 +59,7 @@ function getFunctionEvent(fnName: string, args: any): MessageEvent {
     },
   } as any;
 }
-function getFunctionMutation(status: ResolveOrReject, valIndex: number): Array<any> {
+function getFunctionMutation(status: ResolveOrReject, valIndex: number | undefined): Array<any> {
   return [TransferrableMutationType.FUNCTION_CALL, status, index, valIndex];
 }
 
@@ -80,89 +86,43 @@ test.serial('exportFunction succeeds without a return value', (t) => {
   t.pass();
 });
 
-test.serial.cb('callFunctionMessageHandler: function does not exist', (t) => {
-  function transmitted(strings: Array<string>, message: MutationFromWorker) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      getFunctionMutation(
-        ResolveOrReject.REJECT,
-        strings.findIndex((str) => str.includes(`"abc" could not be found.`)),
-      ),
-    );
-    t.end();
-  }
-  t.context.emitter.once(transmitted);
-
+test.serial('callFunctionMessageHandler: unexported fn', async (t) => {
   callFunctionMessageHandler(getFunctionEvent('abc', []), t.context.document);
+
+  const mutation = await t.context.mutationPromise;
+  t.deepEqual(mutation, getFunctionMutation(ResolveOrReject.REJECT, getForTestingPartial(`"abc" could not be found.`)));
 });
-test.serial.cb('callFunctionMessageHandler rejects', (t) => {
+
+test.serial('callFunctionMessageHandler rejects', async (t) => {
   exportFunction('abc', () => Promise.reject('rejected message'));
-
-  function transmitted(strings: Array<string>, message: MutationFromWorker) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      getFunctionMutation(
-        ResolveOrReject.REJECT,
-        strings.findIndex((str) => str.includes(`"rejected message"`)),
-      ),
-    );
-    t.end();
-  }
-  t.context.emitter.once(transmitted);
-
   callFunctionMessageHandler(getFunctionEvent('abc', []), t.context.document);
+
+  const mutation = await t.context.mutationPromise;
+  t.deepEqual(mutation, getFunctionMutation(ResolveOrReject.REJECT, getForTestingPartial(`rejected message`)));
 });
 
-test.serial.cb('callFunctionMessageHandler throws', (t) => {
+test.serial('callFunctionMessageHandler throws', async (t) => {
   exportFunction('abc', () => {
     throw new Error('error message');
   });
-
-  function transmitted(strings: Array<string>, message: MutationFromWorker) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      getFunctionMutation(
-        ResolveOrReject.REJECT,
-        strings.findIndex((str) => str.includes(`"error message"`)),
-      ),
-    );
-    t.end();
-  }
-  t.context.emitter.once(transmitted);
-
   callFunctionMessageHandler(getFunctionEvent('abc', []), t.context.document);
+
+  const mutation = await t.context.mutationPromise;
+  t.deepEqual(mutation, getFunctionMutation(ResolveOrReject.REJECT, getForTestingPartial(`"error message"`)));
 });
 
-test.serial.cb('callFunctionMessageHandler successful 0 args.', (t) => {
+test.serial('callFunctionMessageHandler successful 0 args.', async (t) => {
   exportFunction('abc', () => 'value');
-  function transmitted(strings: Array<string>, message: MutationFromWorker) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      getFunctionMutation(
-        ResolveOrReject.RESOLVE,
-        strings.findIndex((str) => str === `"value"`),
-      ),
-    );
-    t.end();
-  }
-  t.context.emitter.once(transmitted);
-
   callFunctionMessageHandler(getFunctionEvent('abc', []), t.context.document);
+
+  const mutation = await t.context.mutationPromise;
+  t.deepEqual(mutation, getFunctionMutation(ResolveOrReject.RESOLVE, getForTestingPartial(`"value"`)));
 });
 
-test.serial.cb('callFunctionMessageHandler successful N args.', (t) => {
+test.serial('callFunctionMessageHandler successful N args.', async (t) => {
   exportFunction('abc', (arg1: any, arg2: any) => [arg1, arg2]);
-  function transmitted(strings: Array<string>, message: MutationFromWorker) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      getFunctionMutation(
-        ResolveOrReject.RESOLVE,
-        strings.findIndex((str) => str === `[12,"test"]`),
-      ),
-    );
-    t.end();
-  }
-  t.context.emitter.once(transmitted);
-
   callFunctionMessageHandler(getFunctionEvent('abc', [12, 'test']), t.context.document);
+
+  const mutation = await t.context.mutationPromise;
+  t.deepEqual(mutation, getFunctionMutation(ResolveOrReject.RESOLVE, getForTestingPartial(`[12,"test"]`)));
 });
