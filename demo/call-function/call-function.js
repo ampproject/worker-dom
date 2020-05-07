@@ -29,3 +29,7 @@ function concat() {
 [performComplexMath, getRemoteData, immediatelyThrow, reject, add, concat].map((fn) => {
   exportFunction(fn.name, fn);
 });
+
+// Manual test for .onerror, by scheduling an unhandled error
+// 2s in via prompt which isn't valid in a Worker.
+setTimeout(() => prompt(), 2000);

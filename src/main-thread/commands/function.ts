@@ -44,9 +44,9 @@ export const FunctionProcessor: CommandExecutorInterface = (strings, nodeContext
         const value = mutations[startPosition + FunctionMutationIndex.Value];
 
         if (status === ResolveOrReject.RESOLVE) {
-          promiseMap[index].resolve(strings.get(value));
+          promiseMap[index].resolve(JSON.parse(strings.get(value)));
         } else {
-          promiseMap[index].reject(strings.get(value));
+          promiseMap[index].reject(JSON.parse(strings.get(value)));
         }
         delete promiseMap[index];
       }

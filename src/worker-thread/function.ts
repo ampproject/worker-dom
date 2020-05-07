@@ -40,7 +40,7 @@ export function callFunctionMessageHandler(event: MessageEvent, document: Docume
       TransferrableMutationType.FUNCTION_CALL,
       ResolveOrReject.REJECT,
       index,
-      store(`[worker-dom]: Exported function "${fnIdentifier}" could not be found.`),
+      store(JSON.stringify(`[worker-dom]: Exported function "${fnIdentifier}" could not be found.`)),
     ]);
     return;
   }
@@ -52,13 +52,13 @@ export function callFunctionMessageHandler(event: MessageEvent, document: Docume
         transfer(document, [TransferrableMutationType.FUNCTION_CALL, ResolveOrReject.RESOLVE, index, store(JSON.stringify(value))]);
       },
       (err: Error) => {
-        const errorMessage = err.message || JSON.stringify(err);
+        const errorMessage = JSON.stringify(err.message || err);
 
         transfer(document, [
           TransferrableMutationType.FUNCTION_CALL,
           ResolveOrReject.REJECT,
           index,
-          store(`[worker-dom]: Function "${fnIdentifier}" threw: "${errorMessage}"`),
+          store(JSON.stringify(`[worker-dom]: Function "${fnIdentifier}" threw: "${errorMessage}"`)),
         ]);
       },
     );

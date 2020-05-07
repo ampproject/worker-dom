@@ -37,6 +37,10 @@
         worker
           .callFunction("immediatelyThrow")
           .catch((err) => console.error(err));
+
+        worker.onerror = (err) => {
+          console.error("Catching an unhandled error: ", err);
+        };
       });
     </script>
   </body>
