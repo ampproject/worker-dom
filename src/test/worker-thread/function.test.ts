@@ -86,11 +86,11 @@ test.serial('exportFunction succeeds without a return value', (t) => {
   t.pass();
 });
 
-test.serial('callFunctionMessageHandler: unexported fn', async (t) => {
+test.serial('callFunctionMessageHandler unexported fn', async (t) => {
   callFunctionMessageHandler(getFunctionEvent('abc', []), t.context.document);
 
   const mutation = await t.context.mutationPromise;
-  t.deepEqual(mutation, getFunctionMutation(ResolveOrReject.REJECT, getForTestingPartial(`"abc" could not be found.`)));
+  t.deepEqual(mutation, getFunctionMutation(ResolveOrReject.REJECT, getForTestingPartial(`abc`)));
 });
 
 test.serial('callFunctionMessageHandler rejects', async (t) => {
@@ -108,7 +108,7 @@ test.serial('callFunctionMessageHandler throws', async (t) => {
   callFunctionMessageHandler(getFunctionEvent('abc', []), t.context.document);
 
   const mutation = await t.context.mutationPromise;
-  t.deepEqual(mutation, getFunctionMutation(ResolveOrReject.REJECT, getForTestingPartial(`"error message"`)));
+  t.deepEqual(mutation, getFunctionMutation(ResolveOrReject.REJECT, getForTestingPartial(`error message`)));
 });
 
 test.serial('callFunctionMessageHandler successful 0 args.', async (t) => {
