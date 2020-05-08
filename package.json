@@ -52,7 +52,7 @@
     "@types/sinon": "9.0.0",
     "acorn": "7.1.1",
     "acorn-walk": "7.1.1",
-    "ava": "3.7.0",
+    "ava": "3.8.2",
     "babel-plugin-minify-replace": "0.5.0",
     "babel-plugin-transform-remove-console": "6.9.4",
     "cross-env": "7.0.2",
