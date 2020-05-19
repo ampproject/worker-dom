@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2020 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,35 @@ import { TransferrableMutationType, FunctionMutationIndex } from '../../transfer
 import { ResolveOrReject } from '../../transfer/Messages';
 
 let fnCallCount = 0;
-const promiseMap: { [id: number]: any } = {};
+
+/**
+ * A mapping between each request to callFunction and its Promise.
+ */
+const promiseMap: {
+  [id: number]: {
+    promise: Promise<any>;
+    resolve: (arg: any) => void;
+    reject: (arg: any) => void;
+  };
+} = {};
+
+/**
+ * Each invocation of `ExportedWorker.prototype.callFunction` needs to be registered with a unique index
+ * and promise. The index is given to the underlying Worker and returned by it as well. That enables the main-thread to
+ * correlate postMessage responses with their original requests and resolve/reject the correct Promise.
+ */
 export function registerPromise(): { promise: Promise<any>; index: number } {
-  let resolve;
-  let reject;
+  // TS won't realize that the constructor promise assigns the handlers, so we `any` them.
+  let resolve: any;
+  let reject: any;
   const promise = new Promise((res, rej) => {
     resolve = res;
     reject = rej;
   });
 
-  const index = fnCallCount;
-  promiseMap[index] = { resolve, reject, promise };
-  return { promise, index: fnCallCount++ };
+  const index = fnCallCount++;
+  promiseMap[index] = { promise, resolve, reject };
+  return { promise, index };
 }
 
 export const FunctionProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {

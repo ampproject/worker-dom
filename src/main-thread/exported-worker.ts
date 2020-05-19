@@ -19,19 +19,31 @@ import { WorkerDOMConfiguration } from './configuration';
 import { registerPromise } from './commands/function';
 import { FunctionCallToWorker, MessageType } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 
+/**
+ * An ExportedWorker is returned by the upgradeElement API.
+ * For the most part, it delegates to the underlying Worker.
+ *
+ * It notably removes `postMessage` support and add `callFunction`.
+ */
 export class ExportedWorker {
   workerContext_: WorkerContext;
-  config_: WorkerDOMConfiguration;
+  config: WorkerDOMConfiguration;
 
   constructor(workerContext: WorkerContext, config: WorkerDOMConfiguration) {
     this.workerContext_ = workerContext;
-    this.config_ = config;
+    this.config = config;
   }
 
+  /**
+   * Calls a function in the worker and returns a promise with the result.
+   * @param functionIdentifer
+   * @param functionArguments
+   */
   callFunction(functionIdentifer: string, ...functionArguments: any[]): Promise<any> {
-    if (!this.config_.callFunctionAllowed) {
-      throw new Error(`[worker-dom]: Error calling ${functionIdentifer}. You must enable callFunctionAllowed within the config.`);
+    if (!this.config.executorsAllowed.includes(TransferrableMutationType.FUNCTION_CALL)) {
+      throw new Error(`[worker-dom]: Error calling ${functionIdentifer}. You must enable the FUNCTION_CALL executor within the config.`);
     }
 
     const { promise, index } = registerPromise();
