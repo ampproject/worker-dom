@@ -24,8 +24,6 @@ import { ResolveOrReject } from '../../../transfer/Messages';
 
 const test = anyTest as TestInterface<{}>;
 
-test.beforeEach((t) => {});
-
 function getFunctionProcessor(strings: string[]): CommandExecutor {
   const stringCtx = new StringContext();
   stringCtx.storeValues(strings);
