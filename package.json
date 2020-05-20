@@ -73,7 +73,7 @@
     "sinon": "9.0.2",
     "sirv": "0.4.2",
     "tslint": "6.1.1",
-    "typescript": "3.8.3"
+    "typescript": "3.9.3"
   },
   "lint-staged": {
     "*.{js,ts}": [
