@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2020 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,18 @@ test('Returns the value of a resolved function', async (t) => {
 
   processor.execute(new Uint16Array(mutations), 0, true);
   t.deepEqual(await promise, { val: true });
+});
+
+test('Is able to return undefined', async (t) => {
+  const { promise, index } = registerPromise();
+  const processor = getFunctionProcessor([JSON.stringify(undefined)]);
+  const mutations: number[] = [];
+  mutations[FunctionMutationIndex.Status] = ResolveOrReject.RESOLVE;
+  mutations[FunctionMutationIndex.Index] = index;
+  mutations[FunctionMutationIndex.Value] = 0;
+
+  processor.execute(new Uint16Array(mutations), 0, true);
+  t.deepEqual(await promise, undefined);
 });
 
 test('Returns the value of a rejected value', (t) => {

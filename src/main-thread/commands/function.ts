@@ -45,7 +45,12 @@ export function registerPromise(): { promise: Promise<any>; index: number } {
     reject = rej;
   });
 
+  // Wraparound to 0 in case someone attempts to register over 9 quadrillion promises.
+  if (fnCallCount >= Number.MAX_VALUE) {
+    fnCallCount = 0;
+  }
   const index = fnCallCount++;
+
   promiseMap[index] = { promise, resolve, reject };
   return { promise, index };
 }
@@ -60,10 +65,11 @@ export const FunctionProcessor: CommandExecutorInterface = (strings, nodeContext
         const index = mutations[startPosition + FunctionMutationIndex.Index];
         const value = mutations[startPosition + FunctionMutationIndex.Value];
 
+        const parsed = strings.hasIndex(value) ? JSON.parse(strings.get(value)) : undefined;
         if (status === ResolveOrReject.RESOLVE) {
-          promiseMap[index].resolve(JSON.parse(strings.get(value)));
+          promiseMap[index].resolve(parsed);
         } else {
-          promiseMap[index].reject(JSON.parse(strings.get(value)));
+          promiseMap[index].reject(parsed);
         }
         delete promiseMap[index];
       }

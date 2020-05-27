@@ -30,6 +30,10 @@
             console.log(`concat([1,2,3], ["4", "5"]) is: ${result}`)
           );
 
+        worker.callFunction('returnsUndefined').then(result => {
+          console.log(`undefined --> ${result}`)
+        })
+
         worker.callFunction("reject").catch((err) => console.error(err));
         worker
           .callFunction("tooCoolToExist")

@@ -14,6 +14,10 @@ function reject() {
   return Promise.reject('Unsupported operation.');
 }
 
+function returnsUndefined() {
+  return Promise.resolve(undefined);
+}
+
 function add(n1, n2) {
   return n1 + n2;
 }
@@ -26,7 +30,7 @@ function concat() {
   return combined;
 }
 
-[performComplexMath, getRemoteData, immediatelyThrow, reject, add, concat].map((fn) => {
+[performComplexMath, getRemoteData, immediatelyThrow, reject, add, concat, returnsUndefined].map((fn) => {
   exportFunction(fn.name, fn);
 });
 
