@@ -95,7 +95,7 @@
       "brotli": "12.6 kB"
     },
     "./dist/main.mjs": {
-      "brotli": "3.68 kB"
+      "brotli": "3.73 kB"
     },
     "./dist/main.js": {
       "brotli": "4.1 kB"
