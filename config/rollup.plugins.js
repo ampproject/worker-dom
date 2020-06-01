@@ -17,7 +17,7 @@
 import babel from 'rollup-plugin-babel';
 import MagicString from 'magic-string';
 import fs from 'fs';
-import path from 'path';
+import * as path from 'path';
 const walk = require('acorn-walk');
 
 /**
@@ -88,7 +88,7 @@ export function removeDebugCommandExecutors() {
     buildStart(options) {
       context = this;
       toDiscover = fs
-        .readdirSync(path.join(path.dirname(options.input), 'commands'))
+        .readdirSync(path.join(path.dirname(options.input[0]), 'commands'))
         .filter((file) => path.extname(file) !== '.map' && path.basename(file, '.js') !== 'interface').length;
     },
     renderChunk(code) {
