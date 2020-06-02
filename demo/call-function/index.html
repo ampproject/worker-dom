@@ -13,16 +13,16 @@
       upgradeElement(
         document.getElementById("upgrade-me"),
         "/dist/amp/worker/worker.mjs"
-      ).then((worker) => {
+      ).then(async (worker) => {
         worker
           .callFunction("performComplexMath")
           .then((result) => console.log(`Complex math result: ${result}`));
         worker
           .callFunction("getRemoteData")
-          .then((result) => console.log(`Remote data: ${result}`));
-        worker
-          .callFunction("add", 40, 2)
-          .then((result) => console.log(`Answer to it all: ${result}`));
+          .then((result) => console.log(`Remote data: ${JSON.stringify(result)}`));
+
+        const addResult = await worker.callFunction("add", 40, 2);
+        console.log(`Answer to it all: ${addResult}`);
 
         worker
           .callFunction("concat", [1, 2, 3], ["4", "5"])
