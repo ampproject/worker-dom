@@ -88,7 +88,7 @@ export function removeDebugCommandExecutors() {
     buildStart(options) {
       context = this;
       toDiscover = fs
-        .readdirSync(path.join(path.dirname(options.input[0]), 'commands'))
+        .readdirSync(path.join(path.dirname(options.input), 'commands'))
         .filter((file) => path.extname(file) !== '.map' && path.basename(file, '.js') !== 'interface').length;
     },
     renderChunk(code) {
