@@ -33,6 +33,10 @@ export class StringContext {
     return this.strings[index] || '';
   }
 
+  hasIndex(index: number) {
+    return this.strings[index] !== undefined;
+  }
+
   /**
    * Stores a string in mapping and returns the index of the location.
    * @param value string to store

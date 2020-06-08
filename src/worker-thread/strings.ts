@@ -43,6 +43,13 @@ export function getForTesting(value: string): number | undefined {
   return mapping.get(value);
 }
 
+export function getForTestingPartial(value: string): number | undefined {
+  const found = Array.from(mapping.keys()).find((str) => str.includes(value));
+  if (found) {
+    return mapping.get(found);
+  }
+}
+
 /**
  * Returns strings registered but not yet transferred.
  * Side effect: Resets the transfer array to default value, to prevent passing the same values multiple times.

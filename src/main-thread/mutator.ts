@@ -34,6 +34,7 @@ import { ObjectCreationProcessor } from './commands/object-creation';
 import { ObjectContext } from './object-context';
 import { ImageBitmapProcessor } from './commands/image-bitmap';
 import { StorageProcessor } from './commands/storage';
+import { FunctionProcessor } from './commands/function';
 
 export class MutatorProcessor {
   private stringContext: StringContext;
@@ -86,6 +87,7 @@ export class MutatorProcessor {
       [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor.apply(null, args),
       [TransferrableMutationType.IMAGE_BITMAP_INSTANCE]: ImageBitmapProcessor.apply(null, args),
       [TransferrableMutationType.STORAGE]: StorageProcessor.apply(null, args),
+      [TransferrableMutationType.FUNCTION_CALL]: FunctionProcessor.apply(null, args),
     };
   }
 
