@@ -56,14 +56,14 @@
     "esm": "3.2.25",
     "husky": "4.2.5",
     "jsdom": "16.2.2",
-    "lint-staged": "10.2.7",
+    "lint-staged": "10.2.9",
     "magic-string": "0.25.7",
     "np": "https://github.com/pixelastic/np/tarball/c3ab2e3b053c7da0ce40a572ca1616273ac080f8",
     "npm-run-all": "4.1.5",
     "polka": "0.5.2",
     "prettier": "2.0.5",
     "rimraf": "3.0.2",
-    "rollup": "2.12.0",
+    "rollup": "2.15.0",
     "rollup-plugin-babel": "4.4.0",
     "rollup-plugin-copy": "3.3.0",
     "rollup-plugin-terser": "6.1.0",
@@ -95,7 +95,7 @@
       "brotli": "12.6 kB"
     },
     "./dist/main.mjs": {
-      "brotli": "3.5 kB"
+      "brotli": "3.73 kB"
     },
     "./dist/main.js": {
       "brotli": "4.1 kB"
