@@ -22,12 +22,13 @@ import { Node } from './dom/Node';
 import { Phase } from '../transfer/Phase';
 import { phase, set as setPhase } from './phase';
 import { Document } from './dom/Document';
+import { DocumentLite } from './dom/DocumentLite';
 
 let pending = false;
 let pendingMutations: Array<number> = [];
 
 // TODO(choumx): Change `mutation` to Array<Uint16> to prevent casting errors e.g. integer underflow, precision loss.
-export function transfer(document: Document, mutation: Array<number>): void {
+export function transfer(document: Document | DocumentLite, mutation: Array<number>): void {
   if (phase > Phase.Initializing && document[TransferrableKeys.allowTransfer]) {
     pending = true;
     pendingMutations = pendingMutations.concat(mutation);
