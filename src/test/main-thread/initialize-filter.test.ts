@@ -20,6 +20,7 @@ import { install } from '../../main-thread/install';
 import { HydrateableNode, NodeType, HTML_NAMESPACE, SVG_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { toLower } from '../../utils';
+import { DefaultAllowedMutations } from '../../transfer/TransferrableMutation';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -71,6 +72,9 @@ test.serial.cb('initialize an empty element', (t) => {
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -107,6 +111,9 @@ test.serial.cb('initialize a single element', (t) => {
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -143,6 +150,9 @@ test.serial.cb('initialize a parent whose children should be filtered with no ch
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -181,6 +191,9 @@ test.serial.cb('initialize a parent whose children should be filtered with one c
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -223,6 +236,9 @@ test.serial.cb('initialize a parent whose children should be filtered with multi
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -259,6 +275,9 @@ test.serial.cb('initialize a parent whose children should not be filtered with n
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -307,6 +326,9 @@ test.serial.cb('initialize a parent whose children should not be filtered with o
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -377,6 +399,9 @@ test.serial.cb('initialize a parent whose children should not be filtered with m
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -413,6 +438,9 @@ test.serial.cb('initialize a single svg element', (t) => {
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -449,6 +477,9 @@ test.serial.cb('initialize a single text node', (t) => {
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -485,6 +516,9 @@ test.serial.cb('initialize a single comment node', (t) => {
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -532,6 +566,9 @@ test.serial.cb('initialize sibling elements', (t) => {
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -579,6 +616,9 @@ test.serial.cb('initialize sibling text nodes', (t) => {
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
 
@@ -626,5 +666,8 @@ test.serial.cb('initialize sibling comment nodes', (t) => {
 
       t.end();
     },
+    mutationPump: requestAnimationFrame.bind(null),
+    executorsAllowed: DefaultAllowedMutations,
+    executors: {},
   }).then();
 });
