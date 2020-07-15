@@ -23,17 +23,21 @@ import { Phase } from '../../transfer/Phase';
 // import { propagate as propagateResize } from '../ResizePropagation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { set as setPhase } from '../phase';
+import { WorkerDOMLiteGlobalScope } from '../WorkerDOMGlobalScope';
 
 export class DocumentLite {
   // Internal variables.
+  public defaultView: WorkerDOMLiteGlobalScope;
   public postMessage: PostMessage;
   public addGlobalEventListener: Function;
   public removeGlobalEventListener: Function;
   public [TransferrableKeys.allowTransfer]: boolean = true;
   public [TransferrableKeys.index]: number;
+  public [TransferrableKeys.index]: number;
 
   constructor() {
     this[TransferrableKeys.index] = -1;
+    this.defaultView = { document: this };
   }
 
   /**
