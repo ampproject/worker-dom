@@ -16,14 +16,21 @@
 
 import { fetchAndInstall } from './install';
 import { ExportedWorker } from './exported-worker';
+import { normalizeConfiguration } from './configuration';
 
 export function upgradeElement(baseElement: Element, domURL: string): Promise<ExportedWorker | null> {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
-    return fetchAndInstall(baseElement as HTMLElement, {
-      authorURL,
-      domURL,
-    });
+    return fetchAndInstall(
+      baseElement as HTMLElement,
+      normalizeConfiguration(
+        {
+          authorURL,
+          domURL,
+        },
+        [],
+      ),
+    );
   }
   return Promise.resolve(null);
 }
