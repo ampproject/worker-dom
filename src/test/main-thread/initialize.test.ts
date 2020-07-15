@@ -64,7 +64,7 @@ test.serial.cb('initialize an empty element', (t) => {
     },
     mutationPump: requestAnimationFrame.bind(null),
     executorsAllowed: DefaultAllowedMutations,
-    executors: {},
+    getExecutors: () => ({}),
   }).then();
 });
 
@@ -102,7 +102,7 @@ test.serial.cb('initialize a single element', (t) => {
     },
     mutationPump: requestAnimationFrame.bind(null),
     executorsAllowed: DefaultAllowedMutations,
-    executors: {},
+    getExecutors: () => ({}),
   }).then();
 });
 
@@ -140,7 +140,7 @@ test.serial.cb('initialize a single svg element', (t) => {
     },
     mutationPump: requestAnimationFrame.bind(null),
     executorsAllowed: DefaultAllowedMutations,
-    executors: {},
+    getExecutors: () => ({}),
   }).then();
 });
 
@@ -178,7 +178,7 @@ test.serial.cb('initialize a single text node', (t) => {
     },
     mutationPump: requestAnimationFrame.bind(null),
     executorsAllowed: DefaultAllowedMutations,
-    executors: {},
+    getExecutors: () => ({}),
   }).then();
 });
 
@@ -216,7 +216,7 @@ test.serial.cb('initialize a single comment node', (t) => {
     },
     mutationPump: requestAnimationFrame.bind(null),
     executorsAllowed: DefaultAllowedMutations,
-    executors: {},
+    getExecutors: () => ({}),
   }).then();
 });
 
@@ -265,7 +265,7 @@ test.serial.cb('initialize sibling elements', (t) => {
     },
     mutationPump: requestAnimationFrame.bind(null),
     executorsAllowed: DefaultAllowedMutations,
-    executors: {},
+    getExecutors: () => ({}),
   }).then();
 });
 
@@ -314,7 +314,7 @@ test.serial.cb('initialize sibling text nodes', (t) => {
     },
     mutationPump: requestAnimationFrame.bind(null),
     executorsAllowed: DefaultAllowedMutations,
-    executors: {},
+    getExecutors: () => ({}),
   }).then();
 });
 
@@ -363,6 +363,6 @@ test.serial.cb('initialize sibling comment nodes', (t) => {
     },
     mutationPump: requestAnimationFrame.bind(null),
     executorsAllowed: DefaultAllowedMutations,
-    executors: {},
+    getExecutors: () => ({}),
   }).then();
 });

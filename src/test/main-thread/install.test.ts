@@ -50,7 +50,7 @@ test.serial('terminate the worker-dom', (t) => {
     domURL: 'domURL',
     mutationPump: requestAnimationFrame.bind(null),
     executorsAllowed: DefaultAllowedMutations,
-    executors: {},
+    getExecutors: () => ({}),
   }).then((workerDOM: ExportedWorker) => {
     t.is(env.workers.length, 1);
     const worker = env.workers[0];

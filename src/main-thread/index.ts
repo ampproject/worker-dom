@@ -16,7 +16,7 @@
 
 import { fetchAndInstall } from './install';
 import { ExportedWorker } from './exported-worker';
-import { normalizeConfiguration } from './configuration';
+import { normalizeConfiguration, getAllProcessors } from './configuration';
 
 export function upgradeElement(baseElement: Element, domURL: string): Promise<ExportedWorker | null> {
   const authorURL = baseElement.getAttribute('src');
@@ -28,7 +28,7 @@ export function upgradeElement(baseElement: Element, domURL: string): Promise<Ex
           authorURL,
           domURL,
         },
-        [],
+        getAllProcessors,
       ),
     );
   }

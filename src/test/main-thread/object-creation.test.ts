@@ -60,7 +60,7 @@ test.beforeEach((t) => {
         domURL: 'domURL',
         authorURL: 'authorURL',
       },
-      {},
+      () => ({}),
     ),
   );
 
