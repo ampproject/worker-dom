@@ -18,8 +18,9 @@ import { AMP } from './amp/amp';
 import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
 import { callFunctionMessageHandler, exportFunction } from './function';
-import { Document } from './dom/Document';
-import { GlobalScope, WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
+// import { Document } from './dom/Document';
+import { /* GlobalScope, WorkerDOMGlobalScope, */ WorkerDOMLiteGlobalScope } from './WorkerDOMGlobalScope';
+import { DocumentLite } from './dom/DocumentLite';
 
 const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
   Array: true,
@@ -112,14 +113,14 @@ const noop = () => void 0;
 
 // WorkerDOM.Document.defaultView ends up being the window object.
 // React requires the classes to exist off the window object for instanceof checks.
-export const workerDOM: WorkerDOMGlobalScope = (function (postMessage, addEventListener, removeEventListener) {
-  const document = new Document({} as GlobalScope);
+export const workerDOM: WorkerDOMLiteGlobalScope = (function (postMessage, addEventListener, removeEventListener) {
+  const document = new DocumentLite();
 
   // TODO(choumx): Avoid polluting Document's public API.
   document.postMessage = postMessage;
   document.addGlobalEventListener = addEventListener;
   document.removeGlobalEventListener = removeEventListener;
-  return document.defaultView;
+  return { document };
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
 // Modify global scope by removing disallowed properties and wrapping `fetch()`.
