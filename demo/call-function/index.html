@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>Call function</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="/dist/amp/main.mjs" type="module"></script>
+    <script src="/dist/amp/main.lite.mjs" type="module"></script>
   </head>
   <body>
     <div src="call-function.js" id="upgrade-me"></div>
@@ -12,7 +12,7 @@
       import { upgradeElement } from "/dist/amp/main.mjs";
       upgradeElement(
         document.getElementById("upgrade-me"),
-        "/dist/amp/worker/worker.mjs"
+        "/dist/amp/worker/worker.lite.mjs"
       ).then(async (worker) => {
         worker
           .callFunction("performComplexMath")

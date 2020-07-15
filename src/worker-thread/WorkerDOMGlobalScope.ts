@@ -122,4 +122,6 @@ export interface WorkerDOMGlobalScope extends GlobalScope {
 
 export interface WorkerDOMLiteGlobalScope {
   document: DocumentLite;
+  localStorage?: Storage;
+  sessionStorage?: Storage;
 }
