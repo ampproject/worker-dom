@@ -92,6 +92,30 @@ const ESModules = [
       }),
     ],
   },
+  {
+    input: 'output/main-thread/index.lite.amp.js',
+    output: {
+      file: 'dist/amp/main.lite.mjs',
+      format: 'es',
+      sourcemap: true,
+      banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
+    },
+    plugins: [
+      removeWorkerWhitespace(),
+      copy({
+        targets: [
+          {
+            src: 'config/dist-packaging/amp/package.json',
+            dest: 'dist/amp',
+          },
+        ],
+      }),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: true,
+      }),
+    ],
+  },
 ];
 
 const IIFEModules = [

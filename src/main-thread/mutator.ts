@@ -17,24 +17,11 @@
 import { NodeContext } from './nodes';
 import { StringContext } from './strings';
 import { WorkerContext } from './worker';
-import { OffscreenCanvasProcessor } from './commands/offscreen-canvas';
 import { TransferrableMutationType, ReadableMutationType, isUserVisibleMutation } from '../transfer/TransferrableMutation';
-import { EventSubscriptionProcessor } from './commands/event-subscription';
-import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
-import { ChildListProcessor } from './commands/child-list';
-import { AttributeProcessor } from './commands/attribute';
-import { CharacterDataProcessor } from './commands/character-data';
-import { PropertyProcessor } from './commands/property';
-import { LongTaskExecutor } from './commands/long-task';
 import { CommandExecutor } from './commands/interface';
 import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
 import { Phase } from '../transfer/Phase';
-import { ObjectMutationProcessor } from './commands/object-mutation';
-import { ObjectCreationProcessor } from './commands/object-creation';
 import { ObjectContext } from './object-context';
-import { ImageBitmapProcessor } from './commands/image-bitmap';
-import { StorageProcessor } from './commands/storage';
-import { FunctionProcessor } from './commands/function';
 
 export class MutatorProcessor {
   private stringContext: StringContext;
@@ -59,36 +46,13 @@ export class MutatorProcessor {
     workerContext: WorkerContext,
     config: WorkerDOMConfiguration,
     objectContext: ObjectContext,
+    executors: { [key: number]: CommandExecutor },
   ) {
     this.stringContext = stringContext;
     this.nodeContext = nodeContext;
     this.sanitizer = config.sanitizer;
     this.mutationPumpFunction = config.mutationPump;
-
-    const args: [StringContext, NodeContext, WorkerContext, ObjectContext, WorkerDOMConfiguration] = [
-      stringContext,
-      nodeContext,
-      workerContext,
-      objectContext,
-      config,
-    ];
-    const sharedLongTaskProcessor = LongTaskExecutor.apply(null, args);
-    this.executors = {
-      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor.apply(null, args),
-      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor.apply(null, args),
-      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor.apply(null, args),
-      [TransferrableMutationType.PROPERTIES]: PropertyProcessor.apply(null, args),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor.apply(null, args),
-      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor.apply(null, args),
-      [TransferrableMutationType.LONG_TASK_START]: sharedLongTaskProcessor,
-      [TransferrableMutationType.LONG_TASK_END]: sharedLongTaskProcessor,
-      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor.apply(null, args),
-      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor.apply(null, args),
-      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor.apply(null, args),
-      [TransferrableMutationType.IMAGE_BITMAP_INSTANCE]: ImageBitmapProcessor.apply(null, args),
-      [TransferrableMutationType.STORAGE]: StorageProcessor.apply(null, args),
-      [TransferrableMutationType.FUNCTION_CALL]: FunctionProcessor.apply(null, args),
-    };
+    this.executors = executors;
   }
 
   /**

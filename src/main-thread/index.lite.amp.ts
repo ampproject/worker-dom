@@ -19,7 +19,7 @@
  */
 
 import { fetchAndInstall, install } from './install';
-import { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
+import { WorkerDOMConfiguration, LongTaskFunction, normalizeConfiguration } from './configuration';
 import { toLower } from '../utils';
 import { ExportedWorker } from './exported-worker';
 
@@ -48,13 +48,19 @@ export function upgradeElement(
 ): Promise<ExportedWorker | null> {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
-    return fetchAndInstall(baseElement as HTMLElement, {
-      domURL,
-      authorURL,
-      longTask,
-      hydrateFilter,
-      sanitizer,
-    });
+    return fetchAndInstall(
+      baseElement as HTMLElement,
+      normalizeConfiguration(
+        {
+          domURL,
+          authorURL,
+          longTask,
+          hydrateFilter,
+          sanitizer,
+        },
+        [],
+      ),
+    );
   }
   return Promise.resolve(null);
 }

@@ -108,9 +108,6 @@ const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
   unescape: true,
 };
 
-// Lite version is domless.
-const globalScope = {};
-
 const noop = () => void 0;
 
 // WorkerDOM.Document.defaultView ends up being the window object.

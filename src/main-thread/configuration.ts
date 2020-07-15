@@ -17,7 +17,25 @@
 import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
 import { Phase } from '../transfer/Phase';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
-import { DefaultAllowedMutations } from '../transfer/TransferrableMutation';
+import { DefaultAllowedMutations, TransferrableMutationType } from '../transfer/TransferrableMutation';
+import { CommandExecutor } from './commands/interface';
+import { LongTaskExecutor } from './commands/long-task';
+import { ChildListProcessor } from './commands/child-list';
+import { AttributeProcessor } from './commands/attribute';
+import { CharacterDataProcessor } from './commands/character-data';
+import { PropertyProcessor } from './commands/property';
+import { EventSubscriptionProcessor } from './commands/event-subscription';
+import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
+import { OffscreenCanvasProcessor } from './commands/offscreen-canvas';
+import { ObjectMutationProcessor } from './commands/object-mutation';
+import { ObjectCreationProcessor } from './commands/object-creation';
+import { ImageBitmapProcessor } from './commands/image-bitmap';
+import { StorageProcessor } from './commands/storage';
+import { FunctionProcessor } from './commands/function';
+import { StringContext } from './strings';
+import { NodeContext } from './nodes';
+import { WorkerContext } from './worker';
+import { ObjectContext } from './object-context';
 
 /**
  * The callback for `mutationPump`. If specified, this callback will be called
@@ -66,6 +84,8 @@ export interface WorkerDOMConfiguration {
   mutationPump: MutationPumpFunction;
   // Executor Filter, allow list
   executorsAllowed: Array<number>;
+  // Executors: the list of executors to apply
+  executors: { [key: number]: CommandExecutor };
 
   // ---- Optional Overrides
   // Schedules long task.
@@ -84,13 +104,42 @@ export interface WorkerDOMConfiguration {
   onReceiveMessage?: (message: MessageFromWorker) => void;
 }
 
-export function normalizeConfiguration(config: InboundWorkerDOMConfiguration): WorkerDOMConfiguration {
+export function normalizeConfiguration(
+  config: InboundWorkerDOMConfiguration,
+  executors: { [index: number]: CommandExecutor },
+): WorkerDOMConfiguration {
   return Object.assign(
-    {},
     {
       mutationPump: requestAnimationFrame.bind(null),
       executorsAllowed: DefaultAllowedMutations,
+      executors,
     },
     config,
   );
 }
+
+export const getLiteProcessors = (args: [StringContext, NodeContext, WorkerContext, ObjectContext, WorkerDOMConfiguration]) => {
+  return {
+    [TransferrableMutationType.FUNCTION_CALL]: FunctionProcessor.apply(null, args),
+  };
+};
+
+export const getAllProcessors = (args: [StringContext, NodeContext, WorkerContext, ObjectContext, WorkerDOMConfiguration]) => {
+  const sharedLongTaskProcessor = LongTaskExecutor.apply(null, args);
+  return {
+    [TransferrableMutationType.CHILD_LIST]: ChildListProcessor.apply(null, args),
+    [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor.apply(null, args),
+    [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor.apply(null, args),
+    [TransferrableMutationType.PROPERTIES]: PropertyProcessor.apply(null, args),
+    [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor.apply(null, args),
+    [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor.apply(null, args),
+    [TransferrableMutationType.LONG_TASK_START]: sharedLongTaskProcessor,
+    [TransferrableMutationType.LONG_TASK_END]: sharedLongTaskProcessor,
+    [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor.apply(null, args),
+    [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor.apply(null, args),
+    [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor.apply(null, args),
+    [TransferrableMutationType.IMAGE_BITMAP_INSTANCE]: ImageBitmapProcessor.apply(null, args),
+    [TransferrableMutationType.STORAGE]: StorageProcessor.apply(null, args),
+    [TransferrableMutationType.FUNCTION_CALL]: FunctionProcessor.apply(null, args),
+  };
+};
