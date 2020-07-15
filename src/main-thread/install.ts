@@ -59,7 +59,7 @@ export function install(
   return fetchPromise.then(([domScriptContent, authorScriptContent]) => {
     if (domScriptContent && authorScriptContent && config.authorURL) {
       const workerContext = new WorkerContext(baseElement, nodeContext, domScriptContent, authorScriptContent, config);
-      const mutatorContext = new MutatorProcessor(stringContext, nodeContext, workerContext, config, objectContext, config.executors);
+      const mutatorContext = new MutatorProcessor(stringContext, nodeContext, workerContext, config, objectContext, config.getExecutors);
       workerContext.worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
 

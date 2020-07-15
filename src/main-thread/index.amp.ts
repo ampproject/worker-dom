@@ -19,7 +19,7 @@
  */
 
 import { fetchAndInstall, install } from './install';
-import { WorkerDOMConfiguration, LongTaskFunction, normalizeConfiguration } from './configuration';
+import { WorkerDOMConfiguration, LongTaskFunction, normalizeConfiguration, getAllProcessors } from './configuration';
 import { toLower } from '../utils';
 import { ExportedWorker } from './exported-worker';
 
@@ -58,7 +58,7 @@ export function upgradeElement(
           hydrateFilter,
           sanitizer,
         },
-        [],
+        getAllProcessors,
       ),
     );
   }

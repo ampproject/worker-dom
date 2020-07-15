@@ -18,7 +18,7 @@ import { NodeContext } from './nodes';
 import { StringContext } from './strings';
 import { WorkerContext } from './worker';
 import { TransferrableMutationType, ReadableMutationType, isUserVisibleMutation } from '../transfer/TransferrableMutation';
-import { CommandExecutor } from './commands/interface';
+import { CommandExecutor, CommandExecutorInterface } from './commands/interface';
 import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
 import { Phase } from '../transfer/Phase';
 import { ObjectContext } from './object-context';
@@ -46,13 +46,27 @@ export class MutatorProcessor {
     workerContext: WorkerContext,
     config: WorkerDOMConfiguration,
     objectContext: ObjectContext,
-    executors: { [key: number]: CommandExecutor },
+    getExecutors: (
+      args: [StringContext, NodeContext, WorkerContext, ObjectContext, WorkerDOMConfiguration],
+    ) => { [key: number]: CommandExecutorInterface },
   ) {
     this.stringContext = stringContext;
     this.nodeContext = nodeContext;
     this.sanitizer = config.sanitizer;
     this.mutationPumpFunction = config.mutationPump;
-    this.executors = executors;
+    const args: [StringContext, NodeContext, WorkerContext, ObjectContext, WorkerDOMConfiguration] = [
+      stringContext,
+      nodeContext,
+      workerContext,
+      objectContext,
+      config,
+    ];
+    this.executors = {};
+    Object.entries(getExecutors([stringContext, nodeContext, workerContext, objectContext, config])).forEach(
+      ([index, executor]: [string, CommandExecutorInterface]) => {
+        this.executors[+index] = executor.apply(null, args);
+      },
+    );
   }
 
   /**

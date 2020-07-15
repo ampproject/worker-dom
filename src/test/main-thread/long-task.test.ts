@@ -60,7 +60,7 @@ test.beforeEach((t) => {
           longTasks.push(promise);
         },
       },
-      {},
+      () => ({}),
     ),
   );
 
@@ -96,7 +96,7 @@ test.serial('should tolerate no callback', (t) => {
         authorURL: 'authorURL',
         domURL: 'domURL',
       },
-      {},
+      () => ({}),
     ),
   );
 

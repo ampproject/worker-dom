@@ -77,10 +77,10 @@ test.serial('batch mutations', (t) => {
         domURL: 'domURL',
         authorURL: 'authorURL',
       },
-      getAllProcessors([stringContext, nodeContext, workerContext, objectContext, {} as any]),
+      getAllProcessors,
     ),
     objectContext,
-    getAllProcessors([stringContext, nodeContext, workerContext, objectContext, {} as any]),
+    getAllProcessors,
   );
 
   mutator.mutate(
@@ -151,10 +151,10 @@ test.serial('batch mutations with custom pump', (t) => {
           tasks.push({ phase, flush });
         },
       },
-      getAllProcessors([stringContext, nodeContext, workerContext, objectContext, {} as any]),
+      getAllProcessors,
     ),
     objectContext,
-    getAllProcessors([stringContext, nodeContext, workerContext, objectContext, {} as any]),
+    getAllProcessors,
   );
 
   mutator.mutate(
@@ -224,10 +224,10 @@ test.serial('leverage allowlist to exclude mutation type', (t) => {
         authorURL: 'authorURL',
         executorsAllowed: [TransferrableMutationType.CHILD_LIST],
       },
-      getAllProcessors([stringContext, nodeContext, workerContext, objectContext, {} as any]),
+      getAllProcessors,
     ),
     objectContext,
-    getAllProcessors([stringContext, nodeContext, workerContext, objectContext, {} as any]),
+    getAllProcessors,
   );
 
   mutator.mutate(
@@ -275,10 +275,10 @@ test.serial('split strings from mutations', (t) => {
         domURL: 'domURL',
         authorURL: 'authorURL',
       },
-      getAllProcessors([stringContext, nodeContext, workerContext, objectContext, {} as any]),
+      getAllProcessors,
     ),
     objectContext,
-    getAllProcessors([stringContext, nodeContext, workerContext, objectContext, {} as any]),
+    getAllProcessors,
   );
 
   mutator.mutate(Phase.Mutating, new ArrayBuffer(0), ['hidden'], new Uint16Array([]));
