@@ -67,7 +67,6 @@ export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
     print(mutations: Uint16Array, startPosition: number): {} {
       return {
         type: ReadableMutationType[mutations[startPosition]],
-        allowedExecution,
       };
     },
     get active(): boolean {

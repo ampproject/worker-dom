@@ -19,7 +19,6 @@ import { WorkerDOMConfiguration } from './configuration';
 import { registerPromise } from './commands/function';
 import { FunctionCallToWorker, MessageType } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 
 /**
  * An ExportedWorker is returned by the upgradeElement API.

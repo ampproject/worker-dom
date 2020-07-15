@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AttributeMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { AttributeMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 
 export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
