@@ -53,10 +53,13 @@ test.beforeEach((t) => {
     nodeContext,
     workerContext,
     objectContext,
-    normalizeConfiguration({
-      domURL: 'domURL',
-      authorURL: 'authorURL',
-    }),
+    normalizeConfiguration(
+      {
+        domURL: 'domURL',
+        authorURL: 'authorURL',
+      },
+      {},
+    ),
   );
 
   const value = '';

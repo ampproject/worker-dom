@@ -118,13 +118,27 @@ export function normalizeConfiguration(
   );
 }
 
-export const getLiteProcessors = (args: [StringContext, NodeContext, WorkerContext, ObjectContext, WorkerDOMConfiguration]) => {
+export function normalizeConfigurationForTests(
+  config: InboundWorkerDOMConfiguration,
+  executors: { [index: number]: CommandExecutor },
+): WorkerDOMConfiguration {
+  return Object.assign(
+    {
+      mutationPump: requestAnimationFrame.bind(null),
+      executorsAllowed: DefaultAllowedMutations,
+      executors,
+    },
+    config,
+  );
+}
+
+export function getLiteProcessors(args: [StringContext, NodeContext, WorkerContext, ObjectContext, WorkerDOMConfiguration]) {
   return {
     [TransferrableMutationType.FUNCTION_CALL]: FunctionProcessor.apply(null, args),
   };
-};
+}
 
-export const getAllProcessors = (args: [StringContext, NodeContext, WorkerContext, ObjectContext, WorkerDOMConfiguration]) => {
+export function getAllProcessors(args: [StringContext, NodeContext, WorkerContext, ObjectContext, WorkerDOMConfiguration]) {
   const sharedLongTaskProcessor = LongTaskExecutor.apply(null, args);
   return {
     [TransferrableMutationType.CHILD_LIST]: ChildListProcessor.apply(null, args),
@@ -142,4 +156,4 @@ export const getAllProcessors = (args: [StringContext, NodeContext, WorkerContex
     [TransferrableMutationType.STORAGE]: StorageProcessor.apply(null, args),
     [TransferrableMutationType.FUNCTION_CALL]: FunctionProcessor.apply(null, args),
   };
-};
+}

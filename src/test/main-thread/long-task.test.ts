@@ -52,13 +52,16 @@ test.beforeEach((t) => {
     nodeContext,
     workerContext,
     objectContext,
-    normalizeConfiguration({
-      authorURL: 'authorURL',
-      domURL: 'domURL',
-      longTask: (promise: Promise<any>) => {
-        longTasks.push(promise);
+    normalizeConfiguration(
+      {
+        authorURL: 'authorURL',
+        domURL: 'domURL',
+        longTask: (promise: Promise<any>) => {
+          longTasks.push(promise);
+        },
       },
-    }),
+      {},
+    ),
   );
 
   baseElement._index_ = 1;
@@ -88,10 +91,13 @@ test.serial('should tolerate no callback', (t) => {
     nodeContext,
     workerContext,
     objectContext,
-    normalizeConfiguration({
-      authorURL: 'authorURL',
-      domURL: 'domURL',
-    }),
+    normalizeConfiguration(
+      {
+        authorURL: 'authorURL',
+        domURL: 'domURL',
+      },
+      {},
+    ),
   );
 
   executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
