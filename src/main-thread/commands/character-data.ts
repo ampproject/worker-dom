@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-import { CharacterDataMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { CharacterDataMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 
 export const CharacterDataProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
-  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHARACTER_DATA);
-
   return {
     execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
-      if (allowedExecution && allowedMutation) {
+      if (allowedMutation) {
         const targetIndex = mutations[startPosition + CharacterDataMutationIndex.Target];
         const target = nodes.getNode(targetIndex);
         const value = mutations[startPosition + CharacterDataMutationIndex.Value];
@@ -42,7 +40,6 @@ export const CharacterDataProcessor: CommandExecutorInterface = (strings, nodes,
       const target = nodes.getNode(targetIndex);
       return {
         target,
-        allowedExecution,
         value: strings.get(mutations[startPosition + CharacterDataMutationIndex.Value]),
       };
     },

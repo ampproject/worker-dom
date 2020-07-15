@@ -17,9 +17,8 @@
 import anyTest, { TestInterface } from 'ava';
 import { registerPromise, FunctionProcessor } from '../../../main-thread/commands/function';
 import { StringContext } from '../../../main-thread/strings';
-import { WorkerDOMConfiguration } from '../../../main-thread/configuration';
 import { CommandExecutor } from '../../../main-thread/commands/interface';
-import { TransferrableMutationType, FunctionMutationIndex } from '../../../transfer/TransferrableMutation';
+import { FunctionMutationIndex } from '../../../transfer/TransferrableMutation';
 import { ResolveOrReject } from '../../../transfer/Messages';
 
 const test = anyTest as TestInterface<{}>;
@@ -28,15 +27,7 @@ function getFunctionProcessor(strings: string[]): CommandExecutor {
   const stringCtx = new StringContext();
   stringCtx.storeValues(strings);
 
-  return FunctionProcessor(
-    stringCtx,
-    undefined as any,
-    undefined as any,
-    undefined as any,
-    {
-      executorsAllowed: [TransferrableMutationType.FUNCTION_CALL],
-    } as WorkerDOMConfiguration,
-  );
+  return FunctionProcessor(stringCtx, undefined as any, undefined as any, undefined as any, undefined as any);
 }
 
 test('Returns the value of a resolved function', async (t) => {

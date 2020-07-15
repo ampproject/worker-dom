@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import { TransferrableMutationType, ObjectMutationIndex } from '../../transfer/TransferrableMutation';
+import { ObjectMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 import { deserializeTransferrableObject } from '../deserializeTransferrableObject';
 
 export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
-  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_MUTATION);
-
   return {
     execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
       const functionName = strings.get(mutations[startPosition + ObjectMutationIndex.FunctionName]);
@@ -38,7 +36,7 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
 
       const { offset: argsOffset, args } = deserializeTransferrableObject(mutations, targetOffset, argCount, strings, nodeContext, objectContext);
 
-      if (allowedExecution && allowedMutation) {
+      if (allowedMutation) {
         if (isSetter(target, functionName)) {
           target[functionName] = args[0];
         } else {
@@ -65,7 +63,6 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeC
         target,
         functionName,
         isSetter: isSetter(target, functionName),
-        allowedExecution,
       };
     },
   };

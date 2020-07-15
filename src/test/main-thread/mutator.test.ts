@@ -203,54 +203,6 @@ test.serial('batch mutations with custom pump', (t) => {
   t.is(baseElement.getAttribute('data-two'), 'data-two');
 });
 
-test.serial('leverage allowlist to exclude mutation type', (t) => {
-  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
-  const { rafTasks } = env;
-  const mutator = new MutatorProcessor(
-    stringContext,
-    nodeContext,
-    workerContext,
-    normalizeConfiguration({
-      domURL: 'domURL',
-      authorURL: 'authorURL',
-      executorsAllowed: [TransferrableMutationType.CHILD_LIST],
-    }),
-    objectContext,
-  );
-
-  mutator.mutate(
-    Phase.Mutating,
-    new ArrayBuffer(0),
-    ['hidden'],
-    new Uint16Array([
-      TransferrableMutationType.ATTRIBUTES,
-      2, // Base Node
-      0,
-      0,
-      0 + 1,
-    ]),
-  );
-  mutator.mutate(
-    Phase.Mutating,
-    new ArrayBuffer(0),
-    ['data-one'],
-    new Uint16Array([
-      TransferrableMutationType.ATTRIBUTES,
-      2, // Base Node
-      1,
-      0,
-      1 + 1,
-    ]),
-  );
-
-  t.is(baseElement.getAttribute('hidden'), null);
-  t.is(baseElement.getAttribute('data-one'), null);
-  t.is(rafTasks.length, 1);
-  rafTasks[0]();
-  t.is(baseElement.getAttribute('hidden'), null);
-  t.is(baseElement.getAttribute('data-one'), null);
-});
-
 test.serial('split strings from mutations', (t) => {
   const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
   const { rafTasks } = env;

@@ -15,16 +15,14 @@
  */
 
 import { CommandExecutorInterface } from './interface';
-import { TransferrableMutationType, ImageBitmapMutationIndex } from '../../transfer/TransferrableMutation';
+import { ImageBitmapMutationIndex } from '../../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { MessageType } from '../../transfer/Messages';
 
 export const ImageBitmapProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
-  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.IMAGE_BITMAP_INSTANCE);
-
   return {
     execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
-      if (allowedExecution && allowedMutation) {
+      if (allowedMutation) {
         const targetIndex = mutations[startPosition + ImageBitmapMutationIndex.Target];
         const target = nodeContext.getNode(targetIndex);
         if (target) {
@@ -51,7 +49,6 @@ export const ImageBitmapProcessor: CommandExecutorInterface = (strings, nodeCont
       return {
         type: 'IMAGE_BITMAP_INSTANCE',
         target,
-        allowedExecution,
         callIndex: mutations[startPosition + ImageBitmapMutationIndex.CallIndex],
       };
     },

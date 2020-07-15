@@ -15,14 +15,12 @@
  */
 
 import { CommandExecutorInterface } from './interface';
-import { TransferrableMutationType, StorageMutationIndex } from '../../transfer/TransferrableMutation';
+import { StorageMutationIndex } from '../../transfer/TransferrableMutation';
 import { StorageLocation } from '../../transfer/TransferrableStorage';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { MessageType, StorageValueToWorker, GetOrSet } from '../../transfer/Messages';
 
 export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
-  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.STORAGE);
-
   const get = (location: StorageLocation, key: string | null): void => {
     if (config.sanitizer && location === StorageLocation.AmpState) {
       config.sanitizer.getStorage(location, key).then((value) => {
@@ -72,7 +70,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
 
   return {
     execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
-      if (allowedExecution && allowedMutation) {
+      if (allowedMutation) {
         const operation = mutations[startPosition + StorageMutationIndex.Operation];
         const location = mutations[startPosition + StorageMutationIndex.Location];
         const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
@@ -107,7 +105,6 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
         location,
         key,
         value,
-        allowedExecution,
       };
     },
   };

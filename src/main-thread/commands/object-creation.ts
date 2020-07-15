@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import { TransferrableMutationType, ObjectCreationIndex } from '../../transfer/TransferrableMutation';
+import { ObjectCreationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 import { deserializeTransferrableObject } from '../deserializeTransferrableObject';
 
 export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
-  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_CREATION);
-
   if (!objectContext) {
     throw new Error('objectContext is not defined.');
   }
@@ -43,7 +41,7 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
 
       const { offset: argsOffset, args } = deserializeTransferrableObject(mutations, targetOffset, argCount, strings, nodeContext, objectContext);
 
-      if (allowedExecution && allowedMutation) {
+      if (allowedMutation) {
         if (functionName === 'new') {
           // deal with constructor case here
         } else {
@@ -74,7 +72,6 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
         functionName,
         objectId,
         argCount,
-        allowedExecution,
       };
     },
   };

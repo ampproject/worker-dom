@@ -17,7 +17,6 @@
 import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
 import { Phase } from '../transfer/Phase';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
-import { DefaultAllowedMutations } from '../transfer/TransferrableMutation';
 
 /**
  * The callback for `mutationPump`. If specified, this callback will be called
@@ -44,8 +43,6 @@ export interface InboundWorkerDOMConfiguration {
   sanitizer?: Sanitizer;
   // Hydration Filter Predicate
   hydrateFilter?: HydrationFilterPredicate;
-  // Executor Filter, allow list
-  executorsAllowed?: Array<number>;
 
   // ---- Optional Callbacks
   // Called when worker consumes the page's initial DOM state.
@@ -64,8 +61,6 @@ export interface WorkerDOMConfiguration {
   // ---- Optional, with defaults
   // Schedules mutation phase.
   mutationPump: MutationPumpFunction;
-  // Executor Filter, allow list
-  executorsAllowed: Array<number>;
 
   // ---- Optional Overrides
   // Schedules long task.
@@ -89,7 +84,6 @@ export function normalizeConfiguration(config: InboundWorkerDOMConfiguration): W
     {},
     {
       mutationPump: requestAnimationFrame.bind(null),
-      executorsAllowed: DefaultAllowedMutations,
     },
     config,
   );

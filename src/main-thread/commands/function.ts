@@ -15,7 +15,7 @@
  */
 
 import { CommandExecutorInterface } from './interface';
-import { TransferrableMutationType, FunctionMutationIndex } from '../../transfer/TransferrableMutation';
+import { FunctionMutationIndex } from '../../transfer/TransferrableMutation';
 import { ResolveOrReject } from '../../transfer/Messages';
 
 let fnCallCount = 0;
@@ -56,23 +56,20 @@ export function registerPromise(): { promise: Promise<any>; index: number } {
 }
 
 export const FunctionProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
-  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.FUNCTION_CALL);
-
   return {
     execute(mutations: Uint16Array, startPosition: number): number {
-      if (allowedExecution) {
-        const status = mutations[startPosition + FunctionMutationIndex.Status];
-        const index = mutations[startPosition + FunctionMutationIndex.Index];
-        const value = mutations[startPosition + FunctionMutationIndex.Value];
+      const status = mutations[startPosition + FunctionMutationIndex.Status];
+      const index = mutations[startPosition + FunctionMutationIndex.Index];
+      const value = mutations[startPosition + FunctionMutationIndex.Value];
 
-        const parsed = strings.hasIndex(value) ? JSON.parse(strings.get(value)) : undefined;
-        if (status === ResolveOrReject.RESOLVE) {
-          promiseMap[index].resolve(parsed);
-        } else {
-          promiseMap[index].reject(parsed);
-        }
-        delete promiseMap[index];
+      const parsed = strings.hasIndex(value) ? JSON.parse(strings.get(value)) : undefined;
+      if (status === ResolveOrReject.RESOLVE) {
+        promiseMap[index].resolve(parsed);
+      } else {
+        promiseMap[index].reject(parsed);
       }
+      delete promiseMap[index];
+
       return startPosition + FunctionMutationIndex.End;
     },
 
@@ -86,7 +83,6 @@ export const FunctionProcessor: CommandExecutorInterface = (strings, nodeContext
         status,
         index,
         value: strings.get(value),
-        allowedExecution,
       };
     },
   };

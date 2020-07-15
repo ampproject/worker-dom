@@ -25,7 +25,6 @@ import {
 } from '../../transfer/TransferrableEvent';
 import { WorkerContext } from '../worker';
 import { CommandExecutorInterface } from './interface';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { BASE_ELEMENT_INDEX } from '../nodes';
 
 /**
@@ -112,7 +111,6 @@ const createTransferrableTouchList = (touchList: TouchList): TransferrableTouchL
 
 export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const knownListeners: Array<(event: Event) => any> = [];
-  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.EVENT_SUBSCRIPTION);
   let cachedWindowSize: [number, number] = [window.innerWidth, window.innerHeight];
 
   /**
@@ -218,7 +216,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
         addEventListenerCount * ADD_EVENT_SUBSCRIPTION_LENGTH +
         removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
 
-      if (allowedExecution && allowedMutation) {
+      if (allowedMutation) {
         const targetIndex = mutations[startPosition + EventSubscriptionMutationIndex.Target];
         const target = nodeContext.getNode(targetIndex);
 
@@ -264,7 +262,6 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
 
       return {
         target,
-        allowedExecution,
         removedEventListeners,
         addedEventListeners,
       };

@@ -18,8 +18,6 @@ import { AttributeMutationIndex, TransferrableMutationType } from '../../transfe
 import { CommandExecutorInterface } from './interface';
 
 export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
-  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.ATTRIBUTES);
-
   /**
    * @param mutations
    * @param startPosition
@@ -33,7 +31,7 @@ export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, wor
 
   return {
     execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
-      if (allowedExecution && allowedMutation) {
+      if (allowedMutation) {
         const targetIndex = mutations[startPosition + AttributeMutationIndex.Target];
         const target = nodes.getNode(targetIndex);
 
@@ -69,7 +67,6 @@ export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, wor
 
       return {
         target,
-        allowedExecution,
         attributeName,
         value,
         remove: value == null,

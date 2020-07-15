@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-import { ChildListMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { ChildListMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 import { NodeContext } from '../nodes';
 import { applyDefaultInputListener, sendValueChangeOnAttributeMutation } from './event-subscription';
 
 export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode }: NodeContext, workerContext, objectContext, config) => {
-  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHILD_LIST);
-
   return {
     execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
       const appendNodeCount = mutations[startPosition + ChildListMutationIndex.AppendedNodeCount];
       const removeNodeCount = mutations[startPosition + ChildListMutationIndex.RemovedNodeCount];
-      if (allowedExecution && allowedMutation) {
+      if (allowedMutation) {
         const targetIndex = mutations[startPosition + ChildListMutationIndex.Target];
         const target = getNode(targetIndex);
         if (target) {
@@ -83,7 +81,6 @@ export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode 
 
       return {
         target,
-        allowedExecution,
         nextSibling: getNode(mutations[startPosition + ChildListMutationIndex.NextSibling]) || null,
         previousSibling: getNode(mutations[startPosition + ChildListMutationIndex.PreviousSibling]) || null,
         addedNodes,

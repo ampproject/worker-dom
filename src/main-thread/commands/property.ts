@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import { PropertyMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { PropertyMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 import { NumericBoolean } from '../../utils';
 
 export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
-  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.PROPERTIES);
-
   const getValue = (mutations: Uint16Array, startPosition: number): boolean | string | null => {
     const value = mutations[startPosition + PropertyMutationIndex.Value];
     if (mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE) {
@@ -34,7 +32,7 @@ export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext
 
   return {
     execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
-      if (allowedExecution && allowedMutation) {
+      if (allowedMutation) {
         const targetIndex = mutations[startPosition + PropertyMutationIndex.Target];
         const target = nodeContext.getNode(targetIndex);
         const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
@@ -68,7 +66,6 @@ export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext
         target,
         name,
         value,
-        allowedExecution,
       };
     },
   };
