@@ -18,7 +18,6 @@ import anyTest, { TestInterface } from 'ava';
 import { Env } from './helpers/env';
 import { install } from '../../main-thread/install';
 import { ExportedWorker } from '../../main-thread/exported-worker';
-import { DefaultAllowedMutations } from '../../transfer/TransferrableMutation';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -48,9 +47,6 @@ test.serial('terminate the worker-dom', (t) => {
   return install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
-    mutationPump: requestAnimationFrame.bind(null),
-    executorsAllowed: DefaultAllowedMutations,
-    getExecutors: () => ({}),
   }).then((workerDOM: ExportedWorker) => {
     t.is(env.workers.length, 1);
     const worker = env.workers[0];
