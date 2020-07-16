@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-// import { toLower } from '../../utils';
 import { PostMessage } from '../worker-thread';
-// import { NodeType, HTML_NAMESPACE, HydrateableNode } from '../../transfer/TransferrableNodes';
 import { Phase } from '../../transfer/Phase';
-// import { propagate as propagateEvents } from '../Event';
-// import { propagate as propagateSyncValues } from '../SyncValuePropagation';
-// import { propagate as propagateResize } from '../ResizePropagation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { set as setPhase } from '../phase';
 import { WorkerDOMLiteGlobalScope } from '../WorkerDOMGlobalScope';
@@ -40,16 +35,8 @@ export class DocumentLite {
     this.defaultView = { document: this };
   }
 
-  /**
-   * Observing the Document indicates it's attached to a main thread
-   * version of the document.
-   *
-   * Each mutation needs to be transferred, synced values need to propagate.
-   */
+  /** */
   public [TransferrableKeys.observe](): void {
     setPhase(Phase.Mutating);
-    // propagateEvents({document: this});
-    // propagateSyncValues(this.defaultView);
-    // propagateResize(this.defaultView);
   }
 }

@@ -19,10 +19,9 @@
  */
 
 import { fetchAndInstall, install } from './install';
-import { WorkerDOMConfiguration, LongTaskFunction, normalizeConfiguration } from './configuration';
+import { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
 import { toLower } from '../utils';
 import { ExportedWorker } from './exported-worker';
-import { getAllProcessors } from './get-processors';
 
 /**
  * AMP Element Children need to be filtered from Hydration, to avoid Author Code from manipulating it.
@@ -49,19 +48,13 @@ export function upgradeElement(
 ): Promise<ExportedWorker | null> {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
-    return fetchAndInstall(
-      baseElement as HTMLElement,
-      normalizeConfiguration(
-        {
-          domURL,
-          authorURL,
-          longTask,
-          hydrateFilter,
-          sanitizer,
-        },
-        getAllProcessors,
-      ),
-    );
+    return fetchAndInstall(baseElement as HTMLElement, {
+      domURL,
+      authorURL,
+      longTask,
+      hydrateFilter,
+      sanitizer,
+    });
   }
   return Promise.resolve(null);
 }

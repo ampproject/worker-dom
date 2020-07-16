@@ -18,7 +18,6 @@ import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
 import { Phase } from '../transfer/Phase';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { DefaultAllowedMutations } from '../transfer/TransferrableMutation';
-import { CommandExecutorInterface } from './commands/interface';
 
 /**
  * The callback for `mutationPump`. If specified, this callback will be called
@@ -67,8 +66,6 @@ export interface WorkerDOMConfiguration {
   mutationPump: MutationPumpFunction;
   // Executor Filter, allow list
   executorsAllowed: Array<number>;
-  // Executors: the list of executors to apply
-  getExecutors: () => { [key: number]: CommandExecutorInterface };
 
   // ---- Optional Overrides
   // Schedules long task.
@@ -87,15 +84,12 @@ export interface WorkerDOMConfiguration {
   onReceiveMessage?: (message: MessageFromWorker) => void;
 }
 
-export function normalizeConfiguration(
-  config: InboundWorkerDOMConfiguration,
-  getExecutors: () => { [index: number]: CommandExecutorInterface },
-): WorkerDOMConfiguration {
+export function normalizeConfiguration(config: InboundWorkerDOMConfiguration): WorkerDOMConfiguration {
   return Object.assign(
+    {},
     {
       mutationPump: requestAnimationFrame.bind(null),
       executorsAllowed: DefaultAllowedMutations,
-      getExecutors,
     },
     config,
   );

@@ -15,7 +15,6 @@
  */
 
 import { AMP } from './amp/amp';
-import { wrap as longTaskWrap } from './long-task';
 import { callFunctionMessageHandler, exportFunction } from './function';
 import { WorkerDOMLiteGlobalScope } from './WorkerDOMGlobalScope';
 import { DocumentLite } from './dom/DocumentLite';
@@ -109,8 +108,6 @@ const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
 
 const noop = () => void 0;
 
-// WorkerDOM.Document.defaultView ends up being the window object.
-// React requires the classes to exist off the window object for instanceof checks.
 export const workerDOM: WorkerDOMLiteGlobalScope = (function (postMessage, addEventListener, removeEventListener) {
   const document = new DocumentLite();
 
@@ -121,7 +118,7 @@ export const workerDOM: WorkerDOMLiteGlobalScope = (function (postMessage, addEv
   return { document };
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
-// Modify global scope by removing disallowed properties and wrapping `fetch()`.
+// Modify global scope by removing disallowed properties.
 (function (global: WorkerGlobalScope) {
   /**
    * @param object
@@ -156,20 +153,6 @@ export const workerDOM: WorkerDOMLiteGlobalScope = (function (postMessage, addEv
       console.info(`Failed to remove ${failedToDelete.length} references from`, current, ':', failedToDelete);
     }
     current = Object.getPrototypeOf(current);
-  }
-  // Wrap global.fetch() with our longTask API.
-  const originalFetch = global['fetch'];
-  if (originalFetch) {
-    try {
-      Object.defineProperty(global, 'fetch', {
-        enumerable: true,
-        writable: true,
-        configurable: true,
-        value: longTaskWrap(workerDOM.document, originalFetch.bind(global)),
-      });
-    } catch (e) {
-      console.warn(e);
-    }
   }
 })(self);
 

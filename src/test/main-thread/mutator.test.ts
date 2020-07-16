@@ -24,7 +24,6 @@ import { TransferrableMutationType } from '../../transfer/TransferrableMutation'
 import { Phase } from '../../transfer/Phase';
 import { normalizeConfiguration } from '../../main-thread/configuration';
 import { ObjectContext } from '../../main-thread/object-context';
-import { getAllProcessors } from '../../main-thread/get-processors';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -73,15 +72,11 @@ test.serial('batch mutations', (t) => {
     stringContext,
     nodeContext,
     workerContext,
-    normalizeConfiguration(
-      {
-        domURL: 'domURL',
-        authorURL: 'authorURL',
-      },
-      getAllProcessors,
-    ),
+    normalizeConfiguration({
+      domURL: 'domURL',
+      authorURL: 'authorURL',
+    }),
     objectContext,
-    getAllProcessors,
   );
 
   mutator.mutate(
@@ -144,18 +139,14 @@ test.serial('batch mutations with custom pump', (t) => {
     stringContext,
     nodeContext,
     workerContext,
-    normalizeConfiguration(
-      {
-        domURL: 'domURL',
-        authorURL: 'authorURL',
-        mutationPump: (flush: Function, phase: Phase) => {
-          tasks.push({ phase, flush });
-        },
+    normalizeConfiguration({
+      domURL: 'domURL',
+      authorURL: 'authorURL',
+      mutationPump: (flush: Function, phase: Phase) => {
+        tasks.push({ phase, flush });
       },
-      getAllProcessors,
-    ),
+    }),
     objectContext,
-    getAllProcessors,
   );
 
   mutator.mutate(
@@ -219,16 +210,12 @@ test.serial('leverage allowlist to exclude mutation type', (t) => {
     stringContext,
     nodeContext,
     workerContext,
-    normalizeConfiguration(
-      {
-        domURL: 'domURL',
-        authorURL: 'authorURL',
-        executorsAllowed: [TransferrableMutationType.CHILD_LIST],
-      },
-      getAllProcessors,
-    ),
+    normalizeConfiguration({
+      domURL: 'domURL',
+      authorURL: 'authorURL',
+      executorsAllowed: [TransferrableMutationType.CHILD_LIST],
+    }),
     objectContext,
-    getAllProcessors,
   );
 
   mutator.mutate(
@@ -271,15 +258,11 @@ test.serial('split strings from mutations', (t) => {
     stringContext,
     nodeContext,
     workerContext,
-    normalizeConfiguration(
-      {
-        domURL: 'domURL',
-        authorURL: 'authorURL',
-      },
-      getAllProcessors,
-    ),
+    normalizeConfiguration({
+      domURL: 'domURL',
+      authorURL: 'authorURL',
+    }),
     objectContext,
-    getAllProcessors,
   );
 
   mutator.mutate(Phase.Mutating, new ArrayBuffer(0), ['hidden'], new Uint16Array([]));
