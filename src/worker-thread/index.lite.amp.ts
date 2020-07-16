@@ -15,11 +15,9 @@
  */
 
 import { AMP } from './amp/amp';
-import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
 import { callFunctionMessageHandler, exportFunction } from './function';
-// import { Document } from './dom/Document';
-import { /* GlobalScope, WorkerDOMGlobalScope, */ WorkerDOMLiteGlobalScope } from './WorkerDOMGlobalScope';
+import { WorkerDOMLiteGlobalScope } from './WorkerDOMGlobalScope';
 import { DocumentLite } from './dom/DocumentLite';
 
 const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
@@ -182,4 +180,4 @@ export const workerDOM: WorkerDOMLiteGlobalScope = (function (postMessage, addEv
 (self as any).exportFunction = exportFunction;
 addEventListener('message', (evt: MessageEvent) => callFunctionMessageHandler(evt, workerDOM.document));
 
-export const hydrate = initialize;
+export const hydrate = noop;
