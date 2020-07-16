@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-import { fetchAndInstall } from './install';
-import { ExportedWorker } from './exported-worker';
-import { normalizeConfiguration } from './configuration';
-import { getAllProcessors } from './get-processors';
+import { TransferrableMutationType } from '../transfer/TransferrableMutation';
+import { FunctionProcessor } from './commands/function';
 
-export function upgradeElement(baseElement: Element, domURL: string): Promise<ExportedWorker | null> {
-  const authorURL = baseElement.getAttribute('src');
-  if (authorURL) {
-    return fetchAndInstall(
-      baseElement as HTMLElement,
-      normalizeConfiguration(
-        {
-          authorURL,
-          domURL,
-        },
-        getAllProcessors,
-      ),
-    );
-  }
-  return Promise.resolve(null);
+export function getLiteProcessors() {
+  return {
+    [TransferrableMutationType.FUNCTION_CALL]: FunctionProcessor,
+  };
 }

@@ -22,8 +22,9 @@ import { StringContext } from '../../main-thread/strings';
 import { WorkerContext } from '../../main-thread/worker';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { Phase } from '../../transfer/Phase';
-import { normalizeConfiguration, getAllProcessors } from '../../main-thread/configuration';
+import { normalizeConfiguration } from '../../main-thread/configuration';
 import { ObjectContext } from '../../main-thread/object-context';
+import { getAllProcessors } from '../../main-thread/get-processors';
 
 const test = anyTest as TestInterface<{
   env: Env;

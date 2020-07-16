@@ -19,9 +19,10 @@
  */
 
 import { fetchAndInstall, install } from './install';
-import { WorkerDOMConfiguration, LongTaskFunction, normalizeConfiguration, getLiteProcessors } from './configuration';
+import { WorkerDOMConfiguration, LongTaskFunction, normalizeConfiguration } from './configuration';
 import { toLower } from '../utils';
 import { ExportedWorker } from './exported-worker';
+import { getLiteProcessors } from './get-processors.lite';
 
 /**
  * AMP Element Children need to be filtered from Hydration, to avoid Author Code from manipulating it.
