@@ -14,31 +14,30 @@
  * limitations under the License.
  */
 
-// import { Node } from './dom/Node';
+import { Node } from './dom/Node';
 import { transfer } from './MutationTransfer';
 import { Document } from './dom/Document';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { DocumentLite } from './dom/DocumentLite';
 
-export function wrap(target: Document | DocumentLite, func: Function): Function {
+export function wrap(target: Node, func: Function): Function {
   return function () {
     return execute(target, Promise.resolve(func.apply(null, arguments)));
   };
 }
 
-function execute(target: Document | DocumentLite, promise: Promise<any>): Promise<any> {
+function execute(target: Node, promise: Promise<any>): Promise<any> {
   // Start the task.
-  transfer(target, [TransferrableMutationType.LONG_TASK_START, target[TransferrableKeys.index]]);
+  transfer(target.ownerDocument as Document, [TransferrableMutationType.LONG_TASK_START, target[TransferrableKeys.index]]);
   return promise.then(
     (result) => {
       // Complete the task.
-      transfer(target, [TransferrableMutationType.LONG_TASK_END, target[TransferrableKeys.index]]);
+      transfer(target.ownerDocument as Document, [TransferrableMutationType.LONG_TASK_END, target[TransferrableKeys.index]]);
       return result;
     },
     (reason) => {
       // Complete the task.
-      transfer(target, [TransferrableMutationType.LONG_TASK_END, target[TransferrableKeys.index]]);
+      transfer(target.ownerDocument as Document, [TransferrableMutationType.LONG_TASK_END, target[TransferrableKeys.index]]);
       throw reason;
     },
   );
