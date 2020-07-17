@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Call function</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/dist/amp/main.mjs" type="module"></script>
+  </head>
+  <body>
+    <div src="call-function.js" id="upgrade-me"></div>
+    <script type="module">
+      import { upgradeElement } from "/dist/amp/main.mjs";
+      upgradeElement(
+        document.getElementById("upgrade-me"),
+        "/dist/amp/worker/worker.mjs"
+      ).then(async (worker) => {
+        worker
+          .callFunction("performComplexMath")
+          .then((result) => console.log(`Complex math result: ${result}`));
+        worker
+          .callFunction("getRemoteData")
+          .then((result) => console.log(`Remote data: ${JSON.stringify(result)}`));
+
+        const addResult = await worker.callFunction("add", 40, 2);
+        console.log(`Answer to it all: ${addResult}`);
+
+        worker
+          .callFunction("concat", [1, 2, 3], ["4", "5"])
+          .then((result) =>
+            console.log(`concat([1,2,3], ["4", "5"]) is: ${result}`)
+          );
+
+        worker.callFunction('returnsUndefined').then(result => {
+          console.log(`undefined --> ${result}`)
+        })
+
+        worker.callFunction("reject").catch((err) => console.error(err));
+        worker
+          .callFunction("tooCoolToExist")
+          .catch((err) => console.error(err));
+        worker
+          .callFunction("immediatelyThrow")
+          .catch((err) => console.error(err));
+
+        worker.onerror = (err) => {
+          console.error("Catching an unhandled error: ", err);
+        };
+      });
+    </script>
+  </body>
+</html>

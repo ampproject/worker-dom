@@ -17,6 +17,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { Env } from './helpers/env';
 import { install } from '../../main-thread/install';
+import { ExportedWorker } from '../../main-thread/exported-worker';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -46,7 +47,7 @@ test.serial('terminate the worker-dom', (t) => {
   return install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
-  }).then((workerDOM: Worker) => {
+  }).then((workerDOM: ExportedWorker) => {
     t.is(env.workers.length, 1);
     const worker = env.workers[0];
     t.is(worker.terminated, false);

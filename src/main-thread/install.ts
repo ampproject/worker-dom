@@ -22,6 +22,7 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { InboundWorkerDOMConfiguration, normalizeConfiguration } from './configuration';
 import { WorkerContext } from './worker';
 import { ObjectContext } from './object-context';
+import { ExportedWorker } from './exported-worker';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 
@@ -33,7 +34,7 @@ const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
  * @param sanitizer
  * @param debug
  */
-export function fetchAndInstall(baseElement: HTMLElement, config: InboundWorkerDOMConfiguration): Promise<Worker | null> {
+export function fetchAndInstall(baseElement: HTMLElement, config: InboundWorkerDOMConfiguration): Promise<ExportedWorker | null> {
   const fetchPromise = Promise.all([
     // TODO(KB): Fetch Polyfill for IE11.
     fetch(config.domURL).then((response) => response.text()),
@@ -51,7 +52,7 @@ export function install(
   fetchPromise: Promise<[string, string]>,
   baseElement: HTMLElement,
   config: InboundWorkerDOMConfiguration,
-): Promise<Worker | null> {
+): Promise<ExportedWorker | null> {
   const stringContext = new StringContext();
   const objectContext = new ObjectContext();
   const nodeContext = new NodeContext(stringContext, baseElement);
@@ -79,7 +80,7 @@ export function install(
         }
       };
 
-      return workerContext.worker;
+      return new ExportedWorker(workerContext, normalizedConfig);
     }
     return null;
   });
