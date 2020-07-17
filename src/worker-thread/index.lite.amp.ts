@@ -119,7 +119,7 @@ export const workerDOM: WorkerDOMLiteGlobalScope = (function (postMessage, addEv
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
 // Modify global scope by removing disallowed properties.
-(function (global: WorkerGlobalScope) {
+export function deleteGlobals(global: WorkerGlobalScope) {
   /**
    * @param object
    * @param property
@@ -154,7 +154,8 @@ export const workerDOM: WorkerDOMLiteGlobalScope = (function (postMessage, addEv
     }
     current = Object.getPrototypeOf(current);
   }
-})(self);
+}
+deleteGlobals(self);
 
 // Offer APIs like AMP.setState() on the global scope.
 (self as any).AMP = new AMP(workerDOM.document);
