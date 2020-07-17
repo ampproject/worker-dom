@@ -27,15 +27,12 @@ export class DocumentLite {
   public addGlobalEventListener: Function;
   public removeGlobalEventListener: Function;
   public [TransferrableKeys.allowTransfer]: boolean = true;
-  public [TransferrableKeys.index]: number;
-  public [TransferrableKeys.index]: number;
+  public [TransferrableKeys.index]: number = -1;
 
   constructor() {
-    this[TransferrableKeys.index] = -1;
     this.defaultView = { document: this };
   }
 
-  /** */
   public [TransferrableKeys.observe](): void {
     setPhase(Phase.Mutating);
   }
