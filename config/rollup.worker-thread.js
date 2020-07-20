@@ -137,7 +137,7 @@ const ESModules = [
   {
     input: 'output/worker-thread/index.nodom.amp.js',
     output: {
-      file: 'dist/amp/worker/worker.lite.mjs',
+      file: 'dist/amp/worker/worker.nodom.mjs',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
@@ -161,7 +161,7 @@ const ESModules = [
   {
     input: 'output/worker-thread/index.nodom.amp.js',
     output: {
-      file: 'dist/amp/worker/worker.lite.js',
+      file: 'dist/amp/worker/worker.nodom.js',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,

@@ -12,7 +12,7 @@
       import { upgradeElement } from "/dist/amp/main.mjs";
       upgradeElement(
         document.getElementById("upgrade-me"),
-        "/dist/amp/worker/worker.lite.mjs"
+        "/dist/amp/worker/worker.nodom.mjs"
       ).then(async (worker) => {
         worker
           .callFunction("performComplexMath")
