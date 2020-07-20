@@ -15,14 +15,19 @@
  */
 
 import { AMP } from './amp/amp';
-import { CharacterData } from './dom/CharacterData';
-import { Comment } from './dom/Comment';
-import { DOMTokenList } from './dom/DOMTokenList';
 import { Document } from './dom/Document';
+import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
+import { initialize } from './initialize';
+import { wrap as longTaskWrap } from './long-task';
+import { callFunctionMessageHandler, exportFunction } from './function';
+import { deleteGlobals } from './delete-globals';
+import { GlobalScope } from './WorkerDOMGlobalScope';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { Element } from './dom/Element';
 import { Event as WorkerDOMEvent } from './Event';
-import { GlobalScope, WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
+import { CharacterData } from './dom/CharacterData';
+import { Comment } from './dom/Comment';
+import { DOMTokenList } from './dom/DOMTokenList';
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
 import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
@@ -57,10 +62,6 @@ import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { MutationObserver } from './MutationObserver';
 import { SVGElement } from './dom/SVGElement';
 import { Text } from './dom/Text';
-import { initialize } from './initialize';
-import { wrap as longTaskWrap } from './long-task';
-import { callFunctionMessageHandler, exportFunction } from './function';
-import { deleteGlobals } from './index.lite.amp';
 
 declare const WORKER_DOM_DEBUG: boolean;
 
