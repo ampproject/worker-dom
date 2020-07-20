@@ -156,6 +156,7 @@ const ESModules = [
         transpileToES5: false,
         allowConsole: true,
       }),
+      ...compilePlugins,
     ],
   },
   {
