@@ -112,6 +112,8 @@ export interface GlobalScope {
   MutationObserver: typeof MutationObserver;
   OffscreenCanvas?: typeof OffscreenCanvas;
   ImageBitmap?: typeof ImageBitmap;
+  requestAnimationFrame: typeof requestAnimationFrame;
+  cancelAnimationFrame: typeof cancelAnimationFrame;
 }
 
 export interface WorkerDOMGlobalScope extends GlobalScope {

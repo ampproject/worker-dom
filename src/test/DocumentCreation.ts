@@ -59,6 +59,7 @@ import { Text } from '../worker-thread/dom/Text';
 import { DOMTokenList } from '../worker-thread/dom/DOMTokenList';
 import { HTMLDataListElement } from '../worker-thread/dom/HTMLDataListElement';
 import { Element } from '../worker-thread/dom/Element';
+import { raf, caf } from '../worker-thread/AnimationFrame';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -127,6 +128,8 @@ const GlobalScope: GlobalScope = {
   Text,
   Event: WorkerDOMEvent,
   MutationObserver,
+  requestAnimationFrame: raf,
+  cancelAnimationFrame: caf,
 };
 
 /**
