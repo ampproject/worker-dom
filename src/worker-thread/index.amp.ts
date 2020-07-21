@@ -15,7 +15,7 @@
  */
 
 import { AMP } from './amp/amp';
-import { deleteGlobals } from './delete-globals';
+import { deleteGlobals } from './amp/delete-globals';
 import { CharacterData } from './dom/CharacterData';
 import { Comment } from './dom/Comment';
 import { Document } from './dom/Document';

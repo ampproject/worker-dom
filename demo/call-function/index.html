@@ -9,43 +9,37 @@
   <body>
     <div src="call-function.js" id="upgrade-me"></div>
     <script type="module">
-      import { upgradeElement } from "/dist/amp/main.mjs";
+      import { upgradeElement } from "/dist/amp/main.mjs"
       upgradeElement(
         document.getElementById("upgrade-me"),
-        "/dist/amp/worker/worker.nodom.mjs"
+        "/dist/amp/worker/worker.nodom.mjs",
       ).then(async (worker) => {
         worker
           .callFunction("performComplexMath")
-          .then((result) => console.log(`Complex math result: ${result}`));
+          .then((result) => console.log(`Complex math result: ${result}`))
         worker
           .callFunction("getRemoteData")
-          .then((result) => console.log(`Remote data: ${JSON.stringify(result)}`));
+          .then((result) => console.log(`Remote data: ${JSON.stringify(result)}`))
 
-        const addResult = await worker.callFunction("add", 40, 2);
-        console.log(`Answer to it all: ${addResult}`);
+        const addResult = await worker.callFunction("add", 40, 2)
+        console.log(`Answer to it all: ${addResult}`)
 
         worker
           .callFunction("concat", [1, 2, 3], ["4", "5"])
-          .then((result) =>
-            console.log(`concat([1,2,3], ["4", "5"]) is: ${result}`)
-          );
+          .then((result) => console.log(`concat([1,2,3], ["4", "5"]) is: ${result}`))
 
-        worker.callFunction('returnsUndefined').then(result => {
+        worker.callFunction("returnsUndefined").then((result) => {
           console.log(`undefined --> ${result}`)
         })
 
-        worker.callFunction("reject").catch((err) => console.error(err));
-        worker
-          .callFunction("tooCoolToExist")
-          .catch((err) => console.error(err));
-        worker
-          .callFunction("immediatelyThrow")
-          .catch((err) => console.error(err));
+        worker.callFunction("reject").catch((err) => console.error(err))
+        worker.callFunction("tooCoolToExist").catch((err) => console.error(err))
+        worker.callFunction("immediatelyThrow").catch((err) => console.error(err))
 
         worker.onerror = (err) => {
-          console.error("Catching an unhandled error: ", err);
-        };
-      });
+          console.error("Catching an unhandled error: ", err)
+        }
+      })
     </script>
   </body>
 </html>

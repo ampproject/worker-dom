@@ -56,7 +56,7 @@ import { CharacterData } from './dom/CharacterData';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { Element } from './dom/Element';
-import { DocumentLite } from './dom/DocumentLite';
+import { DocumentStub } from './dom/DocumentLite';
 
 /**
  * Should only contain properties that exist on Window.
@@ -120,8 +120,8 @@ export interface WorkerDOMGlobalScope extends GlobalScope {
   removeEventListener: (type: string, handler: EventHandler) => void;
 }
 
-export interface WorkerDOMLiteGlobalScope {
-  document: DocumentLite;
+export interface WorkerNoDOMGlobalScope {
+  document: DocumentStub;
   localStorage?: Storage;
   sessionStorage?: Storage;
 }
