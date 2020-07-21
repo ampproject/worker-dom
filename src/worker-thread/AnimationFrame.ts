@@ -14,49 +14,45 @@
  * limitations under the License.
  */
 
-export let raf: typeof requestAnimationFrame;
-export let caf: typeof cancelAnimationFrame;
-
-if (typeof requestAnimationFrame !== 'undefined') {
-  raf = requestAnimationFrame;
-  caf = cancelAnimationFrame;
-}
-
 interface Queued {
   handle: number;
   callback: Function;
   cancelled: boolean;
 }
 
-if (typeof requestAnimationFrame === 'undefined') {
+export const { rafPolyfill, cafPolyfill }: { rafPolyfill: typeof requestAnimationFrame; cafPolyfill: typeof cancelAnimationFrame } = (() => {
   const frameDuration = 1000 / 60;
   let last: number = 0;
   let id: number = 0;
   let queue: Array<Queued> = [];
 
-  raf = function (callback) {
-    if (queue.length === 0) {
-      var _now = performance.now(),
-        next = Math.max(0, frameDuration - (_now - last));
-      last = next + _now;
-      setTimeout(function () {
-        var cp = queue.slice(0);
-        // Clear queue here to prevent
-        // callbacks from appending listeners
-        // to the current frame's queue
-        queue.length = 0;
-        for (var i = 0; i < cp.length; i++) {
-          if (!cp[i].cancelled) {
-            try {
-              cp[i].callback(last);
-            } catch (e) {
-              setTimeout(function () {
-                throw e;
-              }, 0);
-            }
+  function scheduleNext() {
+    var _now = performance.now(),
+      next = Math.max(0, frameDuration - (_now - last));
+    last = next + _now;
+    setTimeout(function () {
+      var cp = queue.slice(0);
+      // Clear queue here to prevent
+      // callbacks from appending listeners
+      // to the current frame's queue
+      queue.length = 0;
+      for (var i = 0; i < cp.length; i++) {
+        if (!cp[i].cancelled) {
+          try {
+            cp[i].callback(last);
+          } catch (e) {
+            setTimeout(function () {
+              throw e;
+            }, 0);
           }
         }
-      }, Math.round(next));
+      }
+    }, Math.round(next));
+  }
+
+  const rafPolyfill = (callback: FrameRequestCallback) => {
+    if (queue.length === 0) {
+      scheduleNext();
     }
     queue.push({
       handle: ++id,
@@ -65,12 +61,13 @@ if (typeof requestAnimationFrame === 'undefined') {
     });
     return id;
   };
-
-  caf = function (handle) {
+  function cafPolyfill(handle: number): void {
     for (var i = 0; i < queue.length; i++) {
       if (queue[i].handle === handle) {
         queue[i].cancelled = true;
       }
     }
-  };
-}
+  }
+
+  return { rafPolyfill, cafPolyfill };
+})();
