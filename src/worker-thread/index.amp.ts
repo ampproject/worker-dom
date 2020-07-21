@@ -58,10 +58,10 @@ import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
-import { raf, caf } from './AnimationFrame';
 import { SVGElement } from './dom/SVGElement';
 import { Text } from './dom/Text';
 import { wrap as longTaskWrap } from './long-task';
+import { rafPolyfill, cafPolyfill } from './AnimationFrame';
 
 declare const WORKER_DOM_DEBUG: boolean;
 
@@ -109,8 +109,8 @@ const globalScope: GlobalScope = {
   Text,
   Event: WorkerDOMEvent,
   MutationObserver,
-  requestAnimationFrame: raf,
-  cancelAnimationFrame: caf,
+  requestAnimationFrame: self.requestAnimationFrame || rafPolyfill,
+  cancelAnimationFrame: self.cancelAnimationFrame || cafPolyfill,
 };
 
 const noop = () => void 0;
