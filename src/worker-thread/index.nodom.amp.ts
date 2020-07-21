@@ -16,14 +16,14 @@
 
 import { AMP } from './amp/amp';
 import { callFunctionMessageHandler, exportFunction } from './function';
-import { WorkerDOMLiteGlobalScope } from './WorkerDOMGlobalScope';
-import { DocumentLite } from './dom/DocumentLite';
-import { deleteGlobals } from './delete-globals';
+import { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope';
+import { DocumentStub } from './dom/DocumentLite';
+import { deleteGlobals } from './amp/delete-globals';
 
 const noop = () => void 0;
 
-export const workerDOM: WorkerDOMLiteGlobalScope = (function (postMessage, addEventListener, removeEventListener) {
-  const document = new DocumentLite();
+export const workerDOM: WorkerNoDOMGlobalScope = (function (postMessage, addEventListener, removeEventListener) {
+  const document = new DocumentStub();
 
   // TODO(choumx): Avoid polluting Document's public API.
   document.postMessage = postMessage;

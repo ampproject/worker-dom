@@ -20,11 +20,11 @@ import { MessageToWorker, MessageType, FunctionCallToWorker, ResolveOrReject } f
 import { transfer } from './MutationTransfer';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { store } from './strings';
-import { DocumentLite } from './dom/DocumentLite';
+import { DocumentStub } from './dom/DocumentLite';
 
 const exportedFunctions: { [fnIdent: string]: Function } = {};
 
-export function callFunctionMessageHandler(event: MessageEvent, document: Document | DocumentLite) {
+export function callFunctionMessageHandler(event: MessageEvent, document: Document | DocumentStub) {
   const msg = event.data as MessageToWorker;
   if (msg[TransferrableKeys.type] !== MessageType.FUNCTION) {
     return;

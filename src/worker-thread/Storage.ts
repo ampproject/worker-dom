@@ -20,7 +20,7 @@ import { StorageLocation } from '../transfer/TransferrableStorage';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { store } from './strings';
 import { transfer } from './MutationTransfer';
-import { DocumentLite } from './dom/DocumentLite';
+import { DocumentStub } from './dom/DocumentLite';
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Storage
@@ -39,7 +39,7 @@ export interface Storage {
  * @param location
  * @param data
  */
-export function createStorage(document: Document | DocumentLite, location: StorageLocation, data: { [key: string]: string }): Storage {
+export function createStorage(document: Document | DocumentStub, location: StorageLocation, data: { [key: string]: string }): Storage {
   const storage: any = Object.assign(Object.create(null), data);
 
   // Define properties on a prototype-less object instead of a class so that

@@ -18,11 +18,14 @@ import { PostMessage } from '../worker-thread';
 import { Phase } from '../../transfer/Phase';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { set as setPhase } from '../phase';
-import { WorkerDOMLiteGlobalScope } from '../WorkerDOMGlobalScope';
+import { WorkerNoDOMGlobalScope } from '../WorkerDOMGlobalScope';
 
-export class DocumentLite {
+/**
+ * A lightweight Document stub for the no-dom amp binary.
+ */
+export class DocumentStub {
   // Internal variables.
-  public defaultView: WorkerDOMLiteGlobalScope;
+  public defaultView: WorkerNoDOMGlobalScope;
   public postMessage: PostMessage;
   public addGlobalEventListener: Function;
   public removeGlobalEventListener: Function;
