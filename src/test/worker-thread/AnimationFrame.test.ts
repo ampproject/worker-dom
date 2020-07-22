@@ -17,55 +17,58 @@
 import anyTest, { TestInterface } from 'ava';
 import { rafPolyfill, cafPolyfill } from '../../worker-thread/AnimationFrame';
 
-const noop = () => {};
+const test = anyTest as TestInterface<{ runTimeout: Function; runAllTimeouts: Function }>;
+// const originalSetTimeout = globalThis.setTimeout;
 
-const test = anyTest as TestInterface<{}>;
-
+const timeouts: Array<Function> = [];
 test.beforeEach((t) => {
-  // Object.defineProperty(globalThis, 'performance',{ value: {now: () => Date.now()}});
-});
+  globalThis.setTimeout = ((cb: any) => timeouts.push(cb)) as any;
 
-test('rafPolyfill should return a number', (t) => {
-  t.assert(Number.isInteger(rafPolyfill(noop)), 'should return a number');
-});
-
-test('rafPolyfill executes the body of the supplied callback', (t) => {
-  let resolve: Function;
-  const rafExecuted: Promise<any> = new Promise((res) => (resolve = res));
-  rafPolyfill(() => {
-    resolve();
-    t.pass();
-  });
-
-  return rafExecuted;
-});
-
-test.only('rafPolyfill will execute all callbacks, even if some throw', (t) => {
-  let rafSuccessResolve: Function;
-  let rafErrorResolve: Function;
-  const rafExecuted = new Promise((res) => (rafSuccessResolve = res));
-  const errorPromise = new Promise((res) => (rafErrorResolve = res));
-  rafPolyfill(() => {
-    throw new Error('raf1');
-  });
-  rafPolyfill(() => rafSuccessResolve());
-
-  process.on('uncaughtException', (err) => {
-    if (err.message === 'raf1') {
-      rafErrorResolve();
+  function runTimeout() {
+    let cb = timeouts.shift();
+    if (cb) {
+      cb();
     }
-  });
+  }
 
-  return Promise.all([rafExecuted, errorPromise]).then(() => t.pass());
+  function runAllTimeouts() {
+    while (timeouts.length) {
+      runTimeout();
+    }
+  }
+
+  t.context = { runTimeout, runAllTimeouts };
 });
 
-test('cafPolyfill can cancel execution via the handler', (t) => {
-  let resolve: Function;
+test.serial('rafPolyfill should return a number', (t) => {
+  t.assert(Number.isInteger(rafPolyfill(() => {})), 'should return a number');
+});
+
+test.serial('rafPolyfill executes the body of the supplied callback', (t) => {
+  rafPolyfill(() => t.pass());
+  t.context.runTimeout();
+});
+
+test.serial('rafPolyfill will execute all callbacks, even if some throw', async (t) => {
+  let raf2Executed = false;
+  rafPolyfill(() => {
+    throw new Error();
+  });
+  rafPolyfill(() => (raf2Executed = true));
+
+  try {
+    t.context.runAllTimeouts();
+  } catch (err) {}
+
+  t.true(raf2Executed);
+});
+
+test.serial('cafPolyfill can cancel execution via the handler', (t) => {
   let executed = false;
   let raf1handle = rafPolyfill(() => (executed = true));
-  const raf2Promise = new Promise((res) => (resolve = res));
-  rafPolyfill(() => resolve());
+  rafPolyfill(() => {});
   cafPolyfill(raf1handle);
 
-  return raf2Promise.then(() => t.assert(!executed));
+  t.context.runAllTimeouts();
+  t.false(executed, 'raf1 should not have executed');
 });
