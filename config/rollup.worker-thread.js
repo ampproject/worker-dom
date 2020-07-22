@@ -134,6 +134,55 @@ const ESModules = [
       ...compilePlugins,
     ],
   },
+  {
+    input: 'output/worker-thread/index.nodom.amp.js',
+    output: {
+      file: 'dist/amp/worker/worker.nodom.mjs',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+      banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
+    },
+    plugins: [
+      copy({
+        targets: [
+          {
+            src: 'config/dist-packaging/amp/worker/package.json',
+            dest: 'dist/amp/worker',
+          },
+        ],
+      }),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: true,
+      }),
+    ],
+  },
+  {
+    input: 'output/worker-thread/index.nodom.amp.js',
+    output: {
+      file: 'dist/amp/worker/worker.nodom.js',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+      banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
+    },
+    plugins: [
+      copy({
+        targets: [
+          {
+            src: 'config/dist-packaging/amp/worker/package.json',
+            dest: 'dist/amp/worker',
+          },
+        ],
+      }),
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: true,
+      }),
+      ...compilePlugins,
+    ],
+  },
 ];
 
 const IIFEModules = [
