@@ -1,6 +1,6 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.25.0",
+  "version": "0.25.1",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/main",
   "files": [
@@ -90,10 +90,10 @@
       "./dist/**/*.mjs"
     ],
     "./dist/worker/worker.mjs": {
-      "brotli": "11.5 kB"
+      "brotli": "11.6 kB"
     },
     "./dist/worker/worker.js": {
-      "brotli": "13 kB"
+      "brotli": "13.5 kB"
     },
     "./dist/main.mjs": {
       "brotli": "4 kB"
