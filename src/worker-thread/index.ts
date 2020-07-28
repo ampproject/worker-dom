@@ -57,6 +57,7 @@ import { Comment } from './dom/Comment';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { Element } from './dom/Element';
+import { rafPolyfill, cafPolyfill } from './AnimationFrame';
 
 const globalScope: GlobalScope = {
   innerWidth: 0,
@@ -102,6 +103,8 @@ const globalScope: GlobalScope = {
   Text,
   Event: WorkerDOMEvent,
   MutationObserver,
+  requestAnimationFrame: self.requestAnimationFrame || rafPolyfill,
+  cancelAnimationFrame: self.cancelAnimationFrame || cafPolyfill,
 };
 
 const noop = () => void 0;

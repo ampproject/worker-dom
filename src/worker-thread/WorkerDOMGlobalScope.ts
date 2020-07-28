@@ -56,6 +56,7 @@ import { CharacterData } from './dom/CharacterData';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { Element } from './dom/Element';
+import { DocumentStub } from './dom/DocumentLite';
 
 /**
  * Should only contain properties that exist on Window.
@@ -111,10 +112,18 @@ export interface GlobalScope {
   MutationObserver: typeof MutationObserver;
   OffscreenCanvas?: typeof OffscreenCanvas;
   ImageBitmap?: typeof ImageBitmap;
+  requestAnimationFrame: typeof requestAnimationFrame;
+  cancelAnimationFrame: typeof cancelAnimationFrame;
 }
 
 export interface WorkerDOMGlobalScope extends GlobalScope {
   document: Document;
   addEventListener: (type: string, handler: EventHandler) => void;
   removeEventListener: (type: string, handler: EventHandler) => void;
+}
+
+export interface WorkerNoDOMGlobalScope {
+  document: DocumentStub;
+  localStorage?: Storage;
+  sessionStorage?: Storage;
 }
