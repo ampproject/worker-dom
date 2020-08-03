@@ -21,11 +21,12 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { store } from '../strings';
 import { transfer } from '../MutationTransfer';
+import { DocumentStub } from '../dom/DocumentLite';
 
 export class AMP {
-  private document: Document;
+  private document: Document | DocumentStub;
 
-  constructor(document: Document) {
+  constructor(document: Document | DocumentStub) {
     this.document = document;
   }
 

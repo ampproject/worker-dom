@@ -15,11 +15,13 @@
  */
 
 import { AMP } from './amp/amp';
+import { callFunctionMessageHandler, exportFunction } from './function';
 import { CharacterData } from './dom/CharacterData';
 import { Comment } from './dom/Comment';
-import { DOMTokenList } from './dom/DOMTokenList';
+import { deleteGlobals } from './amp/delete-globals';
 import { Document } from './dom/Document';
 import { DocumentFragment } from './dom/DocumentFragment';
+import { DOMTokenList } from './dom/DOMTokenList';
 import { Element } from './dom/Element';
 import { Event as WorkerDOMEvent } from './Event';
 import { GlobalScope, WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
@@ -54,101 +56,14 @@ import { HTMLTableElement } from './dom/HTMLTableElement';
 import { HTMLTableRowElement } from './dom/HTMLTableRowElement';
 import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
+import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
+import { rafPolyfill, cafPolyfill } from './AnimationFrame';
 import { SVGElement } from './dom/SVGElement';
 import { Text } from './dom/Text';
-import { initialize } from './initialize';
 import { wrap as longTaskWrap } from './long-task';
-import { callFunctionMessageHandler, exportFunction } from './function';
 
 declare const WORKER_DOM_DEBUG: boolean;
-
-const ALLOWLISTED_GLOBALS: { [key: string]: boolean } = {
-  Array: true,
-  ArrayBuffer: true,
-  BigInt: true,
-  BigInt64Array: true,
-  BigUint64Array: true,
-  Boolean: true,
-  Cache: true,
-  CustomEvent: true,
-  DataView: true,
-  Date: true,
-  Error: true,
-  EvalError: true,
-  Event: true,
-  EventTarget: true,
-  Float32Array: true,
-  Float64Array: true,
-  Function: true,
-  Infinity: true,
-  Int16Array: true,
-  Int32Array: true,
-  Int8Array: true,
-  Intl: true,
-  JSON: true,
-  Map: true,
-  Math: true,
-  NaN: true,
-  Number: true,
-  Object: true,
-  Promise: true,
-  Proxy: true,
-  RangeError: true,
-  ReferenceError: true,
-  Reflect: true,
-  RegExp: true,
-  Set: true,
-  String: true,
-  Symbol: true,
-  SyntaxError: true,
-  TextDecoder: true,
-  TextEncoder: true,
-  TypeError: true,
-  URIError: true,
-  URL: true,
-  Uint16Array: true,
-  Uint32Array: true,
-  Uint8Array: true,
-  Uint8ClampedArray: true,
-  WeakMap: true,
-  WeakSet: true,
-  WebAssembly: true,
-  WebSocket: true,
-  XMLHttpRequest: true,
-  atob: true,
-  addEventListener: true,
-  removeEventListener: true,
-  btoa: true,
-  caches: true,
-  clearInterval: true,
-  clearTimeout: true,
-  console: true,
-  decodeURI: true,
-  decodeURIComponent: true,
-  document: true,
-  encodeURI: true,
-  encodeURIComponent: true,
-  escape: true,
-  fetch: true,
-  indexedDB: true,
-  isFinite: true,
-  isNaN: true,
-  location: true,
-  navigator: true,
-  onerror: true,
-  onrejectionhandled: true,
-  onunhandledrejection: true,
-  parseFloat: true,
-  parseInt: true,
-  performance: true,
-  requestAnimationFrame: true,
-  cancelAnimationFrame: true,
-  self: true,
-  setTimeout: true,
-  setInterval: true,
-  unescape: true,
-};
 
 const globalScope: GlobalScope = {
   innerWidth: 0,
@@ -194,6 +109,8 @@ const globalScope: GlobalScope = {
   Text,
   Event: WorkerDOMEvent,
   MutationObserver,
+  requestAnimationFrame: self.requestAnimationFrame || rafPolyfill,
+  cancelAnimationFrame: self.cancelAnimationFrame || cafPolyfill,
 };
 
 const noop = () => void 0;
@@ -221,41 +138,7 @@ export const workerDOM: WorkerDOMGlobalScope = (function (postMessage, addEventL
 
 // Modify global scope by removing disallowed properties and wrapping `fetch()`.
 (function (global: WorkerGlobalScope) {
-  /**
-   * @param object
-   * @param property
-   * @return True if property was deleted from object. Otherwise, false.
-   */
-  const deleteUnsafe = (object: any, property: string): boolean => {
-    if (!ALLOWLISTED_GLOBALS.hasOwnProperty(property)) {
-      try {
-        delete object[property];
-        return true;
-      } catch (e) {}
-    }
-    return false;
-  };
-  // Walk up global's prototype chain and dereference non-allowlisted properties
-  // until EventTarget is reached.
-  let current = global;
-  while (current && current.constructor !== EventTarget) {
-    const deleted: string[] = [];
-    const failedToDelete: string[] = [];
-    Object.getOwnPropertyNames(current).forEach((prop) => {
-      if (deleteUnsafe(current, prop)) {
-        deleted.push(prop);
-      } else {
-        failedToDelete.push(prop);
-      }
-    });
-    if (WORKER_DOM_DEBUG) {
-      console.info(`Removed ${deleted.length} references from`, current, ':', deleted);
-      if (failedToDelete.length) {
-        console.info(`Failed to remove ${failedToDelete.length} references from`, current, ':', failedToDelete);
-      }
-    }
-    current = Object.getPrototypeOf(current);
-  }
+  deleteGlobals(global);
   // Wrap global.fetch() with our longTask API.
   const originalFetch = global['fetch'];
   if (originalFetch) {

@@ -64,6 +64,7 @@
     "prettier": "2.0.5",
     "rimraf": "3.0.2",
     "rollup": "2.15.0",
+    "rollup-plugin-analyzer": "3.3.0",
     "rollup-plugin-babel": "4.4.0",
     "rollup-plugin-copy": "3.3.0",
     "rollup-plugin-terser": "6.1.0",
@@ -89,10 +90,10 @@
       "./dist/**/*.mjs"
     ],
     "./dist/worker/worker.mjs": {
-      "brotli": "11.5 kB"
+      "brotli": "11.6 kB"
     },
     "./dist/worker/worker.js": {
-      "brotli": "13 kB"
+      "brotli": "13.5 kB"
     },
     "./dist/main.mjs": {
       "brotli": "4 kB"
