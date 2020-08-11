@@ -55,7 +55,7 @@
     "cross-env": "7.0.2",
     "esm": "3.2.25",
     "husky": "4.2.5",
-    "jsdom": "16.2.2",
+    "jsdom": "16.4.0",
     "lint-staged": "10.2.9",
     "magic-string": "0.25.7",
     "np": "https://github.com/pixelastic/np/tarball/c3ab2e3b053c7da0ce40a572ca1616273ac080f8",
