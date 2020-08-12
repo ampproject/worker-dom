@@ -69,7 +69,7 @@
     "rollup-plugin-copy": "3.3.0",
     "rollup-plugin-terser": "6.1.0",
     "sinon": "9.0.2",
-    "sirv": "1.0.0",
+    "sirv": "1.0.6",
     "tslint": "6.1.2",
     "typescript": "3.9.5"
   },
