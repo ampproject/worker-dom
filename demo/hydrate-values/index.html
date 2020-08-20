@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Hello World</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/dist/debug/main.mjs" type="module"></script>
+</head>
+<body>
+  <div src="./hydrate-values/hydrate-values.js" id="upgrade-me">
+    <input id="input" value="prefilled-value">
+    <button id="get-value">
+      Get prefilled value
+    </button>
+  </div>
+  <script type="module">
+    import {upgradeElement} from '/dist/debug/main.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
+  </script>
+</body>
+</html>

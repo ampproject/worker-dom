@@ -24,6 +24,8 @@ import { store as storeString } from '../strings';
 import { Document } from './Document';
 import { transfer } from '../MutationTransfer';
 import { NumericBoolean } from '../../utils';
+import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeName, NamespaceURI, Node } from './Node';
 
 export class HTMLInputElement extends HTMLElement {
   // Per spec, some attributes like 'value' and 'checked' change behavior based on dirty flags.
@@ -39,6 +41,13 @@ export class HTMLInputElement extends HTMLElement {
   //   1. "Dirtiness" caveat above.
   //   2. Duplicate SYNC events. Sent by every event fired from elements with a `value`, plus the default 'change' listener.
   //   3. Duplicate MUTATE events. Caused by stale `value` in worker due to no default 'input' listener (see below).
+
+  constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null, overrideIndex?: number, attrs?: any) {
+    super(nodeType, localName, namespaceURI, ownerDocument, overrideIndex, attrs);
+    if (this.hasAttribute('value')) {
+      this[TransferrableKeys.value] = String(this.getAttribute('value'));
+    }
+  }
 
   get value(): string {
     return this[TransferrableKeys.value];

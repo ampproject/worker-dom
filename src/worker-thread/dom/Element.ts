@@ -100,7 +100,14 @@ export class Element extends ParentNode {
    */
   private kind: ElementKind;
 
-  constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null, overrideIndex?: number) {
+  constructor(
+    nodeType: NodeType,
+    localName: NodeName,
+    namespaceURI: NamespaceURI,
+    ownerDocument: Node | null,
+    overrideIndex?: number,
+    initialAttrs?: any,
+  ) {
     super(nodeType, toUpper(localName), ownerDocument, overrideIndex);
     this.namespaceURI = namespaceURI || HTML_NAMESPACE;
     this.localName = localName;
@@ -113,6 +120,7 @@ export class Element extends ParentNode {
       0,
       this.namespaceURI === null ? 0 : storeString(this.namespaceURI),
     ];
+    (initialAttrs ?? []).forEach((attribute: any) => this.setAttributeNS(attribute[0], attribute[1], attribute[2]));
   }
 
   // Unimplemented properties

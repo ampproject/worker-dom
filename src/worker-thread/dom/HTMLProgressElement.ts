@@ -19,10 +19,19 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { NodeType } from '../../transfer/TransferrableNodes';
+import { NodeName, NamespaceURI, Node } from './Node';
 
 export class HTMLProgressElement extends HTMLElement {
   private [TransferrableKeys.indeterminate]: boolean = true;
   private [TransferrableKeys.value]: number = 0;
+
+  constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node | null, overrideIndex?: number, attrs?: any) {
+    super(nodeType, localName, namespaceURI, ownerDocument, overrideIndex, attrs);
+    if (this.hasAttribute('value')) {
+      this[TransferrableKeys.value] = Number(this.getAttribute('value'));
+    }
+  }
 
   get position(): number {
     return this[TransferrableKeys.indeterminate] ? -1 : this[TransferrableKeys.value] / this.max;

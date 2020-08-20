@@ -116,16 +116,13 @@ export class Document extends Element {
         const namespaceURI: string = strings[skeleton[TransferrableKeys.namespaceURI] as number] || HTML_NAMESPACE;
         const localName: string = strings[skeleton[TransferrableKeys.localOrNodeName]];
         const constructor = NS_NAME_TO_CLASS[`${namespaceURI}:${localName}`] || HTMLElement;
-        const node = new constructor(NodeType.ELEMENT_NODE, localName, namespaceURI, this, skeleton[TransferrableKeys.index]);
+        const attributes = (skeleton[TransferrableKeys.attributes] || []).map((attr) => [
+          strings[attr[0]] !== 'null' ? strings[attr[0]] : HTML_NAMESPACE,
+          strings[attr[1]],
+          strings[attr[2]],
+        ]);
+        const node = new constructor(NodeType.ELEMENT_NODE, localName, namespaceURI, this, skeleton[TransferrableKeys.index], attributes);
 
-        (skeleton[TransferrableKeys.attributes] || []).forEach((attribute) =>
-          // AttributeNamespaceURI = strings[attribute[0]] !== 'null' ? strings[attribute[0]] : HTML_NAMESPACE
-          node.setAttributeNS(
-            strings[attribute[0]] !== 'null' ? strings[attribute[0]] : HTML_NAMESPACE,
-            strings[attribute[1]],
-            strings[attribute[2]],
-          ),
-        );
         (skeleton[TransferrableKeys.childNodes] || []).forEach((child) => node.appendChild(this[TransferrableKeys.hydrateNode](strings, child)));
         return node;
     }
