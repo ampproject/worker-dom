@@ -117,6 +117,7 @@ export class Document extends Element {
         const localName: string = strings[skeleton[TransferrableKeys.localOrNodeName]];
         const constructor = NS_NAME_TO_CLASS[`${namespaceURI}:${localName}`] || HTMLElement;
         const attributes = (skeleton[TransferrableKeys.attributes] || []).map((attr) => [
+          // AttributeNamespaceURI = strings[attribute[0]] !== 'null' ? strings[attribute[0]] : HTML_NAMESPACE
           strings[attr[0]] !== 'null' ? strings[attr[0]] : HTML_NAMESPACE,
           strings[attr[1]],
           strings[attr[2]],

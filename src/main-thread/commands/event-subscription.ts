@@ -74,16 +74,14 @@ export const sendValueChangeOnAttributeMutation = (workerContext: WorkerContext,
  * @param worker whom to dispatch value toward.
  * @param node where to get the value from.
  */
-const fireValueChange = (workerContext: WorkerContext, node: RenderableElement): void => {
-  console.error({ workerContext, node });
-  return workerContext.messageToWorker({
+const fireValueChange = (workerContext: WorkerContext, node: RenderableElement): void =>
+  workerContext.messageToWorker({
     [TransferrableKeys.type]: MessageType.SYNC,
     [TransferrableKeys.sync]: {
       [TransferrableKeys.index]: node._index_,
       [TransferrableKeys.value]: node.value,
     },
   });
-};
 
 /**
  * Tell WorkerDOM what the window dimensions are.
