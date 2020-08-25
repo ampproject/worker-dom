@@ -17,9 +17,11 @@ test('supports hydrating a node with a value attribute', (t) => {
   const { document } = t.context;
 
   ['input', 'progress'].forEach((nodeName) => {
-    let { node, strings } = getHydratableInputNode(nodeName, 'startingValue');
+    let { node, strings } = getHydratableInputNode(nodeName, '42');
     const hydratedNode = document[TransferrableKeys.hydrateNode](strings, node);
-    t.is(hydratedNode.value, 'startingValue');
+
+    const expected = nodeName === 'input' ? '42' : 42;
+    t.is(hydratedNode.value, expected);
   });
 });
 
