@@ -16,16 +16,18 @@ test.beforeEach((t) => {
 test('supports hydrating a node with a value attribute', (t) => {
   const { document } = t.context;
 
-  let { node, strings } = getHydratableInputNode(0, 'startingValue');
-  const hydratedNode = document[TransferrableKeys.hydrateNode](strings, node);
-  t.is(hydratedNode.value, 'startingValue');
+  ['input', 'progress'].forEach((nodeName) => {
+    let { node, strings } = getHydratableInputNode(nodeName, 'startingValue');
+    const hydratedNode = document[TransferrableKeys.hydrateNode](strings, node);
+    t.is(hydratedNode.value, 'startingValue');
+  });
 });
 
-function getHydratableInputNode(index: number, value: string): { node: HydrateableNode; strings: Array<string> } {
-  const strings = ['input', '', HTML_NAMESPACE, 'value', value];
+function getHydratableInputNode(localOrNodeName: string, value: string): { node: HydrateableNode; strings: Array<string> } {
+  const strings = [localOrNodeName, '', HTML_NAMESPACE, 'value', value];
   return {
     node: {
-      [TransferrableKeys.index]: index,
+      [TransferrableKeys.index]: 0,
       [TransferrableKeys.transferred]: 0,
       [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
       [TransferrableKeys.localOrNodeName]: 0,
