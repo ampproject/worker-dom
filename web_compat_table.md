@@ -203,7 +203,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Element.hasAttributes()                             | ✔️     |                                                  | 
 | Element.hasPointerCapture()                         | ✖️     |                                                  | 
 | Element.id                                          | ✔️     |                                                  | 
-| Element.innerHTML                                   | ✖️     |                                                  | 
+| Element.innerHTML                                   | ✔️     | Partial support                                  | 
 | Element.insertAdjacentElement()                     | ✖️     |                                                  | 
 | Element.insertAdjacentHTML()                        | ✖️     |                                                  | 
 | Element.insertAdjacentText()                        | ✖️     |                                                  | 
