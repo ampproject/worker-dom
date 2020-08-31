@@ -48,7 +48,7 @@
     "@types/node": "14.0.13",
     "@types/sinon": "9.0.4",
     "acorn": "7.3.1",
-    "acorn-walk": "7.1.1",
+    "acorn-walk": "8.0.0",
     "ava": "3.8.2",
     "babel-plugin-minify-replace": "0.5.0",
     "babel-plugin-transform-remove-console": "6.9.4",
@@ -63,11 +63,11 @@
     "polka": "0.5.2",
     "prettier": "2.0.5",
     "rimraf": "3.0.2",
-    "rollup": "2.15.0",
+    "rollup": "2.26.8",
     "rollup-plugin-analyzer": "3.3.0",
     "rollup-plugin-babel": "4.4.0",
     "rollup-plugin-copy": "3.3.0",
-    "rollup-plugin-terser": "6.1.0",
+    "rollup-plugin-terser": "7.0.1",
     "sinon": "9.0.2",
     "sirv": "1.0.0",
     "tslint": "6.1.2",
@@ -115,7 +115,7 @@
   },
   "volta": {
     "node": "14.4.0",
-    "yarn": "1.22.4"
+    "yarn": "1.22.5"
   },
   "publishConfig": {
     "access": "public"
