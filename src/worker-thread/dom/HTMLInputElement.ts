@@ -33,6 +33,7 @@ export class HTMLInputElement extends HTMLElement {
   //     and forwarding interaction events to flag "dirtiness".
   // https://html.spec.whatwg.org/multipage/input.html#common-input-element-apis
   private [TransferrableKeys.value]: string = '';
+  private dirtyValue: boolean = false;
   private [TransferrableKeys.checked]: boolean = false;
 
   // TODO(willchou): There are a few interrelated issues with `value` property.
@@ -41,13 +42,14 @@ export class HTMLInputElement extends HTMLElement {
   //   3. Duplicate MUTATE events. Caused by stale `value` in worker due to no default 'input' listener (see below).
 
   get value(): string {
-    return this[TransferrableKeys.value];
+    return !this.dirtyValue ? this.getAttribute('value') || '' : this[TransferrableKeys.value];
   }
 
   set value(value: string) {
     // Don't early-out if value doesn't appear to have changed.
     // The worker may have a stale value since 'input' events aren't being forwarded.
     this[TransferrableKeys.value] = String(value);
+    this.dirtyValue = true;
     transfer(this.ownerDocument as Document, [
       TransferrableMutationType.PROPERTIES,
       this[TransferrableKeys.index],
@@ -59,7 +61,7 @@ export class HTMLInputElement extends HTMLElement {
 
   get valueAsDate(): Date | null {
     // Don't use Date constructor or Date.parse() since ISO 8601 (yyyy-mm-dd) parsing is inconsistent.
-    const date = this.stringToDate(this[TransferrableKeys.value]);
+    const date = this.stringToDate(this.value);
     const invalid = !date || isNaN(date.getTime());
     return invalid ? null : date;
   }
@@ -73,10 +75,10 @@ export class HTMLInputElement extends HTMLElement {
   }
 
   get valueAsNumber(): number {
-    if (this[TransferrableKeys.value].length === 0) {
+    if (this.value.length === 0) {
       return NaN;
     }
-    return Number(this[TransferrableKeys.value]);
+    return Number(this.value);
   }
 
   /** Unlike browsers, does not throw if this input[type] doesn't support numbers. */
