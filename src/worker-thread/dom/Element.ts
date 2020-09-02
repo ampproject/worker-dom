@@ -34,6 +34,7 @@ import { TransferrableMutationType } from '../../transfer/TransferrableMutation'
 import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
 import { parse } from '../../third_party/html-parser/html-parser';
 import { propagate } from './Node';
+import { Event } from '../Event';
 
 export const NS_NAME_TO_CLASS: { [key: string]: typeof Element } = {};
 export const registerSubclass = (localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): any =>
@@ -552,6 +553,13 @@ export class Element extends ParentNode {
         setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.
       }
     });
+  }
+
+  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/click
+  click() {
+    const event = new Event('click', {});
+    event.target = this;
+    this.dispatchEvent(event);
   }
 
   public get classList(): DOMTokenList {
