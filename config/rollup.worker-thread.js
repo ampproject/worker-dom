@@ -17,7 +17,6 @@
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
 import replace from '@rollup/plugin-replace';
-import copy from 'rollup-plugin-copy';
 import { babelPlugin } from './rollup.plugins.js';
 
 // Compile plugins should always be added at the end of the plugin list.
@@ -41,14 +40,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      copy({
-        targets: [
-          {
-            src: 'config/dist-packaging/worker/package.json',
-            dest: 'dist/worker',
-          },
-        ],
-      }),
       replace({
         WORKER_DOM_DEBUG: false,
       }),
@@ -68,14 +59,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      copy({
-        targets: [
-          {
-            src: 'config/dist-packaging/debug/worker/package.json',
-            dest: 'dist/debug/worker',
-          },
-        ],
-      }),
       replace({
         WORKER_DOM_DEBUG: true,
       }),
@@ -95,14 +78,6 @@ const ESModules = [
       banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
     },
     plugins: [
-      copy({
-        targets: [
-          {
-            src: 'config/dist-packaging/amp/worker/package.json',
-            dest: 'dist/amp/worker',
-          },
-        ],
-      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: true,
@@ -119,14 +94,6 @@ const ESModules = [
       banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
     },
     plugins: [
-      copy({
-        targets: [
-          {
-            src: 'config/dist-packaging/amp/worker/package.json',
-            dest: 'dist/amp/worker',
-          },
-        ],
-      }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: true,
@@ -144,14 +111,6 @@ const ESModules = [
       banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
     },
     plugins: [
-      copy({
-        targets: [
-          {
-            src: 'config/dist-packaging/amp/worker/package.json',
-            dest: 'dist/amp/worker',
-          },
-        ],
-      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: true,
@@ -168,14 +127,6 @@ const ESModules = [
       banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
     },
     plugins: [
-      copy({
-        targets: [
-          {
-            src: 'config/dist-packaging/amp/worker/package.json',
-            dest: 'dist/amp/worker',
-          },
-        ],
-      }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: true,

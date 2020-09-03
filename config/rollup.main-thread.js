@@ -17,7 +17,6 @@
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
 import replace from '@rollup/plugin-replace';
-import copy from 'rollup-plugin-copy';
 import { babelPlugin, removeDebugCommandExecutors, removeWorkerWhitespace } from './rollup.plugins.js';
 
 const ESModules = [
@@ -51,14 +50,6 @@ const ESModules = [
     },
     plugins: [
       removeWorkerWhitespace(),
-      copy({
-        targets: [
-          {
-            src: 'config/dist-packaging/debug/package.json',
-            dest: 'dist/debug',
-          },
-        ],
-      }),
       replace({
         WORKER_DOM_DEBUG: true,
       }),
@@ -78,14 +69,6 @@ const ESModules = [
     },
     plugins: [
       removeWorkerWhitespace(),
-      copy({
-        targets: [
-          {
-            src: 'config/dist-packaging/amp/package.json',
-            dest: 'dist/amp',
-          },
-        ],
-      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: true,
