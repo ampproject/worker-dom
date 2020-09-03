@@ -85,11 +85,9 @@
   },
   "filesize": {
     "track": [
-      "./dist/*.js",
-      "./dist/*.mjs",
-      "./dist/worker/**/*.js",
-      "./dist/worker/**/*.mjs",
-      "./dist/amp-production/**/*.mjs"
+      "./dist/*.(js|mjs)",
+      "./dist/worker/**/*.(js|mjs)",
+      "./dist/amp-production/**/*.(js|mjs)"
     ],
     "./dist/worker/worker.mjs": {
       "brotli": "11.7 kB"
