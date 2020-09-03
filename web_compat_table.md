@@ -203,7 +203,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Element.hasAttributes()                             | ✔️     |                                                  | 
 | Element.hasPointerCapture()                         | ✖️     |                                                  | 
 | Element.id                                          | ✔️     |                                                  | 
-| Element.innerHTML                                   | ✖️     |                                                  | 
+| Element.innerHTML                                   | ✔️     | Partial support                                  | 
 | Element.insertAdjacentElement()                     | ✖️     |                                                  | 
 | Element.insertAdjacentHTML()                        | ✖️     |                                                  | 
 | Element.insertAdjacentText()                        | ✖️     |                                                  | 
@@ -394,6 +394,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | HTMLElement.blur()                                  | ✖️     |                                                  | 
 | HTMLElement.charset                                 | ✔️     |                                                  | 
 | HTMLElement.checkValidity()                         | ✖️     |                                                  | 
+| HTMLElement.click()                                 | ✔️     |                                                  |
 | HTMLElement.contentEditable                         | ✔️     |                                                  | 
 | HTMLElement.contextMenu                             | ✖️     |                                                  | 
 | HTMLElement.crossOrigin                             | ✔️     |                                                  | 
@@ -525,7 +526,6 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | HTMLInputElement.blur()                             | ✔️     |                                                  | 
 | HTMLInputElement.checked                            | ✖️     |                                                  | 
 | HTMLInputElement.checkValidity()                    | ✖️     |                                                  | 
-| HTMLInputElement.click()                            | ✔️     |                                                  | 
 | HTMLInputElement.defaultChecked                     | ✔️     |                                                  | 
 | HTMLInputElement.defaultValue                       | ✔️     |                                                  | 
 | HTMLInputElement.dirName                            | ✔️     |                                                  | 
