@@ -45,7 +45,7 @@
     "@babel/plugin-proposal-object-rest-spread": "7.10.1",
     "@babel/preset-env": "7.10.2",
     "@rollup/plugin-replace": "2.3.3",
-    "@types/node": "14.6.3",
+    "@types/node": "14.6.4",
     "@types/sinon": "9.0.5",
     "acorn": "8.0.1",
     "acorn-walk": "8.0.0",
@@ -113,7 +113,7 @@
     ]
   },
   "volta": {
-    "node": "14.9.0",
+    "node": "14.10.0",
     "yarn": "1.22.5"
   },
   "publishConfig": {
