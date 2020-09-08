@@ -17,7 +17,6 @@
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
 import replace from '@rollup/plugin-replace';
-import copy from 'rollup-plugin-copy';
 import { babelPlugin, removeDebugCommandExecutors, removeWorkerWhitespace } from './rollup.plugins.js';
 
 const ESModules = [
@@ -51,14 +50,6 @@ const ESModules = [
     },
     plugins: [
       removeWorkerWhitespace(),
-      copy({
-        targets: [
-          {
-            src: 'config/dist-packaging/debug/package.json',
-            dest: 'dist/debug',
-          },
-        ],
-      }),
       replace({
         WORKER_DOM_DEBUG: true,
       }),
@@ -71,20 +62,35 @@ const ESModules = [
   {
     input: 'output/main-thread/index.amp.js',
     output: {
-      file: 'dist/amp/main.mjs',
+      file: 'dist/amp-production/main.mjs',
       format: 'es',
       sourcemap: true,
-      banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
     },
     plugins: [
       removeWorkerWhitespace(),
-      copy({
-        targets: [
-          {
-            src: 'config/dist-packaging/amp/package.json',
-            dest: 'dist/amp',
-          },
-        ],
+      removeDebugCommandExecutors(),
+      replace({
+        WORKER_DOM_DEBUG: false,
+      }),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: false,
+      }),
+      compiler(),
+      terser(),
+    ],
+  },
+  {
+    input: 'output/main-thread/index.amp.js',
+    output: {
+      file: 'dist/amp-debug/main.mjs',
+      format: 'es',
+      sourcemap: true,
+    },
+    plugins: [
+      removeWorkerWhitespace(),
+      replace({
+        WORKER_DOM_DEBUG: true,
       }),
       babelPlugin({
         transpileToES5: false,
