@@ -1,6 +1,6 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.26.0",
+  "version": "0.27.1",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/main",
   "files": [
@@ -33,7 +33,7 @@
     "build": "cross-env MINIFY_BUNDLE=true npm-run-all ~rollup",
     "presize": "npm-run-all build",
     "size": "filesize",
-    "release": "np --no-2fa",
+    "release": "HUSKY_SKIP_HOOKS=1 np --no-2fa",
     "prepublishOnly": "npm-run-all clean build"
   },
   "devDependencies": {
