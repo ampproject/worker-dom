@@ -71,11 +71,29 @@ const ESModules = [
   {
     input: 'output/worker-thread/index.amp.js',
     output: {
-      file: 'dist/amp/worker/worker.mjs',
+      file: 'dist/amp-production/worker/worker.mjs',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
-      banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
+    },
+    plugins: [
+      replace({
+        WORKER_DOM_DEBUG: false,
+      }),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: false,
+      }),
+      ...compilePlugins,
+    ],
+  },
+  {
+    input: 'output/worker-thread/index.amp.js',
+    output: {
+      file: 'dist/amp-debug/worker/worker.mjs',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
     },
     plugins: [
       babelPlugin({
@@ -87,15 +105,54 @@ const ESModules = [
   {
     input: 'output/worker-thread/index.amp.js',
     output: {
-      file: 'dist/amp/worker/worker.js',
+      file: 'dist/amp-production/worker/worker.js',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
-      banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
     },
     plugins: [
+      replace({
+        WORKER_DOM_DEBUG: false,
+      }),
       babelPlugin({
         transpileToES5: true,
+        allowConsole: false,
+      }),
+      ...compilePlugins,
+    ],
+  },
+  {
+    input: 'output/worker-thread/index.amp.js',
+    output: {
+      file: 'dist/amp-debug/worker/worker.js',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+    },
+    plugins: [
+      replace({
+        WORKER_DOM_DEBUG: true,
+      }),
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: true,
+      }),
+    ],
+  },
+  {
+    input: 'output/worker-thread/index.nodom.amp.js',
+    output: {
+      file: 'dist/amp-production/worker/worker.nodom.mjs',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+    },
+    plugins: [
+      replace({
+        WORKER_DOM_DEBUG: false,
+      }),
+      babelPlugin({
+        transpileToES5: false,
         allowConsole: true,
       }),
       ...compilePlugins,
@@ -104,13 +161,15 @@ const ESModules = [
   {
     input: 'output/worker-thread/index.nodom.amp.js',
     output: {
-      file: 'dist/amp/worker/worker.nodom.mjs',
+      file: 'dist/amp-debug/worker/worker.nodom.mjs',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
-      banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
     },
     plugins: [
+      replace({
+        WORKER_DOM_DEBUG: true,
+      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: true,
@@ -120,18 +179,38 @@ const ESModules = [
   {
     input: 'output/worker-thread/index.nodom.amp.js',
     output: {
-      file: 'dist/amp/worker/worker.nodom.js',
+      file: 'dist/amp-production/worker/worker.nodom.js',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
-      banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
     },
     plugins: [
+      replace({
+        WORKER_DOM_DEBUG: false,
+      }),
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: false,
+      }),
+      ...compilePlugins,
+    ],
+  },
+  {
+    input: 'output/worker-thread/index.nodom.amp.js',
+    output: {
+      file: 'dist/amp-debug/worker/worker.nodom.js',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+    },
+    plugins: [
+      replace({
+        WORKER_DOM_DEBUG: true,
+      }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: true,
       }),
-      ...compilePlugins,
     ],
   },
 ];
