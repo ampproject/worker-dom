@@ -33,7 +33,7 @@
     "build": "cross-env MINIFY_BUNDLE=true npm-run-all ~rollup",
     "presize": "npm-run-all build",
     "size": "filesize",
-    "release": "np --no-2fa",
+    "release": "HUSKY_SKIP_HOOKS=1 np --no-2fa",
     "prepublishOnly": "npm-run-all clean build"
   },
   "devDependencies": {
