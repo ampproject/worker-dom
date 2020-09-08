@@ -85,20 +85,30 @@
   },
   "filesize": {
     "track": [
-      "./dist/**/*.js",
-      "./dist/**/*.mjs"
+      "./dist/*.(js|mjs)",
+      "./dist/worker/**/*.(js|mjs)",
+      "./dist/amp-production/**/*.(js|mjs)"
     ],
+    "./dist/main.mjs": {
+      "brotli": "4 kB"
+    },
+    "./dist/main.js": {
+      "brotli": "5 kB"
+    },
     "./dist/worker/worker.mjs": {
       "brotli": "11.7 kB"
     },
     "./dist/worker/worker.js": {
       "brotli": "13.5 kB"
     },
-    "./dist/main.mjs": {
+    "./dist/amp-production/main.mjs": {
       "brotli": "4 kB"
     },
-    "./dist/main.js": {
-      "brotli": "5 kB"
+    "./dist/amp-production/worker/worker.mjs": {
+      "brotli": "13 kB"
+    },
+    "./dist/amp-production/worker/worker.nodom.mjs": {
+      "brotli": "2 kB"
     }
   },
   "esm": {
