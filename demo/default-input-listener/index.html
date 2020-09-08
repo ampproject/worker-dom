@@ -14,10 +14,6 @@
     }
   </style>
   <script src="/dist/main.mjs" type="module"></script>
-  <script src="/dist/main.js" nomodule defer></script>
-  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
-  <!-- Comment either block to enable module/nomodule or disable it. -->
-  <!-- <script src="./dist/main.js" defer></script> -->
 </head>
 <body>
   <div src="/default-input-listener/author.js" id="upgrade-me">
@@ -31,18 +27,6 @@
     import {upgradeElement} from '/dist/main.mjs';
     upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
   </script>
-  <script nomodule async=false defer>
-    document.addEventListener('DOMContentLoaded', function() {
-      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
-    }, false);
-  </script>
-  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
-  <!-- Comment either block to enable module/nomodule or disable it. -->
-  <!-- <script async=false defer>
-    document.addEventListener('DOMContentLoaded', function() {
-      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
-    }, false);
-  </script> -->
   <div id="main-thread-area">
     <p>Main Thread Implementation</p>
     <script>
@@ -55,7 +39,6 @@
 
       setInterval(_ => valueOut.textContent = input.value, 500);
     </script>
-
   </div>
 </body>
 </html>

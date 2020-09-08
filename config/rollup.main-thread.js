@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import compiler from '@ampproject/rollup-plugin-closure-compiler';
-import { terser } from 'rollup-plugin-terser';
 import replace from '@rollup/plugin-replace';
 import { babelPlugin, removeDebugCommandExecutors, removeWorkerWhitespace } from './rollup.plugins.js';
 
@@ -34,11 +32,8 @@ const ESModules = [
         WORKER_DOM_DEBUG: false,
       }),
       babelPlugin({
-        transpileToES5: false,
         allowConsole: false,
       }),
-      compiler(),
-      terser(),
     ],
   },
   {
@@ -54,7 +49,6 @@ const ESModules = [
         WORKER_DOM_DEBUG: true,
       }),
       babelPlugin({
-        transpileToES5: false,
         allowConsole: true,
       }),
     ],
@@ -73,11 +67,8 @@ const ESModules = [
         WORKER_DOM_DEBUG: false,
       }),
       babelPlugin({
-        transpileToES5: false,
         allowConsole: false,
       }),
-      compiler(),
-      terser(),
     ],
   },
   {
@@ -93,57 +84,10 @@ const ESModules = [
         WORKER_DOM_DEBUG: true,
       }),
       babelPlugin({
-        transpileToES5: false,
         allowConsole: true,
       }),
     ],
   },
 ];
 
-const IIFEModules = [
-  {
-    input: 'output/main-thread/index.js',
-    output: {
-      file: 'dist/main.js',
-      format: 'iife',
-      name: 'MainThread',
-      sourcemap: true,
-    },
-    plugins: [
-      removeWorkerWhitespace(),
-      removeDebugCommandExecutors(),
-      replace({
-        WORKER_DOM_DEBUG: false,
-      }),
-      babelPlugin({
-        transpileToES5: true,
-        allowConsole: false,
-      }),
-      compiler(),
-      terser(),
-    ],
-  },
-  {
-    input: 'output/main-thread/index.js',
-    output: {
-      file: 'dist/debug/main.js',
-      format: 'iife',
-      name: 'MainThread',
-      sourcemap: true,
-    },
-    plugins: [
-      removeWorkerWhitespace(),
-      replace({
-        WORKER_DOM_DEBUG: true,
-      }),
-      babelPlugin({
-        transpileToES5: true,
-        allowConsole: true,
-      }),
-      compiler(),
-      terser(),
-    ],
-  },
-];
-
-export default [...ESModules, ...IIFEModules];
+export default [...ESModules];

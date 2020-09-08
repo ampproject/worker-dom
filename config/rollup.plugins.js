@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import MagicString from 'magic-string';
 import fs from 'fs';
 import * as path from 'path';
@@ -27,42 +27,13 @@ const walk = require('acorn-walk');
  * - allowConsole Should we allow `console` methods in the output?
  * - allowPostMessage Should we allow postMessage to/from the Worker?
  */
-export function babelPlugin({ transpileToES5, allowConsole = false, allowPostMessage = true }) {
-  const targets = transpileToES5 ? { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] } : { esmodules: true };
+export function babelPlugin({ allowConsole = false }) {
   const exclude = allowConsole ? ['error', 'warn', 'trace', 'info', 'log', 'time', 'timeEnd'] : [];
 
   return babel({
     exclude: 'node_modules/**',
-    presets: [
-      [
-        '@babel/env',
-        {
-          targets,
-          loose: !transpileToES5,
-          modules: false,
-          bugfixes: true,
-        },
-      ],
-    ],
-    plugins: [
-      ['@babel/plugin-proposal-object-rest-spread'],
-      ['@babel/proposal-class-properties'],
-      [
-        'babel-plugin-minify-replace',
-        {
-          replacements: [
-            {
-              identifierName: '__ALLOW_POST_MESSAGE__',
-              replacement: {
-                type: 'booleanLiteral',
-                value: allowPostMessage,
-              },
-            },
-          ],
-        },
-      ],
-      ['babel-plugin-transform-remove-console', { exclude }],
-    ],
+    babelHelpers: 'bundled',
+    plugins: [['babel-plugin-transform-remove-console', { exclude }]],
   });
 }
 

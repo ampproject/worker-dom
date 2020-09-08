@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="todomvc.css">
   <style>[v-cloak] { display: none; }</style>
   <script src="/dist/main.mjs" type="module"></script>
-  <script src="/dist/main.js" nomodule defer></script>
 </head>
 <body>
   <div src="app.js" id="upgrade-me">
@@ -64,11 +63,6 @@
   <script type="module">
     import {upgradeElement} from '/dist/main.mjs';
     upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
-  </script>
-  <script nomodule async="false" defer>
-    document.addEventListener('DOMContentLoaded', function() {
-      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
-    }, false);
   </script>
 </body>
 </html>
