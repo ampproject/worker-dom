@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "obj-str": "1.0.3",
-    "preact": "10.4.4"
+    "preact": "10.4.8"
   },
   "devDependencies": {
     "@babel/core": "7.10.2",
@@ -24,7 +24,7 @@
     "webpack-cli": "3.3.12"
   },
   "volta": {
-    "node": "14.9.0",
+    "node": "14.10.0",
     "yarn": "1.22.5"
   }
 }
