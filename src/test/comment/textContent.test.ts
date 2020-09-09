@@ -14,47 +14,49 @@
  * limitations under the License.
  */
 
-import anyTest, { TestInterface } from 'ava';
-import { Comment } from '../../worker-thread/dom/Comment';
+import { suite, Context } from 'uvu';
+import * as assert from 'uvu/assert';
 import { createTestingDocument } from '../DocumentCreation';
+import { Document } from '../../worker-thread/dom/Document';
 
-const test = anyTest as TestInterface<{
-  comment: Comment;
-}>;
-
-test.beforeEach((t) => {
-  const document = createTestingDocument();
-
-  t.context = {
-    comment: document.createComment('default value'),
-  };
+const test = suite<Context>('textContent', {
+  document: Document,
 });
 
-test('get textContent', (t) => {
-  const { comment } = t.context;
-
-  t.is(comment.textContent, 'default value');
+test.before.each((context) => {
+  context.document = createTestingDocument();
 });
 
-test('set textContent', (t) => {
-  const { comment } = t.context;
+test('get textContent', (context) => {
+  const { document } = context;
+  const comment = document.createComment('default value');
 
-  t.is(comment.textContent, 'default value');
+  assert.is(comment.textContent, 'default value');
+});
+
+test('set textContent', (context) => {
+  const { document } = context;
+  const comment = document.createComment('default value');
+
+  assert.is(comment.textContent, 'default value');
   comment.textContent = 'new value';
-  t.is(comment.textContent, 'new value');
+  assert.is(comment.textContent, 'new value');
 });
 
-test('textContent matches data', (t) => {
-  const { comment } = t.context;
+test('textContent matches data', (context) => {
+  const { document } = context;
+  const comment = document.createComment('default value');
 
-  t.is(comment.data, 'default value');
-  t.is(comment.textContent, 'default value');
+  assert.is(comment.data, 'default value');
+  assert.is(comment.textContent, 'default value');
 
   comment.data = 'data setter';
-  t.is(comment.data, 'data setter');
-  t.is(comment.textContent, 'data setter');
+  assert.is(comment.data, 'data setter');
+  assert.is(comment.textContent, 'data setter');
 
   comment.textContent = 'textContent setter';
-  t.is(comment.data, 'textContent setter');
-  t.is(comment.textContent, 'textContent setter');
+  assert.is(comment.data, 'textContent setter');
+  assert.is(comment.textContent, 'textContent setter');
 });
+
+test.run();

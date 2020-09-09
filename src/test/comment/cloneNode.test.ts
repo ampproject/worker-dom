@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-import anyTest, { TestInterface } from 'ava';
-import { Element } from '../../worker-thread/dom/Element';
-import { Comment } from '../../worker-thread/dom/Comment';
+import { suite, Context } from 'uvu';
+import * as assert from 'uvu/assert';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { createTestingDocument } from '../DocumentCreation';
+import { Element } from '../../worker-thread/dom/Element';
+import { Comment } from '../../worker-thread/dom/Comment';
 
-const test = anyTest as TestInterface<{
-  parent: Element;
-  comment: Comment;
-}>;
+const test = suite<Context>('cloneNode', {
+  parent: Element,
+  comment: Comment,
+});
 
-test.beforeEach((t) => {
+test.before.each((context) => {
   const document = createTestingDocument();
   const parent = document.createElement('div');
   const comment = document.createComment('Super Comment');
@@ -33,29 +34,30 @@ test.beforeEach((t) => {
   parent.appendChild(comment);
   document.body.appendChild(parent);
 
-  t.context = {
-    parent,
-    comment,
-  };
+  context.parent = parent;
+  context.comment = comment;
 });
 
-test('cloneNode should create a new node with the same tagName', (t) => {
-  const { comment } = t.context;
+test('cloneNode should create a new node with the same tagName', (context) => {
+  const { comment } = context;
 
-  t.is(comment.cloneNode().tagName, comment.tagName);
+  assert.is(comment.cloneNode().tagName, comment.tagName);
 });
 
-test('cloneNode should create a new node with a different index', (t) => {
-  const { comment } = t.context;
+test('cloneNode should create a new node with a different index', (context) => {
+  const { comment } = context;
+  const clone = comment.cloneNode();
 
-  t.not(comment.cloneNode()[TransferrableKeys.index], comment[TransferrableKeys.index]);
+  assert.not.equal(clone[TransferrableKeys.index], comment[TransferrableKeys.index]);
 });
 
-test('cloneNode should create a new node with the same children when the deep flag is set', (t) => {
-  const { parent, comment } = t.context;
+test('cloneNode should create a new node with the same children when the deep flag is set', (context) => {
+  const { parent, comment } = context;
   const clone = parent.cloneNode(true);
 
-  t.is(parent.childNodes.length, clone.childNodes.length);
-  t.is(comment.tagName, clone.childNodes[0].tagName);
-  t.is(comment.textContent, clone.childNodes[0].textContent);
+  assert.is(parent.childNodes.length, clone.childNodes.length);
+  assert.is(comment.tagName, clone.childNodes[0].tagName);
+  assert.is(comment.textContent, clone.childNodes[0].textContent);
 });
+
+test.run();
