@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import MagicString from 'magic-string';
 import fs from 'fs';
 import * as path from 'path';
@@ -28,19 +28,22 @@ const walk = require('acorn-walk');
  * - allowPostMessage Should we allow postMessage to/from the Worker?
  */
 export function babelPlugin({ transpileToES5, allowConsole = false, allowPostMessage = true }) {
-  const targets = transpileToES5 ? { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] } : { esmodules: true };
+  const targets = transpileToES5 ? { browsers: ['last 2 versions', 'ie >= 10', 'safari >= 7'] } : { esmodules: true };
   const exclude = allowConsole ? ['error', 'warn', 'trace', 'info', 'log', 'time', 'timeEnd'] : [];
 
   return babel({
     exclude: 'node_modules/**',
+    babelHelpers: 'bundled', // TODO: maybe switch to 'runtime'? Would require consumers use a bundler.
     presets: [
       [
-        '@babel/env',
+        '@babel/preset-env',
         {
           targets,
           loose: !transpileToES5,
           modules: false,
           bugfixes: true,
+          useBuiltIns: transpileToES5 ? 'usage' : false,
+          corejs: transpileToES5 ? '3.6' : undefined,
         },
       ],
     ],

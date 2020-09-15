@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
 import replace from '@rollup/plugin-replace';
@@ -111,6 +112,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      nodeResolve(),
       replace({
         WORKER_DOM_DEBUG: false,
       }),
@@ -130,6 +132,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      nodeResolve(),
       replace({
         WORKER_DOM_DEBUG: true,
       }),
@@ -185,6 +188,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      nodeResolve(),
       replace({
         WORKER_DOM_DEBUG: false,
       }),
@@ -204,6 +208,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      nodeResolve(),
       replace({
         WORKER_DOM_DEBUG: true,
       }),
@@ -225,6 +230,7 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
+      nodeResolve(),
       replace({
         WORKER_DOM_DEBUG: false,
       }),
@@ -244,6 +250,7 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
+      nodeResolve(),
       replace({
         WORKER_DOM_DEBUG: true,
       }),
