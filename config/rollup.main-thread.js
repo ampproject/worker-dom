@@ -140,8 +140,6 @@ const IIFEModules = [
         transpileToES5: true,
         allowConsole: true,
       }),
-      compiler(),
-      terser(),
     ],
   },
 ];
