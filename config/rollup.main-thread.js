@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import alias from '@rollup/plugin-alias';
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
 import replace from '@rollup/plugin-replace';
@@ -118,7 +117,6 @@ const IIFEModules = [
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
       replace({ WORKER_DOM_DEBUG: false }),
-      alias({ entries: [{ find: '../polyfills.js', replacemenet: '../empty-polyfill.js' }] }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: false,
@@ -140,7 +138,6 @@ const IIFEModules = [
       nodeResolve(),
       removeWorkerWhitespace(),
       replace({ WORKER_DOM_DEBUG: true }),
-      alias({ entries: [{ find: '../polyfills.js', replacemenet: '../empty-polyfill.js' }] }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: true,

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import '../polyfills';
 import { fetchAndInstall } from './install';
 import { ExportedWorker } from './exported-worker';
 

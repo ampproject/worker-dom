@@ -34,10 +34,7 @@ const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
  * @param debug
  */
 export function fetchAndInstall(baseElement: HTMLElement, config: InboundWorkerDOMConfiguration): Promise<ExportedWorker | null> {
-  const fetchPromise = Promise.all([
-    fetch(config.domURL).then((response) => response.text()),
-    fetch(config.authorURL).then((response) => response.text()),
-  ]);
+  const fetchPromise = Promise.all([xhrPromise(config.domURL), xhrPromise(config.authorURL)]);
   return install(fetchPromise, baseElement, config);
 }
 
@@ -81,5 +78,26 @@ export function install(
       return new ExportedWorker(workerContext, normalizedConfig);
     }
     return null;
+  });
+}
+
+function xhrPromise(url: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = () => {
+      // Only run if the request is complete
+      if (xhr.readyState !== 4) {
+        return;
+      }
+
+      // Process our return data
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(xhr.responseText);
+      } else {
+        reject(xhr.responseText);
+      }
+    };
+    xhr.open('GET', url);
+    xhr.send();
   });
 }
