@@ -18,6 +18,7 @@ import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
 import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import { babelPlugin, removeDebugCommandExecutors, removeWorkerWhitespace } from './rollup.plugins.js';
 
 const ESModules = [
@@ -29,6 +30,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      commonjs(),
       nodeResolve(),
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
@@ -51,6 +53,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      commonjs(),
       nodeResolve(),
       removeWorkerWhitespace(),
       replace({
@@ -70,6 +73,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      commonjs(),
       nodeResolve(),
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
@@ -92,6 +96,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      commonjs(),
       nodeResolve(),
       removeWorkerWhitespace(),
       replace({
@@ -115,6 +120,7 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
+      commonjs(),
       nodeResolve(),
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
@@ -138,6 +144,7 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
+      commonjs(),
       nodeResolve(),
       removeWorkerWhitespace(),
       replace({

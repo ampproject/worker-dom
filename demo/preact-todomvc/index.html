@@ -6,11 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="base.css" />
   <link rel="stylesheet" href="todomvc.css" />
-  <script src="/dist/main.mjs" type="module"></script>
-  <script src="/dist/main.js" nomodule defer></script>
   <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
   <!-- Comment either block to enable module/nomodule or disable it. -->
-  <!-- <script src="/dist/main.js" defer></script> -->
+  <script src="/dist/debug/main.js" defer></script>
 </head>
 <body>
   <div src="app.js" id="upgrade-me" class="todoapp"></div>
@@ -19,21 +17,16 @@
     <p>Created by <a href="http://github.com/kristoferbaxter/">kristoferbaxter</a></p>
     <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
   </footer>
-  <script type="module">
-    import {upgradeElement} from '/dist/main.mjs';
-    upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
-  </script>
-  <script nomodule async=false defer>
-    document.addEventListener('DOMContentLoaded', function() {
-      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
-    }, false);
-  </script>
   <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
   <!-- Comment either block to enable module/nomodule or disable it. -->
-  <!-- <script async=false defer>
+  <script async=false defer>
     document.addEventListener('DOMContentLoaded', function() {
-      MainThread.upgradeElement(document.getElementById('upgrade-me'), './dist/worker/worker.js');
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.js').then(function (worker) {
+        worker.onerror = function(e) {
+          console.error(e)
+        }
+      });
     }, false);
-  </script> -->
+  </script>
 </body>
 </html>

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
 import { MutatorProcessor } from './mutator';
 import { NodeContext } from './nodes';
@@ -36,7 +35,6 @@ const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
  */
 export function fetchAndInstall(baseElement: HTMLElement, config: InboundWorkerDOMConfiguration): Promise<ExportedWorker | null> {
   const fetchPromise = Promise.all([
-    // TODO(KB): Fetch Polyfill for IE11.
     fetch(config.domURL).then((response) => response.text()),
     fetch(config.authorURL).then((response) => response.text()),
   ]);
