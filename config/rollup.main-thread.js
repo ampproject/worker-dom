@@ -30,8 +30,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      commonjs(),
-      nodeResolve(),
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
       replace({
@@ -53,8 +51,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      commonjs(),
-      nodeResolve(),
       removeWorkerWhitespace(),
       replace({
         WORKER_DOM_DEBUG: true,
@@ -73,8 +69,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      commonjs(),
-      nodeResolve(),
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
       replace({
@@ -96,8 +90,6 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      commonjs(),
-      nodeResolve(),
       removeWorkerWhitespace(),
       replace({
         WORKER_DOM_DEBUG: true,
