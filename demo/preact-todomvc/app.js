@@ -14,1623 +14,769 @@
  * limitations under the License.
  */
 
-(function () {
+!(function () {
   'use strict';
-
-  function _extends() {
-    _extends =
-      Object.assign ||
-      function (target) {
-        for (var i = 1; i < arguments.length; i++) {
-          var source = arguments[i];
-
-          for (var key in source) {
-            if (Object.prototype.hasOwnProperty.call(source, key)) {
-              target[key] = source[key];
-            }
-          }
-        }
-
-        return target;
-      };
-
-    return _extends.apply(this, arguments);
+  function e(e, t, n) {
+    (this.nodeName = e), (this.attributes = t), (this.children = n), (this.key = t && t.key);
   }
-
-  function _inheritsLoose(subClass, superClass) {
-    subClass.prototype = Object.create(superClass.prototype);
-    subClass.prototype.constructor = subClass;
-    subClass.__proto__ = superClass;
+  function t(t, n) {
+    var o = [],
+      r = void 0,
+      i = void 0,
+      l = void 0,
+      a = void 0;
+    for (a = arguments.length; a-- > 2; ) Z.push(arguments[a]);
+    for (n && n.children && (Z.length || Z.push(n.children), delete n.children); Z.length; )
+      if ((i = Z.pop()) instanceof Array) for (a = i.length; a--; ) Z.push(i[a]);
+      else
+        null != i &&
+          i !== !1 &&
+          (('number' != typeof i && i !== !0) || (i += ''), (l = 'string' == typeof i), l && r ? (o[o.length - 1] += i) : (o.push(i), (r = l)));
+    var s = new e(t, n || void 0, o);
+    return Y.vnode && Y.vnode(s), s;
   }
-
-  function _assertThisInitialized(self) {
-    if (self === void 0) {
-      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }
-
-    return self;
+  function n(e, t) {
+    if (t) for (var n in t) e[n] = t[n];
+    return e;
   }
-
-  /** Virtual DOM Node */
-  function VNode() {}
-  /** Global options
-   *	@public
-   *	@namespace options {Object}
-   */
-
-  var options = {
-    /** If `true`, `prop` changes trigger synchronous component updates.
-     *	@name syncComponentUpdates
-     *	@type Boolean
-     *	@default true
-     */
-    //syncComponentUpdates: true,
-    /** Processes all created VNodes.
-     *	@param {VNode} vnode	A newly-created VNode to normalize/process
-     */
-    //vnode(vnode) { }
-    /** Hook invoked after a component is mounted. */
-    // afterMount(component) { }
-    /** Hook invoked after the DOM is updated with a component's latest render. */
-    // afterUpdate(component) { }
-    /** Hook invoked immediately before a component is unmounted. */
-    // beforeUnmount(component) { }
-  };
-  var stack = [];
-  var EMPTY_CHILDREN = [];
-  /**
-   * JSX/hyperscript reviver.
-   * @see http://jasonformat.com/wtf-is-jsx
-   * Benchmarks: https://esbench.com/bench/57ee8f8e330ab09900a1a1a0
-   *
-   * Note: this is exported as both `h()` and `createElement()` for compatibility reasons.
-   *
-   * Creates a VNode (virtual DOM element). A tree of VNodes can be used as a lightweight representation
-   * of the structure of a DOM tree. This structure can be realized by recursively comparing it against
-   * the current _actual_ DOM structure, and applying only the differences.
-   *
-   * `h()`/`createElement()` accepts an element name, a list of attributes/props,
-   * and optionally children to append to the element.
-   *
-   * @example The following DOM tree
-   *
-   * `<div id="foo" name="bar">Hello!</div>`
-   *
-   * can be constructed using this function as:
-   *
-   * `h('div', { id: 'foo', name : 'bar' }, 'Hello!');`
-   *
-   * @param {string} nodeName	An element name. Ex: `div`, `a`, `span`, etc.
-   * @param {Object} attributes	Any attributes/props to set on the created element.
-   * @param rest			Additional arguments are taken to be children to append. Can be infinitely nested Arrays.
-   *
-   * @public
-   */
-
-  function h(nodeName, attributes) {
-    var children = EMPTY_CHILDREN,
-      lastSimple,
-      child,
-      simple,
-      i;
-
-    for (i = arguments.length; i-- > 2; ) {
-      stack.push(arguments[i]);
-    }
-
-    if (attributes && attributes.children != null) {
-      if (!stack.length) stack.push(attributes.children);
-      delete attributes.children;
-    }
-
-    while (stack.length) {
-      if ((child = stack.pop()) && child.pop !== undefined) {
-        for (i = child.length; i--; ) {
-          stack.push(child[i]);
+  function o(e) {
+    return n({}, e);
+  }
+  function r(e, t) {
+    for (var n = t.split('.'), o = 0; o < n.length && e; o++) e = e[n[o]];
+    return e;
+  }
+  function i(e) {
+    return 'function' == typeof e;
+  }
+  function l(e) {
+    return 'string' == typeof e;
+  }
+  function a(e) {
+    var t = '';
+    for (var n in e) e[n] && (t && (t += ' '), (t += n));
+    return t;
+  }
+  function s(e, t, n) {
+    var o = t.split('.');
+    return function (t) {
+      for (
+        var i = (t && t.target) || this, a = {}, s = a, c = l(n) ? r(t, n) : i.nodeName ? (i.type.match(/^che|rad/) ? i.checked : i.value) : t, u = 0;
+        u < o.length - 1;
+        u++
+      )
+        s = s[o[u]] || (s[o[u]] = (!u && e.state[o[u]]) || {});
+      (s[o[u]] = c), e.setState(a);
+    };
+  }
+  function c(e) {
+    !e._dirty && (e._dirty = !0) && 1 == fe.push(e) && (Y.debounceRendering || ne)(u);
+  }
+  function u() {
+    var e = void 0,
+      t = fe;
+    for (fe = []; (e = t.pop()); ) e._dirty && P(e);
+  }
+  function f(e) {
+    var t = e && e.nodeName;
+    return t && i(t) && !(t.prototype && t.prototype.render);
+  }
+  function d(e, t) {
+    return e.nodeName(m(e), t || ae);
+  }
+  function p(e, t) {
+    return l(t)
+      ? e instanceof Text
+      : l(t.nodeName)
+      ? !e._componentConstructor && h(e, t.nodeName)
+      : i(t.nodeName)
+      ? !e._componentConstructor || e._componentConstructor === t.nodeName
+      : void 0;
+  }
+  function h(e, t) {
+    return e.normalizedNodeName === t || ee(e.nodeName) === ee(t);
+  }
+  function m(e) {
+    var t = o(e.attributes);
+    t.children = e.children;
+    var n = e.nodeName.defaultProps;
+    if (n) for (var r in n) void 0 === t[r] && (t[r] = n[r]);
+    return t;
+  }
+  function v(e) {
+    var t = e.parentNode;
+    t && t.removeChild(e);
+  }
+  function y(e, t, n, o, r) {
+    if (('className' === t && (t = 'class'), 'class' === t && o && 'object' === (void 0 === o ? 'undefined' : de(o)) && (o = a(o)), 'key' === t));
+    else if ('class' !== t || r)
+      if ('style' === t) {
+        if (((!o || l(o) || l(n)) && (e.style.cssText = o || ''), o && 'object' === (void 0 === o ? 'undefined' : de(o)))) {
+          if (!l(n)) for (var s in n) s in o || (e.style[s] = '');
+          for (var c in o) e.style[c] = 'number' != typeof o[c] || ce[c] ? o[c] : o[c] + 'px';
         }
-      } else {
-        if (typeof child === 'boolean') child = null;
-
-        if ((simple = typeof nodeName !== 'function')) {
-          if (child == null) child = '';
-          else if (typeof child === 'number') child = String(child);
-          else if (typeof child !== 'string') simple = false;
-        }
-
-        if (simple && lastSimple) {
-          children[children.length - 1] += child;
-        } else if (children === EMPTY_CHILDREN) {
-          children = [child];
-        } else {
-          children.push(child);
-        }
-
-        lastSimple = simple;
+      } else if ('dangerouslySetInnerHTML' === t) e.innerHTML = (o && o.__html) || '';
+      else if ('o' == t[0] && 'n' == t[1]) {
+        var u = e._listeners || (e._listeners = {});
+        (t = ee(t.substring(2))), o ? u[t] || e.addEventListener(t, g, !!ue[t]) : u[t] && e.removeEventListener(t, g, !!ue[t]), (u[t] = o);
+      } else if ('list' !== t && 'type' !== t && !r && t in e) b(e, t, null == o ? '' : o), (null != o && o !== !1) || e.removeAttribute(t);
+      else {
+        var f = r && t.match(/^xlink\:?(.+)/);
+        null == o || o === !1
+          ? f
+            ? e.removeAttributeNS('http://www.w3.org/1999/xlink', ee(f[1]))
+            : e.removeAttribute(t)
+          : 'object' === (void 0 === o ? 'undefined' : de(o)) ||
+            i(o) ||
+            (f ? e.setAttributeNS('http://www.w3.org/1999/xlink', ee(f[1]), o) : e.setAttribute(t, o));
       }
-    }
-
-    var p = new VNode();
-    p.nodeName = nodeName;
-    p.children = children;
-    p.attributes = attributes == null ? undefined : attributes;
-    p.key = attributes == null ? undefined : attributes.key; // if a "vnode hook" is defined, pass every created VNode to it
-
-    if (options.vnode !== undefined) options.vnode(p);
-    return p;
+    else e.className = o || '';
   }
-  /**
-   *  Copy all properties from `props` onto `obj`.
-   *  @param {Object} obj		Object onto which properties should be copied.
-   *  @param {Object} props	Object from which to copy properties.
-   *  @returns obj
-   *  @private
-   */
-
-  function extend(obj, props) {
-    for (var i in props) {
-      obj[i] = props[i];
-    }
-
-    return obj;
-  }
-  /**
-   * Call a function asynchronously, as soon as possible. Makes
-   * use of HTML Promise to schedule the callback if available,
-   * otherwise falling back to `setTimeout` (mainly for IE<11).
-   *
-   * @param {Function} callback
-   */
-
-  var defer = typeof Promise == 'function' ? Promise.resolve().then.bind(Promise.resolve()) : setTimeout;
-  var IS_NON_DIMENSIONAL = /acit|ex(?:s|g|n|p|$)|rph|ows|mnc|ntw|ine[ch]|zoo|^ord/i;
-  /** Managed queue of dirty components to be re-rendered */
-
-  var items = [];
-
-  function enqueueRender(component) {
-    if (!component._dirty && (component._dirty = true) && items.push(component) == 1) {
-      (options.debounceRendering || defer)(rerender);
-    }
-  }
-
-  function rerender() {
-    var p,
-      list = items;
-    items = [];
-
-    while ((p = list.pop())) {
-      if (p._dirty) renderComponent(p);
-    }
-  }
-  /**
-   * Check if two nodes are equivalent.
-   *
-   * @param {Node} node			DOM Node to compare
-   * @param {VNode} vnode			Virtual DOM node to compare
-   * @param {boolean} [hyrdating=false]	If true, ignores component constructors when comparing.
-   * @private
-   */
-
-  function isSameNodeType(node, vnode, hydrating) {
-    if (typeof vnode === 'string' || typeof vnode === 'number') {
-      return node.splitText !== undefined;
-    }
-
-    if (typeof vnode.nodeName === 'string') {
-      return !node._componentConstructor && isNamedNode(node, vnode.nodeName);
-    }
-
-    return hydrating || node._componentConstructor === vnode.nodeName;
-  }
-  /**
-   * Check if an Element has a given nodeName, case-insensitively.
-   *
-   * @param {Element} node	A DOM Element to inspect the name of.
-   * @param {String} nodeName	Unnormalized name to compare against.
-   */
-
-  function isNamedNode(node, nodeName) {
-    return node.normalizedNodeName === nodeName || node.nodeName.toLowerCase() === nodeName.toLowerCase();
-  }
-  /**
-   * Reconstruct Component-style `props` from a VNode.
-   * Ensures default/fallback values from `defaultProps`:
-   * Own-properties of `defaultProps` not present in `vnode.attributes` are added.
-   *
-   * @param {VNode} vnode
-   * @returns {Object} props
-   */
-
-  function getNodeProps(vnode) {
-    var props = extend({}, vnode.attributes);
-    props.children = vnode.children;
-    var defaultProps = vnode.nodeName.defaultProps;
-
-    if (defaultProps !== undefined) {
-      for (var i in defaultProps) {
-        if (props[i] === undefined) {
-          props[i] = defaultProps[i];
-        }
-      }
-    }
-
-    return props;
-  }
-  /** Create an element with the given nodeName.
-   *	@param {String} nodeName
-   *	@param {Boolean} [isSvg=false]	If `true`, creates an element within the SVG namespace.
-   *	@returns {Element} node
-   */
-
-  function createNode(nodeName, isSvg) {
-    var node = isSvg ? document.createElementNS('http://www.w3.org/2000/svg', nodeName) : document.createElement(nodeName);
-    node.normalizedNodeName = nodeName;
-    return node;
-  }
-  /** Remove a child node from its parent if attached.
-   *	@param {Element} node		The node to remove
-   */
-
-  function removeNode(node) {
-    var parentNode = node.parentNode;
-    if (parentNode) parentNode.removeChild(node);
-  }
-  /** Set a named attribute on the given Node, with special behavior for some names and event handlers.
-   *	If `value` is `null`, the attribute/handler will be removed.
-   *	@param {Element} node	An element to mutate
-   *	@param {string} name	The name/key to set, such as an event or attribute name
-   *	@param {any} old	The last value that was set for this name/node pair
-   *	@param {any} value	An attribute value, such as a function to be used as an event handler
-   *	@param {Boolean} isSvg	Are we currently diffing inside an svg?
-   *	@private
-   */
-
-  function setAccessor(node, name, old, value, isSvg) {
-    if (name === 'className') name = 'class';
-
-    if (name === 'key') {
-      // ignore
-    } else if (name === 'ref') {
-      if (old) old(null);
-      if (value) value(node);
-    } else if (name === 'class' && !isSvg) {
-      node.className = value || '';
-    } else if (name === 'style') {
-      if (!value || typeof value === 'string' || typeof old === 'string') {
-        node.style.cssText = value || '';
-      }
-
-      if (value && typeof value === 'object') {
-        if (typeof old !== 'string') {
-          for (var i in old) {
-            if (!(i in value)) node.style[i] = '';
-          }
-        }
-
-        for (var i in value) {
-          node.style[i] = typeof value[i] === 'number' && IS_NON_DIMENSIONAL.test(i) === false ? value[i] + 'px' : value[i];
-        }
-      }
-    } else if (name === 'dangerouslySetInnerHTML') {
-      if (value) node.innerHTML = value.__html || '';
-    } else if (name[0] == 'o' && name[1] == 'n') {
-      var useCapture = name !== (name = name.replace(/Capture$/, ''));
-      name = name.toLowerCase().substring(2);
-
-      if (value) {
-        if (!old) node.addEventListener(name, eventProxy, useCapture);
-      } else {
-        node.removeEventListener(name, eventProxy, useCapture);
-      }
-
-      (node._listeners || (node._listeners = {}))[name] = value;
-    } else if (name !== 'list' && name !== 'type' && !isSvg && name in node) {
-      setProperty(node, name, value == null ? '' : value);
-      if (value == null || value === false) node.removeAttribute(name);
-    } else {
-      var ns = isSvg && name !== (name = name.replace(/^xlink\:?/, ''));
-
-      if (value == null || value === false) {
-        if (ns) node.removeAttributeNS('http://www.w3.org/1999/xlink', name.toLowerCase());
-        else node.removeAttribute(name);
-      } else if (typeof value !== 'function') {
-        if (ns) node.setAttributeNS('http://www.w3.org/1999/xlink', name.toLowerCase(), value);
-        else node.setAttribute(name, value);
-      }
-    }
-  }
-  /** Attempt to set a DOM property to the given value.
-   *	IE & FF throw for certain property-value combinations.
-   */
-
-  function setProperty(node, name, value) {
+  function b(e, t, n) {
     try {
-      node[name] = value;
+      e[t] = n;
     } catch (e) {}
   }
-  /** Proxy an event to hooked event handlers
-   *	@private
-   */
-
-  function eventProxy(e) {
-    return this._listeners[e.type]((options.event && options.event(e)) || e);
+  function g(e) {
+    return this._listeners[e.type]((Y.event && Y.event(e)) || e);
   }
-  /** Queue of components that have been mounted and are awaiting componentDidMount */
-
-  var mounts = [];
-  /** Diff recursion count, used to track the end of the diff cycle. */
-
-  var diffLevel = 0;
-  /** Global flag indicating if the diff is currently within an SVG */
-
-  var isSvgMode = false;
-  /** Global flag indicating if the diff is performing hydration */
-
-  var hydrating = false;
-  /** Invoke queued componentDidMount lifecycle methods */
-
-  function flushMounts() {
-    var c;
-
-    while ((c = mounts.pop())) {
-      if (options.afterMount) options.afterMount(c);
-      if (c.componentDidMount) c.componentDidMount();
+  function _(e) {
+    if ((v(e), e instanceof Element)) {
+      e._component = e._componentConstructor = null;
+      var t = e.normalizedNodeName || ee(e.nodeName);
+      (pe[t] || (pe[t] = [])).push(e);
     }
   }
-  /** Apply differences in a given vnode (and it's deep children) to a real DOM Node.
-   *	@param {Element} [dom=null]		A DOM node to mutate into the shape of the `vnode`
-   *	@param {VNode} vnode			A VNode (with descendants forming a tree) representing the desired DOM structure
-   *	@returns {Element} dom			The created/mutated element
-   *	@private
-   */
-
-  function diff(dom, vnode, context, mountAll, parent, componentRoot) {
-    // diffLevel having been 0 here indicates initial entry into the diff (not a subdiff)
-    if (!diffLevel++) {
-      // when first starting the diff, check if we're diffing an SVG or within an SVG
-      isSvgMode = parent != null && parent.ownerSVGElement !== undefined; // hydration is indicated by the existing element to be diffed not having a prop cache
-
-      hydrating = dom != null && !('__preactattr_' in dom);
-    }
-
-    var ret = idiff(dom, vnode, context, mountAll, componentRoot); // append the element if its a new parent
-
-    if (parent && ret.parentNode !== parent) parent.appendChild(ret); // diffLevel being reduced to 0 means we're exiting the diff
-
-    if (!--diffLevel) {
-      hydrating = false; // invoke queued componentDidMount lifecycle methods
-
-      if (!componentRoot) flushMounts();
-    }
-
-    return ret;
+  function w(e, t) {
+    var n = ee(e),
+      o = (pe[n] && pe[n].pop()) || (t ? document.createElementNS('http://www.w3.org/2000/svg', e) : document.createElement(e));
+    return (o.normalizedNodeName = n), o;
   }
-  /** Internals of `diff()`, separated to allow bypassing diffLevel / mount flushing. */
-
-  function idiff(dom, vnode, context, mountAll, componentRoot) {
-    var out = dom,
-      prevSvgMode = isSvgMode; // empty values (null, undefined, booleans) render as empty Text nodes
-
-    if (vnode == null || typeof vnode === 'boolean') vnode = ''; // Fast case: Strings & Numbers create/update Text nodes.
-
-    if (typeof vnode === 'string' || typeof vnode === 'number') {
-      // update if it's already a Text node:
-      if (dom && dom.splitText !== undefined && dom.parentNode && (!dom._component || componentRoot)) {
-        /* istanbul ignore if */
-
-        /* Browser quirk that can't be covered: https://github.com/developit/preact/commit/fd4f21f5c45dfd75151bd27b4c217d8003aa5eb9 */
-        if (dom.nodeValue != vnode) {
-          dom.nodeValue = vnode;
-        }
-      } else {
-        // it wasn't a Text node: replace it with one and recycle the old Element
-        out = document.createTextNode(vnode);
-
-        if (dom) {
-          if (dom.parentNode) dom.parentNode.replaceChild(out, dom);
-          recollectNodeTree(dom, true);
-        }
-      }
-
-      out['__preactattr_'] = true;
-      return out;
-    } // If the VNode represents a Component, perform a component diff:
-
-    var vnodeName = vnode.nodeName;
-
-    if (typeof vnodeName === 'function') {
-      return buildComponentFromVNode(dom, vnode, context, mountAll);
-    } // Tracks entering and exiting SVG namespace when descending through the tree.
-
-    isSvgMode = vnodeName === 'svg' ? true : vnodeName === 'foreignObject' ? false : isSvgMode; // If there's no existing element or it's the wrong type, create a new one:
-
-    vnodeName = String(vnodeName);
-
-    if (!dom || !isNamedNode(dom, vnodeName)) {
-      out = createNode(vnodeName, isSvgMode);
-
-      if (dom) {
-        // move children into the replacement node
-        while (dom.firstChild) {
-          out.appendChild(dom.firstChild);
-        } // if the previous Element was mounted into the DOM, replace it inline
-
-        if (dom.parentNode) dom.parentNode.replaceChild(out, dom); // recycle the old element (skips non-Element node types)
-
-        recollectNodeTree(dom, true);
-      }
-    }
-
-    var fc = out.firstChild,
-      props = out['__preactattr_'],
-      vchildren = vnode.children;
-
-    if (props == null) {
-      props = out['__preactattr_'] = {};
-
-      for (var a = out.attributes, i = a.length; i--; ) {
-        props[a[i].name] = a[i].value;
-      }
-    } // Optimization: fast-path for elements containing a single TextNode:
-
-    if (
-      !hydrating &&
-      vchildren &&
-      vchildren.length === 1 &&
-      typeof vchildren[0] === 'string' &&
-      fc != null &&
-      fc.splitText !== undefined &&
-      fc.nextSibling == null
-    ) {
-      if (fc.nodeValue != vchildren[0]) {
-        fc.nodeValue = vchildren[0];
-      }
-    } // otherwise, if there are existing or new children, diff them:
-    else if ((vchildren && vchildren.length) || fc != null) {
-      innerDiffNode(out, vchildren, context, mountAll, hydrating || props.dangerouslySetInnerHTML != null);
-    } // Apply attributes/props from VNode to the DOM Element:
-
-    diffAttributes(out, vnode.attributes, props); // restore previous SVG mode: (in case we're exiting an SVG namespace)
-
-    isSvgMode = prevSvgMode;
-    return out;
+  function C() {
+    for (var e = void 0; (e = he.pop()); ) Y.afterMount && Y.afterMount(e), e.componentDidMount && e.componentDidMount();
   }
-  /** Apply child and attribute changes between a VNode and a DOM Node to the DOM.
-   *	@param {Element} dom			Element whose children should be compared & mutated
-   *	@param {Array} vchildren		Array of VNodes to compare to `dom.childNodes`
-   *	@param {Object} context			Implicitly descendant context object (from most recent `getChildContext()`)
-   *	@param {Boolean} mountAll
-   *	@param {Boolean} isHydrating	If `true`, consumes externally created elements similar to hydration
-   */
-
-  function innerDiffNode(dom, vchildren, context, mountAll, isHydrating) {
-    var originalChildren = dom.childNodes,
-      children = [],
-      keyed = {},
-      keyedLen = 0,
-      min = 0,
-      len = originalChildren.length,
-      childrenLen = 0,
-      vlen = vchildren ? vchildren.length : 0,
-      j,
-      c,
-      f,
-      vchild,
-      child; // Build up a map of keyed children and an Array of unkeyed children:
-
-    if (len !== 0) {
-      for (var i = 0; i < len; i++) {
-        var _child = originalChildren[i],
-          props = _child['__preactattr_'],
-          key = vlen && props ? (_child._component ? _child._component.__key : props.key) : null;
-
-        if (key != null) {
-          keyedLen++;
-          keyed[key] = _child;
-        } else if (props || (_child.splitText !== undefined ? (isHydrating ? _child.nodeValue.trim() : true) : isHydrating)) {
-          children[childrenLen++] = _child;
-        }
-      }
-    }
-
-    if (vlen !== 0) {
-      for (var i = 0; i < vlen; i++) {
-        vchild = vchildren[i];
-        child = null; // attempt to find a node based on key matching
-
-        var key = vchild.key;
-
-        if (key != null) {
-          if (keyedLen && keyed[key] !== undefined) {
-            child = keyed[key];
-            keyed[key] = undefined;
-            keyedLen--;
-          }
-        } // attempt to pluck a node of the same type from the existing children
-        else if (!child && min < childrenLen) {
-          for (j = min; j < childrenLen; j++) {
-            if (children[j] !== undefined && isSameNodeType((c = children[j]), vchild, isHydrating)) {
-              child = c;
-              children[j] = undefined;
-              if (j === childrenLen - 1) childrenLen--;
-              if (j === min) min++;
-              break;
-            }
-          }
-        } // morph the matched/found/created DOM child to match vchild (deep)
-
-        child = idiff(child, vchild, context, mountAll);
-        f = originalChildren[i];
-
-        if (child && child !== dom && child !== f) {
-          if (f == null) {
-            dom.appendChild(child);
-          } else if (child === f.nextSibling) {
-            removeNode(f);
-          } else {
-            dom.insertBefore(child, f);
-          }
-        }
-      }
-    } // remove unused keyed children:
-
-    if (keyedLen) {
-      for (var i in keyed) {
-        if (keyed[i] !== undefined) recollectNodeTree(keyed[i], false);
-      }
-    } // remove orphaned unkeyed children:
-
-    while (min <= childrenLen) {
-      if ((child = children[childrenLen--]) !== undefined) recollectNodeTree(child, false);
-    }
+  function S(e, t, n, o, r, i) {
+    me++ || ((ve = r instanceof SVGElement), (ye = e && !(se in e)));
+    var l = x(e, t, n, o);
+    return r && l.parentNode !== r && r.appendChild(l), --me || ((ye = !1), i || C()), l;
   }
-  /** Recursively recycle (or just unmount) a node and its descendants.
-   *	@param {Node} node						DOM node to start unmount/removal from
-   *	@param {Boolean} [unmountOnly=false]	If `true`, only triggers unmount lifecycle, skips removal
-   */
-
-  function recollectNodeTree(node, unmountOnly) {
-    var component = node._component;
-
-    if (component) {
-      // if node is owned by a Component, unmount that component (ends up recursing back here)
-      unmountComponent(component);
-    } else {
-      // If the node's VNode had a ref function, invoke it with null here.
-      // (this is part of the React spec, and smart for unsetting references)
-      if (node['__preactattr_'] != null && node['__preactattr_'].ref) node['__preactattr_'].ref(null);
-
-      if (unmountOnly === false || node['__preactattr_'] == null) {
-        removeNode(node);
+  function x(e, t, n, o) {
+    for (var r = t && t.attributes; f(t); ) t = d(t, n);
+    if ((null == t && (t = ''), l(t)))
+      return e && e instanceof Text ? e.nodeValue != t && (e.nodeValue = t) : (e && T(e), (e = document.createTextNode(t))), (e[se] = !0), e;
+    if (i(t.nodeName)) return U(e, t, n, o);
+    var a = e,
+      s = t.nodeName + '',
+      c = ve,
+      u = t.children;
+    if (((ve = 'svg' === s || ('foreignObject' !== s && ve)), e)) {
+      if (!h(e, s)) {
+        for (a = w(s, ve); e.firstChild; ) a.appendChild(e.firstChild);
+        T(e);
       }
-
-      removeChildren(node);
+    } else a = w(s, ve);
+    var p = a.firstChild,
+      m = a[se];
+    if (!m) {
+      a[se] = m = {};
+      for (var v = a.attributes, y = v.length; y--; ) m[v[y].name] = v[y].value;
     }
-  }
-  /** Recollect/unmount all children.
-   *	- we use .lastChild here because it causes less reflow than .firstChild
-   *	- it's also cheaper than accessing the .childNodes Live NodeList
-   */
-
-  function removeChildren(node) {
-    node = node.lastChild;
-
-    while (node) {
-      var next = node.previousSibling;
-      recollectNodeTree(node, true);
-      node = next;
-    }
-  }
-  /** Apply differences in attributes from a VNode to the given DOM Element.
-   *	@param {Element} dom		Element with attributes to diff `attrs` against
-   *	@param {Object} attrs		The desired end-state key-value attribute pairs
-   *	@param {Object} old			Current/previous attributes (from previous VNode or element's prop cache)
-   */
-
-  function diffAttributes(dom, attrs, old) {
-    var name; // remove attributes no longer present on the vnode by setting them to undefined
-
-    for (name in old) {
-      if (!(attrs && attrs[name] != null) && old[name] != null) {
-        setAccessor(dom, name, old[name], (old[name] = undefined), isSvgMode);
-      }
-    } // add new & update changed attributes
-
-    for (name in attrs) {
-      if (
-        name !== 'children' &&
-        name !== 'innerHTML' &&
-        (!(name in old) || attrs[name] !== (name === 'value' || name === 'checked' ? dom[name] : old[name]))
-      ) {
-        setAccessor(dom, name, old[name], (old[name] = attrs[name]), isSvgMode);
-      }
-    }
-  }
-  /** Retains a pool of Components for re-use, keyed on component name.
-   *	Note: since component names are not unique or even necessarily available, these are primarily a form of sharding.
-   *	@private
-   */
-
-  var components = {};
-  /** Reclaim a component for later re-use by the recycler. */
-
-  function collectComponent(component) {
-    var name = component.constructor.name;
-    (components[name] || (components[name] = [])).push(component);
-  }
-  /** Create a component. Normalizes differences between PFC's and classful Components. */
-
-  function createComponent(Ctor, props, context) {
-    var list = components[Ctor.name],
-      inst;
-
-    if (Ctor.prototype && Ctor.prototype.render) {
-      inst = new Ctor(props, context);
-      Component.call(inst, props, context);
-    } else {
-      inst = new Component(props, context);
-      inst.constructor = Ctor;
-      inst.render = doRender;
-    }
-
-    if (list) {
-      for (var i = list.length; i--; ) {
-        if (list[i].constructor === Ctor) {
-          inst.nextBase = list[i].nextBase;
-          list.splice(i, 1);
-          break;
-        }
-      }
-    }
-
-    return inst;
-  }
-  /** The `.render()` method for a PFC backing instance. */
-
-  function doRender(props, state, context) {
-    return this.constructor(props, context);
-  }
-  /** Set a component's `props` (generally derived from JSX attributes).
-   *	@param {Object} props
-   *	@param {Object} [opts]
-   *	@param {boolean} [opts.renderSync=false]	If `true` and {@link options.syncComponentUpdates} is `true`, triggers synchronous rendering.
-   *	@param {boolean} [opts.render=true]			If `false`, no render will be triggered.
-   */
-
-  function setComponentProps(component, props, opts, context, mountAll) {
-    if (component._disable) return;
-    component._disable = true;
-    if ((component.__ref = props.ref)) delete props.ref;
-    if ((component.__key = props.key)) delete props.key;
-
-    if (!component.base || mountAll) {
-      if (component.componentWillMount) component.componentWillMount();
-    } else if (component.componentWillReceiveProps) {
-      component.componentWillReceiveProps(props, context);
-    }
-
-    if (context && context !== component.context) {
-      if (!component.prevContext) component.prevContext = component.context;
-      component.context = context;
-    }
-
-    if (!component.prevProps) component.prevProps = component.props;
-    component.props = props;
-    component._disable = false;
-
-    if (opts !== 0) {
-      if (opts === 1 || options.syncComponentUpdates !== false || !component.base) {
-        renderComponent(component, 1, mountAll);
-      } else {
-        enqueueRender(component);
-      }
-    }
-
-    if (component.__ref) component.__ref(component);
-  }
-  /** Render a Component, triggering necessary lifecycle events and taking High-Order Components into account.
-   *	@param {Component} component
-   *	@param {Object} [opts]
-   *	@param {boolean} [opts.build=false]		If `true`, component will build and store a DOM node if not already associated with one.
-   *	@private
-   */
-
-  function renderComponent(component, opts, mountAll, isChild) {
-    if (component._disable) return;
-    var props = component.props,
-      state = component.state,
-      context = component.context,
-      previousProps = component.prevProps || props,
-      previousState = component.prevState || state,
-      previousContext = component.prevContext || context,
-      isUpdate = component.base,
-      nextBase = component.nextBase,
-      initialBase = isUpdate || nextBase,
-      initialChildComponent = component._component,
-      skip = false,
-      rendered,
-      inst,
-      cbase; // if updating
-
-    if (isUpdate) {
-      component.props = previousProps;
-      component.state = previousState;
-      component.context = previousContext;
-
-      if (opts !== 2 && component.shouldComponentUpdate && component.shouldComponentUpdate(props, state, context) === false) {
-        skip = true;
-      } else if (component.componentWillUpdate) {
-        component.componentWillUpdate(props, state, context);
-      }
-
-      component.props = props;
-      component.state = state;
-      component.context = context;
-    }
-
-    component.prevProps = component.prevState = component.prevContext = component.nextBase = null;
-    component._dirty = false;
-
-    if (!skip) {
-      rendered = component.render(props, state, context); // context to pass to the child, can be updated via (grand-)parent component
-
-      if (component.getChildContext) {
-        context = extend(extend({}, context), component.getChildContext());
-      }
-
-      var childComponent = rendered && rendered.nodeName,
-        toUnmount,
-        base;
-
-      if (typeof childComponent === 'function') {
-        // set up high order component link
-        var childProps = getNodeProps(rendered);
-        inst = initialChildComponent;
-
-        if (inst && inst.constructor === childComponent && childProps.key == inst.__key) {
-          setComponentProps(inst, childProps, 1, context, false);
-        } else {
-          toUnmount = inst;
-          component._component = inst = createComponent(childComponent, childProps, context);
-          inst.nextBase = inst.nextBase || nextBase;
-          inst._parentComponent = component;
-          setComponentProps(inst, childProps, 0, context, false);
-          renderComponent(inst, 1, mountAll, true);
-        }
-
-        base = inst.base;
-      } else {
-        cbase = initialBase; // destroy high order component link
-
-        toUnmount = initialChildComponent;
-
-        if (toUnmount) {
-          cbase = component._component = null;
-        }
-
-        if (initialBase || opts === 1) {
-          if (cbase) cbase._component = null;
-          base = diff(cbase, rendered, context, mountAll || !isUpdate, initialBase && initialBase.parentNode, true);
-        }
-      }
-
-      if (initialBase && base !== initialBase && inst !== initialChildComponent) {
-        var baseParent = initialBase.parentNode;
-
-        if (baseParent && base !== baseParent) {
-          baseParent.replaceChild(base, initialBase);
-
-          if (!toUnmount) {
-            initialBase._component = null;
-            recollectNodeTree(initialBase, false);
-          }
-        }
-      }
-
-      if (toUnmount) {
-        unmountComponent(toUnmount);
-      }
-
-      component.base = base;
-
-      if (base && !isChild) {
-        var componentRef = component,
-          t = component;
-
-        while ((t = t._parentComponent)) {
-          (componentRef = t).base = base;
-        }
-
-        base._component = componentRef;
-        base._componentConstructor = componentRef.constructor;
-      }
-    }
-
-    if (!isUpdate || mountAll) {
-      mounts.unshift(component);
-    } else if (!skip) {
-      // Ensure that pending componentDidMount() hooks of child components
-      // are called before the componentDidUpdate() hook in the parent.
-      // Note: disabled as it causes duplicate hooks, see https://github.com/developit/preact/issues/750
-      // flushMounts();
-      if (component.componentDidUpdate) {
-        component.componentDidUpdate(previousProps, previousState, previousContext);
-      }
-
-      if (options.afterUpdate) options.afterUpdate(component);
-    }
-
-    if (component._renderCallbacks != null) {
-      while (component._renderCallbacks.length) {
-        component._renderCallbacks.pop().call(component);
-      }
-    }
-
-    if (!diffLevel && !isChild) flushMounts();
-  }
-  /** Apply the Component referenced by a VNode to the DOM.
-   *	@param {Element} dom	The DOM node to mutate
-   *	@param {VNode} vnode	A Component-referencing VNode
-   *	@returns {Element} dom	The created/mutated element
-   *	@private
-   */
-
-  function buildComponentFromVNode(dom, vnode, context, mountAll) {
-    var c = dom && dom._component,
-      originalComponent = c,
-      oldDom = dom,
-      isDirectOwner = c && dom._componentConstructor === vnode.nodeName,
-      isOwner = isDirectOwner,
-      props = getNodeProps(vnode);
-
-    while (c && !isOwner && (c = c._parentComponent)) {
-      isOwner = c.constructor === vnode.nodeName;
-    }
-
-    if (c && isOwner && (!mountAll || c._component)) {
-      setComponentProps(c, props, 3, context, mountAll);
-      dom = c.base;
-    } else {
-      if (originalComponent && !isDirectOwner) {
-        unmountComponent(originalComponent);
-        dom = oldDom = null;
-      }
-
-      c = createComponent(vnode.nodeName, props, context);
-
-      if (dom && !c.nextBase) {
-        c.nextBase = dom; // passing dom/oldDom as nextBase will recycle it if unused, so bypass recycling on L229:
-
-        oldDom = null;
-      }
-
-      setComponentProps(c, props, 1, context, mountAll);
-      dom = c.base;
-
-      if (oldDom && dom !== oldDom) {
-        oldDom._component = null;
-        recollectNodeTree(oldDom, false);
-      }
-    }
-
-    return dom;
-  }
-  /** Remove a component from the DOM and recycle it.
-   *	@param {Component} component	The Component instance to unmount
-   *	@private
-   */
-
-  function unmountComponent(component) {
-    if (options.beforeUnmount) options.beforeUnmount(component);
-    var base = component.base;
-    component._disable = true;
-    if (component.componentWillUnmount) component.componentWillUnmount();
-    component.base = null; // recursively tear down & recollect high-order component children:
-
-    var inner = component._component;
-
-    if (inner) {
-      unmountComponent(inner);
-    } else if (base) {
-      if (base['__preactattr_'] && base['__preactattr_'].ref) base['__preactattr_'].ref(null);
-      component.nextBase = base;
-      removeNode(base);
-      collectComponent(component);
-      removeChildren(base);
-    }
-
-    if (component.__ref) component.__ref(null);
-  }
-  /** Base Component class.
-   *	Provides `setState()` and `forceUpdate()`, which trigger rendering.
-   *	@public
-   *
-   *	@example
-   *	class MyFoo extends Component {
-   *		render(props, state) {
-   *			return <div />;
-   *		}
-   *	}
-   */
-
-  function Component(props, context) {
-    this._dirty = true;
-    /** @public
-     *	@type {object}
-     */
-
-    this.context = context;
-    /** @public
-     *	@type {object}
-     */
-
-    this.props = props;
-    /** @public
-     *	@type {object}
-     */
-
-    this.state = this.state || {};
-  }
-
-  extend(Component.prototype, {
-    /** Returns a `boolean` indicating if the component should re-render when receiving the given `props` and `state`.
-     *	@param {object} nextProps
-     *	@param {object} nextState
-     *	@param {object} nextContext
-     *	@returns {Boolean} should the component re-render
-     *	@name shouldComponentUpdate
-     *	@function
-     */
-
-    /** Update component state by copying properties from `state` to `this.state`.
-     *	@param {object} state		A hash of state properties to update with new values
-     *	@param {function} callback	A function to be called once component state is updated
-     */
-    setState: function setState(state, callback) {
-      var s = this.state;
-      if (!this.prevState) this.prevState = extend({}, s);
-      extend(s, typeof state === 'function' ? state(s, this.props) : state);
-      if (callback) (this._renderCallbacks = this._renderCallbacks || []).push(callback);
-      enqueueRender(this);
-    },
-
-    /** Immediately perform a synchronous re-render of the component.
-     *	@param {function} callback		A function to be called after component is re-rendered.
-     *	@private
-     */
-    forceUpdate: function forceUpdate(callback) {
-      if (callback) (this._renderCallbacks = this._renderCallbacks || []).push(callback);
-      renderComponent(this, 2);
-    },
-
-    /** Accepts `props` and `state`, and returns a new Virtual DOM tree to build.
-     *	Virtual DOM is generally constructed via [JSX](http://jasonformat.com/wtf-is-jsx).
-     *	@param {object} props		Props (eg: JSX attributes) received from parent element/component
-     *	@param {object} state		The component's current state
-     *	@param {object} context		Context object (if a parent component has provided context)
-     *	@returns VNode
-     */
-    render: function render() {},
-  });
-  /** Render JSX into a `parent` Element.
-   *	@param {VNode} vnode		A (JSX) VNode to render
-   *	@param {Element} parent		DOM element to render into
-   *	@param {Element} [merge]	Attempt to re-use an existing DOM tree rooted at `merge`
-   *	@public
-   *
-   *	@example
-   *	// render a div into <body>:
-   *	render(<div id="hello">hello!</div>, document.body);
-   *
-   *	@example
-   *	// render a "Thing" component into #foo:
-   *	const Thing = ({ name }) => <span>{ name }</span>;
-   *	render(<Thing name="one" />, document.querySelector('#foo'));
-   */
-
-  function render(vnode, parent, merge) {
-    return diff(merge, vnode, {}, false, parent, false);
-  }
-
-  function dlv(obj, key, def, p) {
-    p = 0;
-    key = key.split ? key.split('.') : key;
-
-    while (obj && p < key.length) {
-      obj = obj[key[p++]];
-    }
-
-    return obj === undefined ? def : obj;
-  }
-  /** Create an Event handler function that sets a given state property.
-   *	@param {Component} component	The component whose state should be updated
-   *	@param {string} key				A dot-notated key path to update in the component's state
-   *	@param {string} eventPath		A dot-notated key path to the value that should be retrieved from the Event or component
-   *	@returns {function} linkedStateHandler
-   */
-
-  function linkState(component, key, eventPath) {
-    var path = key.split('.'),
-      cache = component.__lsc || (component.__lsc = {});
     return (
-      cache[key + eventPath] ||
-      (cache[key + eventPath] = function (e) {
-        var t = (e && e.target) || this,
-          state = {},
-          obj = state,
-          v = typeof eventPath === 'string' ? dlv(e, eventPath) : t.nodeName ? (t.type.match(/^che|rad/) ? t.checked : t.value) : e,
-          i = 0;
-
-        for (; i < path.length - 1; i++) {
-          obj = obj[path[i]] || (obj[path[i]] = (!i && component.state[path[i]]) || {});
-        }
-
-        obj[path[i]] = v;
-        component.setState(state);
-      })
+      O(a, t.attributes, m),
+      !ye && u && 1 === u.length && 'string' == typeof u[0] && p instanceof Text && !p.nextSibling
+        ? p.nodeValue != u[0] && (p.nodeValue = u[0])
+        : ((u && u.length) || p) && N(a, u, n, o),
+      r && 'function' == typeof r.ref && (m.ref = r.ref)(a),
+      (ve = c),
+      a
     );
   }
-
-  function uuid() {
-    var uuid = '';
-
-    for (var i = 0; i < 32; i++) {
-      var random = (Math.random() * 16) | 0;
-
-      if (i === 8 || i === 12 || i === 16 || i === 20) {
-        uuid += '-';
+  function N(e, t, n, o) {
+    var r = e.childNodes,
+      l = [],
+      a = {},
+      s = 0,
+      c = 0,
+      u = r.length,
+      f = 0,
+      d = t && t.length,
+      h = void 0,
+      m = void 0,
+      v = void 0,
+      y = void 0;
+    if (u)
+      for (var b = 0; b < u; b++) {
+        var g = r[b],
+          _ = g[se],
+          w = d ? ((m = g._component) ? m.__key : _ ? _.key : null) : null;
+        null != w ? (s++, (a[w] = g)) : (ye || _) && (l[f++] = g);
       }
-
-      uuid += (i === 12 ? 4 : i === 16 ? (random & 3) | 8 : random).toString(16);
-    }
-
-    return uuid;
-  }
-  function pluralize(count, word) {
-    return count === 1 ? word : word + 's';
-  }
-  function store(namespace, data) {
-    if (data) return (localStorage[namespace] = JSON.stringify(data));
-    var store = localStorage[namespace];
-    return (store && JSON.parse(store)) || [];
-  }
-
-  var TodoModel =
-    /*#__PURE__*/
-    (function () {
-      function TodoModel(key, sub) {
-        this.key = key;
-        this.todos = store(key) || [];
-        this.onChanges = [sub];
-      }
-
-      var _proto = TodoModel.prototype;
-
-      _proto.inform = function inform() {
-        store(this.key, this.todos);
-        this.onChanges.forEach(function (cb) {
-          return cb();
-        });
-      };
-
-      _proto.addTodo = function addTodo(title) {
-        this.todos = this.todos.concat({
-          id: uuid(),
-          title: title,
-          completed: false,
-        });
-        this.inform();
-      };
-
-      _proto.toggleAll = function toggleAll(completed) {
-        this.todos = this.todos.map(function (todo) {
-          return _extends({}, todo, {
-            completed: completed,
-          });
-        });
-        this.inform();
-      };
-
-      _proto.toggle = function toggle(todoToToggle) {
-        this.todos = this.todos.map(function (todo) {
-          return todo !== todoToToggle
-            ? todo
-            : _extends({}, todo, {
-                completed: !todo.completed,
-              });
-        });
-        this.inform();
-      };
-
-      _proto.destroy = function destroy(todo) {
-        this.todos = this.todos.filter(function (t) {
-          return t !== todo;
-        });
-        this.inform();
-      };
-
-      _proto.save = function save(todoToSave, title) {
-        this.todos = this.todos.map(function (todo) {
-          return todo !== todoToSave
-            ? todo
-            : _extends({}, todo, {
-                title: title,
-              });
-        });
-        this.inform();
-      };
-
-      _proto.clearCompleted = function clearCompleted() {
-        this.todos = this.todos.filter(function (todo) {
-          return !todo.completed;
-        });
-        this.inform();
-      };
-
-      return TodoModel;
-    })();
-
-  var TodoFooter =
-    /*#__PURE__*/
-    (function (_Component) {
-      _inheritsLoose(TodoFooter, _Component);
-
-      function TodoFooter() {
-        return _Component.apply(this, arguments) || this;
-      }
-
-      var _proto = TodoFooter.prototype;
-
-      _proto.render = function render$$1(_ref) {
-        var nowShowing = _ref.nowShowing,
-          count = _ref.count,
-          completedCount = _ref.completedCount,
-          onClearCompleted = _ref.onClearCompleted;
-        return h(
-          'footer',
-          {
-            class: 'footer',
-          },
-          h(
-            'span',
-            {
-              class: 'todo-count',
-            },
-            h('strong', null, count),
-            ' ',
-            pluralize(count, 'item'),
-            ' left',
-          ),
-          h(
-            'ul',
-            {
-              class: 'filters',
-            },
-            h(
-              'li',
-              null,
-              h(
-                'a',
-                {
-                  href: '#/',
-                  class: nowShowing == 'all' && 'selected',
-                },
-                'All',
-              ),
-            ),
-            h(
-              'li',
-              null,
-              h(
-                'a',
-                {
-                  href: '#/active',
-                  class: nowShowing == 'active' && 'selected',
-                },
-                'Active',
-              ),
-            ),
-            h(
-              'li',
-              null,
-              h(
-                'a',
-                {
-                  href: '#/completed',
-                  class: nowShowing == 'completed' && 'selected',
-                },
-                'Completed',
-              ),
-            ),
-          ),
-          completedCount > 0 &&
-            h(
-              'button',
-              {
-                class: 'clear-completed',
-                onClick: onClearCompleted,
-              },
-              'Clear completed',
-            ),
-        );
-      };
-
-      return TodoFooter;
-    })(Component);
-
-  var ESCAPE_KEY = 27;
-  var ENTER_KEY = 13;
-
-  var TodoItem =
-    /*#__PURE__*/
-    (function (_Component) {
-      _inheritsLoose(TodoItem, _Component);
-
-      function TodoItem() {
-        var _temp, _this;
-
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
-        }
-
-        return (
-          ((_temp = _this = _Component.call.apply(_Component, [this].concat(args)) || this),
-          Object.defineProperty(_assertThisInitialized(_this), 'handleSubmit', {
-            configurable: true,
-            enumerable: true,
-            writable: true,
-            value: function value() {
-              var _this$props = _this.props,
-                onSave = _this$props.onSave,
-                onDestroy = _this$props.onDestroy,
-                todo = _this$props.todo,
-                val = _this.state.editText.trim();
-
-              if (val) {
-                onSave(todo, val);
-
-                _this.setState({
-                  editText: val,
-                });
-              } else {
-                onDestroy(todo);
-              }
-            },
-          }),
-          Object.defineProperty(_assertThisInitialized(_this), 'handleEdit', {
-            configurable: true,
-            enumerable: true,
-            writable: true,
-            value: function value() {
-              var _this$props2 = _this.props,
-                onEdit = _this$props2.onEdit,
-                todo = _this$props2.todo;
-              onEdit(todo);
-
-              _this.setState({
-                editText: todo.title,
-              });
-            },
-          }),
-          Object.defineProperty(_assertThisInitialized(_this), 'toggle', {
-            configurable: true,
-            enumerable: true,
-            writable: true,
-            value: function value(e) {
-              var _this$props3 = _this.props,
-                onToggle = _this$props3.onToggle,
-                todo = _this$props3.todo;
-              onToggle(todo);
-              e.preventDefault();
-            },
-          }),
-          Object.defineProperty(_assertThisInitialized(_this), 'handleKeyDown', {
-            configurable: true,
-            enumerable: true,
-            writable: true,
-            value: function value(e) {
-              if (e.which === ESCAPE_KEY) {
-                var todo = _this.props.todo;
-
-                _this.setState({
-                  editText: todo.title,
-                });
-
-                _this.props.onCancel(todo);
-              } else if (e.which === ENTER_KEY) {
-                _this.handleSubmit();
-              }
-            },
-          }),
-          Object.defineProperty(_assertThisInitialized(_this), 'handleDestroy', {
-            configurable: true,
-            enumerable: true,
-            writable: true,
-            value: function value() {
-              _this.props.onDestroy(_this.props.todo);
-            },
-          }),
-          _temp) || _assertThisInitialized(_this)
-        );
-      }
-
-      var _proto = TodoItem.prototype;
-
-      // shouldComponentUpdate({ todo, editing, editText }) {
-      // 	return (
-      // 		todo !== this.props.todo ||
-      // 		editing !== this.props.editing ||
-      // 		editText !== this.state.editText
-      // 	);
-      // }
-      _proto.componentDidUpdate = function componentDidUpdate() {
-        // var node = this.base && this.base.querySelector('.edit');
-        // if (node) node.focus();
-      };
-
-      _proto.render = function render$$1(_ref, _ref2) {
-        var _ref$todo = _ref.todo,
-          title = _ref$todo.title,
-          completed = _ref$todo.completed,
-          onToggle = _ref.onToggle,
-          onDestroy = _ref.onDestroy,
-          editing = _ref.editing;
-        var editText = _ref2.editText;
-        var className = [completed ? completed : false, editing ? editing : false].filter(Boolean).join(' ');
-        return h(
-          'li',
-          {
-            class: className,
-          },
-          h(
-            'div',
-            {
-              class: 'view',
-            },
-            h('input', {
-              class: 'toggle',
-              type: 'checkbox',
-              checked: completed,
-              onChange: this.toggle,
-            }),
-            h(
-              'label',
-              {
-                onDblClick: this.handleEdit,
-              },
-              title,
-            ),
-            h('button', {
-              class: 'destroy',
-              onClick: this.handleDestroy,
-            }),
-          ),
-          editing &&
-            h('input', {
-              class: 'edit',
-              value: editText,
-              onBlur: this.handleSubmit,
-              onInput: linkState(this, 'editText'),
-              onKeyDown: this.handleKeyDown,
-            }),
-        );
-      };
-
-      return TodoItem;
-    })(Component);
-
-  var ENTER_KEY$1 = 13;
-  var FILTERS = {
-    all: function all(todo) {
-      return true;
-    },
-    active: function active(todo) {
-      return !todo.completed;
-    },
-    completed: function completed(todo) {
-      return todo.completed;
-    },
-  };
-
-  var App =
-    /*#__PURE__*/
-    (function (_Component) {
-      _inheritsLoose(App, _Component);
-
-      function App() {
-        var _this;
-
-        _this = _Component.call(this) || this;
-        Object.defineProperty(_assertThisInitialized(_this), 'handleNewTodoKeyDown', {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value: function value(e) {
-            if (e.keyCode !== ENTER_KEY$1) return;
-            e.preventDefault();
-
-            var val = _this.state.newTodo.trim();
-
-            if (val) {
-              _this.model.addTodo(val);
-
-              _this.setState({
-                newTodo: '',
-              });
+    if (d)
+      for (var C = 0; C < d; C++) {
+        (v = t[C]), (y = null);
+        var S = v.key;
+        if (null != S) s && S in a && ((y = a[S]), (a[S] = void 0), s--);
+        else if (!y && c < f) {
+          for (h = c; h < f; h++)
+            if (((m = l[h]), m && p(m, v))) {
+              (y = m), (l[h] = void 0), h === f - 1 && f--, h === c && c++;
+              break;
             }
-          },
-        });
-        Object.defineProperty(_assertThisInitialized(_this), 'toggleAll', {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value: function value(event) {
-            var checked = event.target.checked;
-
-            _this.model.toggleAll(checked);
-          },
-        });
-        Object.defineProperty(_assertThisInitialized(_this), 'toggle', {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value: function value(todo) {
-            _this.model.toggle(todo);
-          },
-        });
-        Object.defineProperty(_assertThisInitialized(_this), 'destroy', {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value: function value(todo) {
-            _this.model.destroy(todo);
-          },
-        });
-        Object.defineProperty(_assertThisInitialized(_this), 'edit', {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value: function value(todo) {
-            _this.setState({
-              editing: todo.id,
-            });
-          },
-        });
-        Object.defineProperty(_assertThisInitialized(_this), 'save', {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value: function value(todoToSave, text) {
-            _this.model.save(todoToSave, text);
-
-            _this.setState({
-              editing: null,
-            });
-          },
-        });
-        Object.defineProperty(_assertThisInitialized(_this), 'cancel', {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value: function value() {
-            _this.setState({
-              editing: null,
-            });
-          },
-        });
-        Object.defineProperty(_assertThisInitialized(_this), 'clearCompleted', {
-          configurable: true,
-          enumerable: true,
-          writable: true,
-          value: function value() {
-            _this.model.clearCompleted();
-          },
-        });
-        _this.model = new TodoModel('preact-todos', function () {
-          return _this.setState({});
-        });
-        addEventListener('hashchange', _this.handleRoute.bind(_assertThisInitialized(_this)));
-
-        _this.handleRoute();
-
-        return _this;
-      }
-
-      var _proto = App.prototype;
-
-      _proto.handleRoute = function handleRoute() {
-        var nowShowing = String(location.hash || '')
-          .split('/')
-          .pop();
-
-        if (!FILTERS[nowShowing]) {
-          nowShowing = 'all';
+          !y && c < f && i(v.nodeName) && o && ((y = l[c]), (l[c++] = void 0));
         }
-
-        this.setState({
-          nowShowing: nowShowing,
-        });
-      };
-
-      _proto.render = function render$$1(state, _ref) {
-        var _this2 = this;
-
-        var _ref$nowShowing = _ref.nowShowing,
-          nowShowing = _ref$nowShowing === void 0 ? ALL_TODOS : _ref$nowShowing,
-          newTodo = _ref.newTodo,
-          editing = _ref.editing;
-        var todos = this.model.todos,
-          shownTodos = todos.filter(FILTERS[nowShowing]),
-          activeTodoCount = todos.reduce(function (a, todo) {
-            return a + (todo.completed ? 0 : 1);
-          }, 0),
-          completedCount = todos.length - activeTodoCount;
-        return h(
-          'div',
-          null,
-          h(
-            'header',
-            {
-              class: 'header',
-            },
-            h('h1', null, 'todos'),
-            h('input', {
-              class: 'new-todo',
-              placeholder: 'What needs to be done?',
-              value: newTodo,
-              onKeyDown: this.handleNewTodoKeyDown,
-              onInput: linkState(this, 'newTodo'),
-              autoFocus: true,
-            }),
-          ),
-          todos.length
-            ? h(
-                'section',
-                {
-                  class: 'main',
-                },
-                h('input', {
-                  class: 'toggle-all',
-                  type: 'checkbox',
-                  onChange: this.toggleAll,
-                  checked: activeTodoCount === 0,
-                }),
-                h(
-                  'ul',
-                  {
-                    class: 'todo-list',
-                  },
-                  shownTodos.map(function (todo) {
-                    return h(TodoItem, {
-                      todo: todo,
-                      onToggle: _this2.toggle,
-                      onDestroy: _this2.destroy,
-                      onEdit: _this2.edit,
-                      editing: editing === todo.id,
-                      onSave: _this2.save,
-                      onCancel: _this2.cancel,
-                    });
-                  }),
-                ),
-              )
-            : null,
-          activeTodoCount || completedCount
-            ? h(TodoFooter, {
-                count: activeTodoCount,
-                completedCount: completedCount,
-                nowShowing: nowShowing,
-                onClearCompleted: this.clearCompleted,
-              })
-            : null,
+        (y = x(y, v, n, o)), y && y !== e && y !== r[C] && e.insertBefore(y, r[C] || null);
+      }
+    if (s) for (var N in a) a[N] && T(a[N]);
+    c < f && k(l);
+  }
+  function k(e, t) {
+    for (var n = e.length; n--; ) e[n] && T(e[n], t);
+  }
+  function T(e, t) {
+    var n = e._component;
+    n ? A(n, !t) : (e[se] && e[se].ref && e[se].ref(null), t || _(e), e.childNodes && e.childNodes.length && k(e.childNodes, t));
+  }
+  function O(e, t, n) {
+    for (var o in n) (t && o in t) || null == n[o] || y(e, o, n[o], (n[o] = void 0), ve);
+    if (t)
+      for (var r in t)
+        'children' === r ||
+          'innerHTML' === r ||
+          (r in n && t[r] === ('value' === r || 'checked' === r ? e[r] : n[r])) ||
+          y(e, r, n[r], (n[r] = t[r]), ve);
+  }
+  function E(e) {
+    var t = e.constructor.name,
+      n = be[t];
+    n ? n.push(e) : (be[t] = [e]);
+  }
+  function D(e, t, n) {
+    var o = new e(t, n),
+      r = be[e.name];
+    if ((B.call(o, t, n), r))
+      for (var i = r.length; i--; )
+        if (r[i].constructor === e) {
+          (o.nextBase = r[i].nextBase), r.splice(i, 1);
+          break;
+        }
+    return o;
+  }
+  function j(e, t, n, o, r) {
+    e._disable ||
+      ((e._disable = !0),
+      (e.__ref = t.ref) && delete t.ref,
+      (e.__key = t.key) && delete t.key,
+      !e.base || r ? e.componentWillMount && e.componentWillMount() : e.componentWillReceiveProps && e.componentWillReceiveProps(t, o),
+      o && o !== e.context && (e.prevContext || (e.prevContext = e.context), (e.context = o)),
+      e.prevProps || (e.prevProps = e.props),
+      (e.props = t),
+      (e._disable = !1),
+      n !== oe && (n !== re && Y.syncComponentUpdates === !1 && e.base ? c(e) : P(e, re, r)),
+      e.__ref && e.__ref(e));
+  }
+  function P(e, t, r, l) {
+    if (!e._disable) {
+      var a = void 0,
+        s = void 0,
+        c = e.props,
+        u = e.state,
+        p = e.context,
+        h = e.prevProps || c,
+        v = e.prevState || u,
+        y = e.prevContext || p,
+        b = e.base,
+        g = e.nextBase,
+        _ = b || g,
+        w = e._component,
+        x = void 0,
+        N = void 0;
+      if (
+        (b &&
+          ((e.props = h),
+          (e.state = v),
+          (e.context = y),
+          t !== ie && e.shouldComponentUpdate && e.shouldComponentUpdate(c, u, p) === !1
+            ? (a = !0)
+            : e.componentWillUpdate && e.componentWillUpdate(c, u, p),
+          (e.props = c),
+          (e.state = u),
+          (e.context = p)),
+        (e.prevProps = e.prevState = e.prevContext = e.nextBase = null),
+        (e._dirty = !1),
+        !a)
+      ) {
+        for (e.render && (s = e.render(c, u, p)), e.getChildContext && (p = n(o(p), e.getChildContext())); f(s); ) s = d(s, p);
+        var k = s && s.nodeName,
+          O = void 0,
+          E = void 0;
+        if (i(k)) {
+          x = w;
+          var U = m(s);
+          x && x.constructor === k
+            ? j(x, U, re, p)
+            : ((O = x),
+              (x = D(k, U, p)),
+              (x.nextBase = x.nextBase || g),
+              (x._parentComponent = e),
+              (e._component = x),
+              j(x, U, oe, p),
+              P(x, re, r, !0)),
+            (E = x.base);
+        } else
+          (N = _),
+            (O = w),
+            O && (N = e._component = null),
+            (_ || t === re) && (N && (N._component = null), (E = S(N, s, p, r || !b, _ && _.parentNode, !0)));
+        if (_ && E !== _ && x !== w) {
+          var B = _.parentNode;
+          B && E !== B && (B.replaceChild(E, _), O || ((_._component = null), T(_)));
+        }
+        if ((O && A(O, E !== _), (e.base = E), E && !l)) {
+          for (var M = e, W = e; (W = W._parentComponent); ) (M = W).base = E;
+          (E._component = M), (E._componentConstructor = M.constructor);
+        }
+      }
+      !b || r ? he.unshift(e) : a || (e.componentDidUpdate && e.componentDidUpdate(h, v, y), Y.afterUpdate && Y.afterUpdate(e));
+      var L = e._renderCallbacks,
+        R = void 0;
+      if (L) for (; (R = L.pop()); ) R.call(e);
+      me || l || C();
+    }
+  }
+  function U(e, t, n, o) {
+    for (var r = e && e._component, i = e, l = r && e._componentConstructor === t.nodeName, a = l, s = m(t); r && !a && (r = r._parentComponent); )
+      a = r.constructor === t.nodeName;
+    return (
+      r && a && (!o || r._component)
+        ? (j(r, s, le, n, o), (e = r.base))
+        : (r && !l && (A(r, !0), (e = i = null)),
+          (r = D(t.nodeName, s, n)),
+          e && !r.nextBase && ((r.nextBase = e), (i = null)),
+          j(r, s, re, n, o),
+          (e = r.base),
+          i && e !== i && ((i._component = null), T(i))),
+      e
+    );
+  }
+  function A(e, t) {
+    Y.beforeUnmount && Y.beforeUnmount(e);
+    var n = e.base;
+    (e._disable = !0), e.componentWillUnmount && e.componentWillUnmount(), (e.base = null);
+    var o = e._component;
+    o ? A(o, t) : n && (n[se] && n[se].ref && n[se].ref(null), (e.nextBase = n), t && (v(n), E(e)), k(n.childNodes, !t)),
+      e.__ref && e.__ref(null),
+      e.componentDidUnmount && e.componentDidUnmount();
+  }
+  function B(e, t) {
+    (this._dirty = !0), (this.context = t), (this.props = e), this.state || (this.state = {});
+  }
+  function M(e, t, n) {
+    return S(n, e, {}, !1, t);
+  }
+  function W() {
+    for (var e = '', t = 0; t < 32; t++) {
+      var n = (16 * Math.random()) | 0;
+      (8 !== t && 12 !== t && 16 !== t && 20 !== t) || (e += '-'), (e += (12 === t ? 4 : 16 === t ? (3 & n) | 8 : n).toString(16));
+    }
+    return e;
+  }
+  function L(e, t) {
+    return 1 === e ? t : t + 's';
+  }
+  function R(e, t) {
+    if (t) return (localStorage[e] = JSON.stringify(t));
+    var n = localStorage[e];
+    return (n && JSON.parse(n)) || [];
+  }
+  function z(e, t) {
+    if (!(e instanceof t)) throw new TypeError('Cannot call a class as a function');
+  }
+  function K(e, t) {
+    if (!(e instanceof t)) throw new TypeError('Cannot call a class as a function');
+  }
+  function V(e, t) {
+    if (!e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    return !t || ('object' != typeof t && 'function' != typeof t) ? e : t;
+  }
+  function H(e, t) {
+    if ('function' != typeof t && null !== t) throw new TypeError('Super expression must either be null or a function, not ' + typeof t);
+    (e.prototype = Object.create(t && t.prototype, { constructor: { value: e, enumerable: !1, writable: !0, configurable: !0 } })),
+      t && (Object.setPrototypeOf ? Object.setPrototypeOf(e, t) : (e.__proto__ = t));
+  }
+  function I(e, t) {
+    if (!(e instanceof t)) throw new TypeError('Cannot call a class as a function');
+  }
+  function F(e, t) {
+    if (!e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    return !t || ('object' != typeof t && 'function' != typeof t) ? e : t;
+  }
+  function G(e, t) {
+    if ('function' != typeof t && null !== t) throw new TypeError('Super expression must either be null or a function, not ' + typeof t);
+    (e.prototype = Object.create(t && t.prototype, { constructor: { value: e, enumerable: !1, writable: !0, configurable: !0 } })),
+      t && (Object.setPrototypeOf ? Object.setPrototypeOf(e, t) : (e.__proto__ = t));
+  }
+  function q(e) {
+    if (null == e) throw new TypeError('Cannot destructure undefined');
+  }
+  function J(e, t) {
+    if (!(e instanceof t)) throw new TypeError('Cannot call a class as a function');
+  }
+  function Q(e, t) {
+    if (!e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    return !t || ('object' != typeof t && 'function' != typeof t) ? e : t;
+  }
+  function X(e, t) {
+    if ('function' != typeof t && null !== t) throw new TypeError('Super expression must either be null or a function, not ' + typeof t);
+    (e.prototype = Object.create(t && t.prototype, { constructor: { value: e, enumerable: !1, writable: !0, configurable: !0 } })),
+      t && (Object.setPrototypeOf ? Object.setPrototypeOf(e, t) : (e.__proto__ = t));
+  }
+  var Y = {},
+    Z = [],
+    $ = {},
+    ee = function (e) {
+      return $[e] || ($[e] = e.toLowerCase());
+    },
+    te = 'undefined' != typeof Promise && Promise.resolve(),
+    ne = te
+      ? function (e) {
+          te.then(e);
+        }
+      : setTimeout,
+    oe = 0,
+    re = 1,
+    ie = 2,
+    le = 3,
+    ae = {},
+    se = 'undefined' != typeof Symbol ? Symbol.for('preactattr') : '__preactattr_',
+    ce = {
+      boxFlex: 1,
+      boxFlexGroup: 1,
+      columnCount: 1,
+      fillOpacity: 1,
+      flex: 1,
+      flexGrow: 1,
+      flexPositive: 1,
+      flexShrink: 1,
+      flexNegative: 1,
+      fontWeight: 1,
+      lineClamp: 1,
+      lineHeight: 1,
+      opacity: 1,
+      order: 1,
+      orphans: 1,
+      strokeOpacity: 1,
+      widows: 1,
+      zIndex: 1,
+      zoom: 1,
+    },
+    ue = { blur: 1, error: 1, focus: 1, load: 1, resize: 1, scroll: 1 },
+    fe = [],
+    de =
+      'function' == typeof Symbol && 'symbol' == typeof Symbol.iterator
+        ? function (e) {
+            return typeof e;
+          }
+        : function (e) {
+            return e && 'function' == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? 'symbol' : typeof e;
+          },
+    pe = {},
+    he = [],
+    me = 0,
+    ve = !1,
+    ye = !1,
+    be = {};
+  n(B.prototype, {
+    linkState: function (e, t) {
+      var n = this._linkedStates || (this._linkedStates = {});
+      return n[e + t] || (n[e + t] = s(this, e, t));
+    },
+    setState: function (e, t) {
+      var r = this.state;
+      this.prevState || (this.prevState = o(r)),
+        n(r, i(e) ? e(r, this.props) : e),
+        t && (this._renderCallbacks = this._renderCallbacks || []).push(t),
+        c(this);
+    },
+    forceUpdate: function () {
+      P(this, ie);
+    },
+    render: function () {},
+  });
+  var ge =
+      Object.assign ||
+      function (e) {
+        for (var t = 1; t < arguments.length; t++) {
+          var n = arguments[t];
+          for (var o in n) Object.prototype.hasOwnProperty.call(n, o) && (e[o] = n[o]);
+        }
+        return e;
+      },
+    _e = (function () {
+      function e(t, n) {
+        z(this, e), (this.key = t), (this.todos = R(t) || []), (this.onChanges = [n]);
+      }
+      return (
+        (e.prototype.inform = function () {
+          R(this.key, this.todos),
+            this.onChanges.forEach(function (e) {
+              return e();
+            });
+        }),
+        (e.prototype.addTodo = function (e) {
+          (this.todos = this.todos.concat({ id: W(), title: e, completed: !1 })), this.inform();
+        }),
+        (e.prototype.toggleAll = function (e) {
+          (this.todos = this.todos.map(function (t) {
+            return ge({}, t, { completed: e });
+          })),
+            this.inform();
+        }),
+        (e.prototype.toggle = function (e) {
+          (this.todos = this.todos.map(function (t) {
+            return t !== e ? t : ge({}, t, { completed: !t.completed });
+          })),
+            this.inform();
+        }),
+        (e.prototype.destroy = function (e) {
+          (this.todos = this.todos.filter(function (t) {
+            return t !== e;
+          })),
+            this.inform();
+        }),
+        (e.prototype.save = function (e, t) {
+          (this.todos = this.todos.map(function (n) {
+            return n !== e ? n : ge({}, n, { title: t });
+          })),
+            this.inform();
+        }),
+        (e.prototype.clearCompleted = function () {
+          (this.todos = this.todos.filter(function (e) {
+            return !e.completed;
+          })),
+            this.inform();
+        }),
+        e
+      );
+    })(),
+    we = (function (e) {
+      function n() {
+        return K(this, n), V(this, e.apply(this, arguments));
+      }
+      return (
+        H(n, e),
+        (n.prototype.render = function (e) {
+          var n = e.nowShowing,
+            o = e.count,
+            r = e.completedCount,
+            i = e.onClearCompleted;
+          return t(
+            'footer',
+            { class: 'footer' },
+            t('span', { class: 'todo-count' }, t('strong', null, o), ' ', L(o, 'item'), ' left'),
+            t(
+              'ul',
+              { class: 'filters' },
+              t('li', null, t('a', { href: '#/', class: 'all' == n && 'selected' }, 'All')),
+              ' ',
+              t('li', null, t('a', { href: '#/active', class: 'active' == n && 'selected' }, 'Active')),
+              ' ',
+              t('li', null, t('a', { href: '#/completed', class: 'completed' == n && 'selected' }, 'Completed')),
+            ),
+            r > 0 && t('button', { class: 'clear-completed', onClick: i }, 'Clear completed'),
+          );
+        }),
+        n
+      );
+    })(B),
+    Ce = 27,
+    Se = 13,
+    xe = (function (e) {
+      function n() {
+        var t, o, r;
+        I(this, n);
+        for (var i = arguments.length, l = Array(i), a = 0; a < i; a++) l[a] = arguments[a];
+        return (
+          (t = o = F(this, e.call.apply(e, [this].concat(l)))),
+          (o.handleSubmit = function () {
+            var e = o.props,
+              t = e.onSave,
+              n = e.onDestroy,
+              r = e.todo,
+              i = o.state.editText.trim();
+            i ? (t(r, i), o.setState({ editText: i })) : n(r);
+          }),
+          (o.handleEdit = function () {
+            var e = o.props,
+              t = e.onEdit,
+              n = e.todo;
+            t(n), o.setState({ editText: n.title });
+          }),
+          (o.toggle = function (e) {
+            var t = o.props;
+            (0, t.onToggle)(t.todo), e.preventDefault();
+          }),
+          (o.handleKeyDown = function (e) {
+            if (e.which === Ce) {
+              var t = o.props.todo;
+              o.setState({ editText: t.title }), o.props.onCancel(t);
+            } else e.which === Se && o.handleSubmit();
+          }),
+          (o.handleDestroy = function () {
+            o.props.onDestroy(o.props.todo);
+          }),
+          (r = t),
+          F(o, r)
         );
-      };
-
-      return App;
-    })(Component);
-
-  // import 'todomvc-common/base.css';
-  // import 'todomvc-app-css/index.css';
-
-  render(h(App, null), document.body);
+      }
+      return (
+        G(n, e),
+        (n.prototype.componentDidUpdate = function () {
+          var e = this.base && this.base.querySelector('.edit');
+          e && e.focus();
+        }),
+        (n.prototype.render = function (e, n) {
+          var o = e.todo,
+            r = o.title,
+            i = o.completed,
+            l = e.editing,
+            a = n.editText;
+          return t(
+            'li',
+            { class: { completed: i, editing: l } },
+            t(
+              'div',
+              { class: 'view' },
+              t('input', { class: 'toggle', type: 'checkbox', checked: i, onChange: this.toggle }),
+              t('label', { onDblClick: this.handleEdit }, r),
+              t('button', { class: 'destroy', onClick: this.handleDestroy }),
+            ),
+            l &&
+              t('input', { class: 'edit', value: a, onBlur: this.handleSubmit, onInput: this.linkState('editText'), onKeyDown: this.handleKeyDown }),
+          );
+        }),
+        n
+      );
+    })(B),
+    Ne = {
+      all: function () {
+        return !0;
+      },
+      active: function (e) {
+        return !e.completed;
+      },
+      completed: function (e) {
+        return e.completed;
+      },
+    };
+  M(
+    t(
+      (function (e) {
+        function n() {
+          J(this, n);
+          var t = Q(this, e.call(this));
+          return (
+            (t.handleNewTodoKeyDown = function (e) {
+              if (13 === e.keyCode) {
+                e.preventDefault();
+                var n = t.state.newTodo.trim();
+                n && (t.model.addTodo(n), t.setState({ newTodo: '' }));
+              }
+            }),
+            (t.toggleAll = function (e) {
+              t.model.toggleAll(e.target.checked);
+            }),
+            (t.toggle = function (e) {
+              t.model.toggle(e);
+            }),
+            (t.destroy = function (e) {
+              t.model.destroy(e);
+            }),
+            (t.edit = function (e) {
+              t.setState({ editing: e.id });
+            }),
+            (t.save = function (e, n) {
+              t.model.save(e, n), t.setState({ editing: null });
+            }),
+            (t.cancel = function () {
+              t.setState({ editing: null });
+            }),
+            (t.clearCompleted = function () {
+              t.model.clearCompleted();
+            }),
+            (t.model = new _e('preact-todos', function () {
+              return t.setState({});
+            })),
+            addEventListener('hashchange', t.handleRoute.bind(t)),
+            t.handleRoute(),
+            t
+          );
+        }
+        return (
+          X(n, e),
+          (n.prototype.handleRoute = function () {
+            var e = ((location.hash || '') + '').split('/').pop();
+            Ne[e] || (e = 'all'), this.setState({ nowShowing: e });
+          }),
+          (n.prototype.render = function (e, n) {
+            var o = this,
+              r = n.nowShowing,
+              i = void 0 === r ? ALL_TODOS : r,
+              l = n.newTodo,
+              a = n.editing;
+            q(e);
+            var s = this.model.todos,
+              c = s.filter(Ne[i]),
+              u = s.reduce(function (e, t) {
+                return e + (t.completed ? 0 : 1);
+              }, 0),
+              f = s.length - u;
+            return t(
+              'div',
+              null,
+              t(
+                'header',
+                { class: 'header' },
+                t('h1', null, 'todos'),
+                t('input', {
+                  class: 'new-todo',
+                  placeholder: 'What needs to be done?',
+                  value: l,
+                  onKeyDown: this.handleNewTodoKeyDown,
+                  onInput: this.linkState('newTodo'),
+                  autoFocus: !0,
+                }),
+              ),
+              s.length
+                ? t(
+                    'section',
+                    { class: 'main' },
+                    t('input', { class: 'toggle-all', type: 'checkbox', onChange: this.toggleAll, checked: 0 === u }),
+                    t(
+                      'ul',
+                      { class: 'todo-list' },
+                      c.map(function (e) {
+                        return t(xe, {
+                          todo: e,
+                          onToggle: o.toggle,
+                          onDestroy: o.destroy,
+                          onEdit: o.edit,
+                          editing: a === e.id,
+                          onSave: o.save,
+                          onCancel: o.cancel,
+                        });
+                      }),
+                    ),
+                  )
+                : null,
+              u || f ? t(we, { count: u, completedCount: f, nowShowing: i, onClearCompleted: this.clearCompleted }) : null,
+            );
+          }),
+          n
+        );
+      })(B),
+      null,
+    ),
+    document.querySelector('.todoapp'),
+  );
 })();
 //# sourceMappingURL=app.js.map

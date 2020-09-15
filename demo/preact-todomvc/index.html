@@ -11,7 +11,9 @@
   <script src="/dist/debug/main.js" defer></script>
 </head>
 <body>
-  <div src="app.js" id="upgrade-me" class="todoapp"></div>
+  <div src="app.js" id="upgrade-me">
+    <section class="todoapp"></section> 
+  </div>
   <footer class="info">
     <p>Double-click to edit a todo</p>
     <p>Created by <a href="http://github.com/kristoferbaxter/">kristoferbaxter</a></p>
@@ -25,6 +27,7 @@
         worker.onerror = function(e) {
           console.error(e)
         }
+        console.error('worker upgraded :) ');
       });
     }, false);
   </script>

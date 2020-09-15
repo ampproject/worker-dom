@@ -38,8 +38,8 @@ export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode 
               )
               .forEach((removeId) => {
                 const node = getNode(removeId);
-                if (node) {
-                  node.remove();
+                if (node && node.parentNode) {
+                  node.parentNode.removeChild(node);
                 } else {
                   console.error(`CHILD_LIST: getNode(${removeId}) is null.`);
                 }
