@@ -88,7 +88,7 @@ export class DOMTokenList {
     const newValue = collection.trim();
 
     // Replace current tokens with new tokens.
-    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...(newValue !== '' ? newValue.split(/\s+/) : ''));
+    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...(newValue !== '' ? newValue.split(/\s+/) : []));
     this[TransferrableKeys.mutated](oldValue, newValue);
   }
 

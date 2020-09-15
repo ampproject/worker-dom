@@ -16,13 +16,16 @@
 
 const btn = document.getElementsByTagName('button')[0];
 
-btn.addEventListener('click', async () => {
+btn.addEventListener('click', function () {
   const h1 = document.createElement('h1');
   h1.textContent = 'Hello World!';
   document.body.appendChild(h1);
 
-  const boundingClientRect = await h1.getBoundingClientRectAsync();
-  h1.textContent = h1.textContent + JSON.stringify(boundingClientRect);
+  h1.getBoundingClientRectAsync().then(function (boundingClientRect) {
+    h1.textContent = h1.textContent + JSON.stringify(boundingClientRect);
+  });
 });
 
-requestAnimationFrame(() => console.log('animation'));
+requestAnimationFrame(function () {
+  console.log('animation');
+});
