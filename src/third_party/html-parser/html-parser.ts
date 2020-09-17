@@ -128,7 +128,7 @@ export function parse(data: string, rootElement: Element) {
     if (lastTextPos < match.index) {
       // if has content
       const text = data.slice(lastTextPos, match.index);
-      currentParent.appendChild(ownerDocument.createTextNode(text));
+      currentParent.appendChild(ownerDocument.createTextNode(decodeNumericEntities(text)));
     }
     lastTextPos = kMarkupPattern.lastIndex;
     if (commentContents !== undefined) {
@@ -231,4 +231,16 @@ export function parse(data: string, rootElement: Element) {
   }
 
   throw new Error('Attempting to parse invalid HTML.');
+}
+
+function decodeNumericEntities(html: string) {
+  return html.replace(/&#(x?\d+);?/g, function (s, entity) {
+    const code = entity.charAt(0) === 'x' ? parseInt(entity.substr(1).toLowerCase(), 16) : parseInt(entity, 10);
+
+    let chr;
+    if (!(isNaN(code) || code < -32768 || code > 65535)) {
+      chr = String.fromCharCode(code);
+    }
+    return chr || s;
+  });
 }
