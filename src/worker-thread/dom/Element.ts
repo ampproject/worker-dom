@@ -31,10 +31,12 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableBoundClientRect';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
+import { MessageToWorker, MessageType, BoundingClientRectToWorker, HydrationToWorker } from '../../transfer/Messages';
 import { parse } from '../../third_party/html-parser/html-parser';
 import { propagate } from './Node';
 import { Event } from '../Event';
+import { Phase } from '../../transfer/Phase';
+import { set as setPhase } from '../phase';
 
 export const NS_NAME_TO_CLASS: { [key: string]: typeof Element } = {};
 export const registerSubclass = (localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): any =>
@@ -247,6 +249,46 @@ export class Element extends ParentNode {
 
     // add new children
     root.childNodes.forEach((child: Node) => this.appendChild(child));
+  }
+
+  setInnerHTMLAsync(html: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const messageHandler = ({ data }: { data: MessageToWorker }) => {
+        if (
+          data[TransferrableKeys.type] === MessageType.HYDRATE &&
+          (data as HydrationToWorker)[TransferrableKeys.target][0] === this[TransferrableKeys.index]
+        ) {
+          this.ownerDocument.removeGlobalEventListener('message', messageHandler);
+          const hydrationToWorker = data as HydrationToWorker;
+          const hydrateableNode = hydrationToWorker[TransferrableKeys.nodes];
+          const strings = hydrationToWorker[TransferrableKeys.strings];
+
+          try {
+            strings.forEach(storeString);
+            setPhase(Phase.Initializing);
+            (hydrateableNode[TransferrableKeys.childNodes] || []).forEach((child) => {
+              this.appendChild(this.ownerDocument[TransferrableKeys.hydrateNode](strings, child));
+            });
+            setPhase(Phase.Mutating);
+          } catch (err) {
+            console.error(err);
+            reject();
+          }
+          resolve();
+        }
+      };
+
+      if (!this.ownerDocument.addGlobalEventListener || !this.isConnected) {
+        // Elements run within Node runtimes are missing addEventListener as a global.
+        // In this case, treat the return value the same as a disconnected node.
+        resolve();
+      } else {
+        this.ownerDocument.addGlobalEventListener('message', messageHandler);
+        // TODO make the xfer pass html param.
+        transfer(this.ownerDocument as Document, [TransferrableMutationType.SET_INNER_HTML, this[TransferrableKeys.index], storeString(html)]);
+        setTimeout(resolve, 500); // TODO: Why a magical constant, define and explain.
+      }
+    });
   }
 
   /**

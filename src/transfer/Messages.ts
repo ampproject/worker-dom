@@ -36,6 +36,7 @@ export const enum MessageType {
   IMAGE_BITMAP_INSTANCE = 10,
   GET_STORAGE = 11,
   FUNCTION = 12,
+  SET_INNER_HTML = 13,
   // NAVIGATION_PUSH_STATE = 8,
   // NAVIGATION_REPLACE_STATE = 9,
   // NAVIGATION_POP_STATE = 10,
@@ -54,6 +55,7 @@ export type MessageFromWorker = {
 
 export interface HydrationToWorker {
   readonly [TransferrableKeys.type]: MessageType.HYDRATE;
+  readonly [TransferrableKeys.target]: TransferredNode;
   readonly [TransferrableKeys.strings]: Array<string>;
   readonly [TransferrableKeys.nodes]: HydrateableNode;
 }
@@ -106,7 +108,8 @@ export type MessageToWorker =
   | OffscreenCanvasToWorker
   | ImageBitmapToWorker
   | StorageValueToWorker
-  | FunctionCallToWorker;
+  | FunctionCallToWorker
+  | HydrationToWorker;
 
 /**
  * Can parameterize a method invocation message as a getter or setter.

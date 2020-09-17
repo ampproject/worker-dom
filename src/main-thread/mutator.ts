@@ -35,6 +35,7 @@ import { ObjectContext } from './object-context';
 import { ImageBitmapProcessor } from './commands/image-bitmap';
 import { StorageProcessor } from './commands/storage';
 import { FunctionProcessor } from './commands/function';
+import { SetInnerHTMLProcessor } from './commands/set-inner-html';
 
 export class MutatorProcessor {
   private stringContext: StringContext;
@@ -88,6 +89,7 @@ export class MutatorProcessor {
       [TransferrableMutationType.IMAGE_BITMAP_INSTANCE]: ImageBitmapProcessor.apply(null, args),
       [TransferrableMutationType.STORAGE]: StorageProcessor.apply(null, args),
       [TransferrableMutationType.FUNCTION_CALL]: FunctionProcessor.apply(null, args),
+      [TransferrableMutationType.SET_INNER_HTML]: SetInnerHTMLProcessor.apply(null, args),
     };
   }
 
