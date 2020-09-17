@@ -234,11 +234,11 @@ export function parse(data: string, rootElement: Element) {
 }
 
 function decodeNumericEntities(html: string) {
-  return html.replace(/&#(x?\d+);?/g, function (s, entity) {
+  return html.replace(/&#(x?[\da-zA-Z]+);?/g, function (s, entity) {
     const code = entity.charAt(0) === 'x' ? parseInt(entity.substr(1).toLowerCase(), 16) : parseInt(entity, 10);
 
     let chr;
-    if (!(isNaN(code) || code < -32768 || code > 65535)) {
+    if (!(isNaN(code) || code < 0 || code > 65535)) {
       chr = String.fromCharCode(code);
     }
     return chr || s;
