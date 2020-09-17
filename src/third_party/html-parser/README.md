@@ -9,3 +9,4 @@ Replaced model used to represent node elements for ours (/src/worker-thread/dom)
 Removed all class declarations for nodes previously used.
 Removed CSS Matcher class.
 Parsed HTML Comment nodes (previously ignored).
+Decode numeric entities in text nodes.
