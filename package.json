@@ -96,13 +96,13 @@
       "brotli": "4 kB"
     },
     "./dist/main.js": {
-      "brotli": "5 kB"
+      "brotli": "24 kB"
     },
     "./dist/worker/worker.mjs": {
       "brotli": "11.7 kB"
     },
     "./dist/worker/worker.js": {
-      "brotli": "13.5 kB"
+      "brotli": "30.5 kB"
     },
     "./dist/amp-production/main.mjs": {
       "brotli": "4 kB"
