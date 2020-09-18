@@ -160,9 +160,12 @@ test('set text with numeric html entities', (t) => {
 
   node.innerHTML = '<p>&#x26;</p>';
   t.is(node.innerHTML, '<p>&</p>');
-  
+
   node.innerHTML = '<p>&#xabc;</p>';
   t.is(node.innerHTML, '<p>઼</p>');
+
+  node.innerHTML = '<p>&#x1F4A9;</p>';
+  t.is(node.innerHTML, '<p>💩</p>');
 });
 
 test('set closes tags by closing others', (t) => {
