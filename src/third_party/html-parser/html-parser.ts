@@ -234,7 +234,7 @@ export function parse(data: string, rootElement: Element) {
 }
 
 function decodeNumericEntities(html: string) {
-  return html.replace(/&#(x?[\da-fA-F]+);?/g, function (s, entity) {
+  return html.replace(/&#(x?[\da-f]+);?/gi, function (s, entity) {
     let code = entity.charAt(0) === 'x' ? parseInt(entity.substr(1).toLowerCase(), 16) : parseInt(entity, 10);
 
     // 1114111 is the largest valid unicode codepoint.
