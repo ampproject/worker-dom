@@ -128,7 +128,7 @@ export function parse(data: string, rootElement: Element) {
     if (lastTextPos < match.index) {
       // if has content
       const text = data.slice(lastTextPos, match.index);
-      currentParent.appendChild(ownerDocument.createTextNode(text));
+      currentParent.appendChild(ownerDocument.createTextNode(decodeNumericEntities(text)));
     }
     lastTextPos = kMarkupPattern.lastIndex;
     if (commentContents !== undefined) {
@@ -231,4 +231,17 @@ export function parse(data: string, rootElement: Element) {
   }
 
   throw new Error('Attempting to parse invalid HTML.');
+}
+
+function decodeNumericEntities(html: string) {
+  return html.replace(/&#(x?[\da-f]+);?/gi, function (s, entity) {
+    let code = entity.charAt(0).toLowerCase() === 'x' ? parseInt(entity.substr(1).toLowerCase(), 16) : parseInt(entity, 10);
+
+    // 1114111 is the largest valid unicode codepoint.
+    if (isNaN(code) || code > 1114111) {
+      return s;
+    }
+
+    return String.fromCodePoint(code) || s;
+  });
 }

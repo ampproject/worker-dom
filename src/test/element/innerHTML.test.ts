@@ -152,6 +152,25 @@ test('set invalid html throws', (t) => {
   t.throws(() => (node.innerHTML = '<div>'));
 });
 
+test('set text with numeric html entities', (t) => {
+  const { node } = t.context;
+
+  node.innerHTML = '<p>&#38;</p>';
+  t.is(node.innerHTML, '<p>&</p>');
+
+  node.innerHTML = '<p>&#x26;</p>';
+  t.is(node.innerHTML, '<p>&</p>');
+
+  node.innerHTML = '<p>&#xabc;</p>';
+  t.is(node.innerHTML, '<p>઼</p>');
+
+  node.innerHTML = '<p>&#x1F913;</p>';
+  t.is(node.innerHTML, '<p>🤓</p>');
+
+  node.innerHTML = '&#X1F913;';
+  t.is(node.innerHTML, '🤓');
+});
+
 test('set closes tags by closing others', (t) => {
   const { node } = t.context;
   node.innerHTML = '<div><a></div>';
