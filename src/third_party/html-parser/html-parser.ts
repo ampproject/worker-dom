@@ -241,7 +241,13 @@ export function parse(data: string, rootElement: Element) {
  *
  * TODO: create solution for other named entities.
  */
-const RESERVED_CHARACTERS: { [key: string]: string } = { amp: '&', lt: '<', gt: '>', quot: '"' };
+const RESERVED_CHARACTERS: { [key: string]: string | null } = {
+  __proto__: null,
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+};
 function decodeEntities(html: string) {
   return html.replace(/&(?:(#x?[\da-f]+)|([\w]+));?/gi, function (s, numericEntity, namedEntity) {
     // Numeric entity
@@ -257,6 +263,10 @@ function decodeEntities(html: string) {
     }
 
     // Named entity. Only HTML reserved entities are currently supported.
-    return RESERVED_CHARACTERS[namedEntity] || s;
+    if (namedEntity) {
+      return RESERVED_CHARACTERS[namedEntity.toLowerCase()] || s;
+    }
+
+    return s;
   });
 }

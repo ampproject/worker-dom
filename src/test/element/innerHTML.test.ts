@@ -183,6 +183,8 @@ test('set text with named html entities', (t) => {
   t.is(node.innerHTML, '>');
   node.innerHTML = '&amp;';
   t.is(node.innerHTML, '&');
+  node.innerHTML = '&AMP;';
+  t.is(node.innerHTML, '&');
 
   // Unsupported named entity is unchanged.
   node.innerHTML = '&copy;';
