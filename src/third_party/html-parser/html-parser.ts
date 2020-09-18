@@ -128,7 +128,7 @@ export function parse(data: string, rootElement: Element) {
     if (lastTextPos < match.index) {
       // if has content
       const text = data.slice(lastTextPos, match.index);
-      currentParent.appendChild(ownerDocument.createTextNode(decodeNumericEntities(text)));
+      currentParent.appendChild(ownerDocument.createTextNode(decodeEntities(text)));
     }
     lastTextPos = kMarkupPattern.lastIndex;
     if (commentContents !== undefined) {
@@ -233,15 +233,30 @@ export function parse(data: string, rootElement: Element) {
   throw new Error('Attempting to parse invalid HTML.');
 }
 
-function decodeNumericEntities(html: string) {
-  return html.replace(/&#(x?[\da-f]+);?/gi, function (s, entity) {
-    let code = entity.charAt(0).toLowerCase() === 'x' ? parseInt(entity.substr(1).toLowerCase(), 16) : parseInt(entity, 10);
+/**
+ * Decodes HTML Entities.
+ * Currently only works for numeric entities, as well as the 4 named entities
+ * required for encoding HTML: &, ", <, >.
+ * See https://developer.mozilla.org/en-US/docs/Glossary/Entity.
+ *
+ * TODO: create solution for other named entities.
+ */
+const RESERVED_CHARACTERS: { [key: string]: string } = { amp: '&', lt: '<', gt: '>', quot: '"' };
+function decodeEntities(html: string) {
+  return html.replace(/&(?:(#x?[\da-f]+)|([\w]+));?/gi, function (s, numericEntity, namedEntity) {
+    // Numeric entity
+    if (numericEntity) {
+      let code = numericEntity.charAt(1).toLowerCase() === 'x' ? parseInt(numericEntity.substr(2), 16) : parseInt(numericEntity.substr(1), 10);
 
-    // 1114111 is the largest valid unicode codepoint.
-    if (isNaN(code) || code > 1114111) {
-      return s;
+      // 1114111 is the largest valid unicode codepoint.
+      if (isNaN(code) || code > 1114111) {
+        return s;
+      }
+
+      return String.fromCodePoint(code) || s;
     }
 
-    return String.fromCodePoint(code) || s;
+    // Named entity. Only HTML reserved entities are currently supported.
+    return RESERVED_CHARACTERS[namedEntity] || s;
   });
 }

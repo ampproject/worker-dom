@@ -171,6 +171,24 @@ test('set text with numeric html entities', (t) => {
   t.is(node.innerHTML, '🤓');
 });
 
+test('set text with named html entities', (t) => {
+  const { node } = t.context;
+
+  // Reserved characters
+  node.innerHTML = '&quot;';
+  t.is(node.innerHTML, '"');
+  node.innerHTML = '&lt;';
+  t.is(node.innerHTML, '<');
+  node.innerHTML = '&gt;';
+  t.is(node.innerHTML, '>');
+  node.innerHTML = '&amp;';
+  t.is(node.innerHTML, '&');
+
+  // Unsupported named entity is unchanged.
+  node.innerHTML = '&copy;';
+  t.is(node.innerHTML, '&copy;');
+});
+
 test('set closes tags by closing others', (t) => {
   const { node } = t.context;
   node.innerHTML = '<div><a></div>';
