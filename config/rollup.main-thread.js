@@ -62,13 +62,36 @@ const ESModules = [
   {
     input: 'output/main-thread/index.amp.js',
     output: {
-      file: 'dist/amp/main.mjs',
+      file: 'dist/amp-production/main.mjs',
       format: 'es',
       sourcemap: true,
-      banner: 'var WORKER_DOM_DEBUG = /log|development/i.test(location.hash);',
     },
     plugins: [
       removeWorkerWhitespace(),
+      removeDebugCommandExecutors(),
+      replace({
+        WORKER_DOM_DEBUG: false,
+      }),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: false,
+      }),
+      compiler(),
+      terser(),
+    ],
+  },
+  {
+    input: 'output/main-thread/index.amp.js',
+    output: {
+      file: 'dist/amp-debug/main.mjs',
+      format: 'es',
+      sourcemap: true,
+    },
+    plugins: [
+      removeWorkerWhitespace(),
+      replace({
+        WORKER_DOM_DEBUG: true,
+      }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: true,
@@ -117,8 +140,6 @@ const IIFEModules = [
         transpileToES5: true,
         allowConsole: true,
       }),
-      compiler(),
-      terser(),
     ],
   },
 ];
