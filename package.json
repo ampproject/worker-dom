@@ -1,6 +1,6 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.27.2",
+  "version": "0.27.3",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/main",
   "files": [
