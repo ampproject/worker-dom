@@ -2,6 +2,7 @@ import { Element } from '../../worker-thread/dom/Element';
 import { Node } from '../../worker-thread/dom/Node';
 import { SVG_NAMESPACE, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { toLower, toUpper } from '../../utils';
+import { CharacterData } from '../../worker-thread/dom/CharacterData';
 
 interface Elements {
   [key: string]: boolean;
@@ -235,7 +236,7 @@ export function parse(data: string, rootElement: Element) {
 
 function decodeNumericEntities(html: string) {
   return html.replace(/&#(x?[\da-f]+);?/gi, function (s, entity) {
-    let code = entity.charAt(0) === 'x' ? parseInt(entity.substr(1).toLowerCase(), 16) : parseInt(entity, 10);
+    let code = entity.charAt(0).toLowerCase() === 'x' ? parseInt(entity.substr(1).toLowerCase(), 16) : parseInt(entity, 10);
 
     // 1114111 is the largest valid unicode codepoint.
     if (isNaN(code) || code > 1114111) {
