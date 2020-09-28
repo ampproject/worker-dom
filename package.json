@@ -124,7 +124,7 @@
   },
   "volta": {
     "node": "14.11.0",
-    "yarn": "1.22.5"
+    "yarn": "1.22.10"
   },
   "publishConfig": {
     "access": "public"
