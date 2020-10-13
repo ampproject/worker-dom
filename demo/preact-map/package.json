@@ -17,7 +17,7 @@
     "@babel/preset-env": "7.10.2",
     "@babel/plugin-transform-react-jsx": "7.10.1",
     "babel-loader": "8.1.0",
-    "css-loader": "4.3.0",
+    "css-loader": "5.0.0",
     "mini-css-extract-plugin": "0.11.3",
     "style-loader": "2.0.0",
     "webpack": "4.44.2",
