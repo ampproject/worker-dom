@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "obj-str": "1.0.3",
-    "preact": "10.5.4"
+    "preact": "10.5.5"
   },
   "devDependencies": {
     "@babel/core": "7.12.3",
