@@ -52,7 +52,10 @@ export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
         if (mutations[startPosition] === TransferrableMutationType.LONG_TASK_START) {
           index++;
           if (!currentResolver) {
-            config.longTask(new Promise((resolve) => (currentResolver = resolve)));
+            const newResolver = new Promise((resolve) => (currentResolver = resolve));
+            setTimeout(() => {
+              config.longTask?.(newResolver);
+            }, 0);
           }
         } else if (mutations[startPosition] === TransferrableMutationType.LONG_TASK_END) {
           index--;
