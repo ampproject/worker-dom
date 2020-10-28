@@ -58,7 +58,7 @@ export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
             // the same set of mutations, we need to guard against having a consumers 1st END
             // handler occur after the START handler. If we synchronously called longTask() here it
             // would likely occur due to scheduling of callbacks vs. promise.
-            // See: PR#.
+            // See: worker-dom/pull/989/files
             Promise.resolve().then(() => {
               if (config.longTask) {
                 config.longTask(newResolver);
