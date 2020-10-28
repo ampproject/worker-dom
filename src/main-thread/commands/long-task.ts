@@ -53,6 +53,12 @@ export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
           index++;
           if (!currentResolver) {
             const newResolver = new Promise((resolve) => (currentResolver = resolve));
+            // One of the worker-dom contracts is that there should not be two
+            // LONG_TASK_STARTs in a row without an END in between. In case both exist within
+            // the same set of mutations, a naive consumer will likely have a race since START is invoked
+            // synchronously via callback, whereas END must be chained to a resolving promise and therefore
+            // would occur afterwards.
+            // We guard against this by yielding to the event loop before calling longTask.
             setTimeout(() => {
               config.longTask?.(newResolver);
             }, 0);
