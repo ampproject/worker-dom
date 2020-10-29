@@ -62,6 +62,6 @@ export class ExportedWorker {
   }
 
   terminate(): void {
-    this.workerContext_.worker.terminate();
+    // this.workerContext_.worker.terminate();
   }
 }

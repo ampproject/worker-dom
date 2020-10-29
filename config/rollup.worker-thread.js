@@ -31,133 +31,133 @@ const compilePlugins = [
 // So, here we continue to use the '.mjs' extension to indicate newer ECMASCRIPT support
 // but ensure the code can be run within a worker by putting it inside a named iife.
 const ESModules = [
-  {
-    input: 'output/worker-thread/index.js',
-    output: {
-      file: 'dist/worker/worker.mjs',
-      format: 'iife',
-      name: 'WorkerThread',
-      sourcemap: true,
-    },
-    plugins: [
-      replace({
-        WORKER_DOM_DEBUG: false,
-      }),
-      babelPlugin({
-        transpileToES5: false,
-        allowConsole: false,
-      }),
-      ...compilePlugins,
-    ],
-  },
-  {
-    input: 'output/worker-thread/index.js',
-    output: {
-      file: 'dist/debug/worker/worker.mjs',
-      format: 'iife',
-      name: 'WorkerThread',
-      sourcemap: true,
-    },
-    plugins: [
-      replace({
-        WORKER_DOM_DEBUG: true,
-      }),
-      babelPlugin({
-        transpileToES5: false,
-        allowConsole: true,
-      }),
-    ],
-  },
-  {
-    input: 'output/worker-thread/index.amp.js',
-    output: {
-      file: 'dist/amp-production/worker/worker.mjs',
-      format: 'iife',
-      name: 'WorkerThread',
-      sourcemap: true,
-    },
-    plugins: [
-      replace({
-        WORKER_DOM_DEBUG: false,
-      }),
-      babelPlugin({
-        transpileToES5: false,
-        allowConsole: false,
-      }),
-      ...compilePlugins,
-    ],
-  },
-  {
-    input: 'output/worker-thread/index.amp.js',
-    output: {
-      file: 'dist/amp-debug/worker/worker.mjs',
-      format: 'iife',
-      name: 'WorkerThread',
-      sourcemap: true,
-    },
-    plugins: [
-      babelPlugin({
-        transpileToES5: false,
-        allowConsole: true,
-      }),
-    ],
-  },
-  {
-    input: 'output/worker-thread/index.amp.js',
-    output: {
-      file: 'dist/amp-production/worker/worker.js',
-      format: 'iife',
-      name: 'WorkerThread',
-      sourcemap: true,
-    },
-    plugins: [
-      replace({
-        WORKER_DOM_DEBUG: false,
-      }),
-      babelPlugin({
-        transpileToES5: true,
-        allowConsole: false,
-      }),
-      ...compilePlugins,
-    ],
-  },
-  {
-    input: 'output/worker-thread/index.amp.js',
-    output: {
-      file: 'dist/amp-debug/worker/worker.js',
-      format: 'iife',
-      name: 'WorkerThread',
-      sourcemap: true,
-    },
-    plugins: [
-      replace({
-        WORKER_DOM_DEBUG: true,
-      }),
-      babelPlugin({
-        transpileToES5: true,
-        allowConsole: true,
-      }),
-    ],
-  },
-  {
-    input: 'output/worker-thread/index.nodom.amp.js',
-    output: {
-      file: 'dist/amp-production/worker/worker.nodom.mjs',
-      format: 'iife',
-      name: 'WorkerThread',
-      sourcemap: true,
-    },
-    plugins: [
-      replace({
-        WORKER_DOM_DEBUG: false,
-      }),
-      babelPlugin({
-        transpileToES5: false,
-        allowConsole: true,
-      }),
-      ...compilePlugins,
-    ],
-  },
+  // {
+  //   input: 'output/worker-thread/index.js',
+  //   output: {
+  //     file: 'dist/worker/worker.mjs',
+  //     format: 'iife',
+  //     name: 'WorkerThread',
+  //     sourcemap: true,
+  //   },
+  //   plugins: [
+  //     replace({
+  //       WORKER_DOM_DEBUG: false,
+  //     }),
+  //     babelPlugin({
+  //       transpileToES5: false,
+  //       allowConsole: false,
+  //     }),
+  //     ...compilePlugins,
+  //   ],
+  // },
+  // {
+  //   input: 'output/worker-thread/index.js',
+  //   output: {
+  //     file: 'dist/debug/worker/worker.mjs',
+  //     format: 'iife',
+  //     name: 'WorkerThread',
+  //     sourcemap: true,
+  //   },
+  //   plugins: [
+  //     replace({
+  //       WORKER_DOM_DEBUG: true,
+  //     }),
+  //     babelPlugin({
+  //       transpileToES5: false,
+  //       allowConsole: true,
+  //     }),
+  //   ],
+  // },
+  // {
+  //   input: 'output/worker-thread/index.amp.js',
+  //   output: {
+  //     file: 'dist/amp-production/worker/worker.mjs',
+  //     format: 'iife',
+  //     name: 'WorkerThread',
+  //     sourcemap: true,
+  //   },
+  //   plugins: [
+  //     replace({
+  //       WORKER_DOM_DEBUG: false,
+  //     }),
+  //     babelPlugin({
+  //       transpileToES5: false,
+  //       allowConsole: false,
+  //     }),
+  //     ...compilePlugins,
+  //   ],
+  // },
+  // {
+  //   input: 'output/worker-thread/index.amp.js',
+  //   output: {
+  //     file: 'dist/amp-debug/worker/worker.mjs',
+  //     format: 'iife',
+  //     name: 'WorkerThread',
+  //     sourcemap: true,
+  //   },
+  //   plugins: [
+  //     babelPlugin({
+  //       transpileToES5: false,
+  //       allowConsole: true,
+  //     }),
+  //   ],
+  // },
+  // {
+  //   input: 'output/worker-thread/index.amp.js',
+  //   output: {
+  //     file: 'dist/amp-production/worker/worker.js',
+  //     format: 'iife',
+  //     name: 'WorkerThread',
+  //     sourcemap: true,
+  //   },
+  //   plugins: [
+  //     replace({
+  //       WORKER_DOM_DEBUG: false,
+  //     }),
+  //     babelPlugin({
+  //       transpileToES5: true,
+  //       allowConsole: false,
+  //     }),
+  //     ...compilePlugins,
+  //   ],
+  // },
+  // {
+  //   input: 'output/worker-thread/index.amp.js',
+  //   output: {
+  //     file: 'dist/amp-debug/worker/worker.js',
+  //     format: 'iife',
+  //     name: 'WorkerThread',
+  //     sourcemap: true,
+  //   },
+  //   plugins: [
+  //     replace({
+  //       WORKER_DOM_DEBUG: true,
+  //     }),
+  //     babelPlugin({
+  //       transpileToES5: true,
+  //       allowConsole: true,
+  //     }),
+  //   ],
+  // },
+  // {
+  //   input: 'output/worker-thread/index.nodom.amp.js',
+  //   output: {
+  //     file: 'dist/amp-production/worker/worker.nodom.mjs',
+  //     format: 'iife',
+  //     name: 'WorkerThread',
+  //     sourcemap: true,
+  //   },
+  //   plugins: [
+  //     replace({
+  //       WORKER_DOM_DEBUG: false,
+  //     }),
+  //     babelPlugin({
+  //       transpileToES5: false,
+  //       allowConsole: true,
+  //     }),
+  //     ...compilePlugins,
+  //   ],
+  // },
   {
     input: 'output/worker-thread/index.nodom.amp.js',
     output: {
@@ -176,43 +176,43 @@ const ESModules = [
       }),
     ],
   },
-  {
-    input: 'output/worker-thread/index.nodom.amp.js',
-    output: {
-      file: 'dist/amp-production/worker/worker.nodom.js',
-      format: 'iife',
-      name: 'WorkerThread',
-      sourcemap: true,
-    },
-    plugins: [
-      replace({
-        WORKER_DOM_DEBUG: false,
-      }),
-      babelPlugin({
-        transpileToES5: true,
-        allowConsole: false,
-      }),
-      ...compilePlugins,
-    ],
-  },
-  {
-    input: 'output/worker-thread/index.nodom.amp.js',
-    output: {
-      file: 'dist/amp-debug/worker/worker.nodom.js',
-      format: 'iife',
-      name: 'WorkerThread',
-      sourcemap: true,
-    },
-    plugins: [
-      replace({
-        WORKER_DOM_DEBUG: true,
-      }),
-      babelPlugin({
-        transpileToES5: true,
-        allowConsole: true,
-      }),
-    ],
-  },
+  // {
+  //   input: 'output/worker-thread/index.nodom.amp.js',
+  //   output: {
+  //     file: 'dist/amp-production/worker/worker.nodom.js',
+  //     format: 'iife',
+  //     name: 'WorkerThread',
+  //     sourcemap: true,
+  //   },
+  //   plugins: [
+  //     replace({
+  //       WORKER_DOM_DEBUG: false,
+  //     }),
+  //     babelPlugin({
+  //       transpileToES5: true,
+  //       allowConsole: false,
+  //     }),
+  //     ...compilePlugins,
+  //   ],
+  // },
+  // {
+  //   input: 'output/worker-thread/index.nodom.amp.js',
+  //   output: {
+  //     file: 'dist/amp-debug/worker/worker.nodom.js',
+  //     format: 'iife',
+  //     name: 'WorkerThread',
+  //     sourcemap: true,
+  //   },
+  //   plugins: [
+  //     replace({
+  //       WORKER_DOM_DEBUG: true,
+  //     }),
+  //     babelPlugin({
+  //       transpileToES5: true,
+  //       allowConsole: true,
+  //     }),
+  //   ],
+  // },
 ];
 
 const IIFEModules = [
@@ -255,4 +255,4 @@ const IIFEModules = [
   },
 ];
 
-export default [...ESModules, ...IIFEModules];
+export default [...ESModules]; // , ...IIFEModules];

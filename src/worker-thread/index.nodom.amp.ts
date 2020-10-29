@@ -18,9 +18,16 @@ import { AMP } from './amp/amp';
 import { callFunctionMessageHandler, exportFunction } from './function';
 import { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { DocumentStub } from './dom/DocumentLite';
-import { deleteGlobals } from './amp/delete-globals';
+// import { deleteGlobals } from './amp/delete-globals';
 
 const noop = () => void 0;
+
+// Allows for function invocation
+(self as any).exportFunction = exportFunction;
+
+self.onmessage = (evt: MessageEvent) => {
+  callFunctionMessageHandler(evt, workerDOM.document);
+};
 
 export const workerDOM: WorkerNoDOMGlobalScope = (function (postMessage, addEventListener, removeEventListener) {
   const document = new DocumentStub();
@@ -33,13 +40,9 @@ export const workerDOM: WorkerNoDOMGlobalScope = (function (postMessage, addEven
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
 // Modify global scope by removing disallowed properties.
-deleteGlobals(self);
+// deleteGlobals(self);
 
 // Offer APIs like AMP.setState() on the global scope.
 (self as any).AMP = new AMP(workerDOM.document);
-
-// Allows for function invocation
-(self as any).exportFunction = exportFunction;
-addEventListener('message', (evt: MessageEvent) => callFunctionMessageHandler(evt, workerDOM.document));
 
 export const hydrate = noop;

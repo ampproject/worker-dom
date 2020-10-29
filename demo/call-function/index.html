@@ -4,16 +4,20 @@
     <meta charset="utf-8" />
     <title>Call function</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="/dist/amp/main.mjs" type="module"></script>
+    <script src="/dist/amp-debug/main.mjs" type="module"></script>
   </head>
   <body>
     <div src="call-function.js" id="upgrade-me"></div>
     <script type="module">
-      import { upgradeElement } from "/dist/amp/main.mjs";
+      import { upgradeElement } from "/dist/amp-debug/main.mjs";
       upgradeElement(
         document.getElementById("upgrade-me"),
-        "/dist/amp/worker/worker.nodom.mjs"
+        "/dist/amp-debug/worker/worker.nodom.mjs"
       ).then(async (worker) => {
+        async function sleep(ms) {
+          return new Promise(res => setTimeout(res, ms));
+        }
+        await sleep(100);
         worker
           .callFunction("performComplexMath")
           .then((result) => console.log(`Complex math result: ${result}`));

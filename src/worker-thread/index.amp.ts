@@ -18,7 +18,6 @@ import { AMP } from './amp/amp';
 import { callFunctionMessageHandler, exportFunction } from './function';
 import { CharacterData } from './dom/CharacterData';
 import { Comment } from './dom/Comment';
-import { deleteGlobals } from './amp/delete-globals';
 import { Document } from './dom/Document';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { DOMTokenList } from './dom/DOMTokenList';
@@ -136,9 +135,17 @@ export const workerDOM: WorkerDOMGlobalScope = (function (postMessage, addEventL
   return document.defaultView;
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
+// Allows for function invocation
+(self as any).exportFunction = exportFunction;
+console.error(self.onmessage);
+self.onmessage = (evt: MessageEvent) => {
+  console.error('onmessage: ', onmessage);
+  callFunctionMessageHandler(evt, workerDOM.document);
+};
+
 // Modify global scope by removing disallowed properties and wrapping `fetch()`.
 (function (global: WorkerGlobalScope) {
-  deleteGlobals(global);
+  // deleteGlobals(global);
   // Wrap global.fetch() with our longTask API.
   const originalFetch = global['fetch'];
   if (originalFetch) {
@@ -157,9 +164,5 @@ export const workerDOM: WorkerDOMGlobalScope = (function (postMessage, addEventL
 
 // Offer APIs like AMP.setState() on the global scope.
 (self as any).AMP = new AMP(workerDOM.document);
-
-// Allows for function invocation
-(self as any).exportFunction = exportFunction;
-addEventListener('message', (evt: MessageEvent) => callFunctionMessageHandler(evt, workerDOM.document));
 
 export const hydrate = initialize;

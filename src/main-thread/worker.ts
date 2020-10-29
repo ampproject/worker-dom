@@ -80,13 +80,16 @@ export class WorkerContext {
           }
         });
       }).call(self);
+
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;
     const iframe = window.document.createElement('iframe');
+    iframe.setAttribute('id', 'WORKER_DOM_IFRAME');
     iframe.setAttribute('sandbox', 'allow-scripts');
     iframe.setAttribute('srcdoc', `<script>${code}</script>`);
+    iframe.setAttribute('style', 'display:none;');
     baseElement.appendChild(iframe);
-    this[TransferrableKeys.worker] = iframe;
+    this[TransferrableKeys.worker] = document.getElementById('WORKER_DOM_IFRAME') as HTMLIFrameElement;
     if (WORKER_DOM_DEBUG) {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config, this));
     }

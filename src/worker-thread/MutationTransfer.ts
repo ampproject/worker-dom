@@ -40,7 +40,7 @@ export function transfer(document: Document | DocumentStub, mutation: Array<numb
         ).buffer;
         const mutations = new Uint16Array(pendingMutations).buffer;
 
-        document.postMessage(
+        (self as any).parent.postMessage(
           {
             [TransferrableKeys.phase]: phase,
             [TransferrableKeys.type]: phase === Phase.Mutating ? MessageType.MUTATE : MessageType.HYDRATE,
@@ -48,6 +48,7 @@ export function transfer(document: Document | DocumentStub, mutation: Array<numb
             [TransferrableKeys.strings]: consumeStrings(),
             [TransferrableKeys.mutations]: mutations,
           } as MutationFromWorker,
+          '*',
           [nodes, mutations],
         );
 
