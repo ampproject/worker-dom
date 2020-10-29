@@ -24,7 +24,7 @@ import { WorkerContext } from '../../main-thread/worker';
 import { normalizeConfiguration, WorkerDOMConfiguration } from '../../main-thread/configuration';
 import { ObjectContext } from '../../main-thread/object-context';
 
-async function sleep(ms: number) {
+async function sleep(ms: number): Promise<void> {
   return new Promise((res) => setTimeout(res, ms));
 }
 
@@ -159,7 +159,7 @@ test.serial('multiple long tasks should have their handlers fired in sequence ST
   executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
   await sleep(0);
 
-  // End 1st task and start the second in the same task.
+  // End 1st task and start the second without a sleep in between.
   executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
   executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
   await sleep(0);
