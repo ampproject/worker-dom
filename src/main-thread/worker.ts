@@ -86,7 +86,7 @@ export class WorkerContext {
     const iframe = window.document.createElement('iframe');
     iframe.setAttribute('id', 'WORKER_DOM_IFRAME');
     iframe.setAttribute('sandbox', 'allow-scripts');
-    iframe.setAttribute('srcdoc', `<script>${code}</script>`);
+    iframe.setAttribute('srcdoc', `<html><head></head><body></body><script>${code}</script></html>`);
     iframe.setAttribute('style', 'display:none;');
     baseElement.appendChild(iframe);
     this[TransferrableKeys.worker] = document.getElementById('WORKER_DOM_IFRAME') as HTMLIFrameElement;
