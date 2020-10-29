@@ -61,7 +61,8 @@ export function install(
     if (domScriptContent && authorScriptContent && config.authorURL) {
       const workerContext = new WorkerContext(baseElement, nodeContext, domScriptContent, authorScriptContent, normalizedConfig);
       const mutatorContext = new MutatorProcessor(stringContext, nodeContext, workerContext, normalizedConfig, objectContext);
-      workerContext.worker.onmessage = (message: MessageFromWorker) => {
+      window.onmessage = (message: MessageFromWorker) => {
+        console.error('got message: ', message);
         const { data } = message;
 
         if (!ALLOWABLE_MESSAGE_TYPES.includes(data[TransferrableKeys.type])) {

@@ -23,7 +23,7 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 
 export class WorkerContext {
-  private [TransferrableKeys.worker]: Worker;
+  private [TransferrableKeys.worker]: HTMLIFrameElement;
   private nodeContext: NodeContext;
   private config: WorkerDOMConfiguration;
 
@@ -54,11 +54,12 @@ export class WorkerContext {
       }
     }
 
+    // TODO: if using iframe, need to remove all of the vdom elements
+    // worker-dom provides, esp if not in nodom mode or itll likely break.
     const code = `
       'use strict';
       (function(){
         ${workerDOMScript}
-        self['window'] = self;
         var workerDOM = WorkerThread.workerDOM;
         WorkerThread.hydrate(
           workerDOM.document,
@@ -71,11 +72,21 @@ export class WorkerContext {
           ${JSON.stringify(sessionStorageData)}
         );
         workerDOM.document[${TransferrableKeys.observe}](this);
-        Object.keys(workerDOM).forEach(function(k){self[k]=workerDOM[k]});
+        Object.keys(workerDOM).forEach(function(k){
+          try {
+            self[k]=workerDOM[k]
+          } catch(err) {
+            console.error('could not set: ' + k);
+          }
+        });
       }).call(self);
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;
-    this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
+    const iframe = window.document.createElement('iframe');
+    iframe.setAttribute('sandbox', 'allow-scripts');
+    iframe.setAttribute('srcdoc', `<script>${code}</script>`);
+    baseElement.appendChild(iframe);
+    this[TransferrableKeys.worker] = iframe;
     if (WORKER_DOM_DEBUG) {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config, this));
     }
@@ -87,7 +98,7 @@ export class WorkerContext {
   /**
    * Returns the private worker.
    */
-  get worker(): Worker {
+  get worker(): HTMLIFrameElement {
     return this[TransferrableKeys.worker];
   }
 
@@ -101,6 +112,8 @@ export class WorkerContext {
     if (this.config.onSendMessage) {
       this.config.onSendMessage(message);
     }
-    this.worker.postMessage(message, transferables || []);
+    if (this.worker.contentWindow) {
+      this.worker.contentWindow.postMessage(message, '*', transferables || []);
+    }
   }
 }
