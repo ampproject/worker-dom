@@ -144,4 +144,4 @@ const IIFEModules = [
   },
 ];
 
-export default [...ESModules]; //, ...IIFEModules];
+export default [...ESModules, ...IIFEModules];
