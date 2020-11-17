@@ -83,7 +83,14 @@ export class WorkerContext {
           ${JSON.stringify(sessionStorageSupportedStatus.errorMsg ?? sessionStorageData)}
         );
         workerDOM.document[${TransferrableKeys.observe}](this);
-        Object.keys(workerDOM).forEach(function(k){try{self[k]=workerDOM[k]}catch(e){}});
+        Object.keys(workerDOM).forEach(function(k){
+          /* These two are already assigned to Window. They also have the potential to throw
+           when accessed. */
+          if (k == 'localStorage' || k == 'sessionStorage') {
+            return;
+          }
+          self[k]=workerDOM[k]
+        });
       }).call(self);
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;

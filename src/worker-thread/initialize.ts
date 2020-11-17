@@ -22,6 +22,7 @@ import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
 import { createStorage } from './Storage';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 import { appendGlobalEventProperties } from './dom/HTMLElement';
+import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 
 export function initialize(
   document: Document,
@@ -44,22 +45,29 @@ export function initialize(
   window.innerHeight = innerHeight;
   if (typeof localStorageData != 'string') {
     window.localStorage = createStorage(document, StorageLocation.Local, localStorageData);
+    (self as any).localStorage = window.localStorage;
   } else {
-    Object.defineProperty(window, 'localStorage', {
-      enumerable: true,
-      get: () => {
-        throw new Error(localStorageData);
-      },
-    });
+    defineThrowingGlobal(window, 'localStorage', localStorageData);
   }
   if (typeof sessionStorageData != 'string') {
     window.sessionStorage = createStorage(document, StorageLocation.Session, sessionStorageData);
+    (self as any).sessionStorage = window.sessionStorage;
   } else {
-    Object.defineProperty(window, 'sessionStorage', {
-      enumerable: true,
-      get: () => {
-        throw new Error(sessionStorageData);
-      },
-    });
+    defineThrowingGlobal(window, 'sessionStorage', sessionStorageData);
   }
+}
+
+function defineThrowingGlobal(win: WorkerDOMGlobalScope, property: string, errorMsg: string) {
+  Object.defineProperty(win, property, {
+    enumerable: true,
+    get: () => {
+      throw new Error(errorMsg);
+    },
+  });
+  Object.defineProperty(self, property, {
+    enumerable: true,
+    get: () => {
+      throw new Error(errorMsg);
+    },
+  });
 }
