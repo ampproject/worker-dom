@@ -57,6 +57,8 @@ export class WorkerContext {
       }
     }
 
+    // We skip assigning the globals for localStorage and sessionStorage because
+    // We've already installed them. Also, accessing them can throw in incognito mode.
     const code = `
       'use strict';
       (function(){
@@ -75,12 +77,7 @@ export class WorkerContext {
         );
         workerDOM.document[${TransferrableKeys.observe}](this);
         Object.keys(workerDOM).forEach(function(k){
-          /* These two are already assigned to Window. They also have the potential to throw
-           when accessed. */
-          if (k == 'localStorage' || k == 'sessionStorage') {
-            return;
-          }
-          self[k]=workerDOM[k]
+          k != 'localStorage' && k != 'sessionStorage' && (self[k]=workerDOM[k])
         });
       }).call(self);
       ${authorScript}
