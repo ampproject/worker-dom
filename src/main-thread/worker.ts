@@ -22,6 +22,7 @@ import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 
+export type StorageSupport = { supported: boolean; errorMsg?: string };
 export class WorkerContext {
   private [TransferrableKeys.worker]: Worker;
   private nodeContext: NodeContext;
@@ -42,8 +43,19 @@ export class WorkerContext {
     const cssKeys: Array<string> = [];
     const globalEventHandlerKeys: Array<string> = [];
     // TODO(choumx): Sync read of all localStorage and sessionStorage a possible performance bottleneck?
-    const localStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Local) : window.localStorage;
-    const sessionStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Session) : window.sessionStorage;
+    const localStorageSupportedStatus = getStorageSupportStatus('localStorage');
+    const sessionStorageSupportedStatus = getStorageSupportStatus('sessionStorage');
+    let localStorageData;
+    if (localStorageSupportedStatus.supported) {
+      localStorageData = config.sanitizer
+        ? // TODO: how can this possibly work. sanitizer returns a promise!?
+          config.sanitizer.getStorage(StorageLocation.Local)
+        : window.localStorage;
+    }
+    let sessionStorageData;
+    if (sessionStorageSupportedStatus.supported) {
+      sessionStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Session) : window.sessionStorage;
+    }
 
     for (const key in baseElement.style) {
       cssKeys.push(key);
@@ -67,11 +79,11 @@ export class WorkerContext {
           ${JSON.stringify(cssKeys)},
           ${JSON.stringify(globalEventHandlerKeys)},
           [${window.innerWidth}, ${window.innerHeight}],
-          ${JSON.stringify(localStorageData)},
-          ${JSON.stringify(sessionStorageData)}
+          ${JSON.stringify(localStorageSupportedStatus.errorMsg ?? localStorageData)},
+          ${JSON.stringify(sessionStorageSupportedStatus.errorMsg ?? sessionStorageData)}
         );
         workerDOM.document[${TransferrableKeys.observe}](this);
-        Object.keys(workerDOM).forEach(function(k){self[k]=workerDOM[k]});
+        Object.keys(workerDOM).forEach(function(k){try{self[k]=workerDOM[k]}catch(e){}});
       }).call(self);
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;
@@ -103,4 +115,14 @@ export class WorkerContext {
     }
     this.worker.postMessage(message, transferables || []);
   }
+}
+
+function getStorageSupportStatus(type: 'localStorage' | 'sessionStorage'): StorageSupport {
+  try {
+    let randKey = 'WORKER_DOM_TEST_KEY';
+    globalThis[type].setItem(randKey, '');
+  } catch (err) {
+    return { supported: false, errorMsg: err.message };
+  }
+  return { supported: true };
 }

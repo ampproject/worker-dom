@@ -30,7 +30,7 @@ export function initialize(
   cssKeys: Array<string>,
   globalEventHandlerKeys: Array<string>,
   [innerWidth, innerHeight]: [number, number],
-  localStorageData: { [key: string]: string },
+  localStorageData: { [key: string]: string } | string,
   sessionStorageData: { [key: string]: string },
 ): void {
   addCssKeys(cssKeys);
@@ -42,6 +42,24 @@ export function initialize(
   const window = document.defaultView;
   window.innerWidth = innerWidth;
   window.innerHeight = innerHeight;
-  window.localStorage = createStorage(document, StorageLocation.Local, localStorageData);
-  window.sessionStorage = createStorage(document, StorageLocation.Session, sessionStorageData);
+  if (typeof localStorageData != 'string') {
+    window.localStorage = createStorage(document, StorageLocation.Local, localStorageData);
+  } else {
+    Object.defineProperty(window, 'localStorage', {
+      enumerable: true,
+      get: () => {
+        throw new Error(localStorageData);
+      },
+    });
+  }
+  if (typeof sessionStorageData != 'string') {
+    window.sessionStorage = createStorage(document, StorageLocation.Session, sessionStorageData);
+  } else {
+    Object.defineProperty(window, 'sessionStorage', {
+      enumerable: true,
+      get: () => {
+        throw new Error(sessionStorageData);
+      },
+    });
+  }
 }
