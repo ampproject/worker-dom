@@ -24,6 +24,8 @@ import { StorageLocation } from '../transfer/TransferrableStorage';
 import { appendGlobalEventProperties } from './dom/HTMLElement';
 import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 
+type WorkerStorageInit = { supported: true; storage: { [key: string]: string } } | { supported: false; errorMsg: string };
+
 export function initialize(
   document: Document,
   strings: Array<string>,
@@ -31,8 +33,8 @@ export function initialize(
   cssKeys: Array<string>,
   globalEventHandlerKeys: Array<string>,
   [innerWidth, innerHeight]: [number, number],
-  localStorageData: { [key: string]: string } | string,
-  sessionStorageData: { [key: string]: string },
+  localStorageInit: WorkerStorageInit,
+  sessionStorageInit: WorkerStorageInit,
 ): void {
   addCssKeys(cssKeys);
   appendGlobalEventProperties(globalEventHandlerKeys);
@@ -43,17 +45,17 @@ export function initialize(
   const window = document.defaultView;
   window.innerWidth = innerWidth;
   window.innerHeight = innerHeight;
-  if (typeof localStorageData != 'string') {
-    window.localStorage = createStorage(document, StorageLocation.Local, localStorageData);
+  if (localStorageInit.supported) {
+    window.localStorage = createStorage(document, StorageLocation.Local, localStorageInit.storage);
     (self as any).localStorage = window.localStorage;
   } else {
-    defineThrowingGlobal(window, 'localStorage', localStorageData);
+    defineThrowingGlobal(window, 'localStorage', localStorageInit.errorMsg);
   }
-  if (typeof sessionStorageData != 'string') {
-    window.sessionStorage = createStorage(document, StorageLocation.Session, sessionStorageData);
+  if (sessionStorageInit.supported) {
+    window.sessionStorage = createStorage(document, StorageLocation.Session, sessionStorageInit.storage);
     (self as any).sessionStorage = window.sessionStorage;
   } else {
-    defineThrowingGlobal(window, 'sessionStorage', sessionStorageData);
+    defineThrowingGlobal(window, 'sessionStorage', sessionStorageInit.errorMsg);
   }
 }
 

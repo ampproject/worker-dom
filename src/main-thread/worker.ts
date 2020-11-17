@@ -22,7 +22,9 @@ import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 
-export type StorageSupport = { supported: boolean; errorMsg?: string };
+// TODO: Sanitizer storage init is likely broken, since the code currently
+// attempts to stringify a Promise.
+export type StorageInit = { supported: true; storage: Storage | Promise<StorageValue> } | { supported: false; errorMsg: string };
 export class WorkerContext {
   private [TransferrableKeys.worker]: Worker;
   private nodeContext: NodeContext;
@@ -43,19 +45,8 @@ export class WorkerContext {
     const cssKeys: Array<string> = [];
     const globalEventHandlerKeys: Array<string> = [];
     // TODO(choumx): Sync read of all localStorage and sessionStorage a possible performance bottleneck?
-    const localStorageSupportedStatus = getStorageSupportStatus('localStorage');
-    const sessionStorageSupportedStatus = getStorageSupportStatus('sessionStorage');
-    let localStorageData;
-    if (localStorageSupportedStatus.supported) {
-      localStorageData = config.sanitizer
-        ? // TODO: how can this possibly work. sanitizer returns a promise!?
-          config.sanitizer.getStorage(StorageLocation.Local)
-        : window.localStorage;
-    }
-    let sessionStorageData;
-    if (sessionStorageSupportedStatus.supported) {
-      sessionStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Session) : window.sessionStorage;
-    }
+    const localStorageInit = getStorageInit('localStorage');
+    const sessionStorageInit = getStorageInit('sessionStorage');
 
     for (const key in baseElement.style) {
       cssKeys.push(key);
@@ -79,8 +70,8 @@ export class WorkerContext {
           ${JSON.stringify(cssKeys)},
           ${JSON.stringify(globalEventHandlerKeys)},
           [${window.innerWidth}, ${window.innerHeight}],
-          ${JSON.stringify(localStorageSupportedStatus.errorMsg ?? localStorageData)},
-          ${JSON.stringify(sessionStorageSupportedStatus.errorMsg ?? sessionStorageData)}
+          ${JSON.stringify(localStorageInit)},
+          ${JSON.stringify(sessionStorageInit)}
         );
         workerDOM.document[${TransferrableKeys.observe}](this);
         Object.keys(workerDOM).forEach(function(k){
@@ -124,12 +115,17 @@ export class WorkerContext {
   }
 }
 
-function getStorageSupportStatus(type: 'localStorage' | 'sessionStorage'): StorageSupport {
+function getStorageInit(type: 'localStorage' | 'sessionStorage', sanitizer?: Sanitizer): StorageInit {
   try {
-    let randKey = 'WORKER_DOM_TEST_KEY';
-    globalThis[type].setItem(randKey, '');
+    let storage = window[type];
+    if (sanitizer) {
+      return {
+        supported: true,
+        storage: sanitizer.getStorage(type == 'localStorage' ? StorageLocation.Local : StorageLocation.Session),
+      };
+    }
+    return { supported: true, storage };
   } catch (err) {
     return { supported: false, errorMsg: err.message };
   }
-  return { supported: true };
 }
