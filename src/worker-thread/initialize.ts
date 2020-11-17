@@ -24,7 +24,7 @@ import { StorageLocation } from '../transfer/TransferrableStorage';
 import { appendGlobalEventProperties } from './dom/HTMLElement';
 import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 
-type WorkerStorageInit = { supported: true; storage: { [key: string]: string } } | { supported: false; errorMsg: string };
+export type WorkerStorageInit = { supported: true; storage: { [key: string]: string } } | { supported: false; errorMsg: string };
 
 export function initialize(
   document: Document,
