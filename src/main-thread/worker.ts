@@ -76,9 +76,7 @@ export class WorkerContext {
           ${JSON.stringify(sessionStorageInit)}
         );
         workerDOM.document[${TransferrableKeys.observe}](this);
-        Object.keys(workerDOM).forEach(function(k){
-          k != 'localStorage' && k != 'sessionStorage' && (self[k]=workerDOM[k])
-        });
+        Object.keys(workerDOM).forEach(function(k){self[k]=workerDOM[k]});
       }).call(self);
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;
