@@ -32,6 +32,7 @@ test.beforeEach((t) => {
 
 test.serial('Should install throwing storage', (t) => {
   const unsupportedAccess: WorkerStorageInit = {
+    storage: null,
     errorMsg: 'Access denied',
   };
   const { doc, self } = t.context;
@@ -45,6 +46,7 @@ test.serial('Should install throwing storage', (t) => {
 test.serial('Should install accessible storage', (t) => {
   const supportedAccess: WorkerStorageInit = {
     storage: {},
+    errorMsg: null,
   };
   const { doc } = t.context;
   initialize(doc, [], {} as HydrateableNode, [], [], [0, 0], supportedAccess, supportedAccess);

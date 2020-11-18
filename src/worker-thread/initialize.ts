@@ -23,7 +23,7 @@ import { createStorage } from './Storage';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 import { appendGlobalEventProperties } from './dom/HTMLElement';
 
-export type WorkerStorageInit = { storage: { [key: string]: string } } | { errorMsg: string };
+export type WorkerStorageInit = { storage: { [key: string]: string }; errorMsg: null } | { storage: null; errorMsg: string };
 
 export function initialize(
   document: Document,
@@ -44,12 +44,12 @@ export function initialize(
   const window = document.defaultView;
   window.innerWidth = innerWidth;
   window.innerHeight = innerHeight;
-  if ('storage' in localStorageInit) {
+  if (localStorageInit.storage) {
     window.localStorage = createStorage(document, StorageLocation.Local, localStorageInit.storage);
   } else {
     console.warn(localStorageInit.errorMsg);
   }
-  if ('storage' in sessionStorageInit) {
+  if (sessionStorageInit.storage) {
     window.sessionStorage = createStorage(document, StorageLocation.Session, sessionStorageInit.storage);
   } else {
     console.warn(sessionStorageInit.errorMsg);
