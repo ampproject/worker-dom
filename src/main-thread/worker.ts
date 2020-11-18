@@ -24,7 +24,7 @@ import { StorageLocation } from '../transfer/TransferrableStorage';
 
 // TODO: Sanitizer storage init is likely broken, since the code currently
 // attempts to stringify a Promise.
-export type StorageInit = { supported: true; storage: Storage | Promise<StorageValue> } | { supported: false; errorMsg: string };
+export type StorageInit = { storage: Storage | Promise<StorageValue> } | { errorMsg: string };
 export class WorkerContext {
   private [TransferrableKeys.worker]: Worker;
   private nodeContext: NodeContext;
@@ -112,15 +112,13 @@ export class WorkerContext {
 
 function getStorageInit(type: 'localStorage' | 'sessionStorage', sanitizer?: Sanitizer): StorageInit {
   try {
-    let storage = window[type];
-    if (sanitizer) {
-      return {
-        supported: true,
-        storage: sanitizer.getStorage(type == 'localStorage' ? StorageLocation.Local : StorageLocation.Session),
-      };
+    if (!sanitizer) {
+      return { storage: window[type] };
     }
-    return { supported: true, storage };
+    return {
+      storage: sanitizer.getStorage(type == 'localStorage' ? StorageLocation.Local : StorageLocation.Session),
+    };
   } catch (err) {
-    return { supported: false, errorMsg: err.message };
+    return { errorMsg: err.message };
   }
 }

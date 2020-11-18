@@ -32,7 +32,6 @@ test.beforeEach((t) => {
 
 test.serial('Should install throwing storage', (t) => {
   const unsupportedAccess: WorkerStorageInit = {
-    supported: false,
     errorMsg: 'Access denied',
   };
   const { doc, self } = t.context;
@@ -45,7 +44,6 @@ test.serial('Should install throwing storage', (t) => {
 
 test.serial('Should install accessible storage', (t) => {
   const supportedAccess: WorkerStorageInit = {
-    supported: true,
     storage: {},
   };
   const { doc } = t.context;
