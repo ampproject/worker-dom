@@ -96,7 +96,7 @@
       "brotli": "5 kB"
     },
     "./dist/worker/worker.mjs": {
-      "brotli": "11.76 kB"
+      "brotli": "12 kB"
     },
     "./dist/worker/worker.js": {
       "brotli": "13.5 kB"
