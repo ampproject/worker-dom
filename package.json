@@ -1,6 +1,6 @@
 {
   "name": "@ampproject/worker-dom",
-  "version": "0.27.3",
+  "version": "0.27.4",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
   "main": "dist/main",
   "files": [
@@ -45,7 +45,7 @@
     "@babel/plugin-proposal-object-rest-spread": "7.12.1",
     "@babel/preset-env": "7.12.1",
     "@rollup/plugin-replace": "2.3.4",
-    "@types/node": "14.14.3",
+    "@types/node": "14.14.8",
     "@types/sinon": "9.0.8",
     "acorn": "8.0.4",
     "acorn-walk": "8.0.0",
@@ -58,12 +58,12 @@
     "jsdom": "16.4.0",
     "lint-staged": "10.5.1",
     "magic-string": "0.25.7",
-    "np": "6.5.0",
+    "np": "7.0.0",
     "npm-run-all": "4.1.5",
     "polka": "0.5.2",
     "prettier": "2.1.2",
     "rimraf": "3.0.2",
-    "rollup": "2.29.0",
+    "rollup": "2.33.3",
     "rollup-plugin-analyzer": "3.3.0",
     "rollup-plugin-babel": "4.4.0",
     "rollup-plugin-terser": "7.0.2",
@@ -96,7 +96,7 @@
       "brotli": "5 kB"
     },
     "./dist/worker/worker.mjs": {
-      "brotli": "11.76 kB"
+      "brotli": "12 kB"
     },
     "./dist/worker/worker.js": {
       "brotli": "13.5 kB"
