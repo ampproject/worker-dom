@@ -22,6 +22,9 @@ import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 
+// TODO: Sanitizer storage init is likely broken, since the code currently
+// attempts to stringify a Promise.
+export type StorageInit = { storage: Storage | Promise<StorageValue>; errorMsg: null } | { storage: null; errorMsg: string };
 export class WorkerContext {
   private [TransferrableKeys.worker]: Worker;
   private nodeContext: NodeContext;
@@ -42,8 +45,8 @@ export class WorkerContext {
     const cssKeys: Array<string> = [];
     const globalEventHandlerKeys: Array<string> = [];
     // TODO(choumx): Sync read of all localStorage and sessionStorage a possible performance bottleneck?
-    const localStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Local) : window.localStorage;
-    const sessionStorageData = config.sanitizer ? config.sanitizer.getStorage(StorageLocation.Session) : window.sessionStorage;
+    const localStorageInit = getStorageInit('localStorage');
+    const sessionStorageInit = getStorageInit('sessionStorage');
 
     for (const key in baseElement.style) {
       cssKeys.push(key);
@@ -54,6 +57,8 @@ export class WorkerContext {
       }
     }
 
+    // We skip assigning the globals for localStorage and sessionStorage because
+    // We've already installed them. Also, accessing them can throw in incognito mode.
     const code = `
       'use strict';
       (function(){
@@ -67,8 +72,8 @@ export class WorkerContext {
           ${JSON.stringify(cssKeys)},
           ${JSON.stringify(globalEventHandlerKeys)},
           [${window.innerWidth}, ${window.innerHeight}],
-          ${JSON.stringify(localStorageData)},
-          ${JSON.stringify(sessionStorageData)}
+          ${JSON.stringify(localStorageInit)},
+          ${JSON.stringify(sessionStorageInit)}
         );
         workerDOM.document[${TransferrableKeys.observe}](this);
         Object.keys(workerDOM).forEach(function(k){self[k]=workerDOM[k]});
@@ -102,5 +107,19 @@ export class WorkerContext {
       this.config.onSendMessage(message);
     }
     this.worker.postMessage(message, transferables || []);
+  }
+}
+
+function getStorageInit(type: 'localStorage' | 'sessionStorage', sanitizer?: Sanitizer): StorageInit {
+  try {
+    if (!sanitizer) {
+      return { storage: window[type], errorMsg: null };
+    }
+    return {
+      storage: sanitizer.getStorage(type == 'localStorage' ? StorageLocation.Local : StorageLocation.Session),
+      errorMsg: null,
+    };
+  } catch (err) {
+    return { errorMsg: err.message, storage: null };
   }
 }

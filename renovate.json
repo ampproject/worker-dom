@@ -1,6 +1,8 @@
 {
   "automerge": true,
   "extends": [
-    "config:base"
-  ]
+    "config:base",
+    "schedule:earlyMondays"
+  ],
+  "groupName": "all"
 }

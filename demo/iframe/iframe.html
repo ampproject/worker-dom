@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <script src="/dist/amp-debug/main.mjs" type="module"></script> 
+  </head>
+  <body>
+    <div src="storage.js" id="upgrade-me"></div>
+    <script type="module">
+      // Force storage access to throw, to simulate crossorigin incognito mode behavior.
+      delete window.localStorage;
+      Object.defineProperty(window, 'localStorage', {
+        enumerable: true,
+        get: () => {
+          throw new Error('Access denied');
+        },
+      }); 
+      delete window.sessionStorage; 
+      Object.defineProperty(window, 'sessionStorage', {
+        enumerable: true,
+        get: () => {
+          throw new Error('Access denied');
+        },
+      }); 
+      
+      import { upgradeElement } from '/dist/amp-debug/main.mjs';
+      upgradeElement(document.getElementById('upgrade-me'), '/dist/amp-debug/worker/worker.mjs');
+    </script>
+  </body>
+</html>

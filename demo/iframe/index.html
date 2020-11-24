@@ -1,0 +1,16 @@
+<!--
+  This file added to assist in testing WorkerDOM iframed use cases.
+  Notably, AMP Documents are often displayed in an crossorigin iframe.
+  These documents have various restrictions, including no access to storage from
+  within incognito windows.
+
+  To run this demo:
+    - you need to map workerdom.localhost to 127.0.0.1 in your /etc/hosts file.
+    - load this page in both regular and incognito modes.
+ -->
+<html>
+  <head></head>
+  <body>
+    <iframe src="http://localhost:3001/demo/iframe/iframe.html"></iframe>
+  </body>
+</html>
