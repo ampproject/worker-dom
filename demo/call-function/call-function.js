@@ -1,3 +1,5 @@
+// Some comment
+console.log('authorScript excuted');
 function performComplexMath() {
   return Math.random() * 1000;
 }
@@ -37,3 +39,5 @@ function concat() {
 // Manual test for .onerror, by scheduling an unhandled error
 // 2s in via prompt which isn't valid in a Worker.
 setTimeout(() => prompt(), 2000);
+
+console.log('authorScript end');

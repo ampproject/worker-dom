@@ -46,6 +46,9 @@ export interface InboundWorkerDOMConfiguration {
   hydrateFilter?: HydrationFilterPredicate;
   // Executor Filter, allow list
   executorsAllowed?: Array<number>;
+  // Sandbox in iframe
+  // QQ: Do we want to expose the sandbox config to non AMP version? If not how to limit the support?
+  sandboxInIframe?: Boolean;
 
   // ---- Optional Callbacks
   // Called when worker consumes the page's initial DOM state.
@@ -74,6 +77,8 @@ export interface WorkerDOMConfiguration {
   sanitizer?: Sanitizer;
   // Hydration Filter Predicate
   hydrateFilter?: HydrationFilterPredicate;
+  // Sandbox in iframe
+  sandboxInIframe?: Boolean;
 
   // ---- Optional Callbacks
   // Called when worker consumes the page's initial DOM state.

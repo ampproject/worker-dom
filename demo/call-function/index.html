@@ -4,15 +4,16 @@
     <meta charset="utf-8" />
     <title>Call function</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="/dist/amp/main.mjs" type="module"></script>
+    <script src="/dist/amp-debug/" type="module"></script>
   </head>
   <body>
     <div src="call-function.js" id="upgrade-me"></div>
     <script type="module">
-      import { upgradeElement } from "/dist/amp/main.mjs";
+      import { upgradeElement } from "/dist/amp-debug/main.mjs";
       upgradeElement(
         document.getElementById("upgrade-me"),
-        "/dist/amp/worker/worker.nodom.mjs"
+        "/dist/amp-debug/worker/worker.nodom.mjs",
+        () => {}, () => {}, true
       ).then(async (worker) => {
         worker
           .callFunction("performComplexMath")
