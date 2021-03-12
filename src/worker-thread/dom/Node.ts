@@ -381,8 +381,11 @@ export abstract class Node {
     const parent: Node | null = this.parentNode;
     let nodeIterator: number = nodes.length;
     let currentNode: Node | string;
-    if (!parent || !nodeIterator) {
+    if (!parent) {
       return;
+    }
+    if (!nodeIterator) {
+      parent.removeChild(this);
     }
     while (nodeIterator--) {
       currentNode = nodes[nodeIterator];

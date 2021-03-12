@@ -39,6 +39,17 @@ test.beforeEach((t) => {
   };
 });
 
+test('replacing with no values provided removes child from parent', (t) => {
+  const { parent, child } = t.context;
+
+  parent.appendChild(child);
+  t.is(child.parentNode, parent, "before replacement parentNode exists");
+
+  child.replaceWith();
+  t.is(child.parentNode, null, "after replacement parentNode is unset");
+  t.deepEqual(parent.childNodes, []);
+});
+
 test('replacing unattached child results in no changes', (t) => {
   const { child, childTwo } = t.context;
 
