@@ -373,6 +373,35 @@ export abstract class Node {
   }
 
   /**
+   * Replaces the current node with the provided Array<node|string>.
+   * @param nodes 
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/replaceWith
+   */
+  public replaceWith(...nodes: Array<Node|string>): void {
+    const parent: Node | null = this.parentNode;
+    let nodeIterator: number = nodes.length;
+    let currentNode: Node | string;
+    if (!parent || !nodeIterator) {
+      return;
+    }
+    while (nodeIterator--) {
+      currentNode = nodes[nodeIterator];
+      
+      if (typeof currentNode !== 'object') {
+        currentNode = this.ownerDocument.createTextNode(currentNode);
+      } 
+
+      // TODO: Investigate inserting all new nodes in a single operation.
+      if (!nodeIterator) {
+        // currentNode is the first argument (currentNode === arguments[0])
+        parent.replaceChild(currentNode as Node, this);
+      } else {
+        parent.insertBefore(currentNode as Node, this.nextSibling);
+      }
+    }
+  }
+
+  /**
    * Removes this Node from the tree it belogs too.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/remove
    */
