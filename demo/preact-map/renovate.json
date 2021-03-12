@@ -1,11 +1,14 @@
 {
+  "automerge": true,
   "extends": [
-    "config:base"
+    "config:base",
+    "schedule:earlyMondays"
   ],
   "dependencies": {
     "enabled": false
   },
   "devDependencies": {
     "enabled": false
-  }
+  },
+  "groupName": "all"
 }

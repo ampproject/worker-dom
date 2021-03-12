@@ -128,7 +128,7 @@ export function parse(data: string, rootElement: Element) {
     if (lastTextPos < match.index) {
       // if has content
       const text = data.slice(lastTextPos, match.index);
-      currentParent.appendChild(ownerDocument.createTextNode(text));
+      currentParent.appendChild(ownerDocument.createTextNode(decodeEntities(text)));
     }
     lastTextPos = kMarkupPattern.lastIndex;
     if (commentContents !== undefined) {
@@ -231,4 +231,42 @@ export function parse(data: string, rootElement: Element) {
   }
 
   throw new Error('Attempting to parse invalid HTML.');
+}
+
+/**
+ * Decodes HTML Entities.
+ * Currently only works for numeric entities, as well as the 4 named entities
+ * required for encoding HTML: &, ", <, >.
+ * See https://developer.mozilla.org/en-US/docs/Glossary/Entity.
+ *
+ * TODO: create solution for other named entities.
+ */
+const RESERVED_CHARACTERS: { [key: string]: string | null } = {
+  __proto__: null,
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+};
+function decodeEntities(html: string) {
+  return html.replace(/&(?:(#x?[\da-f]+)|([\w]+));?/gi, function (s, numericEntity, namedEntity) {
+    // Numeric entity
+    if (numericEntity) {
+      let code = numericEntity.charAt(1).toLowerCase() === 'x' ? parseInt(numericEntity.substr(2), 16) : parseInt(numericEntity.substr(1), 10);
+
+      // 1114111 is the largest valid unicode codepoint.
+      if (isNaN(code) || code > 1114111) {
+        return s;
+      }
+
+      return String.fromCodePoint(code) || s;
+    }
+
+    // Named entity. Only HTML reserved entities are currently supported.
+    if (namedEntity) {
+      return RESERVED_CHARACTERS[namedEntity.toLowerCase()] || s;
+    }
+
+    return s;
+  });
 }
