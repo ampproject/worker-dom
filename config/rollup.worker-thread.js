@@ -41,7 +41,10 @@ const ESModules = [
     },
     plugins: [
       replace({
-        WORKER_DOM_DEBUG: false,
+        values: {
+          WORKER_DOM_DEBUG: false,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -60,7 +63,10 @@ const ESModules = [
     },
     plugins: [
       replace({
-        WORKER_DOM_DEBUG: true,
+        values: {
+          WORKER_DOM_DEBUG: true,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -78,7 +84,10 @@ const ESModules = [
     },
     plugins: [
       replace({
-        WORKER_DOM_DEBUG: false,
+        values: {
+          WORKER_DOM_DEBUG: false,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -112,7 +121,10 @@ const ESModules = [
     },
     plugins: [
       replace({
-        WORKER_DOM_DEBUG: false,
+        values: {
+          WORKER_DOM_DEBUG: false,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: true,
@@ -131,7 +143,10 @@ const ESModules = [
     },
     plugins: [
       replace({
-        WORKER_DOM_DEBUG: true,
+        values: {
+          WORKER_DOM_DEBUG: true,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: true,
@@ -149,7 +164,10 @@ const ESModules = [
     },
     plugins: [
       replace({
-        WORKER_DOM_DEBUG: false,
+        values: {
+          WORKER_DOM_DEBUG: false,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -168,7 +186,10 @@ const ESModules = [
     },
     plugins: [
       replace({
-        WORKER_DOM_DEBUG: true,
+        values: {
+          WORKER_DOM_DEBUG: true,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -186,7 +207,10 @@ const ESModules = [
     },
     plugins: [
       replace({
-        WORKER_DOM_DEBUG: false,
+        values: {
+          WORKER_DOM_DEBUG: false,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: true,
@@ -205,7 +229,10 @@ const ESModules = [
     },
     plugins: [
       replace({
-        WORKER_DOM_DEBUG: true,
+        values: {
+          WORKER_DOM_DEBUG: true,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: true,
@@ -226,7 +253,10 @@ const IIFEModules = [
     },
     plugins: [
       replace({
-        WORKER_DOM_DEBUG: false,
+        values: {
+          WORKER_DOM_DEBUG: false,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: true,
@@ -245,7 +275,10 @@ const IIFEModules = [
     },
     plugins: [
       replace({
-        WORKER_DOM_DEBUG: true,
+        values: {
+          WORKER_DOM_DEBUG: true,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: true,
