@@ -227,7 +227,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Element.scroll()                                    | ✖️     |                                                  | 
 | Element.scrollBy()                                  | ✖️     |                                                  | 
 | Element.scrollHeight                                | ✖️     |                                                  | 
-| Element.scrollIntoView()                            | ✖️     |                                                  | 
+| Element.scrollIntoView()                            | ✔️     | Only suported without params                     | 
 | Element.scrollLeft                                  | ✖️     |                                                  | 
 | Element.scrollLeftMax                               | ✖️     |                                                  | 
 | Element.scrollTo()                                  | ✖️     |                                                  | 
