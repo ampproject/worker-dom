@@ -45,7 +45,6 @@ export const isUserVisibleMutation = (type: TransferrableMutationType): boolean 
     case TransferrableMutationType.STORAGE:
     case TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE:
     case TransferrableMutationType.FUNCTION_CALL:
-    case TransferrableMutationType.SCROLL_INTO_VIEW:
       return false;
     default:
       return true;
