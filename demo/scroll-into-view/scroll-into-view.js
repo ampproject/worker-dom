@@ -4,4 +4,4 @@ document.getElementById('scroll-button').addEventListener('click', () => {
 
 document.getElementById('scroll-button-up').addEventListener('click', () => {
   document.getElementById('scroll-button').scrollIntoView();
-  });  
+});  
