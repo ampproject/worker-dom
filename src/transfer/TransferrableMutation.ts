@@ -29,6 +29,7 @@ export const enum TransferrableMutationType {
   IMAGE_BITMAP_INSTANCE = 11,
   STORAGE = 12,
   FUNCTION_CALL = 13,
+  SCROLL_INTO_VIEW = 14,
 }
 
 /**
@@ -65,6 +66,7 @@ export const DefaultAllowedMutations = [
   TransferrableMutationType.IMAGE_BITMAP_INSTANCE,
   TransferrableMutationType.STORAGE,
   TransferrableMutationType.FUNCTION_CALL,
+  TransferrableMutationType.SCROLL_INTO_VIEW
 ];
 
 export const ReadableMutationType: { [key: number]: string } = {
@@ -82,6 +84,7 @@ export const ReadableMutationType: { [key: number]: string } = {
   11: 'IMAGE_BITMAP_INSTANCE',
   12: 'STORAGE',
   13: 'FUNCTION_INVOCATION',
+  14: 'SCROLL_INTO_VIEW',
 };
 
 /**
@@ -270,4 +273,16 @@ export const enum FunctionMutationIndex {
   Index = 2,
   Value = 3,
   End = 4,
+}
+
+/**
+ * Scroll Into View Mutation
+ * [
+ *   ScrollIntoViewMutationIndex.START || TransferrableMutation.END
+ *   Target.index,
+ * ]
+ */
+ export const enum ScrollIntoViewMutationIndex {
+  Target = 1,
+  End = 2,
 }

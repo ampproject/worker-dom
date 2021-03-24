@@ -562,6 +562,13 @@ export class Element extends ParentNode {
     this.dispatchEvent(event);
   }
 
+  // https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
+  scrollIntoView() {
+    if(this.isConnected) {
+      transfer(this.ownerDocument as Document, [TransferrableMutationType.SCROLL_INTO_VIEW, this[TransferrableKeys.index]]);
+    }
+  }
+
   public get classList(): DOMTokenList {
     return this._classList || (this._classList = new DOMTokenList(this, 'class'));
   }

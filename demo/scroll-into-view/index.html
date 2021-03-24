@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Scroll Into View Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/demo.css" rel="stylesheet" />
+    <script src="/dist/main.mjs" type="module"></script>
+    <script src="/dist/main.js" nomodule defer></script>
+    <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+    <!-- Comment either block to enable module/nomodule or disable it. -->
+    <!-- <script src="/dist/main.js" defer></script> -->
+  </head>
+  <body>
+    <div src="/scroll-into-view/scroll-into-view.js" id="upgrade-me">
+      <p>Demo of <b>element.scrollIntoView()</b></p>
+      <button id="scroll-button" type="button">
+        Scroll down to element <b>#scroll-element</b> !
+      </button>
+      <div style="height:1200px;width:100%;" ><!-- SPACER --></div>
+      <div id="scroll-element" style="height:400px;width:100%;background-color: burlywood;" >
+        <button id="scroll-button-up" type="button">
+            Scroll Up to element <b>#scroll-button</b> !
+          </button>
+      </div>
+    </div>
+    <script type="module">
+      import { upgradeElement } from '/dist/main.mjs';
+      upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
+    </script>
+    <script nomodule async="false" defer>
+      document.addEventListener(
+        'DOMContentLoaded',
+        function() {
+          MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
+        },
+        false,
+      );
+    </script>
+    <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+    <!-- Comment either block to enable module/nomodule or disable it. -->
+    <!-- <script async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), './dist/worker/worker.js');
+    }, false);
+  </script> -->
+  </body>
+</html>
