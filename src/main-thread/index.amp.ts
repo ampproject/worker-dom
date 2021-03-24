@@ -45,6 +45,7 @@ export function upgradeElement(
   domURL: string,
   longTask?: LongTaskFunction,
   sanitizer?: Sanitizer,
+  sandbox?: { iframeUrl: string },
 ): Promise<ExportedWorker | null> {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL) {
@@ -54,6 +55,7 @@ export function upgradeElement(
       longTask,
       hydrateFilter,
       sanitizer,
+      sandbox,
     });
   }
   return Promise.resolve(null);

@@ -46,6 +46,8 @@ export interface InboundWorkerDOMConfiguration {
   hydrateFilter?: HydrationFilterPredicate;
   // Executor Filter, allow list
   executorsAllowed?: Array<number>;
+  // Extra layer of sandboxing by placing Worker inside of iframe.
+  sandbox?: { iframeUrl: string };
 
   // ---- Optional Callbacks
   // Called when worker consumes the page's initial DOM state.
@@ -74,6 +76,8 @@ export interface WorkerDOMConfiguration {
   sanitizer?: Sanitizer;
   // Hydration Filter Predicate
   hydrateFilter?: HydrationFilterPredicate;
+  // Extra layer of sandboxing by placing Worker inside of iframe.
+  sandbox?: { iframeUrl: string };
 
   // ---- Optional Callbacks
   // Called when worker consumes the page's initial DOM state.

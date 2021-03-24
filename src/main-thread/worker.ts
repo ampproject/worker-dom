@@ -22,6 +22,9 @@ import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 
+// TODO: Have rollup remove this from non-AMP builds.
+import { IframeWorker } from './iframe-worker';
+
 // TODO: Sanitizer storage init is likely broken, since the code currently
 // attempts to stringify a Promise.
 export type StorageInit = { storage: Storage | Promise<StorageValue>; errorMsg: null } | { storage: null; errorMsg: string };
@@ -80,7 +83,11 @@ export class WorkerContext {
       }).call(self);
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;
-    this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
+    if (!config.sandbox) {
+      this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
+    } else {
+      this[TransferrableKeys.worker] = new IframeWorker(URL.createObjectURL(new Blob([code])), config.sandbox.iframeUrl) as Worker;
+    }
     if (WORKER_DOM_DEBUG) {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config, this));
     }

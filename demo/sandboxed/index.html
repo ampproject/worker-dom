@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>IframeWorker Sandbox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/dist/amp-debug/main.mjs" type="module"></script>
+  </head>
+  <body>
+    <div src="../hello-world/hello-world.js" id="upgrade-me">
+      <div class="root">
+        <button>Insert Hello World!</button>
+      </div>
+    </div>
+    <script type="module">
+      import { upgradeElement } from '/dist/amp-debug/main.mjs';
+      upgradeElement(
+        document.getElementById('upgrade-me'),
+        '/dist/amp-debug/worker/worker.mjs',
+        () => {},
+        undefined,
+        { iframeUrl: 'sandbox-iframe.html' }
+      ).then((worker) => {
+        worker.onmessage = (msg) =>
+          console.log(`onmessage: ${JSON.stringify(msg)}`);
+        worker.onmessageerror = (msg) =>
+          console.error(`msgerror ${JSON.stringify(msg)}`);
+        worker.onerror = (msg) =>
+          console.error(`error: ${JSON.stringify(msg)}`);
+      });
+    </script>
+  </body>
+</html>
