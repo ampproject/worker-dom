@@ -31,7 +31,10 @@ const ESModules = [
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
       replace({
-        WORKER_DOM_DEBUG: false,
+        values: {
+          WORKER_DOM_DEBUG: false,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -51,7 +54,10 @@ const ESModules = [
     plugins: [
       removeWorkerWhitespace(),
       replace({
-        WORKER_DOM_DEBUG: true,
+        values: {
+          WORKER_DOM_DEBUG: true,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -70,7 +76,10 @@ const ESModules = [
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
       replace({
-        WORKER_DOM_DEBUG: false,
+        values: {
+          WORKER_DOM_DEBUG: false,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -90,7 +99,10 @@ const ESModules = [
     plugins: [
       removeWorkerWhitespace(),
       replace({
-        WORKER_DOM_DEBUG: true,
+        values: {
+          WORKER_DOM_DEBUG: true,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: false,
@@ -113,7 +125,10 @@ const IIFEModules = [
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
       replace({
-        WORKER_DOM_DEBUG: false,
+        values: {
+          WORKER_DOM_DEBUG: false,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: true,
@@ -134,7 +149,10 @@ const IIFEModules = [
     plugins: [
       removeWorkerWhitespace(),
       replace({
-        WORKER_DOM_DEBUG: true,
+        values: {
+          WORKER_DOM_DEBUG: true,
+        },
+        preventAssignment: true,
       }),
       babelPlugin({
         transpileToES5: true,

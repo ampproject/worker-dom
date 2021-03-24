@@ -23,8 +23,8 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | CharacterData.substringData()                       | ✖️     |                                                  | 
 | ChildNode.after()                                   | ✖️     |                                                  | 
 | ChildNode.before()                                  | ✖️     |                                                  | 
-| ChildNode.remove()                                  | ✖️     |                                                  | 
-| ChildNode.replaceWith()                             | ✖️     |                                                  | 
+| ChildNode.remove()                                  | ✔️     | Implemented at Node layer                        | 
+| ChildNode.replaceWith()                             | ✔️     | Implemented at Node layer                        | 
 | Comment                                             | ✔️     | See CharacterData and Node                       | 
 | CSSStyleDeclaration.cssText                         | ✔️     |                                                  | 
 | CSSStyleDeclaration.getPropertyPriority()           | ✖️     |                                                  | 
