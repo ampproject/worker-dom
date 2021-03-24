@@ -5,7 +5,7 @@
     <title>Hello World</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="/demo.css" rel="stylesheet" />
-    <script src="/dist/amp/main.mjs" type="module"></script>
+    <script src="/dist/amp-debug/main.mjs" type="module"></script>
     <style>
       #status-element {
         margin-top: 16px;
@@ -23,8 +23,8 @@
     </div>
     <div id="status-element"></div>
     <script type="module">
-      import { upgradeElement } from '/dist/amp/main.mjs';
-      upgradeElement(document.getElementById('upgrade-me'), '/dist/amp/worker/worker.mjs', (promise, opt_message) => {
+      import { upgradeElement } from '/dist/amp-debug/main.mjs';
+      upgradeElement(document.getElementById('upgrade-me'), '/dist/amp-debug/worker/worker.mjs', (promise, opt_message) => {
         const statusElement = document.getElementById('status-element');
         statusElement.textContent = opt_message || 'Long task is running...';
         promise.then(() => {

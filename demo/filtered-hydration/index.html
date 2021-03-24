@@ -10,7 +10,7 @@
       width: 100%;
     }
   </style>
-  <script src="/dist/amp/main.mjs" type="module"></script>
+  <script src="/dist/amp-debug/main.mjs" type="module"></script>
 </head>
 <body>
   <div src="/filtered-hydration/author.js" id="upgrade-me">
@@ -19,8 +19,8 @@
     </amp-img>
   </div>
   <script type="module">
-    import {upgradeElement} from '/dist/amp/main.mjs';
-    upgradeElement(document.getElementById('upgrade-me'), '/dist/amp/worker/worker.mjs');
+    import {upgradeElement} from '/dist/amp-debug/main.mjs';
+    upgradeElement(document.getElementById('upgrade-me'), '/dist/amp-debug/worker/worker.mjs');
   </script>
 </body>
 </html>
