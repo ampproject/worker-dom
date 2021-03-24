@@ -20,7 +20,7 @@
  import { createTestingDocument } from '../DocumentCreation';
  import { expectMutations } from '../Emitter';
  import { Element } from '../../worker-thread/dom/Element';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
  
  const test = anyTest as TestInterface<{
    document: Document;
