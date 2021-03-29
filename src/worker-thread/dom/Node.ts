@@ -374,10 +374,10 @@ export abstract class Node {
 
   /**
    * Replaces the current node with the provided Array<node|string>.
-   * @param nodes 
+   * @param nodes
    * @see https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/replaceWith
    */
-  public replaceWith(...nodes: Array<Node|string>): void {
+  public replaceWith(...nodes: Array<Node | string>): void {
     const parent: Node | null = this.parentNode;
     let nodeIterator: number = nodes.length;
     let currentNode: Node | string;
@@ -389,10 +389,10 @@ export abstract class Node {
     }
     while (nodeIterator--) {
       currentNode = nodes[nodeIterator];
-      
+
       if (typeof currentNode !== 'object') {
         currentNode = this.ownerDocument.createTextNode(currentNode);
-      } 
+      }
 
       // TODO: Investigate inserting all new nodes in a single operation.
       if (!nodeIterator) {

@@ -564,7 +564,7 @@ export class Element extends ParentNode {
 
   // https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
   scrollIntoView() {
-    if(this.isConnected) {
+    if (this.isConnected) {
       transfer(this.ownerDocument as Document, [TransferrableMutationType.SCROLL_INTO_VIEW, this[TransferrableKeys.index]]);
     }
   }
