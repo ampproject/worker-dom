@@ -66,7 +66,7 @@ export const DefaultAllowedMutations = [
   TransferrableMutationType.IMAGE_BITMAP_INSTANCE,
   TransferrableMutationType.STORAGE,
   TransferrableMutationType.FUNCTION_CALL,
-  TransferrableMutationType.SCROLL_INTO_VIEW
+  TransferrableMutationType.SCROLL_INTO_VIEW,
 ];
 
 export const ReadableMutationType: { [key: number]: string } = {
@@ -282,7 +282,7 @@ export const enum FunctionMutationIndex {
  *   Target.index,
  * ]
  */
- export const enum ScrollIntoViewMutationIndex {
+export const enum ScrollIntoViewMutationIndex {
   Target = 1,
   End = 2,
 }

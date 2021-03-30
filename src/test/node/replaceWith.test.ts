@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import anyTest, { TestInterface } from "ava";
-import { Document } from "../../worker-thread/dom/Document";
-import { Element } from "../../worker-thread/dom/Element";
-import { createTestingDocument } from "../DocumentCreation";
+import anyTest, { TestInterface } from 'ava';
+import { Document } from '../../worker-thread/dom/Document';
+import { Element } from '../../worker-thread/dom/Element';
+import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -32,10 +32,10 @@ test.beforeEach((t) => {
 
   t.context = {
     document,
-    parent: document.createElement("div"),
-    child: document.createElement("div"),
-    childTwo: document.createElement("div"),
-    childThree: document.createElement("div"),
+    parent: document.createElement('div'),
+    child: document.createElement('div'),
+    childTwo: document.createElement('div'),
+    childThree: document.createElement('div'),
   };
 });
 
@@ -43,31 +43,31 @@ test('replacing with no values provided removes child from parent', (t) => {
   const { parent, child } = t.context;
 
   parent.appendChild(child);
-  t.is(child.parentNode, parent, "before replacement parentNode exists");
+  t.is(child.parentNode, parent, 'before replacement parentNode exists');
 
   child.replaceWith();
-  t.is(child.parentNode, null, "after replacement parentNode is unset");
+  t.is(child.parentNode, null, 'after replacement parentNode is unset');
   t.deepEqual(parent.childNodes, []);
 });
 
 test('replacing unattached child results in no changes', (t) => {
   const { child, childTwo } = t.context;
 
-  t.is(child.parentNode, null, "before replacement parentNode does not exist");
+  t.is(child.parentNode, null, 'before replacement parentNode does not exist');
 
   child.replaceWith(childTwo);
-  t.is(child.parentNode, null, "after replacement original child parentNode remains unset");
-  t.is(childTwo.parentNode, null, "after replacement new child parentNode remains unset");
+  t.is(child.parentNode, null, 'after replacement original child parentNode remains unset');
+  t.is(childTwo.parentNode, null, 'after replacement new child parentNode remains unset');
 });
 
 test('replacing the same child results in no changes', (t) => {
   const { parent, child } = t.context;
 
   parent.appendChild(child);
-  t.is(child.parentNode, parent, "before replacement parentNode exists");
+  t.is(child.parentNode, parent, 'before replacement parentNode exists');
 
   child.replaceWith(child);
-  t.is(child.parentNode, parent, "after replacement parentNode remains correct");
+  t.is(child.parentNode, parent, 'after replacement parentNode remains correct');
   t.deepEqual(parent.childNodes, [child]);
 });
 
