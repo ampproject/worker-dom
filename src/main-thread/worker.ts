@@ -85,7 +85,7 @@ export class WorkerContext {
       //# sourceURL=${encodeURI(config.authorURL)}`;
     if (!config.sandbox) {
       this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
-    } else {
+    } else if (IS_AMP && config.sandbox){
       this[TransferrableKeys.worker] = new IframeWorker(URL.createObjectURL(new Blob([code])), config.sandbox.iframeUrl) as Worker;
     }
     if (WORKER_DOM_DEBUG) {
