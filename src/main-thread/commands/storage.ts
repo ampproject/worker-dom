@@ -23,12 +23,12 @@ import { MessageType, StorageValueToWorker, GetOrSet } from '../../transfer/Mess
 export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.STORAGE);
 
-  const get = (location: StorageLocation, key: string | null): void => {
+  const get = (location: StorageLocation, key: string): void => {
     if (config.sanitizer && location === StorageLocation.AmpState) {
       config.sanitizer.getStorage(location, key).then((value) => {
         const message: StorageValueToWorker = {
           [TransferrableKeys.type]: MessageType.GET_STORAGE,
-          [TransferrableKeys.storageKey]: key || '',
+          [TransferrableKeys.storageKey]: key,
           [TransferrableKeys.storageLocation]: location,
           [TransferrableKeys.value]: value,
         };
@@ -80,7 +80,7 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
 
         // TODO(choumx): Clean up key/value strings (or don't store them in the first place)
         // to avoid leaking memory.
-        const key = keyIndex >= 0 ? strings.get(keyIndex) : null;
+        const key = keyIndex >= 0 ? strings.get(keyIndex) : '';
         const value = valueIndex >= 0 ? strings.get(valueIndex) : null;
 
         if (operation === GetOrSet.GET) {
