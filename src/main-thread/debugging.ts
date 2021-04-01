@@ -22,7 +22,14 @@
  * @see https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#9.4
  */
 
-import { EventToWorker, MessageType, MessageToWorker, ValueSyncToWorker, BoundingClientRectToWorker } from '../transfer/Messages';
+import {
+  EventToWorker,
+  MessageType,
+  MessageToWorker,
+  ValueSyncToWorker,
+  BoundingClientRectToWorker,
+  StorageValueToWorker,
+} from '../transfer/Messages';
 import { HydrateableNode, TransferredNode, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
 import { NodeContext } from './nodes';
 import { TransferrableEvent } from '../transfer/TransferrableEvent';
@@ -78,6 +85,7 @@ const isEvent = (message: MessageToWorker): message is EventToWorker => message[
 const isValueSync = (message: MessageToWorker): message is ValueSyncToWorker => message[TransferrableKeys.type] == MessageType.SYNC;
 const isBoundingClientRect = (message: MessageToWorker): message is BoundingClientRectToWorker =>
   message[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT;
+const isGetStorage = (message: MessageToWorker): message is StorageValueToWorker => message[TransferrableKeys.type] === MessageType.GET_STORAGE;
 
 /**
  * @param nodeContext {NodeContext}
@@ -139,6 +147,13 @@ export function readableMessageToWorker(nodeContext: NodeContext, message: Messa
     return {
       type: 'GET_BOUNDING_CLIENT_RECT',
       target: readableTransferredNode(nodeContext, message[TransferrableKeys.target]),
+    };
+  } else if (isGetStorage(message)) {
+    return {
+      type: 'GET_STORAGE',
+      key: message[TransferrableKeys.storageKey],
+      location: message[TransferrableKeys.storageLocation],
+      value: message[TransferrableKeys.value],
     };
   } else {
     return 'Unrecognized MessageToWorker type: ' + message[TransferrableKeys.type];

@@ -34,7 +34,7 @@ export class AMP {
    * Returns a promise that resolves with the value of `key`.
    * @param key
    */
-  getState(key: string): Promise<{} | null> {
+  getState(key: string = ''): Promise<{} | null> {
     return new Promise((resolve) => {
       const messageHandler = (event: MessageEvent) => {
         const message: MessageToWorker = event.data;

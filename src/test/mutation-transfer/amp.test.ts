@@ -32,14 +32,13 @@ const test = anyTest as TestInterface<{
 test.beforeEach((t) => {
   const document = createTestingDocument();
   const amp = new AMP(document);
-
   t.context = {
     document,
     amp,
   };
 });
 
-test.serial.cb('AMP.getState()', (t) => {
+test.serial.cb('AMP.getState(): string key', (t) => {
   const { document, amp } = t.context;
 
   let addGlobalEventListenerCalled = false;
@@ -54,6 +53,23 @@ test.serial.cb('AMP.getState()', (t) => {
   });
 
   amp.getState('foo');
+});
+
+test.serial.cb('AMP.getState(): falsy key', (t) => {
+  const { document, amp } = t.context;
+
+  let addGlobalEventListenerCalled = false;
+  document.addGlobalEventListener = () => {
+    addGlobalEventListenerCalled = true;
+  };
+
+  expectMutations(document, (mutations) => {
+    t.true(addGlobalEventListenerCalled);
+    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.GET, StorageLocation.AmpState, getForTesting(''), 0]);
+    t.end();
+  });
+
+  (amp as any).getState();
 });
 
 test.serial.cb('AMP.setState()', (t) => {
