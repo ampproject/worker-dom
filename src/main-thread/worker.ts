@@ -21,12 +21,13 @@ import { readableHydrateableRootNode, readableMessageToWorker } from './debuggin
 import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { StorageLocation } from '../transfer/TransferrableStorage';
+import { IframeWorker } from './iframe-worker';
 
 // TODO: Sanitizer storage init is likely broken, since the code currently
 // attempts to stringify a Promise.
 export type StorageInit = { storage: Storage | Promise<StorageValue>; errorMsg: null } | { storage: null; errorMsg: string };
 export class WorkerContext {
-  private [TransferrableKeys.worker]: Worker;
+  private [TransferrableKeys.worker]: Worker | IframeWorker;
   private nodeContext: NodeContext;
   private config: WorkerDOMConfiguration;
 
@@ -80,7 +81,11 @@ export class WorkerContext {
       }).call(self);
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;
-    this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
+    if (!config.sandbox) {
+      this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
+    } else if (IS_AMP) {
+      this[TransferrableKeys.worker] = new IframeWorker(URL.createObjectURL(new Blob([code])), config.sandbox.iframeUrl);
+    }
     if (WORKER_DOM_DEBUG) {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config, this));
     }
@@ -92,7 +97,7 @@ export class WorkerContext {
   /**
    * Returns the private worker.
    */
-  get worker(): Worker {
+  get worker(): Worker | IframeWorker {
     return this[TransferrableKeys.worker];
   }
 

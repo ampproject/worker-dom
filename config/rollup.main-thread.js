@@ -33,6 +33,7 @@ const ESModules = [
       replace({
         values: {
           WORKER_DOM_DEBUG: false,
+          IS_AMP: false,
         },
         preventAssignment: true,
       }),
@@ -56,6 +57,7 @@ const ESModules = [
       replace({
         values: {
           WORKER_DOM_DEBUG: true,
+          IS_AMP: false,
         },
         preventAssignment: true,
       }),
@@ -78,6 +80,7 @@ const ESModules = [
       replace({
         values: {
           WORKER_DOM_DEBUG: false,
+          IS_AMP: true,
         },
         preventAssignment: true,
       }),
@@ -101,6 +104,7 @@ const ESModules = [
       replace({
         values: {
           WORKER_DOM_DEBUG: true,
+          IS_AMP: true,
         },
         preventAssignment: true,
       }),
@@ -127,6 +131,7 @@ const IIFEModules = [
       replace({
         values: {
           WORKER_DOM_DEBUG: false,
+          IS_AMP: false,
         },
         preventAssignment: true,
       }),
@@ -151,6 +156,7 @@ const IIFEModules = [
       replace({
         values: {
           WORKER_DOM_DEBUG: true,
+          IS_AMP: false,
         },
         preventAssignment: true,
       }),
