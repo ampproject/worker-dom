@@ -25,7 +25,7 @@ import { TransferrableMutationType } from '../transfer/TransferrableMutation';
  * An ExportedWorker is returned by the upgradeElement API.
  * For the most part, it delegates to the underlying Worker.
  *
- * It notably removes `postMessage` support and add `callFunction`.
+ * It notably removes `postMessage` support and adds `callFunction`.
  */
 export class ExportedWorker {
   workerContext_: WorkerContext;

@@ -36,7 +36,7 @@ test.beforeEach((t) => {
     Promise.resolve({
       text: () => Promise.resolve(blob.toString().slice('BLOB:'.length)),
     }) as any;
-  const worker = new IframeWorker(URL.createObjectURL(new Blob(['worker code'])), 'https://example.com' as any);
+  const worker = new IframeWorker(URL.createObjectURL(new Blob(['worker code'])), 'https://example.com');
   const iframe = (worker as any).iframe as HTMLIFrameElement;
 
   const oldPostMessage = iframe.contentWindow!.postMessage.bind(iframe.contentWindow);

@@ -20,16 +20,14 @@ import { createHydrateableRootNode } from './serialize';
 import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
 import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { StorageLocation } from '../transfer/TransferrableStorage';
-
-// TODO: Have rollup remove this from non-AMP builds.
+import { StorageLocation } from '../transfer/TransferrableStorage'; 
 import { IframeWorker } from './iframe-worker';
 
 // TODO: Sanitizer storage init is likely broken, since the code currently
 // attempts to stringify a Promise.
 export type StorageInit = { storage: Storage | Promise<StorageValue>; errorMsg: null } | { storage: null; errorMsg: string };
 export class WorkerContext {
-  private [TransferrableKeys.worker]: Worker;
+  private [TransferrableKeys.worker]: Worker | IframeWorker;
   private nodeContext: NodeContext;
   private config: WorkerDOMConfiguration;
 
@@ -85,8 +83,8 @@ export class WorkerContext {
       //# sourceURL=${encodeURI(config.authorURL)}`;
     if (!config.sandbox) {
       this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
-    } else if (IS_AMP && config.sandbox){
-      this[TransferrableKeys.worker] = new IframeWorker(URL.createObjectURL(new Blob([code])), config.sandbox.iframeUrl) as Worker;
+    } else if (IS_AMP){
+      this[TransferrableKeys.worker] = new IframeWorker(URL.createObjectURL(new Blob([code])), config.sandbox.iframeUrl);
     }
     if (WORKER_DOM_DEBUG) {
       console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config, this));
@@ -99,7 +97,7 @@ export class WorkerContext {
   /**
    * Returns the private worker.
    */
-  get worker(): Worker {
+  get worker(): Worker | IframeWorker {
     return this[TransferrableKeys.worker];
   }
 

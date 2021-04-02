@@ -73,7 +73,7 @@ class IframeWorker {
       if (type == 'onmessage' && this.onmessage) {
         this.onmessage({ ...event, data: message });
       } else if (type === 'onerror' && this.onerror) {
-        this.onerror({ ...message });
+        this.onerror(message);
       } else if (type === 'onmessageerror' && this.onmessageerror) {
         this.onmessageerror({ ...event, data: message });
       }
@@ -89,17 +89,7 @@ class IframeWorker {
     const msg: MessageToIframe = { type: 'terminate' };
     this.iframe.contentWindow!.postMessage(msg, '*');
     this.iframe.remove();
-  }
-
-  addEventListener() {
-    throw new Error('Unsupported operation');
-  }
-  removeEventListener() {
-    throw new Error('Unsupported operation');
-  }
-  dispatchEvent(): boolean {
-    throw new Error('Unsupported operation');
-  }
+  } 
 }
 
 export { IframeWorker };
