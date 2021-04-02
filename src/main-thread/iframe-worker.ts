@@ -24,6 +24,12 @@ export type MessageToIframe = { type: 'terminate' } | { type: 'init-worker'; cod
 /**
  * An almost drop-in replacement for a standard Web Worker, although this one
  * within a sandboxed cross-origin iframe for a heightened security boundary.
+ * For more details on Worker, see: https://developer.mozilla.org/en-US/docs/Web/API/Worker
+ *
+ * The iframe used for sandboxing must follow a specific contract. It:
+ *   1. Must send a ready message to the main-thread.
+ *   2. Must listen for a message from main-thread with the code to initialize a Worker with.
+ *   3. Must proxy all messages between the Worker and Parent, including errors.
  */
 class IframeWorker {
   // Public Worker API
@@ -33,9 +39,12 @@ class IframeWorker {
 
   // Internal variables.
   private iframe: HTMLIFrameElement;
-  private url: string | URL;
 
-  constructor(url: string | URL, iframeUrl: string) {
+  /**
+   * @param url The URL to initiate the worker from.
+   * @param iframeUrl The URL of the iframe to use as the worker proxy.
+   */
+  constructor(private url: string | URL, iframeUrl: string) {
     this.iframe = window.document.createElement('iframe');
     this.iframe.setAttribute('sandbox', 'allow-scripts');
     this.iframe.setAttribute('style', 'display:none');
@@ -80,16 +89,24 @@ class IframeWorker {
     });
   }
 
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
+   * @param message
+   * @param transferables
+   */
   postMessage(message: any, transferables?: Array<Transferable>) {
     const msg: MessageToIframe = { type: 'postMessage', message };
     this.iframe.contentWindow!.postMessage(msg, '*', transferables);
   }
 
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/API/Worker/terminate
+   */
   terminate() {
     const msg: MessageToIframe = { type: 'terminate' };
     this.iframe.contentWindow!.postMessage(msg, '*');
     this.iframe.remove();
-  } 
+  }
 }
 
 export { IframeWorker };

@@ -1,10 +1,8 @@
 <html>
   <script>
-    // The IframeWorker contract is that it must:
-    // 1. Send a ready message.
-    // 2. Listen for the Worker code to initialize it with.
-    // 3. Proxy all messages between the Worker and Parent, including errors.
-
+    /**
+     * See `iframe-worker.ts` for the iframe proxy contract.
+     */
     let parentOrigin = '*';
     const MESSAGE_TYPES = {
       ready: 'iframe-ready',

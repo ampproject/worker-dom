@@ -20,7 +20,7 @@ import { createHydrateableRootNode } from './serialize';
 import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
 import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { StorageLocation } from '../transfer/TransferrableStorage'; 
+import { StorageLocation } from '../transfer/TransferrableStorage';
 import { IframeWorker } from './iframe-worker';
 
 // TODO: Sanitizer storage init is likely broken, since the code currently
@@ -83,7 +83,7 @@ export class WorkerContext {
       //# sourceURL=${encodeURI(config.authorURL)}`;
     if (!config.sandbox) {
       this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
-    } else if (IS_AMP){
+    } else if (IS_AMP) {
       this[TransferrableKeys.worker] = new IframeWorker(URL.createObjectURL(new Blob([code])), config.sandbox.iframeUrl);
     }
     if (WORKER_DOM_DEBUG) {
