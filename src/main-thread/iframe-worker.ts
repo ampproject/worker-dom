@@ -57,17 +57,20 @@ class IframeWorker {
   }
 
   private setupInit() {
-    const listener = async (event: MessageEvent) => {
+    const listener = (event: MessageEvent) => {
       if (event.source != this.iframe.contentWindow) {
         return;
       }
 
-      const code = await fetch(this.url.toString()).then((res) => res.text());
-      if ((event.data as MessageFromIframe).type == 'iframe-ready') {
-        const msg: MessageToIframe = { type: 'init-worker', code };
-        this.iframe.contentWindow!.postMessage(msg, '*');
-      }
-      window.removeEventListener('message', listener);
+      fetch(this.url.toString())
+        .then((res) => res.text())
+        .then((code) => {
+          if ((event.data as MessageFromIframe).type == 'iframe-ready') {
+            const msg: MessageToIframe = { type: 'init-worker', code };
+            this.iframe.contentWindow!.postMessage(msg, '*');
+          }
+          window.removeEventListener('message', listener);
+        });
     };
     window.addEventListener('message', listener);
   }
