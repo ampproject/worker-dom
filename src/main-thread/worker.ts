@@ -95,12 +95,11 @@ export class WorkerContext {
   }
 
   /**
-   * Returns a Promise that resolves when the worker is ready to receive messages.
-   * @returns {Promise}
+   * Returns a Promise that resolves when the Worker is ready to receive messages.
+   * @returns {Promise<void>}
    */
   ready() {
-    const worker = this[TransferrableKeys.worker];
-    return worker instanceof Worker ? Promise.resolve() : worker.readyPromise;
+    return (this.worker as IframeWorker).readyPromise || Promise.resolve();
   }
 
   /**
