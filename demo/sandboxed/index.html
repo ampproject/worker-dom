@@ -7,26 +7,28 @@
     <script src="/dist/amp-debug/main.mjs" type="module"></script>
   </head>
   <body>
-    <div src="/hello-world/hello-world.js" id="upgrade-me">
+    <div src="/sandboxed/index.js" id="upgrade-me">
       <div class="root">
         <button>Insert Hello World!</button>
       </div>
     </div>
     <script type="module">
       import { upgradeElement } from '/dist/amp-debug/main.mjs';
-      upgradeElement(
+      const worker = await upgradeElement(
         document.getElementById('upgrade-me'),
         '/dist/amp-debug/worker/worker.mjs',
         () => {},
         undefined,
         { iframeUrl: 'sandbox-iframe.html' }
-      ).then((worker) => {
-        worker.onmessage = (msg) =>
-          console.log(`onmessage: ${JSON.stringify(msg)}`);
-        worker.onmessageerror = (msg) =>
-          console.error(`msgerror ${JSON.stringify(msg)}`);
-        worker.onerror = (msg) =>
-          console.error(`error: ${JSON.stringify(msg)}`);
+      );
+      worker.onmessage = (msg) =>
+        console.log(`onmessage: ${JSON.stringify(msg)}`);
+      worker.onmessageerror = (msg) =>
+        console.error(`msgerror ${JSON.stringify(msg)}`);
+      worker.onerror = (msg) => console.error(`error: ${JSON.stringify(msg)}`);
+
+      worker.callFunction('getData').then((data) => {
+        console.log(`Received data: ${JSON.stringify(data)}`);
       });
     </script>
   </body>
