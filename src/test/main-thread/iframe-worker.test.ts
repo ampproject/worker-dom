@@ -78,10 +78,14 @@ test('Should listen for and respond to an iframe-ready signal.', async (t) => {
   ]);
 });
 
-test('Should proxy postMessage calls.', async (t) => {
-  const { worker, sentToIframe } = t.context;
-  worker.postMessage({ hello: 'world' });
+test('Should proxy postMessage calls after init completes.', async (t) => {
+  const { worker, sentToIframe, fakeReceiveMessage } = t.context;
 
+  worker.postMessage({ hello: 'world' });
+  t.is(sentToIframe.length, 0);
+
+  fakeReceiveMessage({ type: 'worker-ready' });
+  await new Promise(setTimeout as any);
   t.is(sentToIframe.length, 1);
   t.deepEqual(sentToIframe, [
     {
@@ -101,14 +105,11 @@ test('Should proxy iframed worker messages.', async (t) => {
   worker.onmessageerror = (msg: MessageEvent) => onmessageerrorMessages.push(msg);
   worker.onerror = (msg: ErrorEvent) => onerrorMessages.push(msg);
 
-  fakeReceiveMessage({ type: 'onmessage', message: { onmessage: 1 } });
-  fakeReceiveMessage({ type: 'onmessage', message: { onmessage: 2 } });
+  fakeReceiveMessage({ type: 'onmessage', message: {} });
+  fakeReceiveMessage({ type: 'onmessage', message: {} });
 
   fakeReceiveMessage({ type: 'onerror', message: { onerror: 1 } });
-  fakeReceiveMessage({
-    type: 'onmessageerror',
-    message: { onmessageerror: 1 },
-  });
+  fakeReceiveMessage({ type: 'onmessageerror', message: {} });
 
   t.is(onmessageMessages.length, 2);
   t.is(onmessageerrorMessages.length, 1);

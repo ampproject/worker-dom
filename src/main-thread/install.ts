@@ -80,7 +80,7 @@ export function install(
         }
       };
 
-      return workerContext.ready().then(() =>  new ExportedWorker(workerContext, normalizedConfig));
+      return workerContext.ready().then(() => new ExportedWorker(workerContext, normalizedConfig));
     }
     return null;
   });

@@ -18,7 +18,7 @@ type MessageFromWorker = {
   type: 'onmessage' | 'onerror' | 'onmessageerror';
   message: any;
 };
-export type MessageFromIframe = { type: 'iframe-ready' } | {type: 'worker-ready'} | MessageFromWorker;
+export type MessageFromIframe = { type: 'iframe-ready' } | { type: 'worker-ready' } | MessageFromWorker;
 export type MessageToIframe = { type: 'terminate' } | { type: 'init-worker'; code: string } | { type: 'postMessage'; message: any };
 
 /**
@@ -53,9 +53,9 @@ class IframeWorker {
     this.iframe.setAttribute('style', 'display:none');
     this.iframe.setAttribute('src', iframeUrl);
     this.url = url;
-    this.readyPromise = new Promise(resolve => {
+    this.readyPromise = new Promise((resolve) => {
       this.readyPromiseResolve = resolve;
-    })
+    });
 
     this.setupInit();
     this.proxyFromWorker();
@@ -77,7 +77,7 @@ class IframeWorker {
             this.iframe.contentWindow!.postMessage(msg, '*');
           } else if (data.type === 'worker-ready') {
             this.readyPromiseResolve();
-            window.removeEventListener('message', listener); 
+            window.removeEventListener('message', listener);
           }
         });
     };
@@ -108,7 +108,9 @@ class IframeWorker {
    */
   postMessage(message: any, transferables?: Array<Transferable>) {
     const msg: MessageToIframe = { type: 'postMessage', message };
-    this.iframe.contentWindow!.postMessage(msg, '*', transferables);
+    this.readyPromise.then(() => {
+      this.iframe.contentWindow!.postMessage(msg, '*', transferables);
+    });
   }
 
   /**
