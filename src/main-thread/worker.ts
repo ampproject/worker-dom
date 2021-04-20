@@ -95,6 +95,14 @@ export class WorkerContext {
   }
 
   /**
+   * Returns a Promise that resolves when the Worker is ready to receive messages.
+   * @returns {Promise<void>}
+   */
+  ready() {
+    return (this.worker as IframeWorker).readyPromise || Promise.resolve();
+  }
+
+  /**
    * Returns the private worker.
    */
   get worker(): Worker | IframeWorker {

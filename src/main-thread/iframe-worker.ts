@@ -18,7 +18,7 @@ type MessageFromWorker = {
   type: 'onmessage' | 'onerror' | 'onmessageerror';
   message: any;
 };
-export type MessageFromIframe = { type: 'iframe-ready' } | MessageFromWorker;
+export type MessageFromIframe = { type: 'iframe-ready' } | { type: 'worker-ready' } | MessageFromWorker;
 export type MessageToIframe = { type: 'terminate' } | { type: 'init-worker'; code: string } | { type: 'postMessage'; message: any };
 
 /**
@@ -29,16 +29,19 @@ export type MessageToIframe = { type: 'terminate' } | { type: 'init-worker'; cod
  * The iframe used for sandboxing must follow a specific contract. It:
  *   1. Must send a ready message to the main-thread.
  *   2. Must listen for a message from main-thread with the code to initialize a Worker with.
- *   3. Must proxy all messages between the Worker and Parent, including errors.
+ *   3. Must send "worker-ready" once worker is initialized.
+ *   4. Must proxy all messages between the Worker and Parent, including errors.
  */
 class IframeWorker {
   // Public Worker API
   public onerror: (this: IframeWorker, ev: ErrorEvent) => any;
   public onmessage: (this: IframeWorker, ev: MessageEvent) => any;
   public onmessageerror: (this: IframeWorker, ev: MessageEvent) => any;
+  public readyPromise: Promise<void>;
 
   // Internal variables.
   private iframe: HTMLIFrameElement;
+  private readyPromiseResolve: Function;
 
   /**
    * @param url The URL to initiate the worker from.
@@ -50,6 +53,9 @@ class IframeWorker {
     this.iframe.setAttribute('style', 'display:none');
     this.iframe.setAttribute('src', iframeUrl);
     this.url = url;
+    this.readyPromise = new Promise((resolve) => {
+      this.readyPromiseResolve = resolve;
+    });
 
     this.setupInit();
     this.proxyFromWorker();
@@ -65,11 +71,14 @@ class IframeWorker {
       fetch(this.url.toString())
         .then((res) => res.text())
         .then((code) => {
-          if ((event.data as MessageFromIframe).type == 'iframe-ready') {
+          const data = event.data as MessageFromIframe;
+          if (data.type == 'iframe-ready') {
             const msg: MessageToIframe = { type: 'init-worker', code };
             this.iframe.contentWindow!.postMessage(msg, '*');
+          } else if (data.type === 'worker-ready') {
+            this.readyPromiseResolve();
+            window.removeEventListener('message', listener);
           }
-          window.removeEventListener('message', listener);
         });
     };
     window.addEventListener('message', listener);
@@ -99,7 +108,9 @@ class IframeWorker {
    */
   postMessage(message: any, transferables?: Array<Transferable>) {
     const msg: MessageToIframe = { type: 'postMessage', message };
-    this.iframe.contentWindow!.postMessage(msg, '*', transferables);
+    this.readyPromise.then(() => {
+      this.iframe.contentWindow!.postMessage(msg, '*', transferables);
+    });
   }
 
   /**
