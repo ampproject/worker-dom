@@ -99,7 +99,7 @@
       "brotli": "12 kB"
     },
     "./dist/worker/worker.js": {
-      "brotli": "14 kB"
+      "brotli": "13.5 kB"
     },
     "./dist/amp-production/main.mjs": {
       "brotli": "4.5 kB"
