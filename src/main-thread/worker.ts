@@ -95,6 +95,15 @@ export class WorkerContext {
   }
 
   /**
+   * Returns a Promise that resolves when the worker is ready to receive messages.
+   * @returns {Promise}
+   */
+  ready() {
+    const worker = this[TransferrableKeys.worker];
+    return worker instanceof Worker ? Promise.resolve() : worker.readyPromise;
+  }
+
+  /**
    * Returns the private worker.
    */
   get worker(): Worker | IframeWorker {
