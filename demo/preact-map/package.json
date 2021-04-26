@@ -17,10 +17,10 @@
     "@babel/preset-env": "7.13.15",
     "@babel/plugin-transform-react-jsx": "7.13.12",
     "babel-loader": "8.2.2",
-    "css-loader": "5.2.1",
-    "mini-css-extract-plugin": "1.4.1",
+    "css-loader": "5.2.4",
+    "mini-css-extract-plugin": "1.5.0",
     "style-loader": "2.0.0",
-    "webpack": "5.31.2",
+    "webpack": "5.35.1",
     "webpack-cli": "4.6.0"
   },
   "volta": {
