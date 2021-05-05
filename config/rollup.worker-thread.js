@@ -32,6 +32,28 @@ const compilePlugins = [
 // but ensure the code can be run within a worker by putting it inside a named iife.
 const ESModules = [
   {
+    input: 'output/worker-thread/server-lib.js',
+    output: {
+      file: 'dist/server-lib.mjs',
+      format: 'es',
+      name: 'ServerLib',
+      sourcemap: true,
+    },
+    plugins: [
+      replace({
+        values: {
+          WORKER_DOM_DEBUG: false,
+        },
+        preventAssignment: true,
+      }),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: false,
+      }),
+      ...compilePlugins,
+    ],
+  },
+  {
     input: 'output/worker-thread/index.js',
     output: {
       file: 'dist/worker/worker.mjs',
