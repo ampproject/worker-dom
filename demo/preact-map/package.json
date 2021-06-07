@@ -13,9 +13,9 @@
     "preact": "10.5.13"
   },
   "devDependencies": {
-    "@babel/core": "7.14.0",
-    "@babel/preset-env": "7.14.1",
-    "@babel/plugin-transform-react-jsx": "7.13.12",
+    "@babel/core": "7.14.3",
+    "@babel/preset-env": "7.14.4",
+    "@babel/plugin-transform-react-jsx": "7.14.3",
     "babel-loader": "8.2.2",
     "css-loader": "5.2.4",
     "mini-css-extract-plugin": "1.6.0",
