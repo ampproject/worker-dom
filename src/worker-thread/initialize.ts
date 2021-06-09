@@ -23,6 +23,7 @@ import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
 import { createStorage } from './Storage';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 import { appendGlobalEventProperties } from './dom/HTMLElement';
+import { DocumentStub } from './dom/DocumentLite';
 
 export type WorkerStorageInit = { storage: { [key: string]: string }; errorMsg: null } | { storage: null; errorMsg: string };
 
@@ -45,6 +46,11 @@ export function initialize(
   const window = document.defaultView;
   window.innerWidth = innerWidth;
   window.innerHeight = innerHeight;
+  initializeStorage(document, localStorageInit, sessionStorageInit);
+}
+
+export function initializeStorage(document: Document | DocumentStub, localStorageInit: WorkerStorageInit, sessionStorageInit: WorkerStorageInit) {
+  const window = document.defaultView;
   if (localStorageInit.storage) {
     window.localStorage = createStorage(document, StorageLocation.Local, localStorageInit.storage);
   } else {

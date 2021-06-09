@@ -20,6 +20,7 @@ import { AMP } from './amp/amp';
 import { DocumentStub } from './dom/DocumentLite';
 import { callFunctionMessageHandler, exportFunction } from './function';
 import { deleteGlobals } from './amp/delete-globals';
+import { initializeStorage, WorkerStorageInit } from './initialize';
 
 const noop = () => void 0;
 
@@ -43,4 +44,16 @@ deleteGlobals(self);
 (self as any).exportFunction = exportFunction;
 addEventListener('message', (evt: MessageEvent) => callFunctionMessageHandler(evt, workerDOM.document));
 
-export const hydrate = noop;
+// Must match the same signature of hydrate in index.amp.ts.
+export function hydrate(
+  document: DocumentStub,
+  strings: Object,
+  hydrateableNode: Object,
+  cssKeys: Object,
+  globalEventHandlerKeys: Object,
+  size: Object,
+  localStorageInit: WorkerStorageInit,
+  sessionStorageInit: WorkerStorageInit,
+) {
+  initializeStorage(document, localStorageInit, sessionStorageInit);
+}
