@@ -15,13 +15,13 @@
  */
 
 import type { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope';
+import type { HydrateFunction } from './hydrate';
 
 import { AMP } from './amp/amp';
 import { DocumentStub } from './dom/DocumentLite';
 import { callFunctionMessageHandler, exportFunction } from './function';
 import { deleteGlobals } from './amp/delete-globals';
-import { initializeStorage, WorkerStorageInit } from './initialize-storage';
-import { HydrateFunction } from './hydrate';
+import { initializeStorage } from './initialize-storage';
 
 const noop = () => void 0;
 
