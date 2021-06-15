@@ -143,8 +143,16 @@ export function createTestingDocument(overrides: {} | null = null): Document {
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
 
-  customGlobal.localStorage = createStorage(document, StorageLocation.Local, {});
-  customGlobal.sessionStorage = createStorage(document, StorageLocation.Session, {});
+  customGlobal.localStorage = createStorage(
+    document,
+    StorageLocation.Local,
+    {},
+  );
+  customGlobal.sessionStorage = createStorage(
+    document,
+    StorageLocation.Session,
+    {},
+  );
 
   return document;
 }

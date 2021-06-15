@@ -53,7 +53,11 @@ import { Comment } from './Comment';
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
 import { PostMessage } from '../worker-thread';
-import { NodeType, HTML_NAMESPACE, HydrateableNode } from '../../transfer/TransferrableNodes';
+import {
+  NodeType,
+  HTML_NAMESPACE,
+  HydrateableNode,
+} from '../../transfer/TransferrableNodes';
 import { Phase } from '../../transfer/Phase';
 import { propagate as propagateEvents } from '../Event';
 import { propagate as propagateSyncValues } from '../SyncValuePropagation';
@@ -106,27 +110,52 @@ export class Document extends Element {
    * @param strings
    * @param skeleton
    */
-  public [TransferrableKeys.hydrateNode](strings: Array<string>, skeleton: HydrateableNode): Node {
+  public [TransferrableKeys.hydrateNode](
+    strings: Array<string>,
+    skeleton: HydrateableNode,
+  ): Node {
     switch (skeleton[TransferrableKeys.nodeType]) {
       case NodeType.TEXT_NODE:
-        return new Text(strings[skeleton[TransferrableKeys.textContent] as number], this, skeleton[TransferrableKeys.index]);
+        return new Text(
+          strings[skeleton[TransferrableKeys.textContent] as number],
+          this,
+          skeleton[TransferrableKeys.index],
+        );
       case NodeType.COMMENT_NODE:
-        return new Comment(strings[skeleton[TransferrableKeys.textContent] as number], this, skeleton[TransferrableKeys.index]);
+        return new Comment(
+          strings[skeleton[TransferrableKeys.textContent] as number],
+          this,
+          skeleton[TransferrableKeys.index],
+        );
       default:
-        const namespaceURI: string = strings[skeleton[TransferrableKeys.namespaceURI] as number] || HTML_NAMESPACE;
-        const localName: string = strings[skeleton[TransferrableKeys.localOrNodeName]];
-        const constructor = NS_NAME_TO_CLASS[`${namespaceURI}:${localName}`] || HTMLElement;
-        const node = new constructor(NodeType.ELEMENT_NODE, localName, namespaceURI, this, skeleton[TransferrableKeys.index]);
+        const namespaceURI: string =
+          strings[skeleton[TransferrableKeys.namespaceURI] as number] ||
+          HTML_NAMESPACE;
+        const localName: string =
+          strings[skeleton[TransferrableKeys.localOrNodeName]];
+        const constructor =
+          NS_NAME_TO_CLASS[`${namespaceURI}:${localName}`] || HTMLElement;
+        const node = new constructor(
+          NodeType.ELEMENT_NODE,
+          localName,
+          namespaceURI,
+          this,
+          skeleton[TransferrableKeys.index],
+        );
 
         (skeleton[TransferrableKeys.attributes] || []).forEach((attribute) =>
           // AttributeNamespaceURI = strings[attribute[0]] !== 'null' ? strings[attribute[0]] : HTML_NAMESPACE
           node.setAttributeNS(
-            strings[attribute[0]] !== 'null' ? strings[attribute[0]] : HTML_NAMESPACE,
+            strings[attribute[0]] !== 'null'
+              ? strings[attribute[0]]
+              : HTML_NAMESPACE,
             strings[attribute[1]],
             strings[attribute[2]],
           ),
         );
-        (skeleton[TransferrableKeys.childNodes] || []).forEach((child) => node.appendChild(this[TransferrableKeys.hydrateNode](strings, child)));
+        (skeleton[TransferrableKeys.childNodes] || []).forEach((child) =>
+          node.appendChild(this[TransferrableKeys.hydrateNode](strings, child)),
+        );
         return node;
     }
   }
@@ -135,9 +164,18 @@ export class Document extends Element {
     return this.createElementNS(HTML_NAMESPACE, toLower(name));
   }
 
-  public createElementNS(namespaceURI: NamespaceURI, localName: string): Element {
-    const constructor = NS_NAME_TO_CLASS[`${namespaceURI}:${localName}`] || HTMLElement;
-    return new constructor(NodeType.ELEMENT_NODE, localName, namespaceURI, this);
+  public createElementNS(
+    namespaceURI: NamespaceURI,
+    localName: string,
+  ): Element {
+    const constructor =
+      NS_NAME_TO_CLASS[`${namespaceURI}:${localName}`] || HTMLElement;
+    return new constructor(
+      NodeType.ELEMENT_NODE,
+      localName,
+      namespaceURI,
+      this,
+    );
   }
 
   /**

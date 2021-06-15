@@ -31,7 +31,11 @@ const WHITESPACE_REGEX = /\s/;
  * @param accessorKey Key used to access DOMTokenList directly from specific element.
  * @param propertyName Key used to access DOMTokenList as string getter/setter.
  */
-export function synchronizedAccessor(defineOn: typeof Element, accessorKey: string, propertyName: string) {
+export function synchronizedAccessor(
+  defineOn: typeof Element,
+  accessorKey: string,
+  propertyName: string,
+) {
   Object.defineProperty(defineOn.prototype, propertyName, {
     enumerable: true,
     configurable: true,
@@ -48,7 +52,11 @@ export class DOMTokenList {
   private [TransferrableKeys.tokens]: Array<string> = [];
   private [TransferrableKeys.target]: Element;
   private [TransferrableKeys.attributeName]: string;
-  private [TransferrableKeys.storeAttribute]: (namespaceURI: NamespaceURI, name: string, value: string) => void;
+  private [TransferrableKeys.storeAttribute]: (
+    namespaceURI: NamespaceURI,
+    name: string,
+    value: string,
+  ) => void;
 
   /**
    * The DOMTokenList interface represents a set of space-separated tokens.
@@ -60,7 +68,9 @@ export class DOMTokenList {
   constructor(target: Element, attributeName: string) {
     this[TransferrableKeys.target] = target;
     this[TransferrableKeys.attributeName] = attributeName;
-    this[TransferrableKeys.storeAttribute] = target[TransferrableKeys.storeAttribute].bind(target);
+    this[TransferrableKeys.storeAttribute] = target[
+      TransferrableKeys.storeAttribute
+    ].bind(target);
   }
 
   /**
@@ -88,7 +98,11 @@ export class DOMTokenList {
     const newValue = collection.trim();
 
     // Replace current tokens with new tokens.
-    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...(newValue !== '' ? newValue.split(/\s+/) : ''));
+    this[TransferrableKeys.tokens].splice(
+      0,
+      this[TransferrableKeys.tokens].length,
+      ...(newValue !== '' ? newValue.split(/\s+/) : ''),
+    );
     this[TransferrableKeys.mutated](oldValue, newValue);
   }
 
@@ -119,7 +133,11 @@ export class DOMTokenList {
    */
   public add(...tokens: string[]): void {
     const oldValue = this.value;
-    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...new Set(this[TransferrableKeys.tokens].concat(tokens)));
+    this[TransferrableKeys.tokens].splice(
+      0,
+      this[TransferrableKeys.tokens].length,
+      ...new Set(this[TransferrableKeys.tokens].concat(tokens)),
+    );
     this[TransferrableKeys.mutated](oldValue, this.value);
   }
 
@@ -135,7 +153,11 @@ export class DOMTokenList {
     this[TransferrableKeys.tokens].splice(
       0,
       this[TransferrableKeys.tokens].length,
-      ...new Set(this[TransferrableKeys.tokens].filter((token) => !tokens.includes(token))),
+      ...new Set(
+        this[TransferrableKeys.tokens].filter(
+          (token) => !tokens.includes(token),
+        ),
+      ),
     );
     this[TransferrableKeys.mutated](oldValue, this.value);
   }
@@ -158,7 +180,11 @@ export class DOMTokenList {
         set.add(newToken);
       }
     }
-    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...set);
+    this[TransferrableKeys.tokens].splice(
+      0,
+      this[TransferrableKeys.tokens].length,
+      ...set,
+    );
     this[TransferrableKeys.mutated](oldValue, this.value);
   }
 
@@ -197,7 +223,11 @@ export class DOMTokenList {
    * @private
    */
   private [TransferrableKeys.mutated](oldValue: string, value: string): void {
-    this[TransferrableKeys.storeAttribute](this[TransferrableKeys.target].namespaceURI, this[TransferrableKeys.attributeName], value);
+    this[TransferrableKeys.storeAttribute](
+      this[TransferrableKeys.target].namespaceURI,
+      this[TransferrableKeys.attributeName],
+      value,
+    );
     mutate(
       this[TransferrableKeys.target].ownerDocument as Document,
       {

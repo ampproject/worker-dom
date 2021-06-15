@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { store as storeNodeMapping, storeOverride as storeOverrideNodeMapping } from '../nodes';
+import {
+  store as storeNodeMapping,
+  storeOverride as storeOverrideNodeMapping,
+} from '../nodes';
 import { Event, EventHandler, AddEventListenerOptions } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
@@ -26,7 +29,12 @@ import { transfer } from '../MutationTransfer';
 import { TransferredNode, NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
-export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
+export type NodeName =
+  | '#comment'
+  | '#document'
+  | '#document-fragment'
+  | '#text'
+  | string;
 export type NamespaceURI = string;
 
 /**
@@ -35,7 +43,11 @@ export type NamespaceURI = string;
  * @param property Property to modify
  * @param value New value to apply
  */
-export const propagate = (node: Node, property: string | number, value: any): void => {
+export const propagate = (
+  node: Node,
+  property: string | number,
+  value: any,
+): void => {
   node[property] = value;
   node.childNodes.forEach((child) => propagate(child, property, value));
 };
@@ -64,14 +76,21 @@ export abstract class Node {
     [index: string]: EventHandler[];
   } = {};
 
-  constructor(nodeType: NodeType, nodeName: NodeName, ownerDocument: Node | null, overrideIndex?: number) {
+  constructor(
+    nodeType: NodeType,
+    nodeName: NodeName,
+    ownerDocument: Node | null,
+    overrideIndex?: number,
+  ) {
     this.nodeType = nodeType;
     this.nodeName = nodeName;
 
     this.ownerDocument = ownerDocument || this;
     this[TransferrableKeys.scopingRoot] = this;
 
-    this[TransferrableKeys.index] = overrideIndex ? storeOverrideNodeMapping(this, overrideIndex) : storeNodeMapping(this);
+    this[TransferrableKeys.index] = overrideIndex
+      ? storeOverrideNodeMapping(this, overrideIndex)
+      : storeNodeMapping(this);
     this[TransferrableKeys.transferredFormat] = [this[TransferrableKeys.index]];
   }
 
@@ -190,14 +209,19 @@ export abstract class Node {
    * @param referenceNode
    * @return child after it has been inserted.
    */
-  public insertBefore(child: Node | null, referenceNode: Node | undefined | null): Node | null {
+  public insertBefore(
+    child: Node | null,
+    referenceNode: Node | undefined | null,
+  ): Node | null {
     if (child === null || child === this) {
       // The new child cannot contain the parent.
       return child;
     }
 
     if (child.nodeType === NodeType.DOCUMENT_FRAGMENT_NODE) {
-      child.childNodes.slice().forEach((node: Node) => this.insertBefore(node, referenceNode));
+      child.childNodes
+        .slice()
+        .forEach((node: Node) => this.insertBefore(node, referenceNode));
     } else if (referenceNode == null) {
       // When a referenceNode is not valid, appendChild(child).
       return this.appendChild(child);
@@ -241,7 +265,11 @@ export abstract class Node {
   protected [TransferrableKeys.insertedNode](child: Node): void {
     child.parentNode = this;
     propagate(child, 'isConnected', this.isConnected);
-    propagate(child, TransferrableKeys.scopingRoot, this[TransferrableKeys.scopingRoot]);
+    propagate(
+      child,
+      TransferrableKeys.scopingRoot,
+      this[TransferrableKeys.scopingRoot],
+    );
   }
 
   /**
@@ -312,7 +340,15 @@ export abstract class Node {
           type: MutationRecordType.CHILD_LIST,
           target: this,
         },
-        [TransferrableMutationType.CHILD_LIST, this[TransferrableKeys.index], 0, 0, 0, 1, child[TransferrableKeys.index]],
+        [
+          TransferrableMutationType.CHILD_LIST,
+          this[TransferrableKeys.index],
+          0,
+          0,
+          0,
+          1,
+          child[TransferrableKeys.index],
+        ],
       );
 
       return child;
@@ -360,7 +396,9 @@ export abstract class Node {
       [
         TransferrableMutationType.CHILD_LIST,
         this[TransferrableKeys.index],
-        this.childNodes[index + 1] ? this.childNodes[index + 1][TransferrableKeys.index] : 0,
+        this.childNodes[index + 1]
+          ? this.childNodes[index + 1][TransferrableKeys.index]
+          : 0,
         0,
         1,
         1,
@@ -420,10 +458,16 @@ export abstract class Node {
    * @param type Event Type (i.e 'click')
    * @param handler Function called when event is dispatched.
    */
-  public addEventListener(type: string, handler: EventHandler, options: AddEventListenerOptions | undefined = {}): void {
+  public addEventListener(
+    type: string,
+    handler: EventHandler,
+    options: AddEventListenerOptions | undefined = {},
+  ): void {
     const lowerType = toLower(type);
     const storedType = storeString(lowerType);
-    const handlers: EventHandler[] = this[TransferrableKeys.handlers][lowerType];
+    const handlers: EventHandler[] = this[TransferrableKeys.handlers][
+      lowerType
+    ];
     let index: number = 0;
     if (handlers) {
       index = handlers.push(handler);
@@ -480,15 +524,26 @@ export abstract class Node {
     let iterator: number;
 
     do {
-      handlers = target && target[TransferrableKeys.handlers] && target[TransferrableKeys.handlers][toLower(event.type)];
+      handlers =
+        target &&
+        target[TransferrableKeys.handlers] &&
+        target[TransferrableKeys.handlers][toLower(event.type)];
       if (handlers) {
         for (iterator = handlers.length; iterator--; ) {
-          if ((handlers[iterator].call(target, event) === false || event[TransferrableKeys.end]) && event.cancelable) {
+          if (
+            (handlers[iterator].call(target, event) === false ||
+              event[TransferrableKeys.end]) &&
+            event.cancelable
+          ) {
             break;
           }
         }
       }
-    } while (event.bubbles && !(event.cancelable && event[TransferrableKeys.stop]) && (target = target && target.parentNode));
+    } while (
+      event.bubbles &&
+      !(event.cancelable && event[TransferrableKeys.stop]) &&
+      (target = target && target.parentNode)
+    );
     return !event.defaultPrevented;
   }
 }

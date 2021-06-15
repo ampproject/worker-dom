@@ -79,7 +79,16 @@ test('elements should contain button element deeply nested, filtering invalid ch
 });
 
 test('elements should contain all valid elements, filtering invalid childNodes', (t) => {
-  const { element, button, fieldset, input, output, select, textarea, div } = t.context;
+  const {
+    element,
+    button,
+    fieldset,
+    input,
+    output,
+    select,
+    textarea,
+    div,
+  } = t.context;
 
   element.appendChild(button);
   element.appendChild(fieldset);
@@ -89,6 +98,13 @@ test('elements should contain all valid elements, filtering invalid childNodes',
   element.appendChild(textarea);
   element.appendChild(div);
 
-  t.deepEqual(element.elements, [button, fieldset, input, output, select, textarea]);
+  t.deepEqual(element.elements, [
+    button,
+    fieldset,
+    input,
+    output,
+    select,
+    textarea,
+  ]);
   t.is(element.elements.length, 6);
 });

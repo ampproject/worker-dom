@@ -19,9 +19,17 @@ import { StorageProcessor } from '../../../main-thread/commands/storage';
 import { StringContext } from '../../../main-thread/strings';
 import { WorkerDOMConfiguration } from '../../../main-thread/configuration';
 import { CommandExecutor } from '../../../main-thread/commands/interface';
-import { TransferrableMutationType, StorageMutationIndex } from '../../../transfer/TransferrableMutation';
+import {
+  TransferrableMutationType,
+  StorageMutationIndex,
+} from '../../../transfer/TransferrableMutation';
 import { StorageLocation } from '../../../transfer/TransferrableStorage';
-import { GetOrSet, MessageToWorker, MessageType, StorageValueToWorker } from '../../../transfer/Messages';
+import {
+  GetOrSet,
+  MessageToWorker,
+  MessageType,
+  StorageValueToWorker,
+} from '../../../transfer/Messages';
 import { WorkerContext } from '../../../main-thread/worker';
 import { TransferrableKeys } from '../../../transfer/TransferrableKeys';
 

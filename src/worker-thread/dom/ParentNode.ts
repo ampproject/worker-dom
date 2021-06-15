@@ -15,7 +15,11 @@
  */
 
 import { Element } from './Element';
-import { elementPredicate, matchAttrReference, matchChildrenElements } from './matchElements';
+import {
+  elementPredicate,
+  matchAttrReference,
+  matchChildrenElements,
+} from './matchElements';
 import { Node } from './Node';
 import { containsIndexOf, toLower } from '../../utils';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
@@ -102,9 +106,18 @@ function querySelectorAll(node: Node, selector: string): Element[] | null {
   // As per spec: https://dom.spec.whatwg.org/#scope-match-a-selectors-string
   // First, parse the selector
   const selectorBracketIndexes = [selector.indexOf('['), selector.indexOf(']')];
-  const selectorHasAttr = containsIndexOf(selectorBracketIndexes[0]) && containsIndexOf(selectorBracketIndexes[1]);
-  const elementSelector = selectorHasAttr ? selector.substring(0, selectorBracketIndexes[0]) : selector;
-  const attrSelector = selectorHasAttr ? selector.substring(selectorBracketIndexes[0], selectorBracketIndexes[1] + 1) : null;
+  const selectorHasAttr =
+    containsIndexOf(selectorBracketIndexes[0]) &&
+    containsIndexOf(selectorBracketIndexes[1]);
+  const elementSelector = selectorHasAttr
+    ? selector.substring(0, selectorBracketIndexes[0])
+    : selector;
+  const attrSelector = selectorHasAttr
+    ? selector.substring(
+        selectorBracketIndexes[0],
+        selectorBracketIndexes[1] + 1,
+      )
+    : null;
 
   // TODO(nainar): Parsing selectors is needed when we add in more complex selectors.
   // Second, find all the matching elements on the Document
@@ -113,20 +126,29 @@ function querySelectorAll(node: Node, selector: string): Element[] | null {
     matcher = (element) => matchAttrReference(selector, element);
   } else if (elementSelector[0] === '#') {
     matcher = selectorHasAttr
-      ? (element) => element.id === elementSelector.substr(1) && matchAttrReference(attrSelector, element)
+      ? (element) =>
+          element.id === elementSelector.substr(1) &&
+          matchAttrReference(attrSelector, element)
       : (element) => element.id === elementSelector.substr(1);
   } else if (elementSelector[0] === '.') {
     matcher = selectorHasAttr
-      ? (element) => element.classList.contains(elementSelector.substr(1)) && matchAttrReference(attrSelector, element)
+      ? (element) =>
+          element.classList.contains(elementSelector.substr(1)) &&
+          matchAttrReference(attrSelector, element)
       : (element) => element.classList.contains(elementSelector.substr(1));
   } else {
     matcher = selectorHasAttr
-      ? (element) => element.localName === toLower(elementSelector) && matchAttrReference(attrSelector, element)
+      ? (element) =>
+          element.localName === toLower(elementSelector) &&
+          matchAttrReference(attrSelector, element)
       : (element) => element.localName === toLower(elementSelector);
   }
 
   // Third, filter to return elements that exist within the querying element's descendants.
   return matcher
-    ? matchChildrenElements(node[TransferrableKeys.scopingRoot], matcher).filter((element) => node !== element && node.contains(element))
+    ? matchChildrenElements(
+        node[TransferrableKeys.scopingRoot],
+        matcher,
+      ).filter((element) => node !== element && node.contains(element))
     : [];
 }

@@ -39,11 +39,19 @@ test('remove a single value', (t) => {
 
   tokenList.value = 'foo foo';
   tokenList.remove('foo');
-  t.is(tokenList.value, '', 'removing a single value that is stored more than once currently removes duplicates');
+  t.is(
+    tokenList.value,
+    '',
+    'removing a single value that is stored more than once currently removes duplicates',
+  );
 
   tokenList.value = 'foo foo';
   tokenList.remove('bar');
-  t.is(tokenList.value, 'foo', 'removing a single value not within stored values removes duplicates');
+  t.is(
+    tokenList.value,
+    'foo',
+    'removing a single value not within stored values removes duplicates',
+  );
 
   tokenList.value = 'foo bar bar foo';
   tokenList.remove('foo');
@@ -63,7 +71,11 @@ test('removing multiple values', (t) => {
 
   tokenList.value = 'foo foo';
   tokenList.remove('foo', 'foo');
-  t.is(tokenList.value, '', 'removing multiple values of the same value that is stored more than once currently removes duplicates');
+  t.is(
+    tokenList.value,
+    '',
+    'removing multiple values of the same value that is stored more than once currently removes duplicates',
+  );
 
   tokenList.value = 'foo bar foo bar';
   tokenList.remove('foo', 'foo');

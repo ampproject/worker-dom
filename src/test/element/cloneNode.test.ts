@@ -62,7 +62,10 @@ test('cloneNode should create a new node with the same nodeName', (t) => {
 test('cloneNode should create a new node with a different index', (t) => {
   const { parent } = t.context;
 
-  t.not(parent.cloneNode()[TransferrableKeys.index], parent[TransferrableKeys.index]);
+  t.not(
+    parent.cloneNode()[TransferrableKeys.index],
+    parent[TransferrableKeys.index],
+  );
 });
 
 test('cloneNode should create a new node with the same attribute', (t) => {
@@ -111,7 +114,10 @@ test('cloneNode should create a new node with the same children when the deep fl
 
   t.is(parent.childNodes.length, clone.childNodes.length);
   t.is(parent.childNodes[0].tagName, clone.childNodes[0].tagName);
-  t.is(parent.childNodes[0].childNodes[0].textContent, clone.childNodes[0].childNodes[0].textContent);
+  t.is(
+    parent.childNodes[0].childNodes[0].textContent,
+    clone.childNodes[0].childNodes[0].textContent,
+  );
 });
 
 test('cloneNode should return a new instance of the the same type as the input', (t) => {

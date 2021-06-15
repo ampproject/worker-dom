@@ -36,7 +36,9 @@ export const enum TransferrableMutationType {
  * Returns true if the mutation type can cause a user-visible change to the DOM.
  * @param type
  */
-export const isUserVisibleMutation = (type: TransferrableMutationType): boolean => {
+export const isUserVisibleMutation = (
+  type: TransferrableMutationType,
+): boolean => {
   switch (type) {
     case TransferrableMutationType.EVENT_SUBSCRIPTION:
     case TransferrableMutationType.GET_BOUNDING_CLIENT_RECT:

@@ -64,7 +64,10 @@ test('test Element.querySelector on tag selectors', (t) => {
   const { document, parentDiv, div } = t.context;
 
   t.deepEqual(document.querySelector('div'), parentDiv);
-  t.deepEqual(document.querySelector('div'), document.body.querySelector('div'));
+  t.deepEqual(
+    document.querySelector('div'),
+    document.body.querySelector('div'),
+  );
   t.deepEqual(parentDiv.querySelector('div'), div);
 });
 

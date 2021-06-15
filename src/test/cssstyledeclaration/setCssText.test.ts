@@ -15,7 +15,10 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
+import {
+  CSSStyleDeclaration,
+  appendKeys,
+} from '../../worker-thread/css/CSSStyleDeclaration';
 import { Element } from '../../worker-thread/dom/Element';
 import { createTestingDocument } from '../DocumentCreation';
 

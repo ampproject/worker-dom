@@ -41,9 +41,18 @@ export class ExportedWorker {
    * @param functionIdentifer
    * @param functionArguments
    */
-  callFunction(functionIdentifer: string, ...functionArguments: any[]): Promise<any> {
-    if (!this.config.executorsAllowed.includes(TransferrableMutationType.FUNCTION_CALL)) {
-      throw new Error(`[worker-dom]: Error calling ${functionIdentifer}. You must enable the FUNCTION_CALL executor within the config.`);
+  callFunction(
+    functionIdentifer: string,
+    ...functionArguments: any[]
+  ): Promise<any> {
+    if (
+      !this.config.executorsAllowed.includes(
+        TransferrableMutationType.FUNCTION_CALL,
+      )
+    ) {
+      throw new Error(
+        `[worker-dom]: Error calling ${functionIdentifer}. You must enable the FUNCTION_CALL executor within the config.`,
+      );
     }
 
     const { promise, index } = registerPromise();

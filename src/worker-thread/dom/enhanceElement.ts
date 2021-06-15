@@ -36,10 +36,17 @@ export interface PropertyPair {
 // TODO: Do all boolean attributes have boolean properties?
 // TODO: Do enumerated attributes with non-boolean properties exist?
 
-export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element): void => {
+export const reflectProperties = (
+  properties: Array<PropertyPair>,
+  defineOn: typeof Element,
+): void => {
   properties.forEach((pair) => {
     for (const property in pair) {
-      const { 0: defaultValue, 1: attributeName = toLower(property), 2: keywords } = pair[property];
+      const {
+        0: defaultValue,
+        1: attributeName = toLower(property),
+        2: keywords,
+      } = pair[property];
       // Boolean attributes only care about presence, not attribute value.
       // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attributes
       const isBooleanAttribute = typeof defaultValue === 'boolean';
@@ -50,20 +57,29 @@ export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typ
           const element = this as Element;
           const attributeValue = element.getAttribute(attributeName);
           if (keywords) {
-            return element.hasAttribute(attributeName) ? attributeValue === keywords[0] : defaultValue;
+            return element.hasAttribute(attributeName)
+              ? attributeValue === keywords[0]
+              : defaultValue;
           }
           if (isBooleanAttribute) {
             return element.hasAttribute(attributeName);
           }
           const castableValue = attributeValue || defaultValue;
-          return typeof defaultValue === 'number' ? Number(castableValue) : String(castableValue);
+          return typeof defaultValue === 'number'
+            ? Number(castableValue)
+            : String(castableValue);
         },
         set(value: PropertyValue) {
           const element = this as Element;
           if (keywords) {
-            element.setAttribute(attributeName, value ? keywords[0] : keywords[1]);
+            element.setAttribute(
+              attributeName,
+              value ? keywords[0] : keywords[1],
+            );
           } else if (isBooleanAttribute) {
-            value ? element.setAttribute(attributeName, '') : element.removeAttribute(attributeName);
+            value
+              ? element.setAttribute(attributeName, '')
+              : element.removeAttribute(attributeName);
           } else {
             element.setAttribute(attributeName, String(value));
           }

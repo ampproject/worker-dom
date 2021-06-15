@@ -47,6 +47,14 @@ registerSubclass('script', HTMLScriptElement);
 // HTMLScriptElement.crossOrigin => string, reflected attribute
 // HTMLScriptElement.noModule => boolean, reflected attribute
 reflectProperties(
-  [{ type: [''] }, { src: [''] }, { charset: [''] }, { async: [false] }, { defer: [false] }, { crossOrigin: [''] }, { noModule: [false] }],
+  [
+    { type: [''] },
+    { src: [''] },
+    { charset: [''] },
+    { async: [false] },
+    { defer: [false] },
+    { crossOrigin: [''] },
+    { noModule: [false] },
+  ],
   HTMLScriptElement,
 );

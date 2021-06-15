@@ -43,7 +43,10 @@ test.afterEach((t) => {
 test.serial('terminate the worker-dom', (t) => {
   const { env, baseElement } = t.context;
 
-  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
+  const fetchPromise = Promise.all([
+    Promise.resolve('workerDOMScript'),
+    Promise.resolve('authorScript'),
+  ]);
   return install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',

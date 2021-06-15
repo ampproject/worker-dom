@@ -41,7 +41,11 @@ test.serial.cb('Node.replaceChild transfer only node', (t) => {
   const div = document.createElement('div');
   const p = document.createElement('p');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+  function transmitted(
+    strings: Array<string>,
+    message: MutationFromWorker,
+    buffers: Array<ArrayBuffer>,
+  ) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
       [
@@ -72,7 +76,11 @@ test.serial.cb('Node.replaceChild transfer replace first with second', (t) => {
   const second = document.createElement('second');
   const third = document.createElement('third');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+  function transmitted(
+    strings: Array<string>,
+    message: MutationFromWorker,
+    buffers: Array<ArrayBuffer>,
+  ) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
       [
@@ -104,7 +112,11 @@ test.serial.cb('Node.replaceChild transfer replace third with second', (t) => {
   const second = document.createElement('second');
   const third = document.createElement('third');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+  function transmitted(
+    strings: Array<string>,
+    message: MutationFromWorker,
+    buffers: Array<ArrayBuffer>,
+  ) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
       [
@@ -135,7 +147,11 @@ test.serial.cb('Node.replaceChild transfer remove sibling node', (t) => {
   const div = document.createElement('div');
   const p = document.createElement('p');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+  function transmitted(
+    strings: Array<string>,
+    message: MutationFromWorker,
+    buffers: Array<ArrayBuffer>,
+  ) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
       [

@@ -69,7 +69,9 @@ export class HTMLOptionElement extends HTMLElement {
       this[TransferrableKeys.index],
       storeString('selected'),
       NumericBoolean.TRUE,
-      this[TransferrableKeys.selected] ? NumericBoolean.TRUE : NumericBoolean.FALSE,
+      this[TransferrableKeys.selected]
+        ? NumericBoolean.TRUE
+        : NumericBoolean.FALSE,
     ]);
   }
 
@@ -108,13 +110,23 @@ export class HTMLOptionElement extends HTMLElement {
 }
 registerSubclass('option', HTMLOptionElement);
 definePropertyBackedAttributes(HTMLOptionElement, {
-  selected: [(el): string => String(el[TransferrableKeys.selected]), (el, value: string): boolean => (el.selected = value === 'true')],
+  selected: [
+    (el): string => String(el[TransferrableKeys.selected]),
+    (el, value: string): boolean => (el.selected = value === 'true'),
+  ],
 });
 // Reflected Properties
 // HTMLOptionElement.defaultSelected => boolean, reflected attribute
 // HTMLOptionElement.disabled => boolean, reflected attribute
 // HTMLOptionElement.type => string, reflected attribute
-reflectProperties([{ defaultSelected: [false, /* attr */ 'selected'] }, { disabled: [false] }, { type: [''] }], HTMLOptionElement);
+reflectProperties(
+  [
+    { defaultSelected: [false, /* attr */ 'selected'] },
+    { disabled: [false] },
+    { type: [''] },
+  ],
+  HTMLOptionElement,
+);
 
 // Implemented at HTMLElement
 // HTMLOptionElement.form, Read only	=> HTMLFormElement

@@ -18,7 +18,11 @@ import anyTest, { TestInterface } from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
 import { Comment } from '../../worker-thread/dom/Comment';
-import { NodeType, SVG_NAMESPACE, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import {
+  NodeType,
+  SVG_NAMESPACE,
+  HTML_NAMESPACE,
+} from '../../transfer/TransferrableNodes';
 import { createTestingDocument } from '../DocumentCreation';
 import { HTMLInputElement } from '../../worker-thread/dom/HTMLInputElement';
 

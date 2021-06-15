@@ -37,90 +37,152 @@ test.beforeEach((t) => {
   };
 });
 
-test.serial.cb('HTMLOptionElement.selected transfers updated truthy property', (t) => {
-  const { document, emitter } = t.context;
-  const el = document.createElement('option');
+test.serial.cb(
+  'HTMLOptionElement.selected transfers updated truthy property',
+  (t) => {
+    const { document, emitter } = t.context;
+    const el = document.createElement('option');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.PROPERTIES, el[TransferrableKeys.index], strings.indexOf('selected'), NumericBoolean.TRUE, NumericBoolean.TRUE],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+    function transmitted(
+      strings: Array<string>,
+      message: MutationFromWorker,
+      buffers: Array<ArrayBuffer>,
+    ) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.PROPERTIES,
+          el[TransferrableKeys.index],
+          strings.indexOf('selected'),
+          NumericBoolean.TRUE,
+          NumericBoolean.TRUE,
+        ],
+        'mutation is as expected',
+      );
+      t.end();
+    }
 
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    el.selected = 'true';
-  });
-});
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      el.selected = 'true';
+    });
+  },
+);
 
-test.serial.cb('HTMLOptionElement.selected transfers updated falsy property', (t) => {
-  const { document, emitter } = t.context;
-  const el = document.createElement('option');
+test.serial.cb(
+  'HTMLOptionElement.selected transfers updated falsy property',
+  (t) => {
+    const { document, emitter } = t.context;
+    const el = document.createElement('option');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.PROPERTIES, el[TransferrableKeys.index], strings.indexOf('selected'), NumericBoolean.TRUE, NumericBoolean.FALSE],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+    function transmitted(
+      strings: Array<string>,
+      message: MutationFromWorker,
+      buffers: Array<ArrayBuffer>,
+    ) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.PROPERTIES,
+          el[TransferrableKeys.index],
+          strings.indexOf('selected'),
+          NumericBoolean.TRUE,
+          NumericBoolean.FALSE,
+        ],
+        'mutation is as expected',
+      );
+      t.end();
+    }
 
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    el.selected = null;
-  });
-});
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      el.selected = null;
+    });
+  },
+);
 
-test.serial.cb('HTMLOptionElement.selected transfers updated true boolean property', (t) => {
-  const { document, emitter } = t.context;
-  const el = document.createElement('option');
+test.serial.cb(
+  'HTMLOptionElement.selected transfers updated true boolean property',
+  (t) => {
+    const { document, emitter } = t.context;
+    const el = document.createElement('option');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.PROPERTIES, el[TransferrableKeys.index], strings.indexOf('selected'), NumericBoolean.TRUE, NumericBoolean.TRUE],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+    function transmitted(
+      strings: Array<string>,
+      message: MutationFromWorker,
+      buffers: Array<ArrayBuffer>,
+    ) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.PROPERTIES,
+          el[TransferrableKeys.index],
+          strings.indexOf('selected'),
+          NumericBoolean.TRUE,
+          NumericBoolean.TRUE,
+        ],
+        'mutation is as expected',
+      );
+      t.end();
+    }
 
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    el.selected = true;
-  });
-});
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      el.selected = true;
+    });
+  },
+);
 
-test.serial.cb('HTMLOptionElement.selected transfers updated false boolean property', (t) => {
-  const { document, emitter } = t.context;
-  const el = document.createElement('option');
+test.serial.cb(
+  'HTMLOptionElement.selected transfers updated false boolean property',
+  (t) => {
+    const { document, emitter } = t.context;
+    const el = document.createElement('option');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.PROPERTIES, el[TransferrableKeys.index], strings.indexOf('selected'), NumericBoolean.TRUE, NumericBoolean.FALSE],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+    function transmitted(
+      strings: Array<string>,
+      message: MutationFromWorker,
+      buffers: Array<ArrayBuffer>,
+    ) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.PROPERTIES,
+          el[TransferrableKeys.index],
+          strings.indexOf('selected'),
+          NumericBoolean.TRUE,
+          NumericBoolean.FALSE,
+        ],
+        'mutation is as expected',
+      );
+      t.end();
+    }
 
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    el.selected = false;
-  });
-});
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      el.selected = false;
+    });
+  },
+);
 
 test.serial.cb('HTMLInputElement.value transfers updated empty string', (t) => {
   const { document, emitter } = t.context;
   const el = document.createElement('input');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+  function transmitted(
+    strings: Array<string>,
+    message: MutationFromWorker,
+    buffers: Array<ArrayBuffer>,
+  ) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.PROPERTIES, el[TransferrableKeys.index], strings.indexOf('value'), NumericBoolean.FALSE, strings.indexOf('')],
+      [
+        TransferrableMutationType.PROPERTIES,
+        el[TransferrableKeys.index],
+        strings.indexOf('value'),
+        NumericBoolean.FALSE,
+        strings.indexOf(''),
+      ],
       'mutation is as expected',
     );
     t.end();

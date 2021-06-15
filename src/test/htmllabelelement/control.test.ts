@@ -51,17 +51,20 @@ test.serial('control should be null by default', (t) => {
   t.is(label.control, null);
 });
 
-test.serial('control should be sibling element with matching id to "for" attribute', (t) => {
-  const { document, label, div, input } = t.context;
+test.serial(
+  'control should be sibling element with matching id to "for" attribute',
+  (t) => {
+    const { document, label, div, input } = t.context;
 
-  div.appendChild(label);
-  div.appendChild(input);
-  input.id = 'identifier';
-  label.htmlFor = 'identifier';
-  document.body.appendChild(div);
+    div.appendChild(label);
+    div.appendChild(input);
+    input.id = 'identifier';
+    label.htmlFor = 'identifier';
+    document.body.appendChild(div);
 
-  t.is(label.control, input);
-});
+    t.is(label.control, input);
+  },
+);
 
 test('control should be null when there is no matching element to the id in "for" attribute', (t) => {
   const { document, label } = t.context;

@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
+import {
+  MutationFromWorker,
+  MessageType,
+  MessageFromWorker,
+} from '../transfer/Messages';
 import { MutatorProcessor } from './mutator';
 import { NodeContext } from './nodes';
 import { StringContext } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { InboundWorkerDOMConfiguration, normalizeConfiguration } from './configuration';
+import {
+  InboundWorkerDOMConfiguration,
+  normalizeConfiguration,
+} from './configuration';
 import { WorkerContext } from './worker';
 import { ObjectContext } from './object-context';
 import { ExportedWorker } from './exported-worker';
@@ -34,7 +41,10 @@ const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
  * @param sanitizer
  * @param debug
  */
-export function fetchAndInstall(baseElement: HTMLElement, config: InboundWorkerDOMConfiguration): Promise<ExportedWorker | null> {
+export function fetchAndInstall(
+  baseElement: HTMLElement,
+  config: InboundWorkerDOMConfiguration,
+): Promise<ExportedWorker | null> {
   const fetchPromise = Promise.all([
     // TODO(KB): Fetch Polyfill for IE11.
     fetch(config.domURL).then((response) => response.text()),
@@ -59,8 +69,20 @@ export function install(
   const normalizedConfig = normalizeConfiguration(config);
   return fetchPromise.then(([domScriptContent, authorScriptContent]) => {
     if (domScriptContent && authorScriptContent && config.authorURL) {
-      const workerContext = new WorkerContext(baseElement, nodeContext, domScriptContent, authorScriptContent, normalizedConfig);
-      const mutatorContext = new MutatorProcessor(stringContext, nodeContext, workerContext, normalizedConfig, objectContext);
+      const workerContext = new WorkerContext(
+        baseElement,
+        nodeContext,
+        domScriptContent,
+        authorScriptContent,
+        normalizedConfig,
+      );
+      const mutatorContext = new MutatorProcessor(
+        stringContext,
+        nodeContext,
+        workerContext,
+        normalizedConfig,
+        objectContext,
+      );
       workerContext.worker.onmessage = (message: MessageFromWorker) => {
         const { data } = message;
 
@@ -80,7 +102,9 @@ export function install(
         }
       };
 
-      return workerContext.ready().then(() => new ExportedWorker(workerContext, normalizedConfig));
+      return workerContext
+        .ready()
+        .then(() => new ExportedWorker(workerContext, normalizedConfig));
     }
     return null;
   });

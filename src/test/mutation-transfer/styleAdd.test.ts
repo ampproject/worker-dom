@@ -41,10 +41,20 @@ test.serial.cb('Element.style transfer single value', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+  function transmitted(
+    strings: Array<string>,
+    message: MutationFromWorker,
+    buffers: Array<ArrayBuffer>,
+  ) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('style'), 0, strings.indexOf('width: 10px;') + 1],
+      [
+        TransferrableMutationType.ATTRIBUTES,
+        div[TransferrableKeys.index],
+        strings.indexOf('style'),
+        0,
+        strings.indexOf('width: 10px;') + 1,
+      ],
       'mutation is as expected',
     );
     t.end();
@@ -62,7 +72,11 @@ test.serial.cb('Element.style transfer multiple values', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+  function transmitted(
+    strings: Array<string>,
+    message: MutationFromWorker,
+    buffers: Array<ArrayBuffer>,
+  ) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
       [
@@ -90,10 +104,20 @@ test.serial.cb('Element.style transfer single value, via setProperty', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+  function transmitted(
+    strings: Array<string>,
+    message: MutationFromWorker,
+    buffers: Array<ArrayBuffer>,
+  ) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('style'), 0, strings.indexOf('width: 10px;') + 1],
+      [
+        TransferrableMutationType.ATTRIBUTES,
+        div[TransferrableKeys.index],
+        strings.indexOf('style'),
+        0,
+        strings.indexOf('width: 10px;') + 1,
+      ],
       'mutation is as expected',
     );
     t.end();
@@ -107,11 +131,50 @@ test.serial.cb('Element.style transfer single value, via setProperty', (t) => {
   });
 });
 
-test.serial.cb('Element.style transfer multiple values, via setProperty', (t) => {
+test.serial.cb(
+  'Element.style transfer multiple values, via setProperty',
+  (t) => {
+    const { document, emitter } = t.context;
+    const div = document.createElement('div');
+
+    function transmitted(
+      strings: Array<string>,
+      message: MutationFromWorker,
+      buffers: Array<ArrayBuffer>,
+    ) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.ATTRIBUTES,
+          div[TransferrableKeys.index],
+          strings.indexOf('style'),
+          0,
+          strings.indexOf('width: 10px; height: 12px;') + 1,
+        ],
+        'mutation is as expected',
+      );
+      t.end();
+    }
+
+    document.body.appendChild(div);
+    appendKeys(['width', 'height']);
+    div.style.setProperty('width', '10px');
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.style.setProperty('height', '12px');
+    });
+  },
+);
+
+test.serial.cb('Element.style transfer single value, via cssText', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+  function transmitted(
+    strings: Array<string>,
+    message: MutationFromWorker,
+    buffers: Array<ArrayBuffer>,
+  ) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
       [
@@ -119,30 +182,8 @@ test.serial.cb('Element.style transfer multiple values, via setProperty', (t) =>
         div[TransferrableKeys.index],
         strings.indexOf('style'),
         0,
-        strings.indexOf('width: 10px; height: 12px;') + 1,
+        strings.indexOf('width: 10px;') + 1,
       ],
-      'mutation is as expected',
-    );
-    t.end();
-  }
-
-  document.body.appendChild(div);
-  appendKeys(['width', 'height']);
-  div.style.setProperty('width', '10px');
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.style.setProperty('height', '12px');
-  });
-});
-
-test.serial.cb('Element.style transfer single value, via cssText', (t) => {
-  const { document, emitter } = t.context;
-  const div = document.createElement('div');
-
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('style'), 0, strings.indexOf('width: 10px;') + 1],
       'mutation is as expected',
     );
     t.end();
@@ -160,7 +201,11 @@ test.serial.cb('Element.style transfer multiple values, via cssText', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+  function transmitted(
+    strings: Array<string>,
+    message: MutationFromWorker,
+    buffers: Array<ArrayBuffer>,
+  ) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
       [

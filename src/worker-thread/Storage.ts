@@ -39,7 +39,11 @@ export interface Storage {
  * @param location
  * @param data
  */
-export function createStorage(document: Document | DocumentStub, location: StorageLocation, data: { [key: string]: string }): Storage {
+export function createStorage(
+  document: Document | DocumentStub,
+  location: StorageLocation,
+  data: { [key: string]: string },
+): Storage {
   const storage: any = Object.assign(Object.create(null), data);
 
   // Define properties on a prototype-less object instead of a class so that
@@ -67,7 +71,13 @@ export function createStorage(document: Document | DocumentStub, location: Stora
       const stringValue = String(value);
       this[key] = stringValue;
 
-      transfer(document, [TransferrableMutationType.STORAGE, GetOrSet.SET, location, store(key), store(stringValue)]);
+      transfer(document, [
+        TransferrableMutationType.STORAGE,
+        GetOrSet.SET,
+        location,
+        store(key),
+        store(stringValue),
+      ]);
     },
   });
   define(storage, 'removeItem', {

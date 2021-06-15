@@ -1,7 +1,11 @@
 import anyTest, { TestInterface } from 'ava';
 import { createTestingDocument } from '../DocumentCreation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { NodeType, HydrateableNode, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import {
+  NodeType,
+  HydrateableNode,
+  HTML_NAMESPACE,
+} from '../../transfer/TransferrableNodes';
 import { Document } from '../../worker-thread/dom/Document';
 
 const test = anyTest as TestInterface<{
@@ -25,7 +29,10 @@ test('supports hydrating a node with a value attribute', (t) => {
   });
 });
 
-function getHydratableInputNode(localOrNodeName: string, value: string): { node: HydrateableNode; strings: Array<string> } {
+function getHydratableInputNode(
+  localOrNodeName: string,
+  value: string,
+): { node: HydrateableNode; strings: Array<string> } {
   const strings = [localOrNodeName, '', HTML_NAMESPACE, 'value', value];
   return {
     node: {

@@ -21,7 +21,13 @@ import { NodeType } from '../../transfer/TransferrableNodes';
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Comment
 export class Comment extends CharacterData {
   constructor(data: string, ownerDocument: Node, overrideIndex?: number) {
-    super(data, NodeType.COMMENT_NODE, '#comment', ownerDocument, overrideIndex);
+    super(
+      data,
+      NodeType.COMMENT_NODE,
+      '#comment',
+      ownerDocument,
+      overrideIndex,
+    );
   }
 
   /**

@@ -15,7 +15,10 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { HTMLElement, appendGlobalEventProperties } from '../../worker-thread/dom/HTMLElement';
+import {
+  HTMLElement,
+  appendGlobalEventProperties,
+} from '../../worker-thread/dom/HTMLElement';
 import { createTestingDocument } from '../DocumentCreation';
 import { Document } from '../../worker-thread/dom/Document';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
@@ -42,12 +45,15 @@ test.serial('appending keys mutates existing instance', (t) => {
   t.is(element.onclick, null);
 });
 
-test.serial('previously appended keys should exist on newly created instances', (t) => {
-  const { document } = t.context;
-  const newElement = document.createElement('div');
+test.serial(
+  'previously appended keys should exist on newly created instances',
+  (t) => {
+    const { document } = t.context;
+    const newElement = document.createElement('div');
 
-  t.is(newElement.onclick, null);
-});
+    t.is(newElement.onclick, null);
+  },
+);
 
 test.serial('subscription uses only assigned value', (t) => {
   const { element } = t.context;
@@ -94,7 +100,9 @@ test('appending as many keys as there are TransferrableKeys functions', (t) => {
   const { element } = t.context;
   const handler = (e: any) => console.log(e);
   appendGlobalEventProperties(['ontouchmove']);
-  appendGlobalEventProperties(Array.from(Array(TransferrableKeys.END), (d, i) => i + 'key'));
+  appendGlobalEventProperties(
+    Array.from(Array(TransferrableKeys.END), (d, i) => i + 'key'),
+  );
 
   t.is(element.ontouchmove, null);
   element.ontouchmove = handler;

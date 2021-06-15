@@ -14,24 +14,45 @@
  * limitations under the License.
  */
 
-import { TransferrableMutationType, ObjectCreationIndex } from '../../transfer/TransferrableMutation';
+import {
+  TransferrableMutationType,
+  ObjectCreationIndex,
+} from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 import { deserializeTransferrableObject } from '../deserializeTransferrableObject';
 
-export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
-  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_CREATION);
+export const ObjectCreationProcessor: CommandExecutorInterface = (
+  strings,
+  nodeContext,
+  workerContext,
+  objectContext,
+  config,
+) => {
+  const allowedExecution = config.executorsAllowed.includes(
+    TransferrableMutationType.OBJECT_CREATION,
+  );
 
   if (!objectContext) {
     throw new Error('objectContext is not defined.');
   }
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
-      const functionName = strings.get(mutations[startPosition + ObjectCreationIndex.FunctionName]);
+    execute(
+      mutations: Uint16Array,
+      startPosition: number,
+      allowedMutation: boolean,
+    ): number {
+      const functionName = strings.get(
+        mutations[startPosition + ObjectCreationIndex.FunctionName],
+      );
       const objectId = mutations[startPosition + ObjectCreationIndex.ObjectId];
-      const argCount = mutations[startPosition + ObjectCreationIndex.ArgumentCount];
+      const argCount =
+        mutations[startPosition + ObjectCreationIndex.ArgumentCount];
 
-      const { offset: targetOffset, args: deserializedTarget } = deserializeTransferrableObject(
+      const {
+        offset: targetOffset,
+        args: deserializedTarget,
+      } = deserializeTransferrableObject(
         mutations,
         startPosition + ObjectCreationIndex.SerializedTarget,
         1, // argCount
@@ -41,7 +62,14 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
       );
       const target = deserializedTarget[0] as any;
 
-      const { offset: argsOffset, args } = deserializeTransferrableObject(mutations, targetOffset, argCount, strings, nodeContext, objectContext);
+      const { offset: argsOffset, args } = deserializeTransferrableObject(
+        mutations,
+        targetOffset,
+        argCount,
+        strings,
+        nodeContext,
+        objectContext,
+      );
 
       if (allowedExecution && allowedMutation) {
         if (functionName === 'new') {
@@ -54,9 +82,12 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
       return argsOffset;
     },
     print(mutations: Uint16Array, startPosition: number): {} {
-      const functionName = strings.get(mutations[startPosition + ObjectCreationIndex.FunctionName]);
+      const functionName = strings.get(
+        mutations[startPosition + ObjectCreationIndex.FunctionName],
+      );
       const objectId = mutations[startPosition + ObjectCreationIndex.ObjectId];
-      const argCount = mutations[startPosition + ObjectCreationIndex.ArgumentCount];
+      const argCount =
+        mutations[startPosition + ObjectCreationIndex.ArgumentCount];
 
       const { args: deserializedTarget } = deserializeTransferrableObject(
         mutations,

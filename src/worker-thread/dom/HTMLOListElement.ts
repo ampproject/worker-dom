@@ -25,4 +25,7 @@ registerSubclass('ol', HTMLOListElement);
 // HTMLModElement.reversed => boolean, reflected attribute
 // HTMLModElement.start => number, reflected attribute
 // HTMLOListElement.type => string, reflected attribute
-reflectProperties([{ reversed: [false] }, { start: [1] }, { type: [''] }], HTMLOListElement);
+reflectProperties(
+  [{ reversed: [false] }, { start: [1] }, { type: [''] }],
+  HTMLOListElement,
+);

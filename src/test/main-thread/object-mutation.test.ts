@@ -83,7 +83,12 @@ test.afterEach((t) => {
 });
 
 test('Method call with no arguments', (t) => {
-  const { sandbox, stringContext, objectMutationProcessor, canvasElement } = t.context;
+  const {
+    sandbox,
+    stringContext,
+    objectMutationProcessor,
+    canvasElement,
+  } = t.context;
 
   const methodName = 'stroke';
   const targetObject = canvasElement.getContext('2d');
@@ -106,7 +111,12 @@ test('Method call with no arguments', (t) => {
 });
 
 test('Method with arguments', (t) => {
-  const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const {
+    stringContext,
+    objectMutationProcessor,
+    sandbox,
+    canvasElement,
+  } = t.context;
 
   const methodName = 'fillRect';
   const serializedArgs = [
@@ -139,7 +149,12 @@ test('Method with arguments', (t) => {
 });
 
 test('Setter', (t) => {
-  const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const {
+    stringContext,
+    objectMutationProcessor,
+    sandbox,
+    canvasElement,
+  } = t.context;
 
   const methodName = 'lineWidth';
   const setter = sandbox.spy();
@@ -168,7 +183,12 @@ test('Setter', (t) => {
 });
 
 test('Method on prototype', (t) => {
-  const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const {
+    stringContext,
+    objectMutationProcessor,
+    sandbox,
+    canvasElement,
+  } = t.context;
 
   const methodName = 'fillRect';
   const serializedArgs = [
@@ -203,7 +223,12 @@ test('Method on prototype', (t) => {
 });
 
 test('Setter on prototype', (t) => {
-  const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const {
+    stringContext,
+    objectMutationProcessor,
+    sandbox,
+    canvasElement,
+  } = t.context;
 
   const methodName = 'lineWidth';
   const setter = sandbox.spy();
@@ -234,7 +259,12 @@ test('Setter on prototype', (t) => {
 });
 
 test('Mutation starts at a non-zero offset', (t) => {
-  const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
+  const {
+    stringContext,
+    objectMutationProcessor,
+    sandbox,
+    canvasElement,
+  } = t.context;
 
   const methodName = 'fillRect';
   const targetObject = canvasElement.getContext('2d');
@@ -273,7 +303,12 @@ test('Mutation starts at a non-zero offset', (t) => {
 });
 
 test('Returns correct end offset', (t) => {
-  const { stringContext, objectMutationProcessor, canvasElement, sandbox } = t.context;
+  const {
+    stringContext,
+    objectMutationProcessor,
+    canvasElement,
+    sandbox,
+  } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
 
@@ -307,7 +342,11 @@ test('Returns correct end offset', (t) => {
   ];
 
   const mutationsArray = new Uint16Array([1, 2, 3].concat(mutation));
-  const endOffset = objectMutationProcessor.execute(mutationsArray, 3, /* allow */ true);
+  const endOffset = objectMutationProcessor.execute(
+    mutationsArray,
+    3,
+    /* allow */ true,
+  );
 
   t.is(mutationsArray[endOffset], 32);
 });
@@ -337,7 +376,11 @@ function executeCall(
 
 // main-thread's strings API does not return an ID when storing a string
 // so for convenience:
-function storeString(stringContext: StringContext, text: string, currentIndex = -1) {
+function storeString(
+  stringContext: StringContext,
+  text: string,
+  currentIndex = -1,
+) {
   stringContext.store(text);
   return ++currentIndex;
 }

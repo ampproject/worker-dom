@@ -41,7 +41,11 @@ test('Serializes Strings', (t) => {
 
 test('Serializes Arrays', (t) => {
   const serialized = serializeTransferrableObject([[1, 2, 3]]);
-  t.deepEqual(serialized, [TransferrableObjectType.Array, 3 /* array length */, ...serializeTransferrableObject([1, 2, 3])]);
+  t.deepEqual(serialized, [
+    TransferrableObjectType.Array,
+    3 /* array length */,
+    ...serializeTransferrableObject([1, 2, 3]),
+  ]);
 });
 
 test('Serializes Transferable Objects', (t) => {
@@ -53,7 +57,9 @@ test('Serializes Transferable Objects', (t) => {
 
   // stub must return a value, otherwise object-creation processor will thow when attempting to store
   const fakeSerializedObject = [1, 2, 3, 4] as number[];
-  const objectSerializeStub = sinon.stub(gradient, TransferrableKeys.serializeAsTransferrableObject).returns(fakeSerializedObject);
+  const objectSerializeStub = sinon
+    .stub(gradient, TransferrableKeys.serializeAsTransferrableObject)
+    .returns(fakeSerializedObject);
   const serialized = serializeTransferrableObject([gradient]);
 
   t.true(objectSerializeStub.calledOnce);

@@ -44,7 +44,8 @@ export const deferredUpgrades = new WeakMap();
  * Delegates all CanvasRenderingContext2D calls, either to an OffscreenCanvas or a polyfill
  * (depending on whether it is supported).
  */
-export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
+export class CanvasRenderingContext2DShim<ElementType extends HTMLElement>
+  implements CanvasRenderingContext2D {
   private queue = [] as { fnName: string; args: any[]; isSetter: boolean }[];
   private implementation: CanvasRenderingContext2D;
   private upgraded = false;
@@ -62,7 +63,9 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
     // If the browser does not support OffscreenCanvas, use polyfill
     if (typeof OffscreenCanvas === 'undefined') {
-      this.implementation = new OffscreenCanvasPolyfill<ElementType>(canvas).getContext('2d');
+      this.implementation = new OffscreenCanvasPolyfill<ElementType>(
+        canvas,
+      ).getContext('2d');
       this.upgraded = true;
       this.polyfillUsed = true;
     }
@@ -96,11 +99,14 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     const upgradePromise = new Promise((resolve) => {
       const messageHandler = ({ data }: { data: OffscreenCanvasToWorker }) => {
         if (
-          data[TransferrableKeys.type] === MessageType.OFFSCREEN_CANVAS_INSTANCE &&
+          data[TransferrableKeys.type] ===
+            MessageType.OFFSCREEN_CANVAS_INSTANCE &&
           data[TransferrableKeys.target][0] === canvas[TransferrableKeys.index]
         ) {
           document.removeGlobalEventListener('message', messageHandler);
-          const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[TransferrableKeys.data];
+          const transferredOffscreenCanvas = (data as OffscreenCanvasToWorker)[
+            TransferrableKeys.data
+          ];
           resolve(
             transferredOffscreenCanvas as {
               getContext(c: '2d'): CanvasRenderingContext2D;
@@ -117,7 +123,10 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
         }
       } else {
         document.addGlobalEventListener('message', messageHandler);
-        transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
+        transfer(canvas.ownerDocument as Document, [
+          TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE,
+          canvas[TransferrableKeys.index],
+        ]);
       }
     }).then((instance: { getContext(c: '2d'): CanvasRenderingContext2D }) => {
       this.goodImplementation = instance.getContext('2d');
@@ -137,7 +146,8 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
    */
   private degradeImplementation() {
     this.upgraded = false;
-    const OffscreenCanvas = this.canvasElement.ownerDocument.defaultView.OffscreenCanvas;
+    const OffscreenCanvas = this.canvasElement.ownerDocument.defaultView
+      .OffscreenCanvas;
     this.implementation = new OffscreenCanvas(0, 0).getContext('2d');
     this.unresolvedCalls++;
   }
@@ -307,7 +317,9 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
           this.maybeUpgradeImplementation();
         });
       } else {
-        this.delegateSetter('fillStyle', [value[TransferrableKeys.patternImplementation]]);
+        this.delegateSetter('fillStyle', [
+          value[TransferrableKeys.patternImplementation],
+        ]);
       }
       // Any other case does not require special handling.
     } else {
@@ -337,7 +349,9 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
           this.maybeUpgradeImplementation();
         });
       } else {
-        this.delegateSetter('strokeStyle', [value[TransferrableKeys.patternImplementation]]);
+        this.delegateSetter('strokeStyle', [
+          value[TransferrableKeys.patternImplementation],
+        ]);
       }
 
       // Any other case does not require special handling.
@@ -351,16 +365,32 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   /* GRADIENTS AND PATTERNS */
-  createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
+  createLinearGradient(
+    x0: number,
+    y0: number,
+    x1: number,
+    y1: number,
+  ): CanvasGradient {
     return this.delegateFunc('createLinearGradient', [...arguments]);
   }
 
-  createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
+  createRadialGradient(
+    x0: number,
+    y0: number,
+    r0: number,
+    x1: number,
+    y1: number,
+    r1: number,
+  ): CanvasGradient {
     return this.delegateFunc('createRadialGradient', [...arguments]);
   }
 
-  createPattern(image: CanvasImageSource, repetition: string): CanvasPattern | null {
-    const ImageBitmap = this.canvasElement.ownerDocument.defaultView.ImageBitmap;
+  createPattern(
+    image: CanvasImageSource,
+    repetition: string,
+  ): CanvasPattern | null {
+    const ImageBitmap = this.canvasElement.ownerDocument.defaultView
+      .ImageBitmap;
 
     // Only HTMLElement image sources require special handling. ImageBitmap is OK to use.
     if (this.polyfillUsed || image instanceof ImageBitmap) {
@@ -371,7 +401,11 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
       this.degradeImplementation();
 
       const fakePattern = new FakeNativeCanvasPattern<ElementType>();
-      fakePattern[TransferrableKeys.retrieveCanvasPattern](this.canvas, image, repetition).then(() => {
+      fakePattern[TransferrableKeys.retrieveCanvasPattern](
+        this.canvas,
+        image,
+        repetition,
+      ).then(() => {
         this.maybeUpgradeImplementation();
       });
 
@@ -381,7 +415,8 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* DRAWING IMAGES */
   drawImage(image: CanvasImageSource, dx: number, dy: number): void {
-    const ImageBitmap = this.canvasElement.ownerDocument.defaultView.ImageBitmap;
+    const ImageBitmap = this.canvasElement.ownerDocument.defaultView
+      .ImageBitmap;
 
     // Only HTMLElement image sources require special handling. ImageBitmap is OK to use.
     if (this.polyfillUsed || image instanceof ImageBitmap) {
@@ -396,7 +431,10 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
       this.degradeImplementation();
 
       // Retrieve an ImageBitmap from the main-thread with the same image as the input image
-      retrieveImageBitmap(image as any, (this.canvas as unknown) as HTMLCanvasElement)
+      retrieveImageBitmap(
+        image as any,
+        (this.canvas as unknown) as HTMLCanvasElement,
+      )
         // Then call the actual method with the retrieved ImageBitmap
         .then((instance: ImageBitmap) => {
           args.push(instance, dx, dy);
@@ -455,7 +493,14 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     this.delegateFunc('lineTo', [...arguments]);
   }
 
-  bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void {
+  bezierCurveTo(
+    cp1x: number,
+    cp1y: number,
+    cp2x: number,
+    cp2y: number,
+    x: number,
+    y: number,
+  ): void {
     this.delegateFunc('bezierCurveTo', [...arguments]);
   }
 
@@ -463,7 +508,14 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     this.delegateFunc('quadraticCurveTo', [...arguments]);
   }
 
-  arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, antiClockwise?: boolean): void {
+  arc(
+    x: number,
+    y: number,
+    radius: number,
+    startAngle: number,
+    endAngle: number,
+    antiClockwise?: boolean,
+  ): void {
     this.delegateFunc('arc', [...arguments]);
   }
 
@@ -489,8 +541,13 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   /* DRAWING PATHS */
-  fill(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule): void {
-    const args = [...arguments] as [Path2D, CanvasFillRule | undefined] | [CanvasFillRule | undefined];
+  fill(
+    pathOrFillRule?: Path2D | CanvasFillRule,
+    fillRule?: CanvasFillRule,
+  ): void {
+    const args = [...arguments] as
+      | [Path2D, CanvasFillRule | undefined]
+      | [CanvasFillRule | undefined];
     this.delegateFunc('fill', args);
   }
 
@@ -499,13 +556,25 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     this.delegateFunc('stroke', args);
   }
 
-  clip(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule): void {
-    const args = [...arguments] as [Path2D, CanvasFillRule | undefined] | [CanvasFillRule | undefined];
+  clip(
+    pathOrFillRule?: Path2D | CanvasFillRule,
+    fillRule?: CanvasFillRule,
+  ): void {
+    const args = [...arguments] as
+      | [Path2D, CanvasFillRule | undefined]
+      | [CanvasFillRule | undefined];
     this.delegateFunc('clip', args);
   }
 
-  isPointInPath(pathOrX: Path2D | number, xOrY: number, yOrFillRule?: number | CanvasFillRule, fillRule?: CanvasFillRule): boolean {
-    const args = [...arguments] as [number, number, CanvasFillRule | undefined] | [Path2D, number, number, CanvasFillRule | undefined];
+  isPointInPath(
+    pathOrX: Path2D | number,
+    xOrY: number,
+    yOrFillRule?: number | CanvasFillRule,
+    fillRule?: CanvasFillRule,
+  ): boolean {
+    const args = [...arguments] as
+      | [number, number, CanvasFillRule | undefined]
+      | [Path2D, number, number, CanvasFillRule | undefined];
 
     return this.delegateFunc('isPointInPath', args);
   }
@@ -528,12 +597,29 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     this.delegateFunc('translate', [...arguments]);
   }
 
-  transform(a: number, b: number, c: number, d: number, e: number, f: number): void {
+  transform(
+    a: number,
+    b: number,
+    c: number,
+    d: number,
+    e: number,
+    f: number,
+  ): void {
     this.delegateFunc('transform', [...arguments]);
   }
 
-  setTransform(transformOrA?: DOMMatrix2DInit | number, bOrC?: number, cOrD?: number, dOrE?: number, eOrF?: number, f?: number): void {
-    const args = [...arguments] as [] | [DOMMatrix2DInit] | [number, number, number, number, number, number];
+  setTransform(
+    transformOrA?: DOMMatrix2DInit | number,
+    bOrC?: number,
+    cOrD?: number,
+    dOrE?: number,
+    eOrF?: number,
+    f?: number,
+  ): void {
+    const args = [...arguments] as
+      | []
+      | [DOMMatrix2DInit]
+      | [number, number, number, number, number, number];
     this.delegateFunc('setTransform', args);
   }
 
@@ -559,7 +645,10 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   /* PIXEL MANIPULATION */
-  createImageData(imagedataOrWidth: ImageData | number, height?: number): ImageData {
+  createImageData(
+    imagedataOrWidth: ImageData | number,
+    height?: number,
+  ): ImageData {
     const args = [...arguments] as [ImageData] | [number, number];
     return this.delegateFunc('createImageData', args);
   }
@@ -568,7 +657,15 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     return this.delegateFunc('getImageData', [...arguments]);
   }
 
-  putImageData(imageData: ImageData, dx: number, dy: number, dirtyX?: number, dirtyY?: number, dirtyWidth?: number, dirtyHeight?: number): void {
+  putImageData(
+    imageData: ImageData,
+    dx: number,
+    dy: number,
+    dirtyX?: number,
+    dirtyY?: number,
+    dirtyWidth?: number,
+    dirtyHeight?: number,
+  ): void {
     this.delegateFunc('putImageData', [...arguments]);
   }
 

@@ -22,7 +22,11 @@ import { deleteGlobals } from './amp/delete-globals';
 
 const noop = () => void 0;
 
-export const workerDOM: WorkerNoDOMGlobalScope = (function (postMessage, addEventListener, removeEventListener) {
+export const workerDOM: WorkerNoDOMGlobalScope = (function (
+  postMessage,
+  addEventListener,
+  removeEventListener,
+) {
   const document = new DocumentStub();
 
   // TODO(choumx): Avoid polluting Document's public API.
@@ -30,7 +34,11 @@ export const workerDOM: WorkerNoDOMGlobalScope = (function (postMessage, addEven
   document.addGlobalEventListener = addEventListener;
   document.removeGlobalEventListener = removeEventListener;
   return { document };
-})(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
+})(
+  postMessage.bind(self) || noop,
+  addEventListener.bind(self) || noop,
+  removeEventListener.bind(self) || noop,
+);
 
 // Modify global scope by removing disallowed properties.
 deleteGlobals(self);
@@ -40,6 +48,8 @@ deleteGlobals(self);
 
 // Allows for function invocation
 (self as any).exportFunction = exportFunction;
-addEventListener('message', (evt: MessageEvent) => callFunctionMessageHandler(evt, workerDOM.document));
+addEventListener('message', (evt: MessageEvent) =>
+  callFunctionMessageHandler(evt, workerDOM.document),
+);
 
 export const hydrate = noop;

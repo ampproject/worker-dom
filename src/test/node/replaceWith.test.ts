@@ -56,8 +56,16 @@ test('replacing unattached child results in no changes', (t) => {
   t.is(child.parentNode, null, 'before replacement parentNode does not exist');
 
   child.replaceWith(childTwo);
-  t.is(child.parentNode, null, 'after replacement original child parentNode remains unset');
-  t.is(childTwo.parentNode, null, 'after replacement new child parentNode remains unset');
+  t.is(
+    child.parentNode,
+    null,
+    'after replacement original child parentNode remains unset',
+  );
+  t.is(
+    childTwo.parentNode,
+    null,
+    'after replacement new child parentNode remains unset',
+  );
 });
 
 test('replacing the same child results in no changes', (t) => {
@@ -67,7 +75,11 @@ test('replacing the same child results in no changes', (t) => {
   t.is(child.parentNode, parent, 'before replacement parentNode exists');
 
   child.replaceWith(child);
-  t.is(child.parentNode, parent, 'after replacement parentNode remains correct');
+  t.is(
+    child.parentNode,
+    parent,
+    'after replacement parentNode remains correct',
+  );
   t.deepEqual(parent.childNodes, [child]);
 });
 

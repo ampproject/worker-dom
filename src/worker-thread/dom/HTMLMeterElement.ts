@@ -30,4 +30,14 @@ HTMLInputLabelsMixin(HTMLMeterElement);
 // HTMLMeterElement.min => number, reflected attribute
 // HTMLMeterElement.optimum => number, reflected attribute
 // HTMLMeterElement.value => number, reflected attribute
-reflectProperties([{ high: [0] }, { low: [0] }, { max: [1] }, { min: [0] }, { optimum: [0] }, { value: [0] }], HTMLMeterElement);
+reflectProperties(
+  [
+    { high: [0] },
+    { low: [0] },
+    { max: [1] },
+    { min: [0] },
+    { optimum: [0] },
+    { value: [0] },
+  ],
+  HTMLMeterElement,
+);

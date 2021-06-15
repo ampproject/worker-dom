@@ -28,12 +28,18 @@ export function testReflectedProperties(propertyPairs: Array<PropertyPair>) {
   });
 }
 
-export function testReflectedProperty(propertyPair: PropertyPair, overrideValueToTest: string | boolean | number | null = null) {
+export function testReflectedProperty(
+  propertyPair: PropertyPair,
+  overrideValueToTest: string | boolean | number | null = null,
+) {
   const propertyName = Object.keys(propertyPair)[0];
   const defaultValue = propertyPair[propertyName][0];
-  const attributeName = propertyPair[propertyName][1] || propertyName.toLowerCase();
+  const attributeName =
+    propertyPair[propertyName][1] || propertyName.toLowerCase();
   const keywords = propertyPair[propertyName][2];
-  const valueToTest = deriveValueToTest(overrideValueToTest !== null ? overrideValueToTest : defaultValue);
+  const valueToTest = deriveValueToTest(
+    overrideValueToTest !== null ? overrideValueToTest : defaultValue,
+  );
 
   test(`${propertyName} should be ${defaultValue} by default`, (t) => {
     const { element } = t.context;
@@ -68,7 +74,9 @@ export function testReflectedProperty(propertyPair: PropertyPair, overrideValueT
   });
 }
 
-function deriveValueToTest(valueToTest: string | boolean | number): string | boolean | number {
+function deriveValueToTest(
+  valueToTest: string | boolean | number,
+): string | boolean | number {
   switch (typeof valueToTest) {
     case 'string':
       return `alt-${valueToTest || ''}`;

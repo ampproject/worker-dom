@@ -21,7 +21,9 @@ import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export const appendGlobalEventProperties = (keys: Array<string>): void => {
-  const keysToAppend = keys.filter((key) => !HTMLElement.prototype.hasOwnProperty(key));
+  const keysToAppend = keys.filter(
+    (key) => !HTMLElement.prototype.hasOwnProperty(key),
+  );
   if (keysToAppend.length <= 0) {
     return;
   }
@@ -31,10 +33,14 @@ export const appendGlobalEventProperties = (keys: Array<string>): void => {
     Object.defineProperty(HTMLElement.prototype, key, {
       enumerable: true,
       get(): string {
-        return this[TransferrableKeys.propertyEventHandlers][normalizedKey] || null;
+        return (
+          this[TransferrableKeys.propertyEventHandlers][normalizedKey] || null
+        );
       },
       set(value) {
-        const stored = this[TransferrableKeys.propertyEventHandlers][normalizedKey];
+        const stored = this[TransferrableKeys.propertyEventHandlers][
+          normalizedKey
+        ];
         if (stored) {
           this.removeEventListener(normalizedKey, stored);
         }
@@ -83,12 +89,20 @@ reflectProperties(
     { lang: [''] },
     { title: [''] },
     {
-      draggable: [false, /* attr */ undefined, /* keywords */ ['true', 'false']],
+      draggable: [
+        false,
+        /* attr */ undefined,
+        /* keywords */ ['true', 'false'],
+      ],
     },
     { hidden: [false, /* attr */ undefined] },
     { noModule: [false] }, // TOOD: Why is this on HTMLElement and not HTMLScriptElement?
     {
-      spellcheck: [true, /* attr */ undefined, /* keywords */ ['true', 'false']],
+      spellcheck: [
+        true,
+        /* attr */ undefined,
+        /* keywords */ ['true', 'false'],
+      ],
     },
     { translate: [true, /* attr */ undefined, /* keywords */ ['yes', 'no']] },
   ],

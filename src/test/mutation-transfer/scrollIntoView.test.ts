@@ -42,7 +42,10 @@ test.serial.cb('Element.scrollIntoView() transfer to main-thread', (t) => {
   element.isConnected = true;
 
   expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.SCROLL_INTO_VIEW, element[TransferrableKeys.index]]);
+    t.deepEqual(mutations, [
+      TransferrableMutationType.SCROLL_INTO_VIEW,
+      element[TransferrableKeys.index],
+    ]);
     t.end();
   });
 

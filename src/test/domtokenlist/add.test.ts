@@ -36,15 +36,27 @@ test('adding a single value', (t) => {
   tokenList.add('foo');
   t.is(tokenList.value, 'foo');
   tokenList.add('foo');
-  t.is(tokenList.value, 'foo', 'adding a duplicate does not change the value, if there are no duplicates in the value');
+  t.is(
+    tokenList.value,
+    'foo',
+    'adding a duplicate does not change the value, if there are no duplicates in the value',
+  );
 
   tokenList.value = 'foo foo';
   tokenList.add('bar');
-  t.is(tokenList.value, 'foo bar', 'adding a new single value removes duplicates');
+  t.is(
+    tokenList.value,
+    'foo bar',
+    'adding a new single value removes duplicates',
+  );
 
   tokenList.value = 'foo bar bar foo';
   tokenList.add('baz');
-  t.is(tokenList.value, 'foo bar baz', 'adding a new single value removes all duplicates');
+  t.is(
+    tokenList.value,
+    'foo bar baz',
+    'adding a new single value removes all duplicates',
+  );
 
   tokenList.value = 'foo foo';
   tokenList.add('foo');
@@ -52,7 +64,11 @@ test('adding a single value', (t) => {
 
   tokenList.value = 'foo bar bar foo';
   tokenList.add('foo');
-  t.is(tokenList.value, 'foo bar', 'adding a duplicate value removes all duplicates');
+  t.is(
+    tokenList.value,
+    'foo bar',
+    'adding a duplicate value removes all duplicates',
+  );
 });
 
 test('adding multiple values', (t) => {
@@ -61,7 +77,11 @@ test('adding multiple values', (t) => {
   tokenList.add('foo', 'bar');
   t.is(tokenList.value, 'foo bar');
   tokenList.add('foo', 'bar');
-  t.is(tokenList.value, 'foo bar', 'adding duplicates does not change the value, if there are no duplicates in the value');
+  t.is(
+    tokenList.value,
+    'foo bar',
+    'adding duplicates does not change the value, if there are no duplicates in the value',
+  );
 
   tokenList.value = 'foo foo';
   tokenList.add('foo', 'bar');
@@ -69,13 +89,25 @@ test('adding multiple values', (t) => {
 
   tokenList.value = 'foo bar bar foo';
   tokenList.add('foo', 'bar', 'baz');
-  t.is(tokenList.value, 'foo bar baz', 'adding multiple values removes all duplicates');
+  t.is(
+    tokenList.value,
+    'foo bar baz',
+    'adding multiple values removes all duplicates',
+  );
 
   tokenList.value = 'foo foo';
   tokenList.add('foo', 'foo');
-  t.is(tokenList.value, 'foo', 'adding multiple of the same value removes duplicates');
+  t.is(
+    tokenList.value,
+    'foo',
+    'adding multiple of the same value removes duplicates',
+  );
 
   tokenList.value = 'foo bar bar foo';
   tokenList.add('baz', 'foo', 'omega');
-  t.is(tokenList.value, 'foo bar baz omega', 'adding multiple new values removes all duplicates');
+  t.is(
+    tokenList.value,
+    'foo bar baz omega',
+    'adding multiple new values removes all duplicates',
+  );
 });

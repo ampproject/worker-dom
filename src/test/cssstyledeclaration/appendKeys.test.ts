@@ -15,7 +15,10 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
+import {
+  CSSStyleDeclaration,
+  appendKeys,
+} from '../../worker-thread/css/CSSStyleDeclaration';
 import { Element } from '../../worker-thread/dom/Element';
 import { createTestingDocument } from '../DocumentCreation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
@@ -42,11 +45,14 @@ test.serial('appending keys mutates a declaration instance', (t) => {
   t.is(declaration.width, '');
 });
 
-test.serial('previously appended keys should exist on newly declared instances', (t) => {
-  const declaration = new CSSStyleDeclaration(t.context.node);
+test.serial(
+  'previously appended keys should exist on newly declared instances',
+  (t) => {
+    const declaration = new CSSStyleDeclaration(t.context.node);
 
-  t.is(declaration.width, '');
-});
+    t.is(declaration.width, '');
+  },
+);
 
 test('invalid keys are filtered', (t) => {
   const initialLength = CSSStyleDeclaration.prototype.length;

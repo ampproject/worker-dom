@@ -18,7 +18,11 @@ import { registerSubclass, definePropertyBackedAttributes } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { DOMTokenList } from './DOMTokenList';
-import { matchNearestParent, tagNameConditionPredicate, matchChildrenElements } from './matchElements';
+import {
+  matchNearestParent,
+  tagNameConditionPredicate,
+  matchChildrenElements,
+} from './matchElements';
 
 export class HTMLTableCellElement extends HTMLElement {
   private _headers: DOMTokenList;
@@ -33,13 +37,21 @@ export class HTMLTableCellElement extends HTMLElement {
    */
   get cellIndex(): number {
     const parent = matchNearestParent(this, tagNameConditionPredicate(['TR']));
-    return parent !== null ? matchChildrenElements(parent, tagNameConditionPredicate(['TH', 'TD'])).indexOf(this) : -1;
+    return parent !== null
+      ? matchChildrenElements(
+          parent,
+          tagNameConditionPredicate(['TH', 'TD']),
+        ).indexOf(this)
+      : -1;
   }
 }
 registerSubclass('th', HTMLTableCellElement);
 registerSubclass('td', HTMLTableCellElement);
 definePropertyBackedAttributes(HTMLTableCellElement, {
-  headers: [(el): string | null => el.headers.value, (el, value: string) => (el.headers.value = value)],
+  headers: [
+    (el): string | null => el.headers.value,
+    (el, value: string) => (el.headers.value = value),
+  ],
 });
 
 // Reflected Properties
@@ -47,4 +59,7 @@ definePropertyBackedAttributes(HTMLTableCellElement, {
 // HTMLTableCellElement.colSpan => number, reflected attribute
 // HTMLTableCellElement.rowSpan => number, reflected attribute
 // HTMLTableCellElement.scope => string, reflected attribute
-reflectProperties([{ abbr: [''] }, { colSpan: [1] }, { rowSpan: [1] }, { scope: [''] }], HTMLTableCellElement);
+reflectProperties(
+  [{ abbr: [''] }, { colSpan: [1] }, { rowSpan: [1] }, { scope: [''] }],
+  HTMLTableCellElement,
+);

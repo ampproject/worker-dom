@@ -47,41 +47,69 @@ test.beforeEach((t) => {
   };
 });
 
-test.serial.cb('Node.removeEventListener transfers an event subscription', (t) => {
-  const { div, eventHandler, emitter } = t.context;
+test.serial.cb(
+  'Node.removeEventListener transfers an event subscription',
+  (t) => {
+    const { div, eventHandler, emitter } = t.context;
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION, div[TransferrableKeys.index], 1, 0, strings.indexOf('click'), 0],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+    function transmitted(
+      strings: Array<string>,
+      message: MutationFromWorker,
+      buffers: Array<ArrayBuffer>,
+    ) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.EVENT_SUBSCRIPTION,
+          div[TransferrableKeys.index],
+          1,
+          0,
+          strings.indexOf('click'),
+          0,
+        ],
+        'mutation is as expected',
+      );
+      t.end();
+    }
 
-  div.addEventListener('click', eventHandler);
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.removeEventListener('click', eventHandler);
-  });
-});
+    div.addEventListener('click', eventHandler);
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.removeEventListener('click', eventHandler);
+    });
+  },
+);
 
-test.serial.cb('Node.removeEventListener transfers the correct subscription when multiple exist', (t) => {
-  const { div, eventHandler, emitter } = t.context;
+test.serial.cb(
+  'Node.removeEventListener transfers the correct subscription when multiple exist',
+  (t) => {
+    const { div, eventHandler, emitter } = t.context;
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION, div[TransferrableKeys.index], 1, 0, strings.indexOf('click'), 1],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+    function transmitted(
+      strings: Array<string>,
+      message: MutationFromWorker,
+      buffers: Array<ArrayBuffer>,
+    ) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.EVENT_SUBSCRIPTION,
+          div[TransferrableKeys.index],
+          1,
+          0,
+          strings.indexOf('click'),
+          1,
+        ],
+        'mutation is as expected',
+      );
+      t.end();
+    }
 
-  div.addEventListener('click', (e) => console.log('0th listener'));
-  div.addEventListener('click', eventHandler);
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.removeEventListener('click', eventHandler);
-  });
-});
+    div.addEventListener('click', (e) => console.log('0th listener'));
+    div.addEventListener('click', eventHandler);
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.removeEventListener('click', eventHandler);
+    });
+  },
+);

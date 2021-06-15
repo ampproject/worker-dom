@@ -48,7 +48,13 @@ test.serial.cb('AMP.getState(): string key', (t) => {
 
   expectMutations(document, (mutations) => {
     t.true(addGlobalEventListenerCalled);
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.GET, StorageLocation.AmpState, getForTesting('foo'), 0]);
+    t.deepEqual(mutations, [
+      TransferrableMutationType.STORAGE,
+      GetOrSet.GET,
+      StorageLocation.AmpState,
+      getForTesting('foo'),
+      0,
+    ]);
     t.end();
   });
 
@@ -65,7 +71,13 @@ test.serial.cb('AMP.getState(): falsy key', (t) => {
 
   expectMutations(document, (mutations) => {
     t.true(addGlobalEventListenerCalled);
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.GET, StorageLocation.AmpState, getForTesting(''), 0]);
+    t.deepEqual(mutations, [
+      TransferrableMutationType.STORAGE,
+      GetOrSet.GET,
+      StorageLocation.AmpState,
+      getForTesting(''),
+      0,
+    ]);
     t.end();
   });
 
@@ -76,7 +88,13 @@ test.serial.cb('AMP.setState()', (t) => {
   const { document, amp } = t.context;
 
   expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.AmpState, 0, getForTesting('{"foo":"bar"}')]);
+    t.deepEqual(mutations, [
+      TransferrableMutationType.STORAGE,
+      GetOrSet.SET,
+      StorageLocation.AmpState,
+      0,
+      getForTesting('{"foo":"bar"}'),
+    ]);
     t.end();
   });
 

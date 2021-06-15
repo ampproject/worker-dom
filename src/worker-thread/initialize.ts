@@ -23,7 +23,9 @@ import { createStorage } from './Storage';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 import { appendGlobalEventProperties } from './dom/HTMLElement';
 
-export type WorkerStorageInit = { storage: { [key: string]: string }; errorMsg: null } | { storage: null; errorMsg: string };
+export type WorkerStorageInit =
+  | { storage: { [key: string]: string }; errorMsg: null }
+  | { storage: null; errorMsg: string };
 
 export function initialize(
   document: Document,
@@ -39,18 +41,28 @@ export function initialize(
   appendGlobalEventProperties(globalEventHandlerKeys);
   strings.forEach(storeString);
   (hydrateableNode[TransferrableKeys.childNodes] || []).forEach((child) =>
-    document.body.appendChild(document[TransferrableKeys.hydrateNode](strings, child)),
+    document.body.appendChild(
+      document[TransferrableKeys.hydrateNode](strings, child),
+    ),
   );
   const window = document.defaultView;
   window.innerWidth = innerWidth;
   window.innerHeight = innerHeight;
   if (localStorageInit.storage) {
-    window.localStorage = createStorage(document, StorageLocation.Local, localStorageInit.storage);
+    window.localStorage = createStorage(
+      document,
+      StorageLocation.Local,
+      localStorageInit.storage,
+    );
   } else {
     console.warn(localStorageInit.errorMsg);
   }
   if (sessionStorageInit.storage) {
-    window.sessionStorage = createStorage(document, StorageLocation.Session, sessionStorageInit.storage);
+    window.sessionStorage = createStorage(
+      document,
+      StorageLocation.Session,
+      sessionStorageInit.storage,
+    );
   } else {
     console.warn(sessionStorageInit.errorMsg);
   }

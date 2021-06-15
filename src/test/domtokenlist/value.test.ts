@@ -44,5 +44,9 @@ test('should accept new total values via setter', (t) => {
   tokenList.value = 'foo bar baz';
   t.is(tokenList.value, 'foo bar baz');
   tokenList.value = 'foo foo bar baz foo baz bar';
-  t.is(tokenList.value, 'foo foo bar baz foo baz bar', 'duplicates are allowed and their position is retained');
+  t.is(
+    tokenList.value,
+    'foo foo bar baz foo baz bar',
+    'duplicates are allowed and their position is retained',
+  );
 });

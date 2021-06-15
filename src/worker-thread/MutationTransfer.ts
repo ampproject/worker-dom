@@ -28,7 +28,10 @@ let pending = false;
 let pendingMutations: Array<number> = [];
 
 // TODO(choumx): Change `mutation` to Array<Uint16> to prevent casting errors e.g. integer underflow, precision loss.
-export function transfer(document: Document | DocumentStub, mutation: Array<number>): void {
+export function transfer(
+  document: Document | DocumentStub,
+  mutation: Array<number>,
+): void {
   if (phase > Phase.Initializing && document[TransferrableKeys.allowTransfer]) {
     pending = true;
     pendingMutations = pendingMutations.concat(mutation);
@@ -36,14 +39,21 @@ export function transfer(document: Document | DocumentStub, mutation: Array<numb
     Promise.resolve().then((_) => {
       if (pending) {
         const nodes = new Uint16Array(
-          consumeNodes().reduce((acc: Array<number>, node: Node) => acc.concat(node[TransferrableKeys.creationFormat]), []),
+          consumeNodes().reduce(
+            (acc: Array<number>, node: Node) =>
+              acc.concat(node[TransferrableKeys.creationFormat]),
+            [],
+          ),
         ).buffer;
         const mutations = new Uint16Array(pendingMutations).buffer;
 
         document.postMessage(
           {
             [TransferrableKeys.phase]: phase,
-            [TransferrableKeys.type]: phase === Phase.Mutating ? MessageType.MUTATE : MessageType.HYDRATE,
+            [TransferrableKeys.type]:
+              phase === Phase.Mutating
+                ? MessageType.MUTATE
+                : MessageType.HYDRATE,
             [TransferrableKeys.nodes]: nodes,
             [TransferrableKeys.strings]: consumeStrings(),
             [TransferrableKeys.mutations]: mutations,

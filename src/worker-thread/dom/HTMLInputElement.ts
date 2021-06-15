@@ -42,7 +42,9 @@ export class HTMLInputElement extends HTMLElement {
   //   3. Duplicate MUTATE events. Caused by stale `value` in worker due to no default 'input' listener (see below).
 
   get value(): string {
-    return !this.dirtyValue ? this.getAttribute('value') || '' : this[TransferrableKeys.value];
+    return !this.dirtyValue
+      ? this.getAttribute('value') || ''
+      : this[TransferrableKeys.value];
   }
 
   set value(value: string) {

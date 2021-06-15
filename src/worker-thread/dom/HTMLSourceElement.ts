@@ -27,7 +27,16 @@ registerSubclass('source', HTMLSourceElement);
 // HTMLSourceElement.src => string, reflected attribute
 // HTMLSourceElement.srcset => string, reflected attribute
 // HTMLSourceElement.type => string, reflected attribute
-reflectProperties([{ media: [''] }, { sizes: [''] }, { src: [''] }, { srcset: [''] }, { type: [''] }], HTMLSourceElement);
+reflectProperties(
+  [
+    { media: [''] },
+    { sizes: [''] },
+    { src: [''] },
+    { srcset: [''] },
+    { type: [''] },
+  ],
+  HTMLSourceElement,
+);
 
 // Unimplemented Properties
 // HTMLSourceElement.keySystem => string

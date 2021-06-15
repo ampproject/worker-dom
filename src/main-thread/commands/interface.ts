@@ -28,7 +28,11 @@ export interface CommandExecutor {
    * @param allow
    * @return The index (startPosition) of the next mutation.
    */
-  execute(mutations: Uint16Array, startPosition: number, allow: boolean): number;
+  execute(
+    mutations: Uint16Array,
+    startPosition: number,
+    allow: boolean,
+  ): number;
 
   print(mutations: Uint16Array, startPosition: number): {};
 }

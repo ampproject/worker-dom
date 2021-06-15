@@ -62,7 +62,11 @@ test('returns true for a node contained deeper within a tree', (t) => {
 
   child.appendChild(childTwo);
   node.appendChild(child);
-  t.is(node.contains(childTwo), true, 'for a node contained deeper within a tree, return true');
+  t.is(
+    node.contains(childTwo),
+    true,
+    'for a node contained deeper within a tree, return true',
+  );
 });
 
 test('returns false for a node deep within a tree containing parents', (t) => {

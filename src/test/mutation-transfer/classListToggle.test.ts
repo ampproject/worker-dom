@@ -40,10 +40,20 @@ test.serial.cb('Element.classList.toggle transfer remove single value', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+  function transmitted(
+    strings: Array<string>,
+    message: MutationFromWorker,
+    buffers: Array<ArrayBuffer>,
+  ) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('') + 1],
+      [
+        TransferrableMutationType.ATTRIBUTES,
+        div[TransferrableKeys.index],
+        strings.indexOf('class'),
+        0,
+        strings.indexOf('') + 1,
+      ],
       'mutation is as expected',
     );
     t.end();
@@ -57,23 +67,36 @@ test.serial.cb('Element.classList.toggle transfer remove single value', (t) => {
   });
 });
 
-test.serial.cb('Element.classList.toggle mutation observed, toggle to add', (t) => {
-  const { document, emitter } = t.context;
-  const div = document.createElement('div');
+test.serial.cb(
+  'Element.classList.toggle mutation observed, toggle to add',
+  (t) => {
+    const { document, emitter } = t.context;
+    const div = document.createElement('div');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('foo bar') + 1],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+    function transmitted(
+      strings: Array<string>,
+      message: MutationFromWorker,
+      buffers: Array<ArrayBuffer>,
+    ) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.ATTRIBUTES,
+          div[TransferrableKeys.index],
+          strings.indexOf('class'),
+          0,
+          strings.indexOf('foo bar') + 1,
+        ],
+        'mutation is as expected',
+      );
+      t.end();
+    }
 
-  div.classList.value = 'foo';
-  document.body.appendChild(div);
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.classList.toggle('bar');
-  });
-});
+    div.classList.value = 'foo';
+    document.body.appendChild(div);
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.classList.toggle('bar');
+    });
+  },
+);

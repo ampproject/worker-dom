@@ -16,7 +16,12 @@
 
 import { Document } from '../dom/Document';
 import { StorageLocation } from '../../transfer/TransferrableStorage';
-import { StorageValueToWorker, MessageType, MessageToWorker, GetOrSet } from '../../transfer/Messages';
+import {
+  StorageValueToWorker,
+  MessageType,
+  MessageToWorker,
+  GetOrSet,
+} from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { store } from '../strings';
@@ -53,7 +58,13 @@ export class AMP {
       };
 
       this.document.addGlobalEventListener('message', messageHandler);
-      transfer(this.document, [TransferrableMutationType.STORAGE, GetOrSet.GET, StorageLocation.AmpState, /* key */ store(key), /* value */ 0]);
+      transfer(this.document, [
+        TransferrableMutationType.STORAGE,
+        GetOrSet.GET,
+        StorageLocation.AmpState,
+        /* key */ store(key),
+        /* value */ 0,
+      ]);
       setTimeout(resolve, 500, null); // TODO: Why a magical constant, define and explain.
     });
   }
@@ -70,6 +81,12 @@ export class AMP {
     } catch (e) {
       throw new Error(`AMP.setState only accepts valid JSON as input.`);
     }
-    transfer(this.document, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.AmpState, /* key */ 0, /* value */ store(stringified)]);
+    transfer(this.document, [
+      TransferrableMutationType.STORAGE,
+      GetOrSet.SET,
+      StorageLocation.AmpState,
+      /* key */ 0,
+      /* value */ store(stringified),
+    ]);
   }
 }
