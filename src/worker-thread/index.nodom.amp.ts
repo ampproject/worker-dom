@@ -20,7 +20,7 @@ import { AMP } from './amp/amp';
 import { DocumentStub } from './dom/DocumentLite';
 import { callFunctionMessageHandler, exportFunction } from './function';
 import { deleteGlobals } from './amp/delete-globals';
-import { initializeStorage, WorkerStorageInit } from './initialize';
+import { initializeStorage, WorkerStorageInit } from './initialize-storage';
 
 const noop = () => void 0;
 

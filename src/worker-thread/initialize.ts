@@ -16,16 +16,13 @@
 
 import type { Document } from './dom/Document';
 import type { HydrateableNode } from '../transfer/TransferrableNodes';
+import type { WorkerStorageInit } from './initialize-storage';
 
 import { store as storeString } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
-import { createStorage } from './Storage';
-import { StorageLocation } from '../transfer/TransferrableStorage';
 import { appendGlobalEventProperties } from './dom/HTMLElement';
-import { DocumentStub } from './dom/DocumentLite';
-
-export type WorkerStorageInit = { storage: { [key: string]: string }; errorMsg: null } | { storage: null; errorMsg: string };
+import { initializeStorage } from './initialize-storage';
 
 export function initialize(
   document: Document,
@@ -47,18 +44,4 @@ export function initialize(
   window.innerWidth = innerWidth;
   window.innerHeight = innerHeight;
   initializeStorage(document, localStorageInit, sessionStorageInit);
-}
-
-export function initializeStorage(document: Document | DocumentStub, localStorageInit: WorkerStorageInit, sessionStorageInit: WorkerStorageInit) {
-  const window = document.defaultView;
-  if (localStorageInit.storage) {
-    window.localStorage = createStorage(document, StorageLocation.Local, localStorageInit.storage);
-  } else {
-    console.warn(localStorageInit.errorMsg);
-  }
-  if (sessionStorageInit.storage) {
-    window.sessionStorage = createStorage(document, StorageLocation.Session, sessionStorageInit.storage);
-  } else {
-    console.warn(sessionStorageInit.errorMsg);
-  }
 }
