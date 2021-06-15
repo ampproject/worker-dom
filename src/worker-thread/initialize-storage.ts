@@ -16,6 +16,7 @@
 
 import type { Document } from './dom/Document';
 import type { DocumentStub } from './dom/DocumentLite';
+
 import { createStorage } from './Storage';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 
