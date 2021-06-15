@@ -20,7 +20,9 @@ import type { DocumentStub } from './dom/DocumentLite';
 import { createStorage } from './Storage';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 
-export type WorkerStorageInit = { storage: { [key: string]: string }; errorMsg: null } | { storage: null; errorMsg: string };
+type InitStorageMap = { storage: { [key: string]: string }; errorMsg: null };
+type InitStorageError = { storage: null; errorMsg: string };
+export type WorkerStorageInit = InitStorageMap | InitStorageError;
 
 export function initializeStorage(document: Document | DocumentStub, localStorageInit: WorkerStorageInit, sessionStorageInit: WorkerStorageInit) {
   const window = document.defaultView;
