@@ -20,9 +20,9 @@ import { transformFileSync } from '@babel/core';
 
 const FIXTURES_DIR = path.join(__dirname, 'fixtures');
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   const warnings = [];
-  console.test = function(warning) {
+  console.test = function (warning) {
     warnings.push(warning);
   };
 
@@ -31,7 +31,7 @@ test.beforeEach(t => {
   };
 });
 
-test.afterEach(t => {
+test.afterEach((t) => {
   delete console.test;
   t.context.warnings.length = 0;
 });
@@ -40,7 +40,7 @@ function process(fixture) {
   transformFileSync(path.join(FIXTURES_DIR, fixture + '.js'));
 }
 
-test.serial('test matching-no-ok', t => {
+test.serial('test matching-no-ok', (t) => {
   process('matching-no-ok');
 
   const { warnings } = t.context;
@@ -83,14 +83,14 @@ test.serial('test matching-no-ok', t => {
   t.true(warnings[14].message.indexOf('offsetWidth') != -1);
 });
 
-test.serial('test matching-ok', t => {
+test.serial('test matching-ok', (t) => {
   process('matching-ok');
 
   const { warnings } = t.context;
   t.is(warnings.length, 0);
 });
 
-test.serial('test not-matching', t => {
+test.serial('test not-matching', (t) => {
   process('not-matching');
 
   const { warnings } = t.context;
