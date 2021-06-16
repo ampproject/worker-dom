@@ -14,31 +14,17 @@
  * limitations under the License.
  */
 
-import {
-  AttributeMutationIndex,
-  TransferrableMutationType,
-} from '../../transfer/TransferrableMutation';
+import { AttributeMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 
-export const AttributeProcessor: CommandExecutorInterface = (
-  strings,
-  nodes,
-  workerContext,
-  objectContext,
-  config,
-) => {
-  const allowedExecution = config.executorsAllowed.includes(
-    TransferrableMutationType.ATTRIBUTES,
-  );
+export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.ATTRIBUTES);
 
   /**
    * @param mutations
    * @param startPosition
    */
-  const getValue = (
-    mutations: Uint16Array,
-    startPosition: number,
-  ): string | null => {
+  const getValue = (mutations: Uint16Array, startPosition: number): string | null => {
     const value = mutations[startPosition + AttributeMutationIndex.Value];
     // Value is sent as 0 when it's the default value or removal.
     // Value is sent as index + 1 when it's a valid value.
@@ -46,29 +32,18 @@ export const AttributeProcessor: CommandExecutorInterface = (
   };
 
   return {
-    execute(
-      mutations: Uint16Array,
-      startPosition: number,
-      allowedMutation: boolean,
-    ): number {
+    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
       if (allowedExecution && allowedMutation) {
-        const targetIndex =
-          mutations[startPosition + AttributeMutationIndex.Target];
+        const targetIndex = mutations[startPosition + AttributeMutationIndex.Target];
         const target = nodes.getNode(targetIndex);
 
-        const attributeName = strings.get(
-          mutations[startPosition + AttributeMutationIndex.Name],
-        );
+        const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);
         const value = getValue(mutations, startPosition);
 
         if (target) {
           if (attributeName != null) {
             if (config.sanitizer) {
-              const mutated = config.sanitizer.setAttribute(
-                target,
-                attributeName,
-                value,
-              );
+              const mutated = config.sanitizer.setAttribute(target, attributeName, value);
               if (!mutated) {
                 // TODO(choumx): Inform worker that sanitizer ignored unsafe attribute value change.
               }
@@ -87,12 +62,9 @@ export const AttributeProcessor: CommandExecutorInterface = (
       return startPosition + AttributeMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number): {} {
-      const targetIndex =
-        mutations[startPosition + AttributeMutationIndex.Target];
+      const targetIndex = mutations[startPosition + AttributeMutationIndex.Target];
       const target = nodes.getNode(targetIndex);
-      const attributeName = strings.get(
-        mutations[startPosition + AttributeMutationIndex.Name],
-      );
+      const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);
       const value = getValue(mutations, startPosition);
 
       return {

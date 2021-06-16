@@ -16,10 +16,7 @@
 
 import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
-import {
-  tagNameConditionPredicate,
-  matchChildrenElements,
-} from './matchElements';
+import { tagNameConditionPredicate, matchChildrenElements } from './matchElements';
 import { Document } from './Document';
 import { HTMLTableRowElement } from './HTMLTableRowElement';
 
@@ -29,10 +26,7 @@ export class HTMLTableSectionElement extends HTMLElement {
    * @return All rows (tr elements) within the table section.
    */
   get rows(): Array<HTMLTableRowElement> {
-    return matchChildrenElements(
-      this,
-      tagNameConditionPredicate(['TR']),
-    ) as Array<HTMLTableRowElement>;
+    return matchChildrenElements(this, tagNameConditionPredicate(['TR'])) as Array<HTMLTableRowElement>;
   }
 
   /**
@@ -55,9 +49,7 @@ export class HTMLTableSectionElement extends HTMLElement {
    */
   public insertRow(index: number): HTMLTableRowElement {
     const rows = this.rows;
-    const tr = (this.ownerDocument as Document).createElement(
-      'tr',
-    ) as HTMLTableRowElement;
+    const tr = (this.ownerDocument as Document).createElement('tr') as HTMLTableRowElement;
     if (index < 0 || index >= rows.length) {
       this.appendChild(tr);
     } else {

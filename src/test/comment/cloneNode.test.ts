@@ -48,10 +48,7 @@ test('cloneNode should create a new node with the same tagName', (t) => {
 test('cloneNode should create a new node with a different index', (t) => {
   const { comment } = t.context;
 
-  t.not(
-    comment.cloneNode()[TransferrableKeys.index],
-    comment[TransferrableKeys.index],
-  );
+  t.not(comment.cloneNode()[TransferrableKeys.index], comment[TransferrableKeys.index]);
 });
 
 test('cloneNode should create a new node with the same children when the deep flag is set', (t) => {

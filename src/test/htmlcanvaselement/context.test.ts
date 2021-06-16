@@ -16,10 +16,7 @@
 
 import anyTest, { TestInterface } from 'ava';
 import * as sinon from 'sinon';
-import {
-  CanvasRenderingContext2DShim,
-  deferredUpgrades,
-} from '../../worker-thread/canvas/CanvasRenderingContext2D';
+import { CanvasRenderingContext2DShim, deferredUpgrades } from '../../worker-thread/canvas/CanvasRenderingContext2D';
 import { HTMLCanvasElement } from '../../worker-thread/dom/HTMLCanvasElement';
 import { CanvasRenderingContext2D } from '../../worker-thread/canvas/CanvasTypes';
 import { createTestingDocument } from '../DocumentCreation';
@@ -93,24 +90,15 @@ test('context calls clearRect', (t) => {
 });
 
 test('context only calls upgraded clearRect if available', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   // stub out method in context of un-upgraded OffscreenCanvas
-  const unUpgradedStub = (unUpgradedOffscreenContext[
-    'clearRect'
-  ] = sandbox.stub());
+  const unUpgradedStub = (unUpgradedOffscreenContext['clearRect'] = sandbox.stub());
 
   // this upgradedInstance will represent the upgraded OffscreenCanvas
   // stub out method for this upgradedInstance's context as well
   const upgradedInstance = new FakeOffscreenCanvas();
-  const upgradedStub = (upgradedInstance.getContext('2d')[
-    'clearRect'
-  ] = sandbox.stub());
+  const upgradedStub = (upgradedInstance.getContext('2d')['clearRect'] = sandbox.stub());
 
   // upgrade the context's OffscreenCanvas
   deferredUpgrade.resolve(upgradedInstance);
@@ -123,24 +111,15 @@ test('context only calls upgraded clearRect if available', async (t) => {
 });
 
 test('context calls both versions of clearRect when called before upgrade', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   // stub out method in context of un-upgraded OffscreenCanvas
-  const unUpgradedStub = (unUpgradedOffscreenContext[
-    'clearRect'
-  ] = sandbox.stub());
+  const unUpgradedStub = (unUpgradedOffscreenContext['clearRect'] = sandbox.stub());
 
   // this upgradedInstance will represent the upgraded OffscreenCanvas
   // stub out method for this upgradedInstance's context as well
   const upgradedInstance = new FakeOffscreenCanvas();
-  const upgradedStub = (upgradedInstance.getContext('2d')[
-    'clearRect'
-  ] = sandbox.stub());
+  const upgradedStub = (upgradedInstance.getContext('2d')['clearRect'] = sandbox.stub());
 
   context2d.clearRect(10, 9, 8, 7);
   t.true(unUpgradedStub.withArgs(10, 9, 8, 7).calledOnce);
@@ -165,21 +144,12 @@ test('context calls fillText', (t) => {
 });
 
 test('context only calls upgraded fillText if available', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
-  const unUpgradedStub = (unUpgradedOffscreenContext[
-    'fillText'
-  ] = sandbox.stub());
+  const unUpgradedStub = (unUpgradedOffscreenContext['fillText'] = sandbox.stub());
 
   const upgradedInstance = new FakeOffscreenCanvas();
-  const upgradedStub = (upgradedInstance.getContext('2d')[
-    'fillText'
-  ] = sandbox.stub());
+  const upgradedStub = (upgradedInstance.getContext('2d')['fillText'] = sandbox.stub());
 
   deferredUpgrade.resolve(upgradedInstance);
 
@@ -191,21 +161,12 @@ test('context only calls upgraded fillText if available', async (t) => {
 });
 
 test('context calls both versions of fillText when called before upgrade', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
-  const unUpgradedStub = (unUpgradedOffscreenContext[
-    'fillText'
-  ] = sandbox.stub());
+  const unUpgradedStub = (unUpgradedOffscreenContext['fillText'] = sandbox.stub());
 
   const upgradedInstance = new FakeOffscreenCanvas();
-  const upgradedStub = (upgradedInstance.getContext('2d')[
-    'fillText'
-  ] = sandbox.stub());
+  const upgradedStub = (upgradedInstance.getContext('2d')['fillText'] = sandbox.stub());
 
   context2d.fillText('hello, world', 1, 2);
   t.true(unUpgradedStub.withArgs('hello, world', 1, 2).calledOnce);
@@ -247,12 +208,7 @@ test('context calls get lineWidth', (t) => {
 });
 
 test('context only calls upgraded set lineWidth if available', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedSetter = sandbox.spy();
   (unUpgradedOffscreenContext['lineWidth'] as any) = 'existent';
@@ -261,9 +217,7 @@ test('context only calls upgraded set lineWidth if available', async (t) => {
   const upgradedInstance = new FakeOffscreenCanvas();
   const upgradedSetter = sandbox.spy();
   (upgradedInstance.getContext('2d')['lineWidth'] as any) = 'existent';
-  sandbox
-    .stub(upgradedInstance.getContext('2d'), 'lineWidth')
-    .set(upgradedSetter);
+  sandbox.stub(upgradedInstance.getContext('2d'), 'lineWidth').set(upgradedSetter);
 
   deferredUpgrade.resolve(upgradedInstance);
 
@@ -275,12 +229,7 @@ test('context only calls upgraded set lineWidth if available', async (t) => {
 });
 
 test('context only calls upgraded get lineWidth if available', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedGetter = sandbox.spy();
   (unUpgradedOffscreenContext['lineWidth'] as any) = 'existent';
@@ -289,9 +238,7 @@ test('context only calls upgraded get lineWidth if available', async (t) => {
   const upgradedInstance = new FakeOffscreenCanvas();
   const upgradedGetter = sandbox.spy();
   (upgradedInstance.getContext('2d')['lineWidth'] as any) = 'existent';
-  sandbox
-    .stub(upgradedInstance.getContext('2d'), 'lineWidth')
-    .get(upgradedGetter);
+  sandbox.stub(upgradedInstance.getContext('2d'), 'lineWidth').get(upgradedGetter);
 
   deferredUpgrade.resolve(upgradedInstance);
 
@@ -303,12 +250,7 @@ test('context only calls upgraded get lineWidth if available', async (t) => {
 });
 
 test('context calls both versions of set lineWidth when called before upgrade', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedSetter = sandbox.spy();
   (unUpgradedOffscreenContext['lineWidth'] as any) = 'existent';
@@ -317,9 +259,7 @@ test('context calls both versions of set lineWidth when called before upgrade', 
   const upgradedInstance = new FakeOffscreenCanvas();
   const upgradedSetter = sandbox.spy();
   (upgradedInstance.getContext('2d')['lineWidth'] as any) = 'existent';
-  sandbox
-    .stub(upgradedInstance.getContext('2d'), 'lineWidth')
-    .set(upgradedSetter);
+  sandbox.stub(upgradedInstance.getContext('2d'), 'lineWidth').set(upgradedSetter);
 
   context2d.lineWidth = 200;
   t.true(unUpgradedSetter.withArgs(200).calledOnce);
@@ -357,12 +297,7 @@ test('context calls get lineCap', (t) => {
 });
 
 test('context only calls upgraded set lineCap if available', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedSetter = sandbox.spy();
   (unUpgradedOffscreenContext['lineCap'] as any) = 'existent';
@@ -371,9 +306,7 @@ test('context only calls upgraded set lineCap if available', async (t) => {
   const upgradedInstance = new FakeOffscreenCanvas();
   const upgradedSetter = sandbox.spy();
   (upgradedInstance.getContext('2d')['lineCap'] as any) = 'existent';
-  sandbox
-    .stub(upgradedInstance.getContext('2d'), 'lineCap')
-    .set(upgradedSetter);
+  sandbox.stub(upgradedInstance.getContext('2d'), 'lineCap').set(upgradedSetter);
 
   deferredUpgrade.resolve(upgradedInstance);
 
@@ -385,12 +318,7 @@ test('context only calls upgraded set lineCap if available', async (t) => {
 });
 
 test('context only calls upgraded get lineCap if available', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedGetter = sandbox.spy();
   (unUpgradedOffscreenContext['lineCap'] as any) = 'existent';
@@ -399,9 +327,7 @@ test('context only calls upgraded get lineCap if available', async (t) => {
   const upgradedInstance = new FakeOffscreenCanvas();
   const upgradedGetter = sandbox.spy();
   (upgradedInstance.getContext('2d')['lineCap'] as any) = 'existent';
-  sandbox
-    .stub(upgradedInstance.getContext('2d'), 'lineCap')
-    .get(upgradedGetter);
+  sandbox.stub(upgradedInstance.getContext('2d'), 'lineCap').get(upgradedGetter);
 
   deferredUpgrade.resolve(upgradedInstance);
 
@@ -413,12 +339,7 @@ test('context only calls upgraded get lineCap if available', async (t) => {
 });
 
 test('context calls both versions of set lineCap when called before upgrade', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
   const unUpgradedSetter = sandbox.spy();
   (unUpgradedOffscreenContext['lineCap'] as any) = 'existent';
@@ -427,9 +348,7 @@ test('context calls both versions of set lineCap when called before upgrade', as
   const upgradedInstance = new FakeOffscreenCanvas();
   const upgradedSetter = sandbox.spy();
   (upgradedInstance.getContext('2d')['lineCap'] as any) = 'existent';
-  sandbox
-    .stub(upgradedInstance.getContext('2d'), 'lineCap')
-    .set(upgradedSetter);
+  sandbox.stub(upgradedInstance.getContext('2d'), 'lineCap').set(upgradedSetter);
 
   context2d.lineCap = 'round';
   t.true(unUpgradedSetter.withArgs('round').calledOnce);
@@ -453,21 +372,12 @@ test('context calls setLineDash', (t) => {
 });
 
 test('context only calls upgraded setLineDash if available', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
-  const unUpgradedStub = (unUpgradedOffscreenContext[
-    'setLineDash'
-  ] = sandbox.stub());
+  const unUpgradedStub = (unUpgradedOffscreenContext['setLineDash'] = sandbox.stub());
 
   const upgradedInstance = new FakeOffscreenCanvas();
-  const upgradedStub = (upgradedInstance.getContext('2d')[
-    'setLineDash'
-  ] = sandbox.stub());
+  const upgradedStub = (upgradedInstance.getContext('2d')['setLineDash'] = sandbox.stub());
 
   deferredUpgrade.resolve(upgradedInstance);
 
@@ -479,21 +389,12 @@ test('context only calls upgraded setLineDash if available', async (t) => {
 });
 
 test('context calls both versions of setLineDash when called before upgrade', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
-  const unUpgradedStub = (unUpgradedOffscreenContext[
-    'setLineDash'
-  ] = sandbox.stub());
+  const unUpgradedStub = (unUpgradedOffscreenContext['setLineDash'] = sandbox.stub());
 
   const upgradedInstance = new FakeOffscreenCanvas();
-  const upgradedStub = (upgradedInstance.getContext('2d')[
-    'setLineDash'
-  ] = sandbox.stub());
+  const upgradedStub = (upgradedInstance.getContext('2d')['setLineDash'] = sandbox.stub());
 
   context2d.setLineDash([0, 1, 2]);
   t.true(unUpgradedStub.withArgs([0, 1, 2]).calledOnce);
@@ -510,9 +411,7 @@ test('context calls drawImage', (t) => {
   const { context2d, sandbox, unUpgradedOffscreenContext } = t.context;
 
   // should call method in the un-upgraded version
-  const stub = ((unUpgradedOffscreenContext[
-    'drawImage'
-  ] as sinon.SinonStub) = sandbox.stub());
+  const stub = ((unUpgradedOffscreenContext['drawImage'] as sinon.SinonStub) = sandbox.stub());
 
   // a fake object can be used as argument for testing
   const imageBitmap = new ImageBitmap();
@@ -522,21 +421,12 @@ test('context calls drawImage', (t) => {
 });
 
 test('context only calls upgraded drawImage if available', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
-  const unUpgradedStub = ((unUpgradedOffscreenContext[
-    'drawImage'
-  ] as sinon.SinonStub) = sandbox.stub());
+  const unUpgradedStub = ((unUpgradedOffscreenContext['drawImage'] as sinon.SinonStub) = sandbox.stub());
 
   const upgradedInstance = new FakeOffscreenCanvas();
-  const upgradedStub = ((upgradedInstance.getContext('2d')[
-    'drawImage'
-  ] as sinon.SinonStub) = sandbox.stub());
+  const upgradedStub = ((upgradedInstance.getContext('2d')['drawImage'] as sinon.SinonStub) = sandbox.stub());
 
   deferredUpgrade.resolve(upgradedInstance);
 
@@ -549,21 +439,12 @@ test('context only calls upgraded drawImage if available', async (t) => {
 });
 
 test('context calls both versions of drawImage when called before upgrade', async (t) => {
-  const {
-    context2d,
-    deferredUpgrade,
-    sandbox,
-    unUpgradedOffscreenContext,
-  } = t.context;
+  const { context2d, deferredUpgrade, sandbox, unUpgradedOffscreenContext } = t.context;
 
-  const unUpgradedStub = ((unUpgradedOffscreenContext[
-    'drawImage'
-  ] as sinon.SinonStub) = sandbox.stub());
+  const unUpgradedStub = ((unUpgradedOffscreenContext['drawImage'] as sinon.SinonStub) = sandbox.stub());
 
   const upgradedInstance = new FakeOffscreenCanvas();
-  const upgradedStub = ((upgradedInstance.getContext('2d')[
-    'drawImage'
-  ] as sinon.SinonStub) = sandbox.stub());
+  const upgradedStub = ((upgradedInstance.getContext('2d')['drawImage'] as sinon.SinonStub) = sandbox.stub());
 
   const imageBitmap = new ImageBitmap();
 

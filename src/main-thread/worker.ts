@@ -17,10 +17,7 @@
 import { MessageToWorker } from '../transfer/Messages';
 import { WorkerDOMConfiguration } from './configuration';
 import { createHydrateableRootNode } from './serialize';
-import {
-  readableHydrateableRootNode,
-  readableMessageToWorker,
-} from './debugging';
+import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
 import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { StorageLocation } from '../transfer/TransferrableStorage';
@@ -28,9 +25,7 @@ import { IframeWorker } from './iframe-worker';
 
 // TODO: Sanitizer storage init is likely broken, since the code currently
 // attempts to stringify a Promise.
-export type StorageInit =
-  | { storage: Storage | Promise<StorageValue>; errorMsg: null }
-  | { storage: null; errorMsg: string };
+export type StorageInit = { storage: Storage | Promise<StorageValue>; errorMsg: null } | { storage: null; errorMsg: string };
 export class WorkerContext {
   private [TransferrableKeys.worker]: Worker | IframeWorker;
   private nodeContext: NodeContext;
@@ -43,21 +38,11 @@ export class WorkerContext {
    * @param authorScript
    * @param config
    */
-  constructor(
-    baseElement: HTMLElement,
-    nodeContext: NodeContext,
-    workerDOMScript: string,
-    authorScript: string,
-    config: WorkerDOMConfiguration,
-  ) {
+  constructor(baseElement: HTMLElement, nodeContext: NodeContext, workerDOMScript: string, authorScript: string, config: WorkerDOMConfiguration) {
     this.nodeContext = nodeContext;
     this.config = config;
 
-    const { skeleton, strings } = createHydrateableRootNode(
-      baseElement,
-      config,
-      this,
-    );
+    const { skeleton, strings } = createHydrateableRootNode(baseElement, config, this);
     const cssKeys: Array<string> = [];
     const globalEventHandlerKeys: Array<string> = [];
     // TODO(choumx): Sync read of all localStorage and sessionStorage a possible performance bottleneck?
@@ -97,21 +82,12 @@ export class WorkerContext {
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;
     if (!config.sandbox) {
-      this[TransferrableKeys.worker] = new Worker(
-        URL.createObjectURL(new Blob([code])),
-      );
+      this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
     } else if (IS_AMP) {
-      this[TransferrableKeys.worker] = new IframeWorker(
-        URL.createObjectURL(new Blob([code])),
-        config.sandbox.iframeUrl,
-      );
+      this[TransferrableKeys.worker] = new IframeWorker(URL.createObjectURL(new Blob([code])), config.sandbox.iframeUrl);
     }
     if (WORKER_DOM_DEBUG) {
-      console.info(
-        'debug',
-        'hydratedNode',
-        readableHydrateableRootNode(baseElement, config, this),
-      );
+      console.info('debug', 'hydratedNode', readableHydrateableRootNode(baseElement, config, this));
     }
     if (config.onCreateWorker) {
       config.onCreateWorker(baseElement, strings, skeleton, cssKeys);
@@ -138,11 +114,7 @@ export class WorkerContext {
    */
   messageToWorker(message: MessageToWorker, transferables?: Transferable[]) {
     if (WORKER_DOM_DEBUG) {
-      console.info(
-        'debug',
-        'messageToWorker',
-        readableMessageToWorker(this.nodeContext, message),
-      );
+      console.info('debug', 'messageToWorker', readableMessageToWorker(this.nodeContext, message));
     }
     if (this.config.onSendMessage) {
       this.config.onSendMessage(message);
@@ -151,20 +123,13 @@ export class WorkerContext {
   }
 }
 
-function getStorageInit(
-  type: 'localStorage' | 'sessionStorage',
-  sanitizer?: Sanitizer,
-): StorageInit {
+function getStorageInit(type: 'localStorage' | 'sessionStorage', sanitizer?: Sanitizer): StorageInit {
   try {
     if (!sanitizer) {
       return { storage: window[type], errorMsg: null };
     }
     return {
-      storage: sanitizer.getStorage(
-        type == 'localStorage'
-          ? StorageLocation.Local
-          : StorageLocation.Session,
-      ),
+      storage: sanitizer.getStorage(type == 'localStorage' ? StorageLocation.Local : StorageLocation.Session),
       errorMsg: null,
     };
   } catch (err) {

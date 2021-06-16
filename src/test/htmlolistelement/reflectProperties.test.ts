@@ -31,8 +31,4 @@ test.beforeEach((t) => {
   };
 });
 
-testReflectedProperties([
-  { reversed: [false] },
-  { start: [1] },
-  { type: [''] },
-]);
+testReflectedProperties([{ reversed: [false] }, { start: [1] }, { type: [''] }]);

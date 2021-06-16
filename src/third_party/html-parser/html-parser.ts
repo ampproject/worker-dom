@@ -1,9 +1,6 @@
 import { Element } from '../../worker-thread/dom/Element';
 import { Node } from '../../worker-thread/dom/Node';
-import {
-  SVG_NAMESPACE,
-  HTML_NAMESPACE,
-} from '../../transfer/TransferrableNodes';
+import { SVG_NAMESPACE, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { toLower, toUpper } from '../../utils';
 
 interface Elements {
@@ -107,10 +104,7 @@ const kBlockTextElements: Elements = {
  */
 export function parse(data: string, rootElement: Element) {
   const ownerDocument = rootElement.ownerDocument;
-  const root = ownerDocument.createElementNS(
-    rootElement.namespaceURI,
-    rootElement.localName,
-  );
+  const root = ownerDocument.createElementNS(rootElement.namespaceURI, rootElement.localName);
 
   let currentParent = root as Node;
   let currentNamespace = root.namespaceURI;
@@ -120,10 +114,7 @@ export function parse(data: string, rootElement: Element) {
   data = '<q>' + data + '</q>';
   const tagsClosed = [] as string[];
 
-  if (
-    currentNamespace !== SVG_NAMESPACE &&
-    currentNamespace !== HTML_NAMESPACE
-  ) {
+  if (currentNamespace !== SVG_NAMESPACE && currentNamespace !== HTML_NAMESPACE) {
     throw new Error('Namespace not supported: ' + currentNamespace);
   }
 
@@ -137,9 +128,7 @@ export function parse(data: string, rootElement: Element) {
     if (lastTextPos < match.index) {
       // if has content
       const text = data.slice(lastTextPos, match.index);
-      currentParent.appendChild(
-        ownerDocument.createTextNode(decodeEntities(text)),
-      );
+      currentParent.appendChild(ownerDocument.createTextNode(decodeEntities(text)));
     }
     lastTextPos = kMarkupPattern.lastIndex;
     if (commentContents !== undefined) {
@@ -157,24 +146,15 @@ export function parse(data: string, rootElement: Element) {
     if (!beginningSlash) {
       // not </ tags
       if (!endSlash && kElementsClosedByOpening[currentParent.tagName]) {
-        if (
-          kElementsClosedByOpening[currentParent.tagName][normalizedTagName]
-        ) {
+        if (kElementsClosedByOpening[currentParent.tagName][normalizedTagName]) {
           stack.pop();
           currentParent = arr_back(stack);
         }
       }
 
-      const childToAppend = ownerDocument.createElementNS(
-        currentNamespace,
-        currentNamespace === HTML_NAMESPACE ? toLower(tagName) : tagName,
-      );
+      const childToAppend = ownerDocument.createElementNS(currentNamespace, currentNamespace === HTML_NAMESPACE ? toLower(tagName) : tagName);
 
-      for (
-        let attMatch;
-        (attMatch = kAttributePattern.exec(matchAttributes));
-
-      ) {
+      for (let attMatch; (attMatch = kAttributePattern.exec(matchAttributes)); ) {
         const attrName = attMatch[2];
         const attrValue = attMatch[4] || attMatch[5] || attMatch[6];
         childToAppend.setAttribute(attrName, attrValue);
@@ -213,9 +193,7 @@ export function parse(data: string, rootElement: Element) {
         } else {
           // Trying to close current tag, and move on
           if (kElementsClosedByClosing[currentParent.tagName]) {
-            if (
-              kElementsClosedByClosing[currentParent.tagName][normalizedTagName]
-            ) {
+            if (kElementsClosedByClosing[currentParent.tagName][normalizedTagName]) {
               stack.pop();
               currentParent = arr_back(stack);
               continue;
@@ -271,30 +249,24 @@ const RESERVED_CHARACTERS: { [key: string]: string | null } = {
   quot: '"',
 };
 function decodeEntities(html: string) {
-  return html.replace(
-    /&(?:(#x?[\da-f]+)|([\w]+));?/gi,
-    function (s, numericEntity, namedEntity) {
-      // Numeric entity
-      if (numericEntity) {
-        let code =
-          numericEntity.charAt(1).toLowerCase() === 'x'
-            ? parseInt(numericEntity.substr(2), 16)
-            : parseInt(numericEntity.substr(1), 10);
+  return html.replace(/&(?:(#x?[\da-f]+)|([\w]+));?/gi, function (s, numericEntity, namedEntity) {
+    // Numeric entity
+    if (numericEntity) {
+      let code = numericEntity.charAt(1).toLowerCase() === 'x' ? parseInt(numericEntity.substr(2), 16) : parseInt(numericEntity.substr(1), 10);
 
-        // 1114111 is the largest valid unicode codepoint.
-        if (isNaN(code) || code > 1114111) {
-          return s;
-        }
-
-        return String.fromCodePoint(code) || s;
+      // 1114111 is the largest valid unicode codepoint.
+      if (isNaN(code) || code > 1114111) {
+        return s;
       }
 
-      // Named entity. Only HTML reserved entities are currently supported.
-      if (namedEntity) {
-        return RESERVED_CHARACTERS[namedEntity.toLowerCase()] || s;
-      }
+      return String.fromCodePoint(code) || s;
+    }
 
-      return s;
-    },
-  );
+    // Named entity. Only HTML reserved entities are currently supported.
+    if (namedEntity) {
+      return RESERVED_CHARACTERS[namedEntity.toLowerCase()] || s;
+    }
+
+    return s;
+  });
 }

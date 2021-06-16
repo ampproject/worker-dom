@@ -87,13 +87,7 @@ test('setting property to a new string', (t) => {
   const storedNewValue = storeString(stringContext, newValue, storedValueKey);
 
   propertyProcessor.execute(
-    new Uint16Array([
-      TransferrableMutationType.PROPERTIES,
-      inputElement._index_,
-      storedValueKey,
-      NumericBoolean.FALSE,
-      storedNewValue,
-    ]),
+    new Uint16Array([TransferrableMutationType.PROPERTIES, inputElement._index_, storedValueKey, NumericBoolean.FALSE, storedNewValue]),
     0,
     /* allow */ true,
   );
@@ -105,49 +99,25 @@ test('setting property back to an empty string', (t) => {
   const firstUpdateValue = 'new value';
   const secondUpdateValue = '';
   const storedValueKey = storeString(stringContext, 'value');
-  const storedFirstUpdateValue = storeString(
-    stringContext,
-    firstUpdateValue,
-    storedValueKey,
-  );
-  const storedSecondUpdateValue = storeString(
-    stringContext,
-    secondUpdateValue,
-    storedFirstUpdateValue,
-  );
+  const storedFirstUpdateValue = storeString(stringContext, firstUpdateValue, storedValueKey);
+  const storedSecondUpdateValue = storeString(stringContext, secondUpdateValue, storedFirstUpdateValue);
 
   propertyProcessor.execute(
-    new Uint16Array([
-      TransferrableMutationType.PROPERTIES,
-      inputElement._index_,
-      storedValueKey,
-      NumericBoolean.FALSE,
-      storedFirstUpdateValue,
-    ]),
+    new Uint16Array([TransferrableMutationType.PROPERTIES, inputElement._index_, storedValueKey, NumericBoolean.FALSE, storedFirstUpdateValue]),
     0,
     /* allow */ true,
   );
   t.is(inputElement.value, firstUpdateValue);
 
   propertyProcessor.execute(
-    new Uint16Array([
-      TransferrableMutationType.PROPERTIES,
-      inputElement._index_,
-      storedValueKey,
-      NumericBoolean.FALSE,
-      storedSecondUpdateValue,
-    ]),
+    new Uint16Array([TransferrableMutationType.PROPERTIES, inputElement._index_, storedValueKey, NumericBoolean.FALSE, storedSecondUpdateValue]),
     0,
     /* allow */ true,
   );
   t.is(inputElement.value, secondUpdateValue);
 });
 
-function storeString(
-  stringContext: StringContext,
-  text: string,
-  currentIndex = -1,
-) {
+function storeString(stringContext: StringContext, text: string, currentIndex = -1) {
   stringContext.store(text);
   return ++currentIndex;
 }

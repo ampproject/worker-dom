@@ -40,20 +40,10 @@ test.serial.cb('document.createTextNode creation format is valid', (t) => {
   const { document, emitter } = t.context;
   const text = document.createTextNode('text');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.nodes])),
-      [
-        text[TransferrableKeys.index],
-        NodeType.TEXT_NODE,
-        strings.indexOf('#text'),
-        strings.indexOf('text'),
-        0,
-      ],
+      [text[TransferrableKeys.index], NodeType.TEXT_NODE, strings.indexOf('#text'), strings.indexOf('text'), 0],
       'creation format is as expected',
     );
     t.end();

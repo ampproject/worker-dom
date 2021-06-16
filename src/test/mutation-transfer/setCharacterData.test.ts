@@ -40,18 +40,10 @@ test.serial.cb('Text, set data', (t) => {
   const { document, emitter } = t.context;
   const text = document.createTextNode('original text');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.CHARACTER_DATA,
-        text[TransferrableKeys.index],
-        strings.indexOf('new text'),
-      ],
+      [TransferrableMutationType.CHARACTER_DATA, text[TransferrableKeys.index], strings.indexOf('new text')],
       'mutation is as expected',
     );
     t.end();
@@ -67,18 +59,10 @@ test.serial.cb('Text, set textContent', (t) => {
   const { document, emitter } = t.context;
   const text = document.createTextNode('original text');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.CHARACTER_DATA,
-        text[TransferrableKeys.index],
-        strings.indexOf('new text'),
-      ],
+      [TransferrableMutationType.CHARACTER_DATA, text[TransferrableKeys.index], strings.indexOf('new text')],
       'mutation is as expected',
     );
     t.end();

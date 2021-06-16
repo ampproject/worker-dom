@@ -22,14 +22,10 @@ import { CanvasRenderingContext2DShim } from '../canvas/CanvasRenderingContext2D
 export class HTMLCanvasElement extends HTMLElement {
   private context: CanvasRenderingContext2DShim<HTMLCanvasElement>;
 
-  getContext(
-    contextType: string,
-  ): CanvasRenderingContext2DShim<HTMLCanvasElement> {
+  getContext(contextType: string): CanvasRenderingContext2DShim<HTMLCanvasElement> {
     if (!this.context) {
       if (contextType === '2D' || contextType === '2d') {
-        this.context = new CanvasRenderingContext2DShim<HTMLCanvasElement>(
-          this,
-        );
+        this.context = new CanvasRenderingContext2DShim<HTMLCanvasElement>(this);
       } else {
         throw new Error('Context type not supported.');
       }

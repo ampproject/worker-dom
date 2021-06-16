@@ -57,35 +57,29 @@ test.serial('rafPolyfill executes the body of the supplied callback', (t) => {
   t.context.runTimeout();
 });
 
-test.serial(
-  'rafPolyfill executes all callbacks, even if some throw',
-  async (t) => {
-    let raf2Executed = false;
-    rafPolyfill(() => {
-      throw new Error();
-    });
-    rafPolyfill(() => (raf2Executed = true));
+test.serial('rafPolyfill executes all callbacks, even if some throw', async (t) => {
+  let raf2Executed = false;
+  rafPolyfill(() => {
+    throw new Error();
+  });
+  rafPolyfill(() => (raf2Executed = true));
 
-    try {
-      t.context.runAllTimeouts();
-    } catch (err) {}
+  try {
+    t.context.runAllTimeouts();
+  } catch (err) {}
 
-    t.true(raf2Executed);
-  },
-);
+  t.true(raf2Executed);
+});
 
-test.serial(
-  'all the accumulated callbacks are called in the same frame',
-  async (t) => {
-    let raf1Executed = false;
-    let raf2Executed = false;
-    rafPolyfill(() => (raf1Executed = true));
-    rafPolyfill(() => (raf2Executed = true));
+test.serial('all the accumulated callbacks are called in the same frame', async (t) => {
+  let raf1Executed = false;
+  let raf2Executed = false;
+  rafPolyfill(() => (raf1Executed = true));
+  rafPolyfill(() => (raf2Executed = true));
 
-    t.context.runTimeout();
-    t.true(raf1Executed && raf2Executed);
-  },
-);
+  t.context.runTimeout();
+  t.true(raf1Executed && raf2Executed);
+});
 
 test.serial('raf within a raf gets scheduled for the next batch', async (t) => {
   let raf1Executed = false;

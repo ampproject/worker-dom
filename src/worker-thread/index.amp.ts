@@ -117,11 +117,7 @@ const noop = () => void 0;
 
 // WorkerDOM.Document.defaultView ends up being the window object.
 // React requires the classes to exist off the window object for instanceof checks.
-export const workerDOM: WorkerDOMGlobalScope = (function (
-  postMessage,
-  addEventListener,
-  removeEventListener,
-) {
+export const workerDOM: WorkerDOMGlobalScope = (function (postMessage, addEventListener, removeEventListener) {
   const document = new Document(globalScope);
   // TODO(choumx): Avoid polluting Document's public API.
   document.postMessage = postMessage;
@@ -138,11 +134,7 @@ export const workerDOM: WorkerDOMGlobalScope = (function (
   globalScope.ImageBitmap = (self as any)['ImageBitmap'];
 
   return document.defaultView;
-})(
-  postMessage.bind(self) || noop,
-  addEventListener.bind(self) || noop,
-  removeEventListener.bind(self) || noop,
-);
+})(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
 // Modify global scope by removing disallowed properties and wrapping `fetch()`.
 (function (global: WorkerGlobalScope) {
@@ -168,8 +160,6 @@ export const workerDOM: WorkerDOMGlobalScope = (function (
 
 // Allows for function invocation
 (self as any).exportFunction = exportFunction;
-addEventListener('message', (evt: MessageEvent) =>
-  callFunctionMessageHandler(evt, workerDOM.document),
-);
+addEventListener('message', (evt: MessageEvent) => callFunctionMessageHandler(evt, workerDOM.document));
 
 export const hydrate = initialize;

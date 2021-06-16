@@ -30,8 +30,4 @@ test.beforeEach((t) => {
     element: document.createElement('option') as HTMLOptionElement,
   };
 });
-testReflectedProperties([
-  { defaultSelected: [false, 'selected'] },
-  { disabled: [false] },
-  { type: [''] },
-]);
+testReflectedProperties([{ defaultSelected: [false, 'selected'] }, { disabled: [false] }, { type: [''] }]);

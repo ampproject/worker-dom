@@ -41,11 +41,7 @@ test.serial.cb('Element.setAttribute transfers new attribute', (t) => {
   const { document, emitter } = t.context;
   const el = document.createElement('div');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
       [
@@ -71,11 +67,7 @@ test.serial.cb('Element.setAttribute transfers attribute overwrite', (t) => {
   const el = document.createElement('div');
   el.setAttribute('data-foo', 'bar');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
       [
@@ -96,67 +88,53 @@ test.serial.cb('Element.setAttribute transfers attribute overwrite', (t) => {
   });
 });
 
-test.serial.cb(
-  'Element.setAttribute transfers new attribute with namespace',
-  (t) => {
-    const { document, emitter } = t.context;
-    const el = document.createElement('div');
+test.serial.cb('Element.setAttribute transfers new attribute with namespace', (t) => {
+  const { document, emitter } = t.context;
+  const el = document.createElement('div');
 
-    function transmitted(
-      strings: Array<string>,
-      message: MutationFromWorker,
-      buffers: Array<ArrayBuffer>,
-    ) {
-      t.deepEqual(
-        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-        [
-          TransferrableMutationType.ATTRIBUTES,
-          el[TransferrableKeys.index],
-          strings.indexOf('data-foo'),
-          strings.indexOf('namespace'),
-          strings.indexOf('bar') + 1,
-        ],
-        'mutation is as expected',
-      );
-      t.end();
-    }
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+    t.deepEqual(
+      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+      [
+        TransferrableMutationType.ATTRIBUTES,
+        el[TransferrableKeys.index],
+        strings.indexOf('data-foo'),
+        strings.indexOf('namespace'),
+        strings.indexOf('bar') + 1,
+      ],
+      'mutation is as expected',
+    );
+    t.end();
+  }
 
-    Promise.resolve().then(() => {
-      emitter.once(transmitted);
-      el.setAttributeNS('namespace', 'data-foo', 'bar');
-    });
-  },
-);
-
-test.serial.cb(
-  'Element.setAttribute transfers attribute overwrite with namespace',
-  (t) => {
-    const { document, emitter } = t.context;
-    const el = document.createElement('div');
+  Promise.resolve().then(() => {
+    emitter.once(transmitted);
     el.setAttributeNS('namespace', 'data-foo', 'bar');
+  });
+});
 
-    function transmitted(
-      strings: Array<string>,
-      message: MutationFromWorker,
-      buffers: Array<ArrayBuffer>,
-    ) {
-      t.deepEqual(
-        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-        [
-          TransferrableMutationType.ATTRIBUTES,
-          el[TransferrableKeys.index],
-          strings.indexOf('data-foo'),
-          strings.indexOf('namespace'),
-          strings.indexOf('baz') + 1,
-        ],
-        'mutation is as expected',
-      );
-      t.end();
-    }
+test.serial.cb('Element.setAttribute transfers attribute overwrite with namespace', (t) => {
+  const { document, emitter } = t.context;
+  const el = document.createElement('div');
+  el.setAttributeNS('namespace', 'data-foo', 'bar');
 
-    Promise.resolve().then(() => {
-      emitter.once(transmitted);
-      el.setAttributeNS('namespace', 'data-foo', 'baz');
-    });
-  },
-);
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+    t.deepEqual(
+      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+      [
+        TransferrableMutationType.ATTRIBUTES,
+        el[TransferrableKeys.index],
+        strings.indexOf('data-foo'),
+        strings.indexOf('namespace'),
+        strings.indexOf('baz') + 1,
+      ],
+      'mutation is as expected',
+    );
+    t.end();
+  }
+
+  Promise.resolve().then(() => {
+    emitter.once(transmitted);
+    el.setAttributeNS('namespace', 'data-foo', 'baz');
+  });
+});

@@ -17,12 +17,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { Env } from './helpers/env';
 import { install } from '../../main-thread/install';
-import {
-  HydrateableNode,
-  NodeType,
-  HTML_NAMESPACE,
-  SVG_NAMESPACE,
-} from '../../transfer/TransferrableNodes';
+import { HydrateableNode, NodeType, HTML_NAMESPACE, SVG_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 const test = anyTest as TestInterface<{
@@ -49,19 +44,11 @@ test.afterEach((t) => {
 test.serial.cb('initialize an empty element', (t) => {
   const { baseElement } = t.context;
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -82,19 +69,11 @@ test.serial.cb('initialize a single element', (t) => {
   const div = env.document.createElement('div');
   baseElement.appendChild(div);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -125,19 +104,11 @@ test.serial.cb('initialize a single svg element', (t) => {
   const svg = env.document.createElementNS(SVG_NAMESPACE, 'svg');
   baseElement.appendChild(svg);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -168,19 +139,11 @@ test.serial.cb('initialize a single text node', (t) => {
   const text = env.document.createTextNode('foo');
   baseElement.appendChild(text);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -211,19 +174,11 @@ test.serial.cb('initialize a single comment node', (t) => {
   const text = env.document.createComment('foo');
   baseElement.appendChild(text);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -256,19 +211,11 @@ test.serial.cb('initialize sibling elements', (t) => {
   baseElement.appendChild(div);
   baseElement.appendChild(span);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -310,19 +257,11 @@ test.serial.cb('initialize sibling text nodes', (t) => {
   baseElement.appendChild(text);
   baseElement.appendChild(textTwo);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -364,19 +303,11 @@ test.serial.cb('initialize sibling comment nodes', (t) => {
   baseElement.appendChild(comment);
   baseElement.appendChild(commentTwo);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),

@@ -111,11 +111,7 @@ const noop = () => void 0;
 
 // WorkerDOM.Document.defaultView ends up being the window object.
 // React requires the classes to exist off the window object for instanceof checks.
-export const workerDOM = (function (
-  postMessage,
-  addEventListener,
-  removeEventListener,
-) {
+export const workerDOM = (function (postMessage, addEventListener, removeEventListener) {
   const document = new Document(globalScope);
   // TODO(choumx): Avoid polluting Document's public API.
   document.postMessage = postMessage;
@@ -132,10 +128,6 @@ export const workerDOM = (function (
   document.appendChild((document.body = document.createElement('body')));
 
   return document.defaultView;
-})(
-  postMessage.bind(self) || noop,
-  addEventListener.bind(self) || noop,
-  removeEventListener.bind(self) || noop,
-);
+})(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
 export const hydrate = initialize;

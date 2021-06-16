@@ -61,22 +61,14 @@ test('selected should be settable to a string falsy value', (t) => {
   const { option } = t.context;
 
   option.selected = 'false';
-  t.is(
-    (option.selected as unknown) as boolean,
-    true,
-    'setting to falsy value causes selected to be true.',
-  );
+  t.is((option.selected as unknown) as boolean, true, 'setting to falsy value causes selected to be true.');
 });
 
 test('selected should be settable to an empty string value', (t) => {
   const { option } = t.context;
 
   option.selected = '';
-  t.is(
-    (option.selected as unknown) as boolean,
-    false,
-    'setting to an empty string forces the value to be false.',
-  );
+  t.is((option.selected as unknown) as boolean, false, 'setting to an empty string forces the value to be false.');
 });
 
 test('selected should be settable to a number truthy value', (t) => {

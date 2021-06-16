@@ -37,16 +37,8 @@ test('removes child Node from parent', (t) => {
 
   node.appendChild(child);
   child.remove();
-  t.is(
-    node.childNodes.length,
-    0,
-    'removing a node from a known parent reduces Parent.childNodes[].length by 1',
-  );
-  t.is(
-    child.parentNode,
-    null,
-    'removing a node makes the child have a null parentNode',
-  );
+  t.is(node.childNodes.length, 0, 'removing a node from a known parent reduces Parent.childNodes[].length by 1');
+  t.is(child.parentNode, null, 'removing a node makes the child have a null parentNode');
 });
 
 test('removes Node without parent', (t) => {

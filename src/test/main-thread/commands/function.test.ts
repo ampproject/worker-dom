@@ -15,17 +15,11 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import {
-  registerPromise,
-  FunctionProcessor,
-} from '../../../main-thread/commands/function';
+import { registerPromise, FunctionProcessor } from '../../../main-thread/commands/function';
 import { StringContext } from '../../../main-thread/strings';
 import { WorkerDOMConfiguration } from '../../../main-thread/configuration';
 import { CommandExecutor } from '../../../main-thread/commands/interface';
-import {
-  TransferrableMutationType,
-  FunctionMutationIndex,
-} from '../../../transfer/TransferrableMutation';
+import { TransferrableMutationType, FunctionMutationIndex } from '../../../transfer/TransferrableMutation';
 import { ResolveOrReject } from '../../../transfer/Messages';
 
 const test = anyTest as TestInterface<{}>;

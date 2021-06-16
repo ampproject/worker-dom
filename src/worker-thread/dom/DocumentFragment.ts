@@ -22,20 +22,9 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export class DocumentFragment extends ParentNode {
   constructor(ownerDocument: Node, overrideIndex?: number) {
-    super(
-      NodeType.DOCUMENT_FRAGMENT_NODE,
-      '#document-fragment',
-      ownerDocument,
-      overrideIndex,
-    );
+    super(NodeType.DOCUMENT_FRAGMENT_NODE, '#document-fragment', ownerDocument, overrideIndex);
 
-    this[TransferrableKeys.creationFormat] = [
-      this[TransferrableKeys.index],
-      NodeType.DOCUMENT_FRAGMENT_NODE,
-      storeString(this.nodeName),
-      0,
-      0,
-    ];
+    this[TransferrableKeys.creationFormat] = [this[TransferrableKeys.index], NodeType.DOCUMENT_FRAGMENT_NODE, storeString(this.nodeName), 0, 0];
   }
 
   /**
@@ -45,9 +34,7 @@ export class DocumentFragment extends ParentNode {
   public cloneNode(deep: boolean = false): DocumentFragment {
     const clone: DocumentFragment = this.ownerDocument.createDocumentFragment();
     if (deep) {
-      this.childNodes.forEach((child) =>
-        clone.appendChild(child.cloneNode(deep)),
-      );
+      this.childNodes.forEach((child) => clone.appendChild(child.cloneNode(deep)));
     }
     return clone;
   }

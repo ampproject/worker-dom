@@ -42,27 +42,17 @@ interface StyleDeclaration {
     | ((namespaceURI: NamespaceURI, name: string, value: string) => void);
 }
 
-const hyphenateKey = (key: string): string =>
-  toLower(
-    key
-      .replace(/(webkit|ms|moz|khtml)/g, '-$1')
-      .replace(/([a-zA-Z])(?=[A-Z])/g, '$1-'),
-  );
+const hyphenateKey = (key: string): string => toLower(key.replace(/(webkit|ms|moz|khtml)/g, '-$1').replace(/([a-zA-Z])(?=[A-Z])/g, '$1-'));
 
 export const appendKeys = (keys: Array<string>): void => {
-  const keysToAppend = keys.filter(
-    (key) =>
-      isNaN(key as any) && !CSSStyleDeclaration.prototype.hasOwnProperty(key),
-  );
+  const keysToAppend = keys.filter((key) => isNaN(key as any) && !CSSStyleDeclaration.prototype.hasOwnProperty(key));
   if (keysToAppend.length <= 0) {
     return;
   }
 
-  const previousPrototypeLength = (CSSStyleDeclaration.prototype.length ||
-    0) as number;
+  const previousPrototypeLength = (CSSStyleDeclaration.prototype.length || 0) as number;
   if (previousPrototypeLength !== 0) {
-    CSSStyleDeclaration.prototype.length =
-      previousPrototypeLength + keysToAppend.length;
+    CSSStyleDeclaration.prototype.length = previousPrototypeLength + keysToAppend.length;
   } else {
     Object.defineProperty(CSSStyleDeclaration.prototype, 'length', {
       configurable: true,
@@ -73,9 +63,7 @@ export const appendKeys = (keys: Array<string>): void => {
 
   keysToAppend.forEach((key: string, index: number): void => {
     const hyphenatedKey = hyphenateKey(key);
-    CSSStyleDeclaration.prototype[
-      index + previousPrototypeLength
-    ] = hyphenatedKey;
+    CSSStyleDeclaration.prototype[index + previousPrototypeLength] = hyphenatedKey;
 
     Object.defineProperties(CSSStyleDeclaration.prototype, {
       [key]: {
@@ -100,17 +88,11 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     | ((key: string, value: string) => void)
     | ((namespaceURI: NamespaceURI, name: string, value: string) => void);
   private [TransferrableKeys.properties]: StyleProperties = {};
-  private [TransferrableKeys.storeAttribute]: (
-    namespaceURI: NamespaceURI,
-    name: string,
-    value: string,
-  ) => string;
+  private [TransferrableKeys.storeAttribute]: (namespaceURI: NamespaceURI, name: string, value: string) => string;
   private [TransferrableKeys.target]: Element;
 
   constructor(target: Element) {
-    this[TransferrableKeys.storeAttribute] = target[
-      TransferrableKeys.storeAttribute
-    ].bind(target);
+    this[TransferrableKeys.storeAttribute] = target[TransferrableKeys.storeAttribute].bind(target);
     this[TransferrableKeys.target] = target;
   }
 
@@ -179,9 +161,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     const values = stringValue.split(/[:;]/);
     const length = values.length;
     for (let index = 0; index + 1 < length; index += 2) {
-      this[TransferrableKeys.properties][
-        toLower(values[index].trim())
-      ] = values[index + 1].trim();
+      this[TransferrableKeys.properties][toLower(values[index].trim())] = values[index + 1].trim();
     }
     this.mutated(this.cssText);
   }
@@ -193,11 +173,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
    * // TODO(KB): Write a test to ensure mutations are fired for CSSStyleDeclaration changes.
    */
   private mutated(value: string): void {
-    const oldValue = this[TransferrableKeys.storeAttribute](
-      this[TransferrableKeys.target].namespaceURI,
-      'style',
-      value,
-    );
+    const oldValue = this[TransferrableKeys.storeAttribute](this[TransferrableKeys.target].namespaceURI, 'style', value);
     mutate(
       this[TransferrableKeys.target].ownerDocument as Document,
       {

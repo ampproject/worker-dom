@@ -29,10 +29,7 @@ export class HTMLIFrameElement extends HTMLElement {
 }
 registerSubclass('iframe', HTMLIFrameElement);
 definePropertyBackedAttributes(HTMLIFrameElement, {
-  sandbox: [
-    (el): string | null => el.sandbox.value,
-    (el, value: string) => (el.sandbox.value = value),
-  ],
+  sandbox: [(el): string | null => el.sandbox.value, (el, value: string) => (el.sandbox.value = value)],
 });
 // Reflected properties
 // HTMLIFrameElement.allow => string, reflected attribute

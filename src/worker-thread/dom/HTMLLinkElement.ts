@@ -28,10 +28,7 @@ export class HTMLLinkElement extends HTMLElement {
 }
 registerSubclass('link', HTMLLinkElement);
 definePropertyBackedAttributes(HTMLLinkElement, {
-  rel: [
-    (el): string | null => el.relList.value,
-    (el, value: string) => (el.relList.value = value),
-  ],
+  rel: [(el): string | null => el.relList.value, (el, value: string) => (el.relList.value = value)],
 });
 synchronizedAccessor(HTMLLinkElement, 'relList', 'rel');
 

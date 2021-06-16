@@ -22,9 +22,7 @@ import { NodeType } from '../../transfer/TransferrableNodes';
 export type ConditionPredicate = (element: Element) => boolean;
 // To future authors: It would be great if we could enforce that elements are not modified by a ConditionPredicate.
 
-export const tagNameConditionPredicate = (
-  tagNames: Array<string>,
-): ConditionPredicate => (element: Element): boolean => {
+export const tagNameConditionPredicate = (tagNames: Array<string>): ConditionPredicate => (element: Element): boolean => {
   console.assert(
     tagNames.every((t) => t === toUpper(t)),
     'tagNames must be all uppercase.',
@@ -32,31 +30,22 @@ export const tagNameConditionPredicate = (
   return tagNames.includes(element.tagName);
 };
 
-export const elementPredicate = (node: Node): boolean =>
-  node.nodeType === NodeType.ELEMENT_NODE;
+export const elementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
-export const matchChildrenElements = (
-  node: Node,
-  conditionPredicate: ConditionPredicate,
-): Element[] => {
+export const matchChildrenElements = (node: Node, conditionPredicate: ConditionPredicate): Element[] => {
   const matchingElements: Element[] = [];
   node.childNodes.forEach((child) => {
     if (elementPredicate(child)) {
       if (conditionPredicate(child as Element)) {
         matchingElements.push(child as Element);
       }
-      matchingElements.push(
-        ...matchChildrenElements(child as Element, conditionPredicate),
-      );
+      matchingElements.push(...matchChildrenElements(child as Element, conditionPredicate));
     }
   });
   return matchingElements;
 };
 
-export const matchChildElement = (
-  element: Element,
-  conditionPredicate: ConditionPredicate,
-): Element | null => {
+export const matchChildElement = (element: Element, conditionPredicate: ConditionPredicate): Element | null => {
   let returnValue: Element | null = null;
   element.children.some((child) => {
     if (conditionPredicate(child)) {
@@ -74,10 +63,7 @@ export const matchChildElement = (
   return returnValue;
 };
 
-export const matchNearestParent = (
-  element: Element,
-  conditionPredicate: ConditionPredicate,
-): Element | null => {
+export const matchNearestParent = (element: Element, conditionPredicate: ConditionPredicate): Element | null => {
   while ((element = element.parentNode as Element)) {
     if (conditionPredicate(element)) {
       return element;
@@ -92,10 +78,7 @@ export const matchNearestParent = (
  * @param element the element being tested.
  * @return boolean for whether we match the condition
  */
-export const matchAttrReference = (
-  attrSelector: string | null,
-  element: Element,
-): boolean => {
+export const matchAttrReference = (attrSelector: string | null, element: Element): boolean => {
   if (!attrSelector) {
     return false;
   }
@@ -106,23 +89,17 @@ export const matchAttrReference = (
   if (equalPos !== -1) {
     const equalSuffix: string = attrSelector.charAt(equalPos - 1);
     const possibleSuffixes: string[] = ['~', '|', '$', '^', '*'];
-    const attrString: string = possibleSuffixes.includes(equalSuffix)
-      ? attrSelector.substring(1, equalPos - 1)
-      : attrSelector.substring(1, equalPos);
+    const attrString: string = possibleSuffixes.includes(equalSuffix) ? attrSelector.substring(1, equalPos - 1) : attrSelector.substring(1, equalPos);
     const rawValue: string = attrSelector.substring(equalPos + 1, endPos);
     const rawAttrValue: string | null = element.getAttribute(attrString);
     if (rawAttrValue) {
       const casedValue: string = caseInsensitive ? toLower(rawValue) : rawValue;
-      const casedAttrValue: string = caseInsensitive
-        ? toLower(rawAttrValue)
-        : rawAttrValue;
+      const casedAttrValue: string = caseInsensitive ? toLower(rawAttrValue) : rawAttrValue;
       switch (equalSuffix) {
         case '~':
           return casedAttrValue.split(' ').indexOf(casedValue) !== -1;
         case '|':
-          return (
-            casedAttrValue === casedValue || casedAttrValue === `${casedValue}-`
-          );
+          return casedAttrValue === casedValue || casedAttrValue === `${casedValue}-`;
         case '^':
           return casedAttrValue.startsWith(casedValue);
         case '$':

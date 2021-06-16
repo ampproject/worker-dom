@@ -40,20 +40,10 @@ test.serial.cb('document.createElement creation format is valid', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.nodes])),
-      [
-        div[TransferrableKeys.index],
-        NodeType.ELEMENT_NODE,
-        strings.indexOf(div.localName),
-        0,
-        strings.indexOf(div.namespaceURI),
-      ],
+      [div[TransferrableKeys.index], NodeType.ELEMENT_NODE, strings.indexOf(div.localName), 0, strings.indexOf(div.namespaceURI)],
       'creation format is as expected',
     );
     t.end();

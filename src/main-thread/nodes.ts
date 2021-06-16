@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  NodeType,
-  TransferrableNodeIndex,
-} from '../transfer/TransferrableNodes';
+import { NodeType, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
 import { StringContext } from './strings';
 
 /**
@@ -26,10 +23,7 @@ import { StringContext } from './strings';
  * @param list NodeList to iterate over
  * @param callback method to call with each node
  */
-const nodeListEach = (
-  list: NodeList,
-  callback: (value: Node, key: number) => any,
-): void => Array.prototype.forEach.call(list, callback);
+const nodeListEach = (list: NodeList, callback: (value: Node, key: number) => any): void => Array.prototype.forEach.call(list, callback);
 
 export const BASE_ELEMENT_INDEX = 1;
 
@@ -68,47 +62,19 @@ export class NodeContext {
     const nodeBuffer = new Uint16Array(buffer);
     const nodeBufferLength = nodeBuffer.length;
 
-    for (
-      let iterator = 0;
-      iterator < nodeBufferLength;
-      iterator += TransferrableNodeIndex.End
-    ) {
+    for (let iterator = 0; iterator < nodeBufferLength; iterator += TransferrableNodeIndex.End) {
       let node: Node;
-      if (
-        nodeBuffer[iterator + TransferrableNodeIndex.NodeType] ===
-        NodeType.TEXT_NODE
-      ) {
-        node = document.createTextNode(
-          this.stringContext.get(
-            nodeBuffer[iterator + TransferrableNodeIndex.TextContent],
-          ),
-        );
-      } else if (
-        nodeBuffer[iterator + TransferrableNodeIndex.NodeType] ===
-        NodeType.COMMENT_NODE
-      ) {
-        node = document.createComment(
-          this.stringContext.get(
-            nodeBuffer[iterator + TransferrableNodeIndex.TextContent],
-          ),
-        );
-      } else if (
-        nodeBuffer[iterator + TransferrableNodeIndex.NodeType] ===
-        NodeType.DOCUMENT_FRAGMENT_NODE
-      ) {
+      if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.TEXT_NODE) {
+        node = document.createTextNode(this.stringContext.get(nodeBuffer[iterator + TransferrableNodeIndex.TextContent]));
+      } else if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.COMMENT_NODE) {
+        node = document.createComment(this.stringContext.get(nodeBuffer[iterator + TransferrableNodeIndex.TextContent]));
+      } else if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.DOCUMENT_FRAGMENT_NODE) {
         node = document.createDocumentFragment();
       } else {
-        const nodeName = this.stringContext.get(
-          nodeBuffer[iterator + TransferrableNodeIndex.NodeName],
-        );
+        const nodeName = this.stringContext.get(nodeBuffer[iterator + TransferrableNodeIndex.NodeName]);
         node =
           nodeBuffer[iterator + TransferrableNodeIndex.Namespace] !== 0
-            ? document.createElementNS(
-                this.stringContext.get(
-                  nodeBuffer[iterator + TransferrableNodeIndex.Namespace],
-                ),
-                nodeName,
-              )
+            ? document.createElementNS(this.stringContext.get(nodeBuffer[iterator + TransferrableNodeIndex.Namespace]), nodeName)
             : document.createElement(nodeName);
 
         // TODO(KB): Restore Properties

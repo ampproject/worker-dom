@@ -17,12 +17,7 @@
 import anyTest, { TestInterface } from 'ava';
 import { Env } from './helpers/env';
 import { install } from '../../main-thread/install';
-import {
-  HydrateableNode,
-  NodeType,
-  HTML_NAMESPACE,
-  SVG_NAMESPACE,
-} from '../../transfer/TransferrableNodes';
+import { HydrateableNode, NodeType, HTML_NAMESPACE, SVG_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { toLower } from '../../utils';
 
@@ -49,10 +44,7 @@ test.afterEach((t) => {
 
 const hydrateFilter = (element: RenderableElement) => {
   if (element.parentNode !== null) {
-    const lowerName = toLower(
-      (element.parentNode as RenderableElement).localName ||
-        (element.parentNode as RenderableElement).nodeName,
-    );
+    const lowerName = toLower((element.parentNode as RenderableElement).localName || (element.parentNode as RenderableElement).nodeName);
     return !/amp-/.test(lowerName) || lowerName === 'amp-script';
   }
   return true;
@@ -61,20 +53,12 @@ const hydrateFilter = (element: RenderableElement) => {
 test.serial.cb('initialize an empty element', (t) => {
   const { baseElement } = t.context;
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
     hydrateFilter,
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -95,20 +79,12 @@ test.serial.cb('initialize a single element', (t) => {
   const div = env.document.createElement('div');
   baseElement.appendChild(div);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
     hydrateFilter,
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -134,373 +110,287 @@ test.serial.cb('initialize a single element', (t) => {
   }).then();
 });
 
-test.serial.cb(
-  'initialize a parent whose children should be filtered with no children',
-  (t) => {
-    const { env, baseElement } = t.context;
-    const ampImg = env.document.createElement('amp-img');
-    baseElement.appendChild(ampImg);
+test.serial.cb('initialize a parent whose children should be filtered with no children', (t) => {
+  const { env, baseElement } = t.context;
+  const ampImg = env.document.createElement('amp-img');
+  baseElement.appendChild(ampImg);
 
-    const fetchPromise = Promise.all([
-      Promise.resolve('workerDOMScript'),
-      Promise.resolve('authorScript'),
-    ]);
-    install(fetchPromise, baseElement, {
-      authorURL: 'authorURL',
-      domURL: 'domURL',
-      hydrateFilter,
-      onCreateWorker: (
-        initialDOM: RenderableElement,
-        strings: Array<string>,
-        skeleton: HydrateableNode,
-        keys: Array<string>,
-      ) => {
-        t.deepEqual(skeleton, {
-          [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-          [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
-          [TransferrableKeys.attributes]: [],
-          [TransferrableKeys.childNodes]: [
-            {
-              [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-              [TransferrableKeys.localOrNodeName]: strings.indexOf('amp-img'),
-              [TransferrableKeys.attributes]: [],
-              [TransferrableKeys.childNodes]: [],
-              [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
-              [TransferrableKeys.index]: 3,
-              [TransferrableKeys.transferred]: 0,
-            },
-          ],
-          [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
-          [TransferrableKeys.index]: 2,
-          [TransferrableKeys.transferred]: 0,
-        });
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
+  install(fetchPromise, baseElement, {
+    authorURL: 'authorURL',
+    domURL: 'domURL',
+    hydrateFilter,
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
+      t.deepEqual(skeleton, {
+        [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+        [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
+        [TransferrableKeys.attributes]: [],
+        [TransferrableKeys.childNodes]: [
+          {
+            [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+            [TransferrableKeys.localOrNodeName]: strings.indexOf('amp-img'),
+            [TransferrableKeys.attributes]: [],
+            [TransferrableKeys.childNodes]: [],
+            [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+            [TransferrableKeys.index]: 3,
+            [TransferrableKeys.transferred]: 0,
+          },
+        ],
+        [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+        [TransferrableKeys.index]: 2,
+        [TransferrableKeys.transferred]: 0,
+      });
 
-        t.end();
-      },
-    }).then();
-  },
-);
+      t.end();
+    },
+  }).then();
+});
 
-test.serial.cb(
-  'initialize a parent whose children should be filtered with one child',
-  (t) => {
-    const { env, baseElement } = t.context;
-    const ampImg = env.document.createElement('amp-img');
-    const img = env.document.createElement('img');
-    ampImg.appendChild(img);
-    baseElement.appendChild(ampImg);
+test.serial.cb('initialize a parent whose children should be filtered with one child', (t) => {
+  const { env, baseElement } = t.context;
+  const ampImg = env.document.createElement('amp-img');
+  const img = env.document.createElement('img');
+  ampImg.appendChild(img);
+  baseElement.appendChild(ampImg);
 
-    const fetchPromise = Promise.all([
-      Promise.resolve('workerDOMScript'),
-      Promise.resolve('authorScript'),
-    ]);
-    install(fetchPromise, baseElement, {
-      authorURL: 'authorURL',
-      domURL: 'domURL',
-      hydrateFilter,
-      onCreateWorker: (
-        initialDOM: RenderableElement,
-        strings: Array<string>,
-        skeleton: HydrateableNode,
-        keys: Array<string>,
-      ) => {
-        t.deepEqual(skeleton, {
-          [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-          [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
-          [TransferrableKeys.attributes]: [],
-          [TransferrableKeys.childNodes]: [
-            {
-              [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-              [TransferrableKeys.localOrNodeName]: strings.indexOf('amp-img'),
-              [TransferrableKeys.attributes]: [],
-              [TransferrableKeys.childNodes]: [],
-              [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
-              [TransferrableKeys.index]: 3,
-              [TransferrableKeys.transferred]: 0,
-            },
-          ],
-          [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
-          [TransferrableKeys.index]: 2,
-          [TransferrableKeys.transferred]: 0,
-        });
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
+  install(fetchPromise, baseElement, {
+    authorURL: 'authorURL',
+    domURL: 'domURL',
+    hydrateFilter,
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
+      t.deepEqual(skeleton, {
+        [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+        [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
+        [TransferrableKeys.attributes]: [],
+        [TransferrableKeys.childNodes]: [
+          {
+            [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+            [TransferrableKeys.localOrNodeName]: strings.indexOf('amp-img'),
+            [TransferrableKeys.attributes]: [],
+            [TransferrableKeys.childNodes]: [],
+            [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+            [TransferrableKeys.index]: 3,
+            [TransferrableKeys.transferred]: 0,
+          },
+        ],
+        [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+        [TransferrableKeys.index]: 2,
+        [TransferrableKeys.transferred]: 0,
+      });
 
-        t.end();
-      },
-    }).then();
-  },
-);
+      t.end();
+    },
+  }).then();
+});
 
-test.serial.cb(
-  'initialize a parent whose children should be filtered with multiple children',
-  (t) => {
-    const { env, baseElement } = t.context;
-    const ampImg = env.document.createElement('amp-img');
-    const img = env.document.createElement('img');
-    const span = env.document.createElement('span');
-    const text = env.document.createTextNode('test');
-    ampImg.appendChild(img);
-    ampImg.appendChild(span);
-    ampImg.appendChild(text);
-    baseElement.appendChild(ampImg);
+test.serial.cb('initialize a parent whose children should be filtered with multiple children', (t) => {
+  const { env, baseElement } = t.context;
+  const ampImg = env.document.createElement('amp-img');
+  const img = env.document.createElement('img');
+  const span = env.document.createElement('span');
+  const text = env.document.createTextNode('test');
+  ampImg.appendChild(img);
+  ampImg.appendChild(span);
+  ampImg.appendChild(text);
+  baseElement.appendChild(ampImg);
 
-    const fetchPromise = Promise.all([
-      Promise.resolve('workerDOMScript'),
-      Promise.resolve('authorScript'),
-    ]);
-    install(fetchPromise, baseElement, {
-      authorURL: 'authorURL',
-      domURL: 'domURL',
-      hydrateFilter,
-      onCreateWorker: (
-        initialDOM: RenderableElement,
-        strings: Array<string>,
-        skeleton: HydrateableNode,
-        keys: Array<string>,
-      ) => {
-        t.deepEqual(skeleton, {
-          [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-          [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
-          [TransferrableKeys.attributes]: [],
-          [TransferrableKeys.childNodes]: [
-            {
-              [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-              [TransferrableKeys.localOrNodeName]: strings.indexOf('amp-img'),
-              [TransferrableKeys.attributes]: [],
-              [TransferrableKeys.childNodes]: [],
-              [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
-              [TransferrableKeys.index]: 3,
-              [TransferrableKeys.transferred]: 0,
-            },
-          ],
-          [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
-          [TransferrableKeys.index]: 2,
-          [TransferrableKeys.transferred]: 0,
-        });
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
+  install(fetchPromise, baseElement, {
+    authorURL: 'authorURL',
+    domURL: 'domURL',
+    hydrateFilter,
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
+      t.deepEqual(skeleton, {
+        [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+        [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
+        [TransferrableKeys.attributes]: [],
+        [TransferrableKeys.childNodes]: [
+          {
+            [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+            [TransferrableKeys.localOrNodeName]: strings.indexOf('amp-img'),
+            [TransferrableKeys.attributes]: [],
+            [TransferrableKeys.childNodes]: [],
+            [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+            [TransferrableKeys.index]: 3,
+            [TransferrableKeys.transferred]: 0,
+          },
+        ],
+        [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+        [TransferrableKeys.index]: 2,
+        [TransferrableKeys.transferred]: 0,
+      });
 
-        t.end();
-      },
-    }).then();
-  },
-);
+      t.end();
+    },
+  }).then();
+});
 
-test.serial.cb(
-  'initialize a parent whose children should not be filtered with no children',
-  (t) => {
-    const { env, baseElement } = t.context;
-    const ampScript = env.document.createElement('amp-script');
-    baseElement.appendChild(ampScript);
+test.serial.cb('initialize a parent whose children should not be filtered with no children', (t) => {
+  const { env, baseElement } = t.context;
+  const ampScript = env.document.createElement('amp-script');
+  baseElement.appendChild(ampScript);
 
-    const fetchPromise = Promise.all([
-      Promise.resolve('workerDOMScript'),
-      Promise.resolve('authorScript'),
-    ]);
-    install(fetchPromise, baseElement, {
-      authorURL: 'authorURL',
-      domURL: 'domURL',
-      hydrateFilter,
-      onCreateWorker: (
-        initialDOM: RenderableElement,
-        strings: Array<string>,
-        skeleton: HydrateableNode,
-        keys: Array<string>,
-      ) => {
-        t.deepEqual(skeleton, {
-          [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-          [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
-          [TransferrableKeys.attributes]: [],
-          [TransferrableKeys.childNodes]: [
-            {
-              [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-              [TransferrableKeys.localOrNodeName]: strings.indexOf(
-                'amp-script',
-              ),
-              [TransferrableKeys.attributes]: [],
-              [TransferrableKeys.childNodes]: [],
-              [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
-              [TransferrableKeys.index]: 3,
-              [TransferrableKeys.transferred]: 0,
-            },
-          ],
-          [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
-          [TransferrableKeys.index]: 2,
-          [TransferrableKeys.transferred]: 0,
-        });
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
+  install(fetchPromise, baseElement, {
+    authorURL: 'authorURL',
+    domURL: 'domURL',
+    hydrateFilter,
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
+      t.deepEqual(skeleton, {
+        [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+        [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
+        [TransferrableKeys.attributes]: [],
+        [TransferrableKeys.childNodes]: [
+          {
+            [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+            [TransferrableKeys.localOrNodeName]: strings.indexOf('amp-script'),
+            [TransferrableKeys.attributes]: [],
+            [TransferrableKeys.childNodes]: [],
+            [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+            [TransferrableKeys.index]: 3,
+            [TransferrableKeys.transferred]: 0,
+          },
+        ],
+        [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+        [TransferrableKeys.index]: 2,
+        [TransferrableKeys.transferred]: 0,
+      });
 
-        t.end();
-      },
-    }).then();
-  },
-);
+      t.end();
+    },
+  }).then();
+});
 
-test.serial.cb(
-  'initialize a parent whose children should not be filtered with one child',
-  (t) => {
-    const { env, baseElement } = t.context;
-    const ampScript = env.document.createElement('amp-script');
-    const img = env.document.createElement('img');
-    ampScript.appendChild(img);
-    baseElement.appendChild(ampScript);
+test.serial.cb('initialize a parent whose children should not be filtered with one child', (t) => {
+  const { env, baseElement } = t.context;
+  const ampScript = env.document.createElement('amp-script');
+  const img = env.document.createElement('img');
+  ampScript.appendChild(img);
+  baseElement.appendChild(ampScript);
 
-    const fetchPromise = Promise.all([
-      Promise.resolve('workerDOMScript'),
-      Promise.resolve('authorScript'),
-    ]);
-    install(fetchPromise, baseElement, {
-      authorURL: 'authorURL',
-      domURL: 'domURL',
-      hydrateFilter,
-      onCreateWorker: (
-        initialDOM: RenderableElement,
-        strings: Array<string>,
-        skeleton: HydrateableNode,
-        keys: Array<string>,
-      ) => {
-        t.deepEqual(skeleton, {
-          [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-          [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
-          [TransferrableKeys.attributes]: [],
-          [TransferrableKeys.childNodes]: [
-            {
-              [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-              [TransferrableKeys.localOrNodeName]: strings.indexOf(
-                'amp-script',
-              ),
-              [TransferrableKeys.attributes]: [],
-              [TransferrableKeys.childNodes]: [
-                {
-                  [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-                  [TransferrableKeys.localOrNodeName]: strings.indexOf('img'),
-                  [TransferrableKeys.attributes]: [],
-                  [TransferrableKeys.childNodes]: [],
-                  [TransferrableKeys.namespaceURI]: strings.indexOf(
-                    HTML_NAMESPACE,
-                  ),
-                  [TransferrableKeys.index]: 4,
-                  [TransferrableKeys.transferred]: 0,
-                },
-              ],
-              [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
-              [TransferrableKeys.index]: 3,
-              [TransferrableKeys.transferred]: 0,
-            },
-          ],
-          [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
-          [TransferrableKeys.index]: 2,
-          [TransferrableKeys.transferred]: 0,
-        });
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
+  install(fetchPromise, baseElement, {
+    authorURL: 'authorURL',
+    domURL: 'domURL',
+    hydrateFilter,
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
+      t.deepEqual(skeleton, {
+        [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+        [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
+        [TransferrableKeys.attributes]: [],
+        [TransferrableKeys.childNodes]: [
+          {
+            [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+            [TransferrableKeys.localOrNodeName]: strings.indexOf('amp-script'),
+            [TransferrableKeys.attributes]: [],
+            [TransferrableKeys.childNodes]: [
+              {
+                [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+                [TransferrableKeys.localOrNodeName]: strings.indexOf('img'),
+                [TransferrableKeys.attributes]: [],
+                [TransferrableKeys.childNodes]: [],
+                [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+                [TransferrableKeys.index]: 4,
+                [TransferrableKeys.transferred]: 0,
+              },
+            ],
+            [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+            [TransferrableKeys.index]: 3,
+            [TransferrableKeys.transferred]: 0,
+          },
+        ],
+        [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+        [TransferrableKeys.index]: 2,
+        [TransferrableKeys.transferred]: 0,
+      });
 
-        t.end();
-      },
-    }).then();
-  },
-);
+      t.end();
+    },
+  }).then();
+});
 
-test.serial.cb(
-  'initialize a parent whose children should not be filtered with multiple children',
-  (t) => {
-    const { env, baseElement } = t.context;
-    const ampScript = env.document.createElement('amp-script');
-    const img = env.document.createElement('img');
-    const span = env.document.createElement('span');
-    const text = env.document.createTextNode('test');
-    ampScript.appendChild(img);
-    ampScript.appendChild(span);
-    ampScript.appendChild(text);
-    baseElement.appendChild(ampScript);
+test.serial.cb('initialize a parent whose children should not be filtered with multiple children', (t) => {
+  const { env, baseElement } = t.context;
+  const ampScript = env.document.createElement('amp-script');
+  const img = env.document.createElement('img');
+  const span = env.document.createElement('span');
+  const text = env.document.createTextNode('test');
+  ampScript.appendChild(img);
+  ampScript.appendChild(span);
+  ampScript.appendChild(text);
+  baseElement.appendChild(ampScript);
 
-    const fetchPromise = Promise.all([
-      Promise.resolve('workerDOMScript'),
-      Promise.resolve('authorScript'),
-    ]);
-    install(fetchPromise, baseElement, {
-      authorURL: 'authorURL',
-      domURL: 'domURL',
-      hydrateFilter,
-      onCreateWorker: (
-        initialDOM: RenderableElement,
-        strings: Array<string>,
-        skeleton: HydrateableNode,
-        keys: Array<string>,
-      ) => {
-        t.deepEqual(skeleton, {
-          [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-          [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
-          [TransferrableKeys.attributes]: [],
-          [TransferrableKeys.childNodes]: [
-            {
-              [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-              [TransferrableKeys.localOrNodeName]: strings.indexOf(
-                'amp-script',
-              ),
-              [TransferrableKeys.attributes]: [],
-              [TransferrableKeys.childNodes]: [
-                {
-                  [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-                  [TransferrableKeys.localOrNodeName]: strings.indexOf('img'),
-                  [TransferrableKeys.attributes]: [],
-                  [TransferrableKeys.childNodes]: [],
-                  [TransferrableKeys.namespaceURI]: strings.indexOf(
-                    HTML_NAMESPACE,
-                  ),
-                  [TransferrableKeys.index]: 4,
-                  [TransferrableKeys.transferred]: 0,
-                },
-                {
-                  [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-                  [TransferrableKeys.localOrNodeName]: strings.indexOf('span'),
-                  [TransferrableKeys.attributes]: [],
-                  [TransferrableKeys.childNodes]: [],
-                  [TransferrableKeys.namespaceURI]: strings.indexOf(
-                    HTML_NAMESPACE,
-                  ),
-                  [TransferrableKeys.index]: 5,
-                  [TransferrableKeys.transferred]: 0,
-                },
-                {
-                  [TransferrableKeys.nodeType]: NodeType.TEXT_NODE,
-                  [TransferrableKeys.localOrNodeName]: strings.indexOf('#text'),
-                  [TransferrableKeys.attributes]: [],
-                  [TransferrableKeys.childNodes]: [],
-                  [TransferrableKeys.textContent]: strings.indexOf('test'),
-                  [TransferrableKeys.index]: 6,
-                  [TransferrableKeys.transferred]: 0,
-                },
-              ],
-              [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
-              [TransferrableKeys.index]: 3,
-              [TransferrableKeys.transferred]: 0,
-            },
-          ],
-          [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
-          [TransferrableKeys.index]: 2,
-          [TransferrableKeys.transferred]: 0,
-        });
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
+  install(fetchPromise, baseElement, {
+    authorURL: 'authorURL',
+    domURL: 'domURL',
+    hydrateFilter,
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
+      t.deepEqual(skeleton, {
+        [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+        [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
+        [TransferrableKeys.attributes]: [],
+        [TransferrableKeys.childNodes]: [
+          {
+            [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+            [TransferrableKeys.localOrNodeName]: strings.indexOf('amp-script'),
+            [TransferrableKeys.attributes]: [],
+            [TransferrableKeys.childNodes]: [
+              {
+                [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+                [TransferrableKeys.localOrNodeName]: strings.indexOf('img'),
+                [TransferrableKeys.attributes]: [],
+                [TransferrableKeys.childNodes]: [],
+                [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+                [TransferrableKeys.index]: 4,
+                [TransferrableKeys.transferred]: 0,
+              },
+              {
+                [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
+                [TransferrableKeys.localOrNodeName]: strings.indexOf('span'),
+                [TransferrableKeys.attributes]: [],
+                [TransferrableKeys.childNodes]: [],
+                [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+                [TransferrableKeys.index]: 5,
+                [TransferrableKeys.transferred]: 0,
+              },
+              {
+                [TransferrableKeys.nodeType]: NodeType.TEXT_NODE,
+                [TransferrableKeys.localOrNodeName]: strings.indexOf('#text'),
+                [TransferrableKeys.attributes]: [],
+                [TransferrableKeys.childNodes]: [],
+                [TransferrableKeys.textContent]: strings.indexOf('test'),
+                [TransferrableKeys.index]: 6,
+                [TransferrableKeys.transferred]: 0,
+              },
+            ],
+            [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+            [TransferrableKeys.index]: 3,
+            [TransferrableKeys.transferred]: 0,
+          },
+        ],
+        [TransferrableKeys.namespaceURI]: strings.indexOf(HTML_NAMESPACE),
+        [TransferrableKeys.index]: 2,
+        [TransferrableKeys.transferred]: 0,
+      });
 
-        t.end();
-      },
-    }).then();
-  },
-);
+      t.end();
+    },
+  }).then();
+});
 
 test.serial.cb('initialize a single svg element', (t) => {
   const { env, baseElement } = t.context;
   const svg = env.document.createElementNS(SVG_NAMESPACE, 'svg');
   baseElement.appendChild(svg);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
     hydrateFilter,
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -531,20 +421,12 @@ test.serial.cb('initialize a single text node', (t) => {
   const text = env.document.createTextNode('foo');
   baseElement.appendChild(text);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
     hydrateFilter,
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -575,20 +457,12 @@ test.serial.cb('initialize a single comment node', (t) => {
   const text = env.document.createComment('foo');
   baseElement.appendChild(text);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
     hydrateFilter,
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -621,20 +495,12 @@ test.serial.cb('initialize sibling elements', (t) => {
   baseElement.appendChild(div);
   baseElement.appendChild(span);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
     hydrateFilter,
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -676,20 +542,12 @@ test.serial.cb('initialize sibling text nodes', (t) => {
   baseElement.appendChild(text);
   baseElement.appendChild(textTwo);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
     hydrateFilter,
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),
@@ -731,20 +589,12 @@ test.serial.cb('initialize sibling comment nodes', (t) => {
   baseElement.appendChild(comment);
   baseElement.appendChild(commentTwo);
 
-  const fetchPromise = Promise.all([
-    Promise.resolve('workerDOMScript'),
-    Promise.resolve('authorScript'),
-  ]);
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
   install(fetchPromise, baseElement, {
     authorURL: 'authorURL',
     domURL: 'domURL',
     hydrateFilter,
-    onCreateWorker: (
-      initialDOM: RenderableElement,
-      strings: Array<string>,
-      skeleton: HydrateableNode,
-      keys: Array<string>,
-    ) => {
+    onCreateWorker: (initialDOM: RenderableElement, strings: Array<string>, skeleton: HydrateableNode, keys: Array<string>) => {
       t.deepEqual(skeleton, {
         [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
         [TransferrableKeys.localOrNodeName]: strings.indexOf('div'),

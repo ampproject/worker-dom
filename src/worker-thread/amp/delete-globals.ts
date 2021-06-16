@@ -131,19 +131,9 @@ export function deleteGlobals(global: WorkerGlobalScope) {
         failedToDelete.push(prop);
       }
     });
-    console.info(
-      `Removed ${deleted.length} references from`,
-      current,
-      ':',
-      deleted,
-    );
+    console.info(`Removed ${deleted.length} references from`, current, ':', deleted);
     if (failedToDelete.length) {
-      console.info(
-        `Failed to remove ${failedToDelete.length} references from`,
-        current,
-        ':',
-        failedToDelete,
-      );
+      console.info(`Failed to remove ${failedToDelete.length} references from`, current, ':', failedToDelete);
     }
     current = Object.getPrototypeOf(current);
   }

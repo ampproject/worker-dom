@@ -78,13 +78,7 @@ test.beforeEach((t) => {
 });
 
 test('Object creation with mutation at a zero offset', (t) => {
-  const {
-    stringContext,
-    objectContext,
-    objectCreationProcessor,
-    sandbox,
-    canvasElement,
-  } = t.context;
+  const { stringContext, objectContext, objectCreationProcessor, sandbox, canvasElement } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
   const methodName = 'createLinearGradient';
@@ -102,10 +96,7 @@ test('Object creation with mutation at a zero offset', (t) => {
   const objectId = 111; // give a sample id
   t.throws(() => objectContext.get(objectId));
 
-  const serializedTarget = [
-    TransferrableObjectType.CanvasRenderingContext2D,
-    canvasElement._index_,
-  ];
+  const serializedTarget = [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_];
   const serializedArgs = [
     TransferrableObjectType.SmallInt,
     1,
@@ -135,13 +126,7 @@ test('Object creation with mutation at a zero offset', (t) => {
 });
 
 test('Object creation with mutation at non-zero offset', (t) => {
-  const {
-    stringContext,
-    objectContext,
-    objectCreationProcessor,
-    sandbox,
-    canvasElement,
-  } = t.context;
+  const { stringContext, objectContext, objectCreationProcessor, sandbox, canvasElement } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
   const methodName = 'createLinearGradient';
@@ -158,10 +143,7 @@ test('Object creation with mutation at non-zero offset', (t) => {
 
   const objectId = 111; // give a sample id
 
-  const serializedTarget = [
-    TransferrableObjectType.CanvasRenderingContext2D,
-    canvasElement._index_,
-  ];
+  const serializedTarget = [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_];
   const serializedArgs = [
     TransferrableObjectType.SmallInt,
     1,
@@ -191,12 +173,7 @@ test('Object creation with mutation at non-zero offset', (t) => {
 });
 
 test('Returns correct end offset', (t) => {
-  const {
-    stringContext,
-    objectCreationProcessor,
-    canvasElement,
-    sandbox,
-  } = t.context;
+  const { stringContext, objectCreationProcessor, canvasElement, sandbox } = t.context;
 
   const targetObject = canvasElement.getContext('2d');
 
@@ -231,20 +208,12 @@ test('Returns correct end offset', (t) => {
   ];
 
   const mutationsArray = new Uint16Array([1, 2, 3].concat(mutation));
-  const endOffset = objectCreationProcessor.execute(
-    mutationsArray,
-    3,
-    /* allow */ true,
-  );
+  const endOffset = objectCreationProcessor.execute(mutationsArray, 3, /* allow */ true);
 
   t.is(mutationsArray[endOffset], 32);
 });
 
-function storeString(
-  stringContext: StringContext,
-  text: string,
-  currentIndex = -1,
-) {
+function storeString(stringContext: StringContext, text: string, currentIndex = -1) {
   stringContext.store(text);
   return ++currentIndex;
 }

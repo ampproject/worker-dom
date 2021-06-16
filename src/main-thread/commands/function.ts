@@ -15,10 +15,7 @@
  */
 
 import { CommandExecutorInterface } from './interface';
-import {
-  TransferrableMutationType,
-  FunctionMutationIndex,
-} from '../../transfer/TransferrableMutation';
+import { TransferrableMutationType, FunctionMutationIndex } from '../../transfer/TransferrableMutation';
 import { ResolveOrReject } from '../../transfer/Messages';
 
 let fnCallCount = 0;
@@ -58,16 +55,8 @@ export function registerPromise(): { promise: Promise<any>; index: number } {
   return { promise, index };
 }
 
-export const FunctionProcessor: CommandExecutorInterface = (
-  strings,
-  nodeContext,
-  workerContext,
-  objectContext,
-  config,
-) => {
-  const allowedExecution = config.executorsAllowed.includes(
-    TransferrableMutationType.FUNCTION_CALL,
-  );
+export const FunctionProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.FUNCTION_CALL);
 
   return {
     execute(mutations: Uint16Array, startPosition: number): number {
@@ -76,9 +65,7 @@ export const FunctionProcessor: CommandExecutorInterface = (
         const index = mutations[startPosition + FunctionMutationIndex.Index];
         const value = mutations[startPosition + FunctionMutationIndex.Value];
 
-        const parsed = strings.hasIndex(value)
-          ? JSON.parse(strings.get(value))
-          : undefined;
+        const parsed = strings.hasIndex(value) ? JSON.parse(strings.get(value)) : undefined;
         if (status === ResolveOrReject.RESOLVE) {
           promiseMap[index].resolve(parsed);
         } else {

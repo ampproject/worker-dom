@@ -41,8 +41,7 @@ const monitoredNodes: Map<RenderableElement, boolean> = new Map();
  * @param node node to check if values should be tracked.
  * @return boolean if the node should have its value property tracked.
  */
-const shouldTrackChanges = (node: HTMLElement): boolean =>
-  node && 'value' in node;
+const shouldTrackChanges = (node: HTMLElement): boolean => node && 'value' in node;
 
 /**
  * When a node that has a value needing synced doesn't already have an event listener
@@ -50,10 +49,7 @@ const shouldTrackChanges = (node: HTMLElement): boolean =>
  * @param worker whom to dispatch value toward.
  * @param node node to listen to value changes on.
  */
-export const applyDefaultInputListener = (
-  workerContext: WorkerContext,
-  node: RenderableElement,
-): void => {
+export const applyDefaultInputListener = (workerContext: WorkerContext, node: RenderableElement): void => {
   if (shouldTrackChanges(node as HTMLElement) && node.oninput === null) {
     node.oninput = () => fireValueChange(workerContext, node);
   }
@@ -64,15 +60,10 @@ export const applyDefaultInputListener = (
  * @param worker whom to dispatch value toward.
  * @param node node to listen to value changes on.
  */
-export const sendValueChangeOnAttributeMutation = (
-  workerContext: WorkerContext,
-  node: RenderableElement,
-): void => {
+export const sendValueChangeOnAttributeMutation = (workerContext: WorkerContext, node: RenderableElement): void => {
   if (shouldTrackChanges(node as HTMLElement) && !monitoredNodes.get(node)) {
     new MutationObserver((mutations: Array<MutationRecord>) =>
-      mutations.map((mutation) =>
-        fireValueChange(workerContext, mutation.target as RenderableElement),
-      ),
+      mutations.map((mutation) => fireValueChange(workerContext, mutation.target as RenderableElement)),
     ).observe(node, { attributes: true });
     monitoredNodes.set(node, true);
   }
@@ -83,10 +74,7 @@ export const sendValueChangeOnAttributeMutation = (
  * @param worker whom to dispatch value toward.
  * @param node where to get the value from.
  */
-const fireValueChange = (
-  workerContext: WorkerContext,
-  node: RenderableElement,
-): void =>
+const fireValueChange = (workerContext: WorkerContext, node: RenderableElement): void =>
   workerContext.messageToWorker({
     [TransferrableKeys.type]: MessageType.SYNC,
     [TransferrableKeys.sync]: {
@@ -100,10 +88,7 @@ const fireValueChange = (
  * @param workerContext
  * @param cachedWindowSize
  */
-const fireResizeChange = (
-  workerContext: WorkerContext,
-  cachedWindowSize: [number, number],
-): void =>
+const fireResizeChange = (workerContext: WorkerContext, cachedWindowSize: [number, number]): void =>
   workerContext.messageToWorker({
     [TransferrableKeys.type]: MessageType.RESIZE,
     [TransferrableKeys.sync]: cachedWindowSize,
@@ -113,9 +98,7 @@ const fireResizeChange = (
  * Convert a TouchList into a TransferrableTouchList
  * @param touchList
  */
-const createTransferrableTouchList = (
-  touchList: TouchList,
-): TransferrableTouchList =>
+const createTransferrableTouchList = (touchList: TouchList): TransferrableTouchList =>
   Object.values(touchList).map((touch) => [
     touch.identifier,
     touch.screenX,
@@ -127,21 +110,10 @@ const createTransferrableTouchList = (
     (touch.target as RenderableElement)._index_,
   ]);
 
-export const EventSubscriptionProcessor: CommandExecutorInterface = (
-  strings,
-  nodeContext,
-  workerContext,
-  objectContext,
-  config,
-) => {
+export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const knownListeners: Array<(event: Event) => any> = [];
-  const allowedExecution = config.executorsAllowed.includes(
-    TransferrableMutationType.EVENT_SUBSCRIPTION,
-  );
-  let cachedWindowSize: [number, number] = [
-    window.innerWidth,
-    window.innerHeight,
-  ];
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.EVENT_SUBSCRIPTION);
+  let cachedWindowSize: [number, number] = [window.innerWidth, window.innerHeight];
 
   /**
    * Register an event handler for dispatching events to worker thread
@@ -149,9 +121,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (
    * @param index node index the event comes from (used to dispatchEvent in worker thread).
    * @return eventHandler function consuming event and dispatching to worker thread
    */
-  const eventHandler = (index: number, preventDefault: boolean) => (
-    event: Event | KeyboardEvent | MouseEvent | TouchEvent,
-  ): void => {
+  const eventHandler = (index: number, preventDefault: boolean) => (event: Event | KeyboardEvent | MouseEvent | TouchEvent): void => {
     if (preventDefault) {
       event.preventDefault();
     }
@@ -160,10 +130,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (
       fireValueChange(workerContext, event.currentTarget as RenderableElement);
     } else if (event.type === 'resize') {
       const { innerWidth, innerHeight } = window;
-      if (
-        cachedWindowSize[0] === innerWidth &&
-        cachedWindowSize[1] === innerHeight
-      ) {
+      if (cachedWindowSize[0] === innerWidth && cachedWindowSize[1] === innerHeight) {
         return;
       }
       cachedWindowSize = [window.innerWidth, window.innerHeight];
@@ -177,34 +144,21 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (
         [TransferrableKeys.bubbles]: event.bubbles,
         [TransferrableKeys.cancelable]: event.cancelable,
         [TransferrableKeys.cancelBubble]: event.cancelBubble,
-        [TransferrableKeys.currentTarget]: [
-          (event.currentTarget as RenderableElement)._index_ || 0,
-        ],
+        [TransferrableKeys.currentTarget]: [(event.currentTarget as RenderableElement)._index_ || 0],
         [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
         [TransferrableKeys.eventPhase]: event.eventPhase,
         [TransferrableKeys.isTrusted]: event.isTrusted,
         [TransferrableKeys.returnValue]: event.returnValue,
-        [TransferrableKeys.target]: [
-          (event.target as RenderableElement)._index_ || 0,
-        ],
+        [TransferrableKeys.target]: [(event.target as RenderableElement)._index_ || 0],
         [TransferrableKeys.timeStamp]: event.timeStamp,
         [TransferrableKeys.type]: event.type,
-        [TransferrableKeys.keyCode]:
-          'keyCode' in event ? event.keyCode : undefined,
+        [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
         [TransferrableKeys.pageX]: 'pageX' in event ? event.pageX : undefined,
         [TransferrableKeys.pageY]: 'pageY' in event ? event.pageY : undefined,
-        [TransferrableKeys.offsetX]:
-          'offsetX' in event ? event.offsetX : undefined,
-        [TransferrableKeys.offsetY]:
-          'offsetY' in event ? event.offsetY : undefined,
-        [TransferrableKeys.touches]:
-          'touches' in event
-            ? createTransferrableTouchList(event.touches)
-            : undefined,
-        [TransferrableKeys.changedTouches]:
-          'changedTouches' in event
-            ? createTransferrableTouchList(event.changedTouches)
-            : undefined,
+        [TransferrableKeys.offsetX]: 'offsetX' in event ? event.offsetX : undefined,
+        [TransferrableKeys.offsetY]: 'offsetY' in event ? event.offsetY : undefined,
+        [TransferrableKeys.touches]: 'touches' in event ? createTransferrableTouchList(event.touches) : undefined,
+        [TransferrableKeys.changedTouches]: 'changedTouches' in event ? createTransferrableTouchList(event.changedTouches) : undefined,
       },
     });
   };
@@ -217,29 +171,14 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (
    * @param mutations Uint16Array for this set of changes
    * @param iterator current location in array to perform this change on
    */
-  const processListenerChange = (
-    target: RenderableElement,
-    addEvent: boolean,
-    mutations: Uint16Array,
-    iterator: number,
-  ): void => {
+  const processListenerChange = (target: RenderableElement, addEvent: boolean, mutations: Uint16Array, iterator: number): void => {
     const type = strings.get(mutations[iterator]);
     const eventIndex = mutations[iterator + AddEventRegistrationIndex.Index];
 
     if (target === nodeContext.baseElement) {
       if (addEvent) {
-        const preventDefault = Boolean(
-          mutations[
-            iterator + AddEventRegistrationIndex.WorkerDOMPreventDefault
-          ],
-        );
-        addEventListener(
-          type,
-          (knownListeners[eventIndex] = eventHandler(
-            BASE_ELEMENT_INDEX,
-            preventDefault,
-          )),
-        );
+        const preventDefault = Boolean(mutations[iterator + AddEventRegistrationIndex.WorkerDOMPreventDefault]);
+        addEventListener(type, (knownListeners[eventIndex] = eventHandler(BASE_ELEMENT_INDEX, preventDefault)));
       } else {
         removeEventListener(type, knownListeners[eventIndex]);
       }
@@ -253,54 +192,26 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (
         inputEventSubscribed = true;
         target.onchange = null;
       }
-      const preventDefault = Boolean(
-        mutations[iterator + AddEventRegistrationIndex.WorkerDOMPreventDefault],
-      );
-      (target as HTMLElement).addEventListener(
-        type,
-        (knownListeners[eventIndex] = eventHandler(
-          target._index_,
-          preventDefault,
-        )),
-      );
+      const preventDefault = Boolean(mutations[iterator + AddEventRegistrationIndex.WorkerDOMPreventDefault]);
+      (target as HTMLElement).addEventListener(type, (knownListeners[eventIndex] = eventHandler(target._index_, preventDefault)));
     } else {
       if (isChangeEvent) {
         inputEventSubscribed = false;
       }
-      (target as HTMLElement).removeEventListener(
-        type,
-        knownListeners[eventIndex],
-      );
+      (target as HTMLElement).removeEventListener(type, knownListeners[eventIndex]);
     }
     if (shouldTrackChanges(target as HTMLElement)) {
-      if (!inputEventSubscribed)
-        applyDefaultInputListener(workerContext, target as RenderableElement);
-      sendValueChangeOnAttributeMutation(
-        workerContext,
-        target as RenderableElement,
-      );
+      if (!inputEventSubscribed) applyDefaultInputListener(workerContext, target as RenderableElement);
+      sendValueChangeOnAttributeMutation(workerContext, target as RenderableElement);
     }
   };
 
   return {
-    execute(
-      mutations: Uint16Array,
-      startPosition: number,
-      allowedMutation: boolean,
-    ): number {
-      const addEventListenerCount =
-        mutations[
-          startPosition + EventSubscriptionMutationIndex.AddEventListenerCount
-        ];
-      const removeEventListenerCount =
-        mutations[
-          startPosition +
-            EventSubscriptionMutationIndex.RemoveEventListenerCount
-        ];
+    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
+      const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
+      const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
       const addEventListenersPosition =
-        startPosition +
-        EventSubscriptionMutationIndex.Events +
-        removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
+        startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
       const endPosition =
         startPosition +
         EventSubscriptionMutationIndex.Events +
@@ -308,8 +219,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (
         removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
 
       if (allowedExecution && allowedMutation) {
-        const targetIndex =
-          mutations[startPosition + EventSubscriptionMutationIndex.Target];
+        const targetIndex = mutations[startPosition + EventSubscriptionMutationIndex.Target];
         const target = nodeContext.getNode(targetIndex);
 
         if (target) {
@@ -317,9 +227,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (
           while (iterator < endPosition) {
             const isRemoveEvent = iterator <= addEventListenersPosition;
             processListenerChange(target, isRemoveEvent, mutations, iterator);
-            iterator += isRemoveEvent
-              ? REMOVE_EVENT_SUBSCRIPTION_LENGTH
-              : ADD_EVENT_SUBSCRIPTION_LENGTH;
+            iterator += isRemoveEvent ? REMOVE_EVENT_SUBSCRIPTION_LENGTH : ADD_EVENT_SUBSCRIPTION_LENGTH;
           }
         } else {
           console.error(`getNode(${targetIndex}) is null.`);
@@ -329,26 +237,16 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (
       return endPosition;
     },
     print(mutations: Uint16Array, startPosition: number): {} {
-      const addEventListenerCount =
-        mutations[
-          startPosition + EventSubscriptionMutationIndex.AddEventListenerCount
-        ];
-      const removeEventListenerCount =
-        mutations[
-          startPosition +
-            EventSubscriptionMutationIndex.RemoveEventListenerCount
-        ];
+      const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
+      const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
       const addEventListenersPosition =
-        startPosition +
-        EventSubscriptionMutationIndex.Events +
-        removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
+        startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
       const endPosition =
         startPosition +
         EventSubscriptionMutationIndex.Events +
         addEventListenerCount * ADD_EVENT_SUBSCRIPTION_LENGTH +
         removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
-      const targetIndex =
-        mutations[startPosition + EventSubscriptionMutationIndex.Target];
+      const targetIndex = mutations[startPosition + EventSubscriptionMutationIndex.Target];
       const target = nodeContext.getNode(targetIndex);
       const removedEventListeners: Array<{ type: string; index: number }> = [];
       const addedEventListeners: Array<{ type: string; index: number }> = [];
@@ -356,16 +254,12 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (
       let iterator = startPosition + EventSubscriptionMutationIndex.Events;
       while (iterator < endPosition) {
         const isRemoveEvent = iterator <= addEventListenersPosition;
-        const eventList = isRemoveEvent
-          ? addedEventListeners
-          : removedEventListeners;
+        const eventList = isRemoveEvent ? addedEventListeners : removedEventListeners;
         eventList.push({
           type: strings.get(mutations[iterator]),
           index: mutations[iterator + 1],
         });
-        iterator += isRemoveEvent
-          ? REMOVE_EVENT_SUBSCRIPTION_LENGTH
-          : ADD_EVENT_SUBSCRIPTION_LENGTH;
+        iterator += isRemoveEvent ? REMOVE_EVENT_SUBSCRIPTION_LENGTH : ADD_EVENT_SUBSCRIPTION_LENGTH;
       }
 
       return {

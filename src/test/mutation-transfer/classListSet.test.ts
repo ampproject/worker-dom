@@ -40,20 +40,10 @@ test.serial.cb('Element.classList.set transfer', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.ATTRIBUTES,
-        div[TransferrableKeys.index],
-        strings.indexOf('class'),
-        0,
-        strings.indexOf('foo bar') + 1,
-      ],
+      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('foo bar') + 1],
       'mutation is as expected',
     );
     t.end();

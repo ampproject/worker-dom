@@ -14,40 +14,19 @@
  * limitations under the License.
  */
 
-import {
-  TransferrableMutationType,
-  ObjectMutationIndex,
-} from '../../transfer/TransferrableMutation';
+import { TransferrableMutationType, ObjectMutationIndex } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
 import { deserializeTransferrableObject } from '../deserializeTransferrableObject';
 
-export const ObjectMutationProcessor: CommandExecutorInterface = (
-  strings,
-  nodeContext,
-  workerContext,
-  objectContext,
-  config,
-) => {
-  const allowedExecution = config.executorsAllowed.includes(
-    TransferrableMutationType.OBJECT_MUTATION,
-  );
+export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_MUTATION);
 
   return {
-    execute(
-      mutations: Uint16Array,
-      startPosition: number,
-      allowedMutation: boolean,
-    ): number {
-      const functionName = strings.get(
-        mutations[startPosition + ObjectMutationIndex.FunctionName],
-      );
-      const argCount =
-        mutations[startPosition + ObjectMutationIndex.ArgumentCount];
+    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
+      const functionName = strings.get(mutations[startPosition + ObjectMutationIndex.FunctionName]);
+      const argCount = mutations[startPosition + ObjectMutationIndex.ArgumentCount];
 
-      const {
-        offset: targetOffset,
-        args: deserializedTarget,
-      } = deserializeTransferrableObject(
+      const { offset: targetOffset, args: deserializedTarget } = deserializeTransferrableObject(
         mutations,
         startPosition + ObjectMutationIndex.SerializedTarget,
         1,
@@ -57,14 +36,7 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (
       );
       const target = deserializedTarget[0] as any;
 
-      const { offset: argsOffset, args } = deserializeTransferrableObject(
-        mutations,
-        targetOffset,
-        argCount,
-        strings,
-        nodeContext,
-        objectContext,
-      );
+      const { offset: argsOffset, args } = deserializeTransferrableObject(mutations, targetOffset, argCount, strings, nodeContext, objectContext);
 
       if (allowedExecution && allowedMutation) {
         if (isSetter(target, functionName)) {
@@ -77,9 +49,7 @@ export const ObjectMutationProcessor: CommandExecutorInterface = (
       return argsOffset;
     },
     print(mutations: Uint16Array, startPosition: number): {} {
-      const functionName = strings.get(
-        mutations[startPosition + ObjectMutationIndex.FunctionName],
-      );
+      const functionName = strings.get(mutations[startPosition + ObjectMutationIndex.FunctionName]);
       const { args: deserializedTarget } = deserializeTransferrableObject(
         mutations,
         startPosition + ObjectMutationIndex.SerializedTarget,

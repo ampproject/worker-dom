@@ -57,11 +57,7 @@ declare interface Sanitizer {
    * @param value A storage value. To remove a key, pass `null` here.
    * @return True if storage change was applied.
    */
-  setStorage(
-    location: number,
-    key: string | null,
-    value: string | null,
-  ): boolean;
+  setStorage(location: number, key: string | null, value: string | null): boolean;
 }
 
 type StorageValue = { [key: string]: string };

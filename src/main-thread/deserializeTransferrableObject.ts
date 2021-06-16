@@ -63,14 +63,7 @@ export function deserializeTransferrableObject(
 
       case TransferrableObjectType.Array:
         const size = buffer[offset++];
-        const des = deserializeTransferrableObject(
-          buffer,
-          offset,
-          size,
-          stringContext,
-          nodeContext,
-          objectContext,
-        );
+        const des = deserializeTransferrableObject(buffer, offset, size, stringContext, nodeContext, objectContext);
         args.push(des.args);
         offset = des.offset;
         break;
@@ -84,9 +77,7 @@ export function deserializeTransferrableObject(
         break;
 
       case TransferrableObjectType.CanvasRenderingContext2D:
-        const canvas = nodeContext.getNode(
-          buffer[offset++],
-        ) as HTMLCanvasElement;
+        const canvas = nodeContext.getNode(buffer[offset++]) as HTMLCanvasElement;
         args.push(canvas.getContext('2d'));
         break;
 

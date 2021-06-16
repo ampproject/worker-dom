@@ -40,22 +40,10 @@ test.serial.cb('Node.appendChild transfers new node', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.CHILD_LIST,
-        document.body[TransferrableKeys.index],
-        0,
-        0,
-        1,
-        0,
-        div[TransferrableKeys.index],
-      ],
+      [TransferrableMutationType.CHILD_LIST, document.body[TransferrableKeys.index], 0, 0, 1, 0, div[TransferrableKeys.index]],
       'mutation is as expected',
     );
     t.end();
@@ -72,11 +60,7 @@ test.serial.cb('Node.appendChild transfers new node, sibling node', (t) => {
   const div = document.createElement('div');
   const p = document.createElement('p');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
       [
@@ -105,22 +89,10 @@ test.serial.cb('Node.appendChild transfers new node, tree > 1 depth', (t) => {
   const div = document.createElement('div');
   const p = document.createElement('p');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.CHILD_LIST,
-        div[TransferrableKeys.index],
-        0,
-        0,
-        1,
-        0,
-        p[TransferrableKeys.index],
-      ],
+      [TransferrableMutationType.CHILD_LIST, div[TransferrableKeys.index], 0, 0, 1, 0, p[TransferrableKeys.index]],
       'mutation is as expected',
     );
     t.end();

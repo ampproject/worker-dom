@@ -15,28 +15,13 @@
  */
 
 import { CommandExecutorInterface } from './interface';
-import {
-  TransferrableMutationType,
-  StorageMutationIndex,
-} from '../../transfer/TransferrableMutation';
+import { TransferrableMutationType, StorageMutationIndex } from '../../transfer/TransferrableMutation';
 import { StorageLocation } from '../../transfer/TransferrableStorage';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import {
-  MessageType,
-  StorageValueToWorker,
-  GetOrSet,
-} from '../../transfer/Messages';
+import { MessageType, StorageValueToWorker, GetOrSet } from '../../transfer/Messages';
 
-export const StorageProcessor: CommandExecutorInterface = (
-  strings,
-  nodeContext,
-  workerContext,
-  objectContext,
-  config,
-) => {
-  const allowedExecution = config.executorsAllowed.includes(
-    TransferrableMutationType.STORAGE,
-  );
+export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
+  const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.STORAGE);
 
   const get = (location: StorageLocation, key: string): void => {
     if (config.sanitizer && location === StorageLocation.AmpState) {
@@ -50,18 +35,11 @@ export const StorageProcessor: CommandExecutorInterface = (
         workerContext.messageToWorker(message);
       });
     } else {
-      console.error(
-        `STORAGE: Sanitizer not found or unsupported location:`,
-        location,
-      );
+      console.error(`STORAGE: Sanitizer not found or unsupported location:`, location);
     }
   };
 
-  const set = (
-    location: StorageLocation,
-    key: string | null,
-    value: string | null,
-  ): void => {
+  const set = (location: StorageLocation, key: string | null, value: string | null): void => {
     if (config.sanitizer) {
       // TODO: Message worker so AMP.setState() can be Promise-able.
       config.sanitizer.setStorage(location, key, value);
@@ -93,19 +71,12 @@ export const StorageProcessor: CommandExecutorInterface = (
   };
 
   return {
-    execute(
-      mutations: Uint16Array,
-      startPosition: number,
-      allowedMutation: boolean,
-    ): number {
+    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
       if (allowedExecution && allowedMutation) {
-        const operation =
-          mutations[startPosition + StorageMutationIndex.Operation];
-        const location =
-          mutations[startPosition + StorageMutationIndex.Location];
+        const operation = mutations[startPosition + StorageMutationIndex.Operation];
+        const location = mutations[startPosition + StorageMutationIndex.Location];
         const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
-        const valueIndex =
-          mutations[startPosition + StorageMutationIndex.Value];
+        const valueIndex = mutations[startPosition + StorageMutationIndex.Value];
 
         // TODO(choumx): Clean up key/value strings (or don't store them in the first place)
         // to avoid leaking memory.
@@ -122,8 +93,7 @@ export const StorageProcessor: CommandExecutorInterface = (
       return startPosition + StorageMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number): {} {
-      const operation =
-        mutations[startPosition + StorageMutationIndex.Operation];
+      const operation = mutations[startPosition + StorageMutationIndex.Operation];
       const location = mutations[startPosition + StorageMutationIndex.Location];
       const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
       const valueIndex = mutations[startPosition + StorageMutationIndex.Value];

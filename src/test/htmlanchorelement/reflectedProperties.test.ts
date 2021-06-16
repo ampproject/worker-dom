@@ -31,10 +31,4 @@ test.beforeEach((t) => {
   };
 });
 
-testReflectedProperties([
-  { href: [''] },
-  { hreflang: [''] },
-  { media: [''] },
-  { target: [''] },
-  { type: [''] },
-]);
+testReflectedProperties([{ href: [''] }, { hreflang: [''] }, { media: [''] }, { target: [''] }, { type: [''] }]);

@@ -40,22 +40,10 @@ test.serial.cb('Node.removeChild transfer only child', (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.CHILD_LIST,
-        document.body[TransferrableKeys.index],
-        0,
-        0,
-        0,
-        1,
-        div[TransferrableKeys.index],
-      ],
+      [TransferrableMutationType.CHILD_LIST, document.body[TransferrableKeys.index], 0, 0, 0, 1, div[TransferrableKeys.index]],
       'mutation is as expected',
     );
     t.end();
@@ -73,22 +61,10 @@ test.serial.cb('Node.removeChild transfer, one of siblings', (t) => {
   const div = document.createElement('div');
   const p = document.createElement('p');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.CHILD_LIST,
-        document.body[TransferrableKeys.index],
-        0,
-        0,
-        0,
-        1,
-        div[TransferrableKeys.index],
-      ],
+      [TransferrableMutationType.CHILD_LIST, document.body[TransferrableKeys.index], 0, 0, 0, 1, div[TransferrableKeys.index]],
       'mutation is as expected',
     );
     t.end();
@@ -108,11 +84,7 @@ test.serial.cb('Node.removeChild transfer, multiple sibling nodes', (t) => {
   const p = document.createElement('p');
   const input = document.createElement('input');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
       [
@@ -151,22 +123,10 @@ test.serial.cb('Node.removeChild transfer, tree > 1 depth', (t) => {
   const div = document.createElement('div');
   const p = document.createElement('p');
 
-  function transmitted(
-    strings: Array<string>,
-    message: MutationFromWorker,
-    buffers: Array<ArrayBuffer>,
-  ) {
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.CHILD_LIST,
-        div[TransferrableKeys.index],
-        0,
-        0,
-        0,
-        1,
-        p[TransferrableKeys.index],
-      ],
+      [TransferrableMutationType.CHILD_LIST, div[TransferrableKeys.index], 0, 0, 0, 1, p[TransferrableKeys.index]],
       'mutation is as expected',
     );
     t.end();

@@ -16,11 +16,7 @@
 
 import anyTest, { TestInterface } from 'ava';
 import { Env } from './helpers/env';
-import {
-  IframeWorker,
-  MessageToIframe,
-  MessageFromIframe,
-} from '../../main-thread/iframe-worker';
+import { IframeWorker, MessageToIframe, MessageFromIframe } from '../../main-thread/iframe-worker';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -34,22 +30,16 @@ test.beforeEach((t) => {
   const sentToIframe: MessageToIframe[] = [];
 
   const messageListeners: any = [];
-  env.window.addEventListener = (type: string, listener: any) =>
-    messageListeners.push(listener);
+  env.window.addEventListener = (type: string, listener: any) => messageListeners.push(listener);
 
   global.fetch = (blob: any) =>
     Promise.resolve({
       text: () => Promise.resolve(blob.toString().slice('BLOB:'.length)),
     }) as any;
-  const worker = new IframeWorker(
-    URL.createObjectURL(new Blob(['worker code'])),
-    'https://example.com',
-  );
+  const worker = new IframeWorker(URL.createObjectURL(new Blob(['worker code'])), 'https://example.com');
   const iframe = (worker as any).iframe as HTMLIFrameElement;
 
-  const oldPostMessage = iframe.contentWindow!.postMessage.bind(
-    iframe.contentWindow,
-  );
+  const oldPostMessage = iframe.contentWindow!.postMessage.bind(iframe.contentWindow);
   iframe.contentWindow!.postMessage = (msg, targetOrigin, transferables) => {
     sentToIframe.push(msg);
     oldPostMessage(msg, targetOrigin, transferables);
@@ -112,8 +102,7 @@ test('Should proxy iframed worker messages.', async (t) => {
   const onmessageerrorMessages: MessageEvent[] = [];
 
   worker.onmessage = (msg: MessageEvent) => onmessageMessages.push(msg);
-  worker.onmessageerror = (msg: MessageEvent) =>
-    onmessageerrorMessages.push(msg);
+  worker.onmessageerror = (msg: MessageEvent) => onmessageerrorMessages.push(msg);
   worker.onerror = (msg: ErrorEvent) => onerrorMessages.push(msg);
 
   fakeReceiveMessage({ type: 'onmessage', message: {} });

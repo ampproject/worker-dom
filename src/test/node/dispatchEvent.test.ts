@@ -40,11 +40,7 @@ test('calls handler functions registered with addEventListener', (t) => {
   const { node, event } = t.context;
 
   node.addEventListener('click', (event: Event) => {
-    t.deepEqual(
-      event.target,
-      node,
-      'event target is the node the event was dispatched from',
-    );
+    t.deepEqual(event.target, node, 'event target is the node the event was dispatched from');
     t.pass();
   });
   t.true(node.dispatchEvent(event));
@@ -52,8 +48,7 @@ test('calls handler functions registered with addEventListener', (t) => {
 
 test('does not call handler functions removed with removeEventListener', (t) => {
   const { node, event } = t.context;
-  const functionRemoved = (event: Event) =>
-    t.fail('removeEventListener function handler was called');
+  const functionRemoved = (event: Event) => t.fail('removeEventListener function handler was called');
 
   node.addEventListener('click', functionRemoved);
   node.removeEventListener('click', functionRemoved);

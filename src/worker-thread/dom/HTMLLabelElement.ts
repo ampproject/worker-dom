@@ -28,15 +28,9 @@ export class HTMLLabelElement extends HTMLElement {
   get control(): Element | null {
     const htmlFor = this.getAttribute('for');
     if (htmlFor !== null) {
-      return (
-        this.ownerDocument &&
-        (this.ownerDocument as Document).getElementById(htmlFor)
-      );
+      return this.ownerDocument && (this.ownerDocument as Document).getElementById(htmlFor);
     }
-    return matchChildElement(
-      this as Element,
-      tagNameConditionPredicate(['INPUT']),
-    );
+    return matchChildElement(this as Element, tagNameConditionPredicate(['INPUT']));
   }
 }
 registerSubclass('label', HTMLLabelElement);

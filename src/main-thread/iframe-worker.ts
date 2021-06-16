@@ -18,14 +18,8 @@ type MessageFromWorker = {
   type: 'onmessage' | 'onerror' | 'onmessageerror';
   message: any;
 };
-export type MessageFromIframe =
-  | { type: 'iframe-ready' }
-  | { type: 'worker-ready' }
-  | MessageFromWorker;
-export type MessageToIframe =
-  | { type: 'terminate' }
-  | { type: 'init-worker'; code: string }
-  | { type: 'postMessage'; message: any };
+export type MessageFromIframe = { type: 'iframe-ready' } | { type: 'worker-ready' } | MessageFromWorker;
+export type MessageToIframe = { type: 'terminate' } | { type: 'init-worker'; code: string } | { type: 'postMessage'; message: any };
 
 /**
  * An almost drop-in replacement for a standard Web Worker, although this one

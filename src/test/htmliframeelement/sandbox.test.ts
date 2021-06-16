@@ -57,14 +57,8 @@ test('sandbox.add of a multiple value should only add all classes', (t) => {
   const { element } = t.context;
 
   element.sandbox.add('allow-forms', 'allow-modals', 'allow-orientation-lock');
-  t.is(
-    element.sandbox.value,
-    'allow-forms allow-modals allow-orientation-lock',
-  );
-  t.is(
-    element.getAttribute('sandbox'),
-    'allow-forms allow-modals allow-orientation-lock',
-  );
+  t.is(element.sandbox.value, 'allow-forms allow-modals allow-orientation-lock');
+  t.is(element.getAttribute('sandbox'), 'allow-forms allow-modals allow-orientation-lock');
 });
 
 test('sandbox.remove of a single value should only remove one class', (t) => {

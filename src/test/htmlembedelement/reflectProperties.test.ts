@@ -31,9 +31,4 @@ test.beforeEach((t) => {
   };
 });
 
-testReflectedProperties([
-  { height: [''] },
-  { src: [''] },
-  { type: [''] },
-  { width: [''] },
-]);
+testReflectedProperties([{ height: [''] }, { src: [''] }, { type: [''] }, { width: [''] }]);

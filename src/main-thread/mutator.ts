@@ -18,11 +18,7 @@ import { NodeContext } from './nodes';
 import { StringContext } from './strings';
 import { WorkerContext } from './worker';
 import { OffscreenCanvasProcessor } from './commands/offscreen-canvas';
-import {
-  TransferrableMutationType,
-  ReadableMutationType,
-  isUserVisibleMutation,
-} from '../transfer/TransferrableMutation';
+import { TransferrableMutationType, ReadableMutationType, isUserVisibleMutation } from '../transfer/TransferrableMutation';
 import { EventSubscriptionProcessor } from './commands/event-subscription';
 import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
 import { ChildListProcessor } from './commands/child-list';
@@ -70,66 +66,30 @@ export class MutatorProcessor {
     this.sanitizer = config.sanitizer;
     this.mutationPumpFunction = config.mutationPump;
 
-    const args: [
-      StringContext,
-      NodeContext,
-      WorkerContext,
-      ObjectContext,
-      WorkerDOMConfiguration,
-    ] = [stringContext, nodeContext, workerContext, objectContext, config];
+    const args: [StringContext, NodeContext, WorkerContext, ObjectContext, WorkerDOMConfiguration] = [
+      stringContext,
+      nodeContext,
+      workerContext,
+      objectContext,
+      config,
+    ];
     const sharedLongTaskProcessor = LongTaskExecutor.apply(null, args);
     this.executors = {
-      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor.apply(
-        null,
-        args,
-      ),
-      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor.apply(
-        null,
-        args,
-      ),
-      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor.apply(
-        null,
-        args,
-      ),
-      [TransferrableMutationType.PROPERTIES]: PropertyProcessor.apply(
-        null,
-        args,
-      ),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor.apply(
-        null,
-        args,
-      ),
-      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor.apply(
-        null,
-        args,
-      ),
+      [TransferrableMutationType.CHILD_LIST]: ChildListProcessor.apply(null, args),
+      [TransferrableMutationType.ATTRIBUTES]: AttributeProcessor.apply(null, args),
+      [TransferrableMutationType.CHARACTER_DATA]: CharacterDataProcessor.apply(null, args),
+      [TransferrableMutationType.PROPERTIES]: PropertyProcessor.apply(null, args),
+      [TransferrableMutationType.EVENT_SUBSCRIPTION]: EventSubscriptionProcessor.apply(null, args),
+      [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT]: BoundingClientRectProcessor.apply(null, args),
       [TransferrableMutationType.LONG_TASK_START]: sharedLongTaskProcessor,
       [TransferrableMutationType.LONG_TASK_END]: sharedLongTaskProcessor,
-      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor.apply(
-        null,
-        args,
-      ),
-      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor.apply(
-        null,
-        args,
-      ),
-      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor.apply(
-        null,
-        args,
-      ),
-      [TransferrableMutationType.IMAGE_BITMAP_INSTANCE]: ImageBitmapProcessor.apply(
-        null,
-        args,
-      ),
+      [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE]: OffscreenCanvasProcessor.apply(null, args),
+      [TransferrableMutationType.OBJECT_MUTATION]: ObjectMutationProcessor.apply(null, args),
+      [TransferrableMutationType.OBJECT_CREATION]: ObjectCreationProcessor.apply(null, args),
+      [TransferrableMutationType.IMAGE_BITMAP_INSTANCE]: ImageBitmapProcessor.apply(null, args),
       [TransferrableMutationType.STORAGE]: StorageProcessor.apply(null, args),
-      [TransferrableMutationType.FUNCTION_CALL]: FunctionProcessor.apply(
-        null,
-        args,
-      ),
-      [TransferrableMutationType.SCROLL_INTO_VIEW]: ScrollIntoViewProcessor.apply(
-        null,
-        args,
-      ),
+      [TransferrableMutationType.FUNCTION_CALL]: FunctionProcessor.apply(null, args),
+      [TransferrableMutationType.SCROLL_INTO_VIEW]: ScrollIntoViewProcessor.apply(null, args),
     };
   }
 
@@ -140,12 +100,7 @@ export class MutatorProcessor {
    * @param stringValues Additional string values to use in decoding messages.
    * @param mutations Changes to apply in both graph shape and content of Elements.
    */
-  public mutate(
-    phase: Phase,
-    nodes: ArrayBuffer,
-    stringValues: Array<string>,
-    mutations: Uint16Array,
-  ): void {
+  public mutate(phase: Phase, nodes: ArrayBuffer, stringValues: Array<string>, mutations: Uint16Array): void {
     this.stringContext.storeValues(stringValues);
     this.nodeContext.createNodes(nodes, this.sanitizer);
     this.mutationQueue = this.mutationQueue.concat(mutations);
@@ -164,9 +119,7 @@ export class MutatorProcessor {
    * @param allowVisibleMutations
    * @return Array of mutation types that were disallowed.
    */
-  private syncFlush = (
-    allowVisibleMutations: boolean = true,
-  ): TransferrableMutationType[] => {
+  private syncFlush = (allowVisibleMutations: boolean = true): TransferrableMutationType[] => {
     if (WORKER_DOM_DEBUG) {
       console.group('Mutations');
     }
@@ -179,19 +132,14 @@ export class MutatorProcessor {
         // TransferrableMutationType is always at position 0.
         const mutationType = mutationArray[operationStart];
         // TODO(worker-dom): Hoist `allow` up to entry point (index.amp.ts) to avoid bundling `isUserVisibleMutation`.
-        const allow =
-          allowVisibleMutations || !isUserVisibleMutation(mutationType);
+        const allow = allowVisibleMutations || !isUserVisibleMutation(mutationType);
         if (!allow) {
           // TODO(worker-dom): Consider returning the strings from executor.print() for better error messaging.
           disallowedMutations.push(mutationType);
         }
         const executor = this.executors[mutationType];
         if (WORKER_DOM_DEBUG) {
-          console.log(
-            allow ? '' : '[disallowed]',
-            ReadableMutationType[mutationType],
-            executor.print(mutationArray, operationStart),
-          );
+          console.log(allow ? '' : '[disallowed]', ReadableMutationType[mutationType], executor.print(mutationArray, operationStart));
         }
         operationStart = executor.execute(mutationArray, operationStart, allow);
       }

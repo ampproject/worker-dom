@@ -76,9 +76,6 @@ test('test Element.querySelector is case insensitive with regards to tags', (t) 
   t.deepEqual(parentFragment.querySelector('DIV'), parentDiv);
   t.deepEqual(parentDiv.querySelector('DIV'), div);
 
-  t.deepEqual(
-    parentFragment.querySelector('div'),
-    parentFragment.querySelector('DIV'),
-  );
+  t.deepEqual(parentFragment.querySelector('div'), parentFragment.querySelector('DIV'));
   t.deepEqual(parentDiv.querySelector('div'), parentDiv.querySelector('DIV'));
 });

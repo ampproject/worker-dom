@@ -20,11 +20,4 @@ export const enum BoundClientRectMutationIndex {
 }
 
 // [top, right, bottom, left, width, height]
-export type TransferrableBoundingClientRect = [
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-];
+export type TransferrableBoundingClientRect = [number, number, number, number, number, number];

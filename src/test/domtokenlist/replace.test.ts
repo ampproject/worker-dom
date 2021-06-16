@@ -59,25 +59,13 @@ test('replace an invalid value', (t) => {
 
   tokenList.value = 'foo';
   tokenList.replace('bar', '');
-  t.is(
-    tokenList.value,
-    'foo',
-    'when value is requested to be replaced that does not exist, the value is unchanged',
-  );
+  t.is(tokenList.value, 'foo', 'when value is requested to be replaced that does not exist, the value is unchanged');
 
   tokenList.value = 'foo bar';
   tokenList.replace('', 'baz');
-  t.is(
-    tokenList.value,
-    'foo bar',
-    'when value is requested to be replaced that does not exist, the value is unchanged',
-  );
+  t.is(tokenList.value, 'foo bar', 'when value is requested to be replaced that does not exist, the value is unchanged');
 
   tokenList.value = 'foo foo bar';
   tokenList.replace('baz', 'omega');
-  t.is(
-    tokenList.value,
-    'foo foo bar',
-    'when value is requested to be replaced that does not exist, the value is unchanged',
-  );
+  t.is(tokenList.value, 'foo foo bar', 'when value is requested to be replaced that does not exist, the value is unchanged');
 });

@@ -31,8 +31,4 @@ test.beforeEach((t) => {
   };
 });
 
-testReflectedProperties([
-  { multiple: [false] },
-  { name: [''] },
-  { required: [false] },
-]);
+testReflectedProperties([{ multiple: [false] }, { name: [''] }, { required: [false] }]);

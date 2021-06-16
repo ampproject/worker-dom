@@ -67,16 +67,7 @@ test('length should contain all valid elements', (t) => {
 });
 
 test('length should contain all valid elements, filtering invalid elements', (t) => {
-  const {
-    form,
-    button,
-    fieldset,
-    input,
-    output,
-    select,
-    textarea,
-    div,
-  } = t.context;
+  const { form, button, fieldset, input, output, select, textarea, div } = t.context;
 
   form.appendChild(button);
   form.appendChild(fieldset);

@@ -59,16 +59,8 @@ test('reappending a known child', (t) => {
   node.appendChild(child);
   node.appendChild(childTwo);
   node.appendChild(child);
-  t.deepEqual(
-    node.childNodes[0],
-    childTwo,
-    'reappending a known child removes the child from exising position',
-  );
-  t.deepEqual(
-    node.childNodes[1],
-    child,
-    'reappending a known child makes childNode[length] = new child',
-  );
+  t.deepEqual(node.childNodes[0], childTwo, 'reappending a known child removes the child from exising position');
+  t.deepEqual(node.childNodes[1], child, 'reappending a known child makes childNode[length] = new child');
 });
 
 test('appending returns the appended child', (t) => {
