@@ -16,6 +16,7 @@
 
 import type { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope';
 import type { HydrateFunction } from './hydrate';
+import type { WorkerStorageInit } from './initialize-storage';
 
 import { AMP } from './amp/amp';
 import { DocumentStub } from './dom/DocumentLite';
