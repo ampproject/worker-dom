@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { HydrateableNode, NodeType } from '../transfer/TransferrableNodes';
+import type { HydrateableNode } from '../transfer/TransferrableNodes';
+import type { WorkerDOMConfiguration, HydrationFilterPredicate } from './configuration';
+import type { WorkerContext } from './worker';
+
+import { NodeType } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { NumericBoolean } from '../utils';
-import { WorkerDOMConfiguration, HydrationFilterPredicate } from './configuration';
 import { applyDefaultInputListener, sendValueChangeOnAttributeMutation } from './commands/event-subscription';
-import { WorkerContext } from './worker';
 
 const NODES_ALLOWED_TO_TRANSMIT_TEXT_CONTENT = [NodeType.COMMENT_NODE, NodeType.TEXT_NODE];
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { TransferredNode } from './TransferrableNodes';
-import { TransferrableKeys } from './TransferrableKeys';
+import type { TransferredNode } from './TransferrableNodes';
+import type { TransferrableKeys } from './TransferrableKeys';
 
 interface TransferrableTouch {
   [key: number]: number;

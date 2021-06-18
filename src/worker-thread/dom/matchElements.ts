@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { Element } from './Element';
+import type { Element } from './Element';
+import type { Node } from './Node';
+
 import { toLower, toUpper } from '../../utils';
-import { Node } from './Node';
 import { NodeType } from '../../transfer/TransferrableNodes';
 
 export type ConditionPredicate = (element: Element) => boolean;

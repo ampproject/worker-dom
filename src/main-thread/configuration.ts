@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
-import { Phase } from '../transfer/Phase';
-import { HydrateableNode } from '../transfer/TransferrableNodes';
+import type { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
+import type { Phase } from '../transfer/Phase';
+import type { HydrateableNode } from '../transfer/TransferrableNodes';
+
 import { DefaultAllowedMutations } from '../transfer/TransferrableMutation';
 
 /**

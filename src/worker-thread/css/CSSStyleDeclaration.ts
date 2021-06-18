@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
+import type { Document } from '../dom/Document';
+import type { Element } from '../dom/Element';
+import type { NamespaceURI } from '../dom/Node';
+
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { Element } from '../dom/Element';
-import { NamespaceURI } from '../dom/Node';
 import { toLower } from '../../utils';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { store as storeString } from '../strings';
-import { Document } from '../dom/Document';
 
 interface StyleProperties {
   [key: string]: string | null;

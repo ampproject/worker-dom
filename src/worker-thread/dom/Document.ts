@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+import type { WorkerDOMGlobalScope, GlobalScope } from '../WorkerDOMGlobalScope';
+import type { PostMessage } from '../worker-thread';
+import type { HydrateableNode } from '../../transfer/TransferrableNodes';
+
 import { Element, NS_NAME_TO_CLASS } from './Element';
 import { HTMLElement } from './HTMLElement';
 import './HTMLAnchorElement';
@@ -52,14 +56,12 @@ import { Text } from './Text';
 import { Comment } from './Comment';
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
-import { PostMessage } from '../worker-thread';
-import { NodeType, HTML_NAMESPACE, HydrateableNode } from '../../transfer/TransferrableNodes';
+import { NodeType, HTML_NAMESPACE, } from '../../transfer/TransferrableNodes';
 import { Phase } from '../../transfer/Phase';
 import { propagate as propagateEvents } from '../Event';
 import { propagate as propagateSyncValues } from '../SyncValuePropagation';
 import { propagate as propagateResize } from '../ResizePropagation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { WorkerDOMGlobalScope, GlobalScope } from '../WorkerDOMGlobalScope';
 import { set as setPhase } from '../phase';
 
 const DOCUMENT_NAME = '#document';

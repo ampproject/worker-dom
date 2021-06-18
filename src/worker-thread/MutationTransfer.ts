@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
+import type { MutationFromWorker } from '../transfer/Messages';
+import type { Node } from './dom/Node';
+import type { Document } from './dom/Document';
+import type { DocumentStub } from './dom/DocumentLite';
+
 import { consume as consumeNodes } from './nodes';
 import { consume as consumeStrings } from './strings';
-import { MessageType, MutationFromWorker } from '../transfer/Messages';
+import { MessageType } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { Node } from './dom/Node';
 import { Phase } from '../transfer/Phase';
 import { phase, set as setPhase } from './phase';
-import { Document } from './dom/Document';
-import { DocumentStub } from './dom/DocumentLite';
 
 let pending = false;
 let pendingMutations: Array<number> = [];

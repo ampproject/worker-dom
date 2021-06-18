@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Node } from './dom/Node';
+import type { Node } from './dom/Node';
+
 import { phase } from './phase';
 import { Phase } from '../transfer/Phase';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';

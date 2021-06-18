@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+import type { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope';
+
 import { AMP } from './amp/amp';
-import { callFunctionMessageHandler, exportFunction } from './function';
-import { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { DocumentStub } from './dom/DocumentLite';
+import { callFunctionMessageHandler, exportFunction } from './function';
 import { deleteGlobals } from './amp/delete-globals';
 
 const noop = () => void 0;

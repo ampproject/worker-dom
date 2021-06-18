@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+import type { Document } from './dom/Document';
+import type { HydrateableNode } from '../transfer/TransferrableNodes';
+
 import { store as storeString } from './strings';
-import { Document } from './dom/Document';
-import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
 import { createStorage } from './Storage';
