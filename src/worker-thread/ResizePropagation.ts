@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { MessageToWorker, MessageType, ResizeSyncToWorker } from '../transfer/Messages';
+import type { MessageToWorker, ResizeSyncToWorker } from '../transfer/Messages';
+import type { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
+
+import { MessageType } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 
 export function propagate(global: WorkerDOMGlobalScope): void {
   const document = global.document;

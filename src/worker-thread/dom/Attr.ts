@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import type { NamespaceURI } from './Node';
 import { keyValueString } from '../../utils';
-import { NamespaceURI } from './Node';
 
 export interface Attr {
   [index: string]: string | null;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Element } from './Element';
+import type { Element } from './Element';
 import { toLower } from '../../utils';
 
 type PropertyValue = string | boolean | number;

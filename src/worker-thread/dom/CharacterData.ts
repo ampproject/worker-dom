@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { Node, NodeName } from './Node';
+import type { NodeName } from './Node';
+import type { Document } from './Document';
+import type { NodeType } from '../../transfer/TransferrableNodes';
+
+import { Node } from './Node';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { store as storeString } from '../strings';
-import { Document } from './Document';
-import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 

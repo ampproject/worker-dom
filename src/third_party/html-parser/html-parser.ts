@@ -1,5 +1,5 @@
-import { Element } from '../../worker-thread/dom/Element';
-import { Node } from '../../worker-thread/dom/Node';
+import type { Element } from '../../worker-thread/dom/Element';
+import type { Node } from '../../worker-thread/dom/Node';
 import { SVG_NAMESPACE, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { toLower, toUpper } from '../../utils';
 

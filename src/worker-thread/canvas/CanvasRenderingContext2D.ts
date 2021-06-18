@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {
+import type {
   CanvasRenderingContext2D,
   CanvasDirection,
   CanvasFillRule,
@@ -27,16 +27,18 @@ import {
   CanvasGradient,
   CanvasPattern,
 } from './CanvasTypes';
-import { MessageType, OffscreenCanvasToWorker } from '../../transfer/Messages';
+import type { OffscreenCanvasToWorker } from '../../transfer/Messages';
+import type { Document } from '../dom/Document';
+import type { HTMLElement } from '../dom/HTMLElement';
+import type { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
+
+import { MessageType } from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { transfer } from '../MutationTransfer';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { OffscreenCanvasPolyfill } from './OffscreenCanvasPolyfill';
-import { Document } from '../dom/Document';
-import { HTMLElement } from '../dom/HTMLElement';
 import { FakeNativeCanvasPattern } from './FakeNativeCanvasPattern';
 import { retrieveImageBitmap } from './canvas-utils';
-import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
 
 export const deferredUpgrades = new WeakMap();
 
@@ -396,7 +398,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
       this.degradeImplementation();
 
       // Retrieve an ImageBitmap from the main-thread with the same image as the input image
-      retrieveImageBitmap(image as any, (this.canvas as unknown) as HTMLCanvasElement)
+      retrieveImageBitmap(image as any, this.canvas as unknown as HTMLCanvasElement)
         // Then call the actual method with the retrieved ImageBitmap
         .then((instance: ImageBitmap) => {
           args.push(instance, dx, dy);

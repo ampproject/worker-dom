@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { Element, registerSubclass } from './Element';
-import { NodeName, Node, NamespaceURI } from './Node';
+import type { NodeName, Node, NamespaceURI } from './Node';
+
+import { registerSubclass, Element } from './Element';
 import { SVG_NAMESPACE, NodeType } from '../../transfer/TransferrableNodes';
 
 export class SVGElement extends Element {

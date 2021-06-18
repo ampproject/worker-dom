@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import type { TransferrableObject } from '../worker-thread';
 import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
-import { TransferrableObject } from '../worker-thread';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 /**

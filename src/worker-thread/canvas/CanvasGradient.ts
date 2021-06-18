@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import { Document } from '../dom/Document';
+import type { Document } from '../dom/Document';
+import type { TransferrableObject } from '../worker-thread';
+
 import { transfer } from '../MutationTransfer';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { serializeTransferrableObject } from '../serializeTransferrableObject';
 import { store } from '../strings';
-import { TransferrableObject } from '../worker-thread';
 import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 

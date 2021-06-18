@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import { Element } from './Element';
-import { NamespaceURI } from './Node';
+import type { Document } from './Document';
+import type { Element } from './Element';
+import type { NamespaceURI } from './Node';
+
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { store as storeString } from '../strings';
-import { Document } from './Document';
 
 const WHITESPACE_REGEX = /\s/;
 
