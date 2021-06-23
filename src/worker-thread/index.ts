@@ -59,6 +59,7 @@ import { Document } from './dom/Document';
 import { initialize } from './initialize';
 import { Event as WorkerDOMEvent } from './Event';
 import { rafPolyfill, cafPolyfill } from './AnimationFrame';
+import { HydrateFunction } from './hydrate';
 
 const globalScope: GlobalScope = {
   innerWidth: 0,
@@ -131,4 +132,4 @@ export const workerDOM = (function (postMessage, addEventListener, removeEventLi
   return document.defaultView;
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
-export const hydrate = initialize;
+export const hydrate: HydrateFunction = initialize;

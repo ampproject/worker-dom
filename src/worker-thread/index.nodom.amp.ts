@@ -15,11 +15,14 @@
  */
 
 import type { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope';
+import type { HydrateFunction } from './hydrate';
+import type { WorkerStorageInit } from './initialize-storage';
 
 import { AMP } from './amp/amp';
 import { DocumentStub } from './dom/DocumentLite';
 import { callFunctionMessageHandler, exportFunction } from './function';
 import { deleteGlobals } from './amp/delete-globals';
+import { initializeStorage } from './initialize-storage';
 
 const noop = () => void 0;
 
@@ -43,4 +46,15 @@ deleteGlobals(self);
 (self as any).exportFunction = exportFunction;
 addEventListener('message', (evt: MessageEvent) => callFunctionMessageHandler(evt, workerDOM.document));
 
-export const hydrate = noop;
+export const hydrate: HydrateFunction = (
+  document: DocumentStub,
+  strings: Object,
+  hydrateableNode: Object,
+  cssKeys: Object,
+  globalEventHandlerKeys: Object,
+  size: Object,
+  localStorageInit: WorkerStorageInit,
+  sessionStorageInit: WorkerStorageInit,
+) => {
+  initializeStorage(document, localStorageInit, sessionStorageInit);
+};

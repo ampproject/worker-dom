@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
+ * Copyright 2021 The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,7 @@ import type { Document } from './dom/Document';
 import type { HydrateableNode } from '../transfer/TransferrableNodes';
 import type { WorkerStorageInit } from './initialize-storage';
 
-import { store as storeString } from './strings';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
-import { appendGlobalEventProperties } from './dom/HTMLElement';
-import { initializeStorage } from './initialize-storage';
-
-export function initialize(
+export type HydrateFunction = (
   document: Document,
   strings: Array<string>,
   hydrateableNode: HydrateableNode,
@@ -33,15 +27,4 @@ export function initialize(
   [innerWidth, innerHeight]: [number, number],
   localStorageInit: WorkerStorageInit,
   sessionStorageInit: WorkerStorageInit,
-): void {
-  addCssKeys(cssKeys);
-  appendGlobalEventProperties(globalEventHandlerKeys);
-  strings.forEach(storeString);
-  (hydrateableNode[TransferrableKeys.childNodes] || []).forEach((child) =>
-    document.body.appendChild(document[TransferrableKeys.hydrateNode](strings, child)),
-  );
-  const window = document.defaultView;
-  window.innerWidth = innerWidth;
-  window.innerHeight = innerHeight;
-  initializeStorage(document, localStorageInit, sessionStorageInit);
-}
+) => void;
