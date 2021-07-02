@@ -19,16 +19,14 @@
  * WorkerDOM's `Event` class. `CustomEvent` is available natively in web worker.
  */
 
-import type { Node } from './dom/Node';
-import type { EventToWorker } from '../transfer/Messages';
-import type { TransferrableEvent, TransferrableTouchList } from '../transfer/TransferrableEvent';
-import type { Document } from './dom/Document';
-import type { TransferredNode } from '../transfer/TransferrableNodes';
-import type { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
-
+import { Node } from './dom/Node';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { MessageType } from '../transfer/Messages';
+import { EventToWorker, MessageType } from '../transfer/Messages';
+import { TransferrableEvent, TransferrableTouchList } from '../transfer/TransferrableEvent';
 import { get } from './nodes';
+import { Document } from './dom/Document';
+import { TransferredNode } from '../transfer/TransferrableNodes';
+import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 
 interface EventOptions {
   bubbles?: boolean;

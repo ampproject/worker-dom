@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import type { StringContext } from './strings';
 import { NodeType, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
+import { StringContext } from './strings';
 
 /**
  * IE11 doesn't support NodeList.prototype.forEach

@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import type { MessageToWorker, ValueSyncToWorker } from '../transfer/Messages';
-import type { Document } from './dom/Document';
-import type { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
-
-import { MessageType } from '../transfer/Messages';
+import { MessageToWorker, MessageType, ValueSyncToWorker } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { get } from './nodes';
+import { Document } from './dom/Document';
+import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 
 /**
  * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import type { Document } from './dom/Document';
-import type { Node } from './dom/Node';
-import type { MutationRecord } from './MutationRecord';
-
+import { Node } from './dom/Node';
+import { MutationRecord } from './MutationRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { Document } from './dom/Document';
 import { transfer } from './MutationTransfer';
 
 const observers: MutationObserver[] = [];

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-import type { Document } from './Document';
-
 import { registerSubclass, definePropertyBackedAttributes } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { transfer } from '../MutationTransfer';
+import { Document } from './Document';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { store as storeString } from '../strings';
 import { NumericBoolean } from '../../utils';

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import type { StringContext } from './strings';
-import type { NodeContext } from './nodes';
-import type { ObjectContext } from './object-context';
-
+import { StringContext } from './strings';
 import { TransferrableObjectType } from '../transfer/TransferrableMutation';
+import { NodeContext } from './nodes';
+import { ObjectContext } from './object-context';
 
 interface DeserializedArgs {
   args: unknown[];

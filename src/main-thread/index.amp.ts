@@ -18,11 +18,10 @@
  * @fileoverview This entry point API in active development and unstable.
  */
 
-import type { ExportedWorker } from './exported-worker';
-import type { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
-
 import { fetchAndInstall, install } from './install';
+import { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
 import { toLower } from '../utils';
+import { ExportedWorker } from './exported-worker';
 
 /**
  * AMP Element Children need to be filtered from Hydration, to avoid Author Code from manipulating it.

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import type { ExportedWorker } from './exported-worker';
 import { fetchAndInstall } from './install';
+import { ExportedWorker } from './exported-worker';
 
 export function upgradeElement(baseElement: Element, domURL: string): Promise<ExportedWorker | null> {
   const authorURL = baseElement.getAttribute('src');

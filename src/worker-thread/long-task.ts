@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import type { Node } from './dom/Node';
-import type { Document } from './dom/Document';
-
+import { Node } from './dom/Node';
 import { transfer } from './MutationTransfer';
+import { Document } from './dom/Document';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 

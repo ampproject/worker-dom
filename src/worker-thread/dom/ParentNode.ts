@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import type { Element } from './Element';
-
+import { Element } from './Element';
 import { elementPredicate, matchAttrReference, matchChildrenElements } from './matchElements';
 import { Node } from './Node';
 import { containsIndexOf, toLower } from '../../utils';

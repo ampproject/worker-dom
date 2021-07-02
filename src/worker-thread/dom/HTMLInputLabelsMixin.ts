@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { Element } from './Element';
+import { Element } from './Element';
 import { matchChildrenElements } from './matchElements';
 
 /**
