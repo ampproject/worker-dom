@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import type { Node } from './Node';
-import type { Element } from './Element';
-
-import { registerSubclass } from './Element';
+import { registerSubclass, Element } from './Element';
 import { HTMLElement } from './HTMLElement';
+import { Node } from './Node';
 
 export class HTMLDataListElement extends HTMLElement {
   /**

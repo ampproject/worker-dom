@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-import type { Element } from './Element';
-import type { HTMLOptionElement } from './HTMLOptionElement';
-import type { Node } from './Node';
-
-import { registerSubclass } from './Element';
+import { registerSubclass, Element } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
 import { matchChildrenElements, matchChildElement, tagNameConditionPredicate } from './matchElements';
+import { HTMLOptionElement } from './HTMLOptionElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { Node } from './Node';
 
 const isOptionPredicate = tagNameConditionPredicate(['OPTION']);
 const isSelectedOptionPredicate = (element: Element): boolean => isOptionPredicate(element) && (element as HTMLOptionElement).selected === true;

@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-import type { HTMLTableElement } from './HTMLTableElement';
-import type { Document } from './Document';
-import type { HTMLTableCellElement } from './HTMLTableCellElement';
-import type { Element } from './Element';
-
-import { registerSubclass } from './Element';
+import { registerSubclass, Element } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { matchNearestParent, tagNameConditionPredicate, ConditionPredicate, matchChildrenElements } from './matchElements';
+import { HTMLTableElement } from './HTMLTableElement';
+import { Document } from './Document';
+import { HTMLTableCellElement } from './HTMLTableCellElement';
 
 const TABLE_SECTION_TAGNAMES = 'TABLE TBODY THEAD TFOOT'.split(' ');
 

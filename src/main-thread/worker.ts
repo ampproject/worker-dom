@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import type { MessageToWorker } from '../transfer/Messages';
-import type { WorkerDOMConfiguration } from './configuration';
-import type { NodeContext } from './nodes';
-
+import { MessageToWorker } from '../transfer/Messages';
+import { WorkerDOMConfiguration } from './configuration';
 import { createHydrateableRootNode } from './serialize';
 import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
+import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 import { IframeWorker } from './iframe-worker';

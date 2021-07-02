@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-import type { MutationFromWorker, MessageFromWorker } from '../transfer/Messages';
-import type { InboundWorkerDOMConfiguration } from './configuration';
-
-import { MessageType } from '../transfer/Messages';
+import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
 import { MutatorProcessor } from './mutator';
 import { NodeContext } from './nodes';
 import { StringContext } from './strings';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { normalizeConfiguration } from './configuration';
+import { InboundWorkerDOMConfiguration, normalizeConfiguration } from './configuration';
 import { WorkerContext } from './worker';
 import { ObjectContext } from './object-context';
 import { ExportedWorker } from './exported-worker';

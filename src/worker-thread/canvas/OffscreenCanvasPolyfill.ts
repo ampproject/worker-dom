@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import type {
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import {
   CanvasRenderingContext2D,
   ImageSmoothingQuality,
   CanvasTextAlign,
@@ -25,13 +27,8 @@ import type {
   CanvasFillRule,
   CanvasImageSource,
 } from './CanvasTypes';
-import type { Document } from '../dom/Document';
-import type { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
-import type { HTMLImageElement } from '../dom/HTMLImageElement';
-
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { transfer } from '../MutationTransfer';
+import { Document } from '../dom/Document';
 import { toLower } from '../../utils';
 import { store } from '../strings';
 import { HTMLElement } from '../dom/HTMLElement';
@@ -40,6 +37,8 @@ import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableObject } from '../worker-thread';
 import { CanvasGradient } from './CanvasGradient';
 import { CanvasPattern } from './CanvasPattern';
+import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
+import { HTMLImageElement } from '../dom/HTMLImageElement';
 
 /**
  * Handles calls to a CanvasRenderingContext2D object in cases where the user's environment does not

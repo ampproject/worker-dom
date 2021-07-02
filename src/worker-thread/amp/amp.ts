@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-import type { Document } from '../dom/Document';
-import type { DocumentStub } from '../dom/DocumentLite';
-import type { StorageValueToWorker, MessageToWorker } from '../../transfer/Messages';
-
+import { Document } from '../dom/Document';
 import { StorageLocation } from '../../transfer/TransferrableStorage';
-import { MessageType, GetOrSet } from '../../transfer/Messages';
+import { StorageValueToWorker, MessageType, MessageToWorker, GetOrSet } from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { store } from '../strings';
 import { transfer } from '../MutationTransfer';
+import { DocumentStub } from '../dom/DocumentLite';
 
 export class AMP {
   private document: Document | DocumentStub;

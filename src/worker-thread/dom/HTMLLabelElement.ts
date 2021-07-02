@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import type { Document } from './Document';
-import type { Element } from './Element';
-
-import { registerSubclass } from './Element';
+import { Element, registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { matchChildElement, tagNameConditionPredicate } from './matchElements';
+import { Document } from './Document';
 
 export class HTMLLabelElement extends HTMLElement {
   /**

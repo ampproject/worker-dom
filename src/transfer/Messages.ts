@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import type { TransferrableEvent } from './TransferrableEvent';
-import type { TransferrableSyncValue } from './TransferrableSyncValue';
-import type { TransferrableKeys } from './TransferrableKeys';
-import type { HydrateableNode, TransferredNode } from './TransferrableNodes';
-import type { TransferrableBoundingClientRect } from './TransferrableBoundClientRect';
-import type { Phase } from './Phase';
-import type { StorageLocation } from './TransferrableStorage';
+import { TransferrableEvent } from './TransferrableEvent';
+import { TransferrableSyncValue } from './TransferrableSyncValue';
+import { TransferrableKeys } from './TransferrableKeys';
+import { HydrateableNode, TransferredNode } from './TransferrableNodes';
+import { TransferrableBoundingClientRect } from './TransferrableBoundClientRect';
+import { Phase } from './Phase';
+import { StorageLocation } from './TransferrableStorage';
 
 export const enum MessageType {
   // INIT = 0,

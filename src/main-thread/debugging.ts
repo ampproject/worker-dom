@@ -22,18 +22,22 @@
  * @see https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#9.4
  */
 
-import type { EventToWorker, MessageToWorker, ValueSyncToWorker, BoundingClientRectToWorker, StorageValueToWorker } from '../transfer/Messages';
-import type { HydrateableNode, TransferredNode } from '../transfer/TransferrableNodes';
-import type { NodeContext } from './nodes';
-import type { TransferrableEvent } from '../transfer/TransferrableEvent';
-import type { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
-import type { WorkerContext } from './worker';
-
-import { MessageType } from '../transfer/Messages';
-import { TransferrableNodeIndex } from '../transfer/TransferrableNodes';
+import {
+  EventToWorker,
+  MessageType,
+  MessageToWorker,
+  ValueSyncToWorker,
+  BoundingClientRectToWorker,
+  StorageValueToWorker,
+} from '../transfer/Messages';
+import { HydrateableNode, TransferredNode, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
+import { NodeContext } from './nodes';
+import { TransferrableEvent } from '../transfer/TransferrableEvent';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
 import { createReadableHydrateableRootNode } from './serialize';
 import { WorkerDOMConfiguration } from './configuration';
+import { WorkerContext } from './worker';
 
 /**
  * @param element

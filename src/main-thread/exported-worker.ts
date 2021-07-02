@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import type { WorkerContext } from './worker';
-import type { WorkerDOMConfiguration } from './configuration';
-import type { FunctionCallToWorker } from '../transfer/Messages';
-
+import { WorkerContext } from './worker';
+import { WorkerDOMConfiguration } from './configuration';
 import { registerPromise } from './commands/function';
-import { MessageType } from '../transfer/Messages';
+import { FunctionCallToWorker, MessageType } from '../transfer/Messages';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 

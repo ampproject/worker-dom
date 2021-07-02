@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Document } from './dom/Document';
 import { HTMLElement } from './dom/HTMLElement';
 import { SVGElement } from './dom/SVGElement';
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
@@ -46,8 +45,11 @@ import { HTMLTableElement } from './dom/HTMLTableElement';
 import { HTMLTableRowElement } from './dom/HTMLTableRowElement';
 import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
+import { Document } from './dom/Document';
 import { GlobalScope } from './WorkerDOMGlobalScope';
+import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
+import { Event as WorkerDOMEvent } from './Event';
 import { Text } from './dom/Text';
 import { HTMLDataListElement } from './dom/HTMLDataListElement';
 import { CharacterData } from './dom/CharacterData';
@@ -55,9 +57,6 @@ import { Comment } from './dom/Comment';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { Element } from './dom/Element';
-
-import { initialize } from './initialize';
-import { Event as WorkerDOMEvent } from './Event';
 import { rafPolyfill, cafPolyfill } from './AnimationFrame';
 import { HydrateFunction } from './hydrate';
 

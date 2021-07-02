@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import type { Node, NodeName, NamespaceURI } from './Node';
-import type { MessageToWorker, BoundingClientRectToWorker } from '../../transfer/Messages';
-
+import { Node, NodeName, NamespaceURI } from './Node';
 import { ParentNode } from './ParentNode';
 import { DOMTokenList, synchronizedAccessor } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
@@ -33,7 +31,7 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableBoundClientRect';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { MessageType } from '../../transfer/Messages';
+import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
 import { parse } from '../../third_party/html-parser/html-parser';
 import { propagate } from './Node';
 import { Event } from '../Event';

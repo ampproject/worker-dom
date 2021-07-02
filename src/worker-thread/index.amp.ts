@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-import { Document } from './dom/Document';
+import { AMP } from './amp/amp';
+import { callFunctionMessageHandler, exportFunction } from './function';
 import { CharacterData } from './dom/CharacterData';
 import { Comment } from './dom/Comment';
+import { deleteGlobals } from './amp/delete-globals';
+import { Document } from './dom/Document';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { Element } from './dom/Element';
+import { Event as WorkerDOMEvent } from './Event';
+import { GlobalScope, WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
 import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
@@ -51,17 +56,11 @@ import { HTMLTableElement } from './dom/HTMLTableElement';
 import { HTMLTableRowElement } from './dom/HTMLTableRowElement';
 import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
+import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
+import { rafPolyfill, cafPolyfill } from './AnimationFrame';
 import { SVGElement } from './dom/SVGElement';
 import { Text } from './dom/Text';
-
-import { AMP } from './amp/amp';
-import { callFunctionMessageHandler, exportFunction } from './function';
-import { deleteGlobals } from './amp/delete-globals';
-import { Event as WorkerDOMEvent } from './Event';
-import { GlobalScope, WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
-import { initialize } from './initialize';
-import { rafPolyfill, cafPolyfill } from './AnimationFrame';
 import { wrap as longTaskWrap } from './long-task';
 import { HydrateFunction } from './hydrate';
 

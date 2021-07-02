@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-import type { Element } from './Element';
-import type { NodeName } from './Node';
-import type { HTMLTableSectionElement } from './HTMLTableSectionElement';
-import type { HTMLTableRowElement } from './HTMLTableRowElement';
-
-import { registerSubclass } from './Element';
+import { registerSubclass, Element } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { matchChildElement, matchChildrenElements, tagNameConditionPredicate } from './matchElements';
+import { NodeName } from './Node';
+import { HTMLTableSectionElement } from './HTMLTableSectionElement';
+import { HTMLTableRowElement } from './HTMLTableRowElement';
 import { toUpper } from '../../utils';
 
 const removeElement = (element: Element | null): any => element && element.remove();

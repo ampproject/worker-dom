@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-import type { Event, EventHandler, AddEventListenerOptions } from '../Event';
-import type { Document } from './Document';
-import type { TransferredNode } from '../../transfer/TransferrableNodes';
-
 import { store as storeNodeMapping, storeOverride as storeOverrideNodeMapping } from '../nodes';
+import { Event, EventHandler, AddEventListenerOptions } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { store as storeString } from '../strings';
+import { Document } from './Document';
 import { transfer } from '../MutationTransfer';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { TransferredNode, NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;

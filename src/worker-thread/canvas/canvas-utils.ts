@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-import type { ImageBitmapToWorker } from '../../transfer/Messages';
-import type { HTMLImageElement } from '../dom/HTMLImageElement';
-import type { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
-import type { Document } from '../dom/Document';
-
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { MessageType } from '../../transfer/Messages';
+import { MessageType, ImageBitmapToWorker } from '../../transfer/Messages';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { HTMLImageElement } from '../dom/HTMLImageElement';
+import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
+import { Document } from '../dom/Document';
 import { transfer } from '../MutationTransfer';
 
 let indexTracker = 0;

@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-import type { Document } from './dom/Document';
-import type { MessageToWorker, FunctionCallToWorker } from '../transfer/Messages';
-import type { DocumentStub } from './dom/DocumentLite';
-
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { MessageType, ResolveOrReject } from '../transfer/Messages';
+import { Document } from './dom/Document';
+import { MessageToWorker, MessageType, FunctionCallToWorker, ResolveOrReject } from '../transfer/Messages';
 import { transfer } from './MutationTransfer';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { store } from './strings';
+import { DocumentStub } from './dom/DocumentLite';
 
 const exportedFunctions: { [fnIdent: string]: Function } = {};
 

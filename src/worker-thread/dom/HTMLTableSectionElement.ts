@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import type { Document } from './Document';
-import type { HTMLTableRowElement } from './HTMLTableRowElement';
-
 import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { tagNameConditionPredicate, matchChildrenElements } from './matchElements';
+import { Document } from './Document';
+import { HTMLTableRowElement } from './HTMLTableRowElement';
+
 export class HTMLTableSectionElement extends HTMLElement {
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableSectionElement
