@@ -16,7 +16,7 @@
 
 const DICT = require('./dict');
 
-module.exports = function({ types: t }) {
+module.exports = function ({ types: t }) {
   return {
     visitor: {
       /**

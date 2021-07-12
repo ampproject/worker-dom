@@ -15,7 +15,8 @@
  */
 
 import anyTest, { TestInterface } from 'ava';
-import { initialize, WorkerStorageInit } from '../../worker-thread/initialize';
+import { initialize } from '../../worker-thread/initialize';
+import { WorkerStorageInit } from '../../worker-thread/initialize-storage';
 import { Document } from '../../worker-thread/dom/Document';
 import { HydrateableNode } from '../../transfer/TransferrableNodes';
 

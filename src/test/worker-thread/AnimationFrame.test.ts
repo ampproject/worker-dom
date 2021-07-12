@@ -17,7 +17,10 @@
 import anyTest, { TestInterface } from 'ava';
 import { rafPolyfill, cafPolyfill } from '../../worker-thread/AnimationFrame';
 
-const test = anyTest as TestInterface<{ runTimeout: Function; runAllTimeouts: Function }>;
+const test = anyTest as TestInterface<{
+  runTimeout: Function;
+  runAllTimeouts: Function;
+}>;
 const originalSetTimeout = globalThis.setTimeout;
 
 test.beforeEach((t) => {
