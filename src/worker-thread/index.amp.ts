@@ -63,6 +63,7 @@ import { SVGElement } from './dom/SVGElement';
 import { Text } from './dom/Text';
 import { wrap as longTaskWrap } from './long-task';
 import { HydrateFunction } from './hydrate';
+import { Location } from './dom/Location';
 
 declare const WORKER_DOM_DEBUG: boolean;
 
@@ -112,6 +113,7 @@ const globalScope: GlobalScope = {
   MutationObserver,
   requestAnimationFrame: self.requestAnimationFrame || rafPolyfill,
   cancelAnimationFrame: self.cancelAnimationFrame || cafPolyfill,
+  location: Location,
 };
 
 const noop = () => void 0;

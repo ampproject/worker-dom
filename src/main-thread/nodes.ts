@@ -16,6 +16,7 @@
 
 import { NodeType, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
 import { StringContext } from './strings';
+import { RenderableElement, Sanitizer } from './main-thread';
 
 /**
  * IE11 doesn't support NodeList.prototype.forEach

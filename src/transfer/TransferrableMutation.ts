@@ -30,6 +30,7 @@ export const enum TransferrableMutationType {
   STORAGE = 12,
   FUNCTION_CALL = 13,
   SCROLL_INTO_VIEW = 14,
+  LOCATION = 15,
 }
 
 /**
@@ -67,6 +68,7 @@ export const DefaultAllowedMutations = [
   TransferrableMutationType.STORAGE,
   TransferrableMutationType.FUNCTION_CALL,
   TransferrableMutationType.SCROLL_INTO_VIEW,
+  TransferrableMutationType.LOCATION,
 ];
 
 export const ReadableMutationType: { [key: number]: string } = {
@@ -85,6 +87,7 @@ export const ReadableMutationType: { [key: number]: string } = {
   12: 'STORAGE',
   13: 'FUNCTION_INVOCATION',
   14: 'SCROLL_INTO_VIEW',
+  15: 'LOCATION',
 };
 
 /**
@@ -285,4 +288,18 @@ export const enum FunctionMutationIndex {
 export const enum ScrollIntoViewMutationIndex {
   Target = 1,
   End = 2,
+}
+
+/**
+ * Location Mutation
+ * [
+ *   TransferrableMutationType.LOCATION,
+ *   GetOrSet,
+ *   Location
+ * ]
+ */
+export const enum LocationMutationIndex {
+  Operation = 1,
+  Location = 2,
+  End = 3,
 }

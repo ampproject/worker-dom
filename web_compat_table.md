@@ -95,7 +95,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Document.lastModified                               | ✖️     |                                                  | 
 | Document.lastStyleSheetSet                          | ✖️     |                                                  | 
 | Document.links                                      | ✖️     |                                                  | 
-| Document.location                                   | ✖️     |                                                  | 
+| Document.location                                   | ✔️     |                                                  | 
 | Document.mozSetImageElement()                       | ✖️     |                                                  | 
 | Document.mozSyntheticDocument                       | ✖️     |                                                  | 
 | Document.normalizeDocument()                        | ✖️     |                                                  | 
@@ -900,6 +900,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Window.isSecureContext                              | ✖️     |                                                  | 
 | Window.length                                       | ✖️     |                                                  | 
 | Window.localStorage                                 | ✔️     |                                                  | 
+| Window.location                                     | ✔️     |                                                  | 
 | Window.locationbar                                  | ✖️     |                                                  | 
 | Window.matchMedia()                                 | ✖️     |                                                  | 
 | Window.maximize()                                   | ✖️     |                                                  | 

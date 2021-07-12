@@ -57,6 +57,7 @@ import { DocumentFragment } from './dom/DocumentFragment';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { Element } from './dom/Element';
 import { DocumentStub } from './dom/DocumentLite';
+import { Location } from './dom/Location';
 
 /**
  * Should only contain properties that exist on Window.
@@ -114,6 +115,7 @@ export interface GlobalScope {
   ImageBitmap?: typeof ImageBitmap;
   requestAnimationFrame: typeof requestAnimationFrame;
   cancelAnimationFrame: typeof cancelAnimationFrame;
+  location: typeof Location;
 }
 
 export interface WorkerDOMGlobalScope extends GlobalScope {

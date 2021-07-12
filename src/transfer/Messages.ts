@@ -21,6 +21,7 @@ import { HydrateableNode, TransferredNode } from './TransferrableNodes';
 import { TransferrableBoundingClientRect } from './TransferrableBoundClientRect';
 import { Phase } from './Phase';
 import { StorageLocation } from './TransferrableStorage';
+import { Location } from '../worker-thread/dom/Location';
 
 export const enum MessageType {
   // INIT = 0,
@@ -36,6 +37,7 @@ export const enum MessageType {
   IMAGE_BITMAP_INSTANCE = 10,
   GET_STORAGE = 11,
   FUNCTION = 12,
+  LOCATION = 13,
   // NAVIGATION_PUSH_STATE = 8,
   // NAVIGATION_REPLACE_STATE = 9,
   // NAVIGATION_POP_STATE = 10,
@@ -90,7 +92,10 @@ export interface StorageValueToWorker {
   [TransferrableKeys.storageLocation]: StorageLocation;
   [TransferrableKeys.value]: { [key: string]: string };
 }
-
+export interface LocationToWorker {
+  [TransferrableKeys.type]: MessageType.LOCATION;
+  [TransferrableKeys.location]: Location;
+}
 export interface FunctionCallToWorker {
   [TransferrableKeys.type]: MessageType.FUNCTION;
   [TransferrableKeys.index]: number;
@@ -106,7 +111,8 @@ export type MessageToWorker =
   | OffscreenCanvasToWorker
   | ImageBitmapToWorker
   | StorageValueToWorker
-  | FunctionCallToWorker;
+  | FunctionCallToWorker
+  | LocationToWorker;
 
 /**
  * Can parameterize a method invocation message as a getter or setter.

@@ -27,6 +27,7 @@ import { WorkerContext } from '../worker';
 import { CommandExecutorInterface } from './interface';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { BASE_ELEMENT_INDEX } from '../nodes';
+import { RenderableElement } from '../main-thread';
 
 /**
  * Monitoring Nodes attribute changes requires a Mutation Observer.
@@ -46,7 +47,7 @@ const shouldTrackChanges = (node: HTMLElement): boolean => node && 'value' in no
 /**
  * When a node that has a value needing synced doesn't already have an event listener
  * listening for input values, ensure the value is synced with a default listener.
- * @param worker whom to dispatch value toward.
+ * @param workerContext worker whom to dispatch value toward.
  * @param node node to listen to value changes on.
  */
 export const applyDefaultInputListener = (workerContext: WorkerContext, node: RenderableElement): void => {
@@ -57,7 +58,7 @@ export const applyDefaultInputListener = (workerContext: WorkerContext, node: Re
 
 /**
  * Use a MutationObserver to capture value changes based on Attribute modification (frequently used by frameworks).
- * @param worker whom to dispatch value toward.
+ * @param workerContext worker whom to dispatch value toward.
  * @param node node to listen to value changes on.
  */
 export const sendValueChangeOnAttributeMutation = (workerContext: WorkerContext, node: RenderableElement): void => {
@@ -71,7 +72,7 @@ export const sendValueChangeOnAttributeMutation = (workerContext: WorkerContext,
 
 /**
  * Tell WorkerDOM what the value is for a Node.
- * @param worker whom to dispatch value toward.
+ * @param workerContext worker whom to dispatch value toward.
  * @param node where to get the value from.
  */
 const fireValueChange = (workerContext: WorkerContext, node: RenderableElement): void =>
@@ -117,7 +118,6 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
 
   /**
    * Register an event handler for dispatching events to worker thread
-   * @param worker whom to dispatch events toward
    * @param index node index the event comes from (used to dispatchEvent in worker thread).
    * @return eventHandler function consuming event and dispatching to worker thread
    */

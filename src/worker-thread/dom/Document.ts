@@ -52,6 +52,7 @@ import { Text } from './Text';
 import { Comment } from './Comment';
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
+import { Location } from "./Location";
 import { PostMessage } from '../worker-thread';
 import { NodeType, HTML_NAMESPACE, HydrateableNode } from '../../transfer/TransferrableNodes';
 import { Phase } from '../../transfer/Phase';
@@ -68,6 +69,7 @@ export class Document extends Element {
   public defaultView: WorkerDOMGlobalScope;
   public documentElement: Document;
   public body: Element;
+  public location: Location;
 
   // Internal variables.
   public postMessage: PostMessage;
@@ -80,11 +82,11 @@ export class Document extends Element {
     // Element uppercases its nodeName, but Document doesn't.
     this.nodeName = DOCUMENT_NAME;
     this.documentElement = this; // TODO(choumx): Should be the <html> element.
-
     this.defaultView = Object.assign(global, {
       document: this,
       addEventListener: this.addEventListener.bind(this),
       removeEventListener: this.removeEventListener.bind(this),
+      location: this.location,
     });
   }
 

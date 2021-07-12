@@ -18,6 +18,7 @@ import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
 import { Phase } from '../transfer/Phase';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { DefaultAllowedMutations } from '../transfer/TransferrableMutation';
+import { RenderableElement, Sanitizer } from './main-thread';
 
 /**
  * The callback for `mutationPump`. If specified, this callback will be called
