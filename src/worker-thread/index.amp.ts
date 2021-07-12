@@ -62,6 +62,7 @@ import { rafPolyfill, cafPolyfill } from './AnimationFrame';
 import { SVGElement } from './dom/SVGElement';
 import { Text } from './dom/Text';
 import { wrap as longTaskWrap } from './long-task';
+import { HydrateFunction } from './hydrate';
 
 declare const WORKER_DOM_DEBUG: boolean;
 
@@ -162,4 +163,4 @@ export const workerDOM: WorkerDOMGlobalScope = (function (postMessage, addEventL
 (self as any).exportFunction = exportFunction;
 addEventListener('message', (evt: MessageEvent) => callFunctionMessageHandler(evt, workerDOM.document));
 
-export const hydrate = initialize;
+export const hydrate: HydrateFunction = initialize;

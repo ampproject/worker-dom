@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+import { HydrateFunction } from './hydrate';
 import { AMP } from './amp/amp';
 import { callFunctionMessageHandler, exportFunction } from './function';
 import { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { DocumentStub } from './dom/DocumentLite';
 import { deleteGlobals } from './amp/delete-globals';
+import { initializeStorage } from './initialize-storage';
+import { WorkerStorageInit } from './initialize-storage';
 
 const noop = () => void 0;
 
@@ -42,4 +45,15 @@ deleteGlobals(self);
 (self as any).exportFunction = exportFunction;
 addEventListener('message', (evt: MessageEvent) => callFunctionMessageHandler(evt, workerDOM.document));
 
-export const hydrate = noop;
+export const hydrate: HydrateFunction = (
+  document: DocumentStub,
+  strings: Object,
+  hydrateableNode: Object,
+  cssKeys: Object,
+  globalEventHandlerKeys: Object,
+  size: Object,
+  localStorageInit: WorkerStorageInit,
+  sessionStorageInit: WorkerStorageInit,
+) => {
+  initializeStorage(document, localStorageInit, sessionStorageInit);
+};

@@ -19,11 +19,9 @@ import { Document } from './dom/Document';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
-import { createStorage } from './Storage';
-import { StorageLocation } from '../transfer/TransferrableStorage';
 import { appendGlobalEventProperties } from './dom/HTMLElement';
-
-export type WorkerStorageInit = { storage: { [key: string]: string }; errorMsg: null } | { storage: null; errorMsg: string };
+import { initializeStorage } from './initialize-storage';
+import { WorkerStorageInit } from './initialize-storage';
 
 export function initialize(
   document: Document,
@@ -44,14 +42,5 @@ export function initialize(
   const window = document.defaultView;
   window.innerWidth = innerWidth;
   window.innerHeight = innerHeight;
-  if (localStorageInit.storage) {
-    window.localStorage = createStorage(document, StorageLocation.Local, localStorageInit.storage);
-  } else {
-    console.warn(localStorageInit.errorMsg);
-  }
-  if (sessionStorageInit.storage) {
-    window.sessionStorage = createStorage(document, StorageLocation.Session, sessionStorageInit.storage);
-  } else {
-    console.warn(sessionStorageInit.errorMsg);
-  }
+  initializeStorage(document, localStorageInit, sessionStorageInit);
 }
