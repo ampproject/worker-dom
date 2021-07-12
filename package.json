@@ -54,7 +54,7 @@
     "babel-plugin-transform-remove-console": "6.9.4",
     "cross-env": "7.0.3",
     "esm": "3.2.25",
-    "husky": "6.0.0",
+    "husky": "7.0.1",
     "jsdom": "16.6.0",
     "lint-staged": "11.0.0",
     "magic-string": "0.25.7",
