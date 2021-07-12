@@ -22,7 +22,6 @@ import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 import { IframeWorker } from './iframe-worker';
-import { IS_AMP, Sanitizer, StorageValue, WORKER_DOM_DEBUG } from './main-thread';
 
 // TODO: Sanitizer storage init is likely broken, since the code currently
 // attempts to stringify a Promise.

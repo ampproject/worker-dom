@@ -36,7 +36,6 @@ import { ImageBitmapProcessor } from './commands/image-bitmap';
 import { StorageProcessor } from './commands/storage';
 import { FunctionProcessor } from './commands/function';
 import { ScrollIntoViewProcessor } from './commands/scroll-into-view';
-import { Sanitizer, WORKER_DOM_DEBUG } from './main-thread';
 
 export class MutatorProcessor {
   private stringContext: StringContext;

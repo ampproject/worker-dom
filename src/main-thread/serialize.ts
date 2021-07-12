@@ -20,7 +20,6 @@ import { NumericBoolean } from '../utils';
 import { WorkerDOMConfiguration, HydrationFilterPredicate } from './configuration';
 import { applyDefaultInputListener, sendValueChangeOnAttributeMutation } from './commands/event-subscription';
 import { WorkerContext } from './worker';
-import { RenderableElement } from './main-thread';
 
 const NODES_ALLOWED_TO_TRANSMIT_TEXT_CONTENT = [NodeType.COMMENT_NODE, NodeType.TEXT_NODE];
 

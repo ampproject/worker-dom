@@ -38,7 +38,6 @@ import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
 import { createReadableHydrateableRootNode } from './serialize';
 import { WorkerDOMConfiguration } from './configuration';
 import { WorkerContext } from './worker';
-import { RenderableElement } from './main-thread';
 
 /**
  * @param element
