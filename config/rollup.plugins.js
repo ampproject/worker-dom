@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import MagicString from 'magic-string';
 import fs from 'fs';
 import * as path from 'path';
@@ -28,10 +28,11 @@ const walk = require('acorn-walk');
  * - allowPostMessage Should we allow postMessage to/from the Worker?
  */
 export function babelPlugin({ transpileToES5, allowConsole = false, allowPostMessage = true }) {
-  const targets = transpileToES5 ? { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] } : { esmodules: true };
+  const targets = transpileToES5 ? { browsers: ['ie >= 11', 'safari >= 8'] } : { esmodules: true };
   const exclude = allowConsole ? ['error', 'warn', 'trace', 'info', 'log', 'time', 'timeEnd'] : [];
 
   return babel({
+    babelHelpers: 'bundled',
     exclude: 'node_modules/**',
     presets: [
       [
@@ -45,8 +46,6 @@ export function babelPlugin({ transpileToES5, allowConsole = false, allowPostMes
       ],
     ],
     plugins: [
-      ['@babel/plugin-proposal-object-rest-spread'],
-      ['@babel/proposal-class-properties'],
       [
         'babel-plugin-minify-replace',
         {
