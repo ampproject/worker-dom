@@ -60,6 +60,7 @@ import { DOMTokenList } from '../worker-thread/dom/DOMTokenList';
 import { HTMLDataListElement } from '../worker-thread/dom/HTMLDataListElement';
 import { Element } from '../worker-thread/dom/Element';
 import { rafPolyfill, cafPolyfill } from '../worker-thread/AnimationFrame';
+import { Location } from '../worker-thread/dom/Location';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -130,6 +131,7 @@ const GlobalScope: GlobalScope = {
   MutationObserver,
   requestAnimationFrame: rafPolyfill,
   cancelAnimationFrame: cafPolyfill,
+  location: Location,
 };
 
 /**

@@ -59,6 +59,7 @@ import { DocumentFragment } from './dom/DocumentFragment';
 import { Element } from './dom/Element';
 import { rafPolyfill, cafPolyfill } from './AnimationFrame';
 import { HydrateFunction } from './hydrate';
+import { Location } from './dom/Location';
 
 const globalScope: GlobalScope = {
   innerWidth: 0,
@@ -106,6 +107,7 @@ const globalScope: GlobalScope = {
   MutationObserver,
   requestAnimationFrame: self.requestAnimationFrame || rafPolyfill,
   cancelAnimationFrame: self.cancelAnimationFrame || cafPolyfill,
+  location: Location
 };
 
 const noop = () => void 0;
