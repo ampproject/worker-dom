@@ -14,8 +14,21 @@
  * limitations under the License.
  */
 
-import MainThreadBuilds from './rollup.main-thread.js';
-import WorkerThreadBuilds from './rollup.worker-thread.js';
-import LibBuilds from './rollup.lib.js';
+const path = require('path');
+const HTMLPlugin = require('html-webpack-plugin');
+const WorkerPlugin = require('worker-plugin');
 
-export default [...MainThreadBuilds, ...WorkerThreadBuilds, ...LibBuilds];
+module.exports = {
+  mode: 'development',
+  resolve: {
+    alias: {
+      '@ampproject/worker-dom': path.join(__dirname, '../../'),
+    },
+  },
+  plugins: [
+    new WorkerPlugin(),
+    new HTMLPlugin({
+      template: path.join(__dirname, 'src/index.html'),
+    }),
+  ],
+};
