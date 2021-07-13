@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import MagicString from 'magic-string';
 import fs from 'fs';
 import * as path from 'path';
@@ -32,6 +32,7 @@ export function babelPlugin({ transpileToES5, allowConsole = false, allowPostMes
   const exclude = allowConsole ? ['error', 'warn', 'trace', 'info', 'log', 'time', 'timeEnd'] : [];
 
   return babel({
+    babelHelpers: 'bundled',
     exclude: 'node_modules/**',
     presets: [
       [
@@ -45,8 +46,6 @@ export function babelPlugin({ transpileToES5, allowConsole = false, allowPostMes
       ],
     ],
     plugins: [
-      ['@babel/plugin-proposal-object-rest-spread'],
-      ['@babel/proposal-class-properties'],
       [
         'babel-plugin-minify-replace',
         {
