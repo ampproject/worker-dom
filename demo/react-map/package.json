@@ -18,14 +18,14 @@
     "@babel/preset-env": "7.14.7",
     "@babel/plugin-transform-react-jsx": "7.14.5",
     "babel-loader": "8.2.2",
-    "css-loader": "5.2.6",
+    "css-loader": "5.2.7",
     "mini-css-extract-plugin": "2.1.0",
-    "style-loader": "3.0.0",
-    "webpack": "5.39.1",
+    "style-loader": "3.2.1",
+    "webpack": "5.45.1",
     "webpack-cli": "4.7.2"
   },
   "volta": {
-    "node": "14.17.1",
+    "node": "14.17.3",
     "yarn": "1.22.10"
   }
 }
