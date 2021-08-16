@@ -54,7 +54,7 @@
     "cross-env": "7.0.3",
     "esm": "3.2.25",
     "husky": "7.0.1",
-    "jsdom": "16.7.0",
+    "jsdom": "17.0.0",
     "lint-staged": "11.1.1",
     "magic-string": "0.25.7",
     "np": "7.5.0",
