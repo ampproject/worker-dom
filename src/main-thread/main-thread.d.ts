@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { Location } from '../worker-thread/dom/Location';
+
 /**
  * Allows clients to apply restrictions on DOM and storage changes.
  */
@@ -58,6 +60,19 @@ declare interface Sanitizer {
    * @return True if storage change was applied.
    */
   setStorage(location: number, key: string | null, value: string | null): boolean;
+
+  /**
+   * Retrieves the current location.
+   * @return current location
+   */
+  getLocation(): Promise<Location>;
+
+  /**
+   * Requests a change in location.
+   * @param location href
+   * @return True if location change was applied.
+   */
+  setLocation(location: string): boolean;
 }
 
 type StorageValue = { [key: string]: string };
