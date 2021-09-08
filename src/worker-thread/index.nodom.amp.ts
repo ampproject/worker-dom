@@ -32,7 +32,7 @@ export const workerDOM: WorkerNoDOMGlobalScope = (function (postMessage, addEven
   document.postMessage = postMessage;
   document.addGlobalEventListener = addEventListener;
   document.removeGlobalEventListener = removeEventListener;
-  return { document };
+  return document.defaultView;
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
 // Modify global scope by removing disallowed properties.
