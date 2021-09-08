@@ -33,7 +33,7 @@ export class DocumentStub {
   public [TransferrableKeys.index]: number = -1;
 
   constructor() {
-    this.defaultView = { document: this };
+    this.defaultView = Object.assign(global, { document: this });
   }
 
   public [TransferrableKeys.observe](): void {

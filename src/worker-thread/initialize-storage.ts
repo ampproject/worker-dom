@@ -15,7 +15,7 @@
  */
 
 import type { Document } from './dom/Document';
-import type { DocumentStub } from './dom/DocumentLite';
+import type { DocumentStub } from './dom/DocumentStub';
 
 import { createStorage } from './Storage';
 import { StorageLocation } from '../transfer/TransferrableStorage';

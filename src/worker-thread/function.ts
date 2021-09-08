@@ -20,7 +20,7 @@ import { MessageToWorker, MessageType, FunctionCallToWorker, ResolveOrReject } f
 import { transfer } from './MutationTransfer';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { store } from './strings';
-import { DocumentStub } from './dom/DocumentLite';
+import { DocumentStub } from './dom/DocumentStub';
 
 const exportedFunctions: { [fnIdent: string]: Function } = {};
 
