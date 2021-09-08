@@ -77,7 +77,7 @@ export class WorkerContext {
           ${JSON.stringify(sessionStorageInit)}
         );
         workerDOM.document[${TransferrableKeys.observe}](this);
-        Object.keys(workerDOM).forEach(function(k){self[k]=workerDOM[k]});
+        Object.assign(self, workerDOM);
       }).call(self);
       ${authorScript}
       //# sourceURL=${encodeURI(config.authorURL)}`;
