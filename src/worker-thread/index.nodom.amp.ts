@@ -18,7 +18,7 @@ import { HydrateFunction } from './hydrate';
 import { AMP } from './amp/amp';
 import { callFunctionMessageHandler, exportFunction } from './function';
 import { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope';
-import { DocumentStub } from './dom/DocumentLite';
+import { DocumentStub } from './dom/DocumentStub';
 import { deleteGlobals } from './amp/delete-globals';
 import { initializeStorage } from './initialize-storage';
 import { WorkerStorageInit } from './initialize-storage';
@@ -32,7 +32,7 @@ export const workerDOM: WorkerNoDOMGlobalScope = (function (postMessage, addEven
   document.postMessage = postMessage;
   document.addGlobalEventListener = addEventListener;
   document.removeGlobalEventListener = removeEventListener;
-  return { document };
+  return document.defaultView;
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
 // Modify global scope by removing disallowed properties.

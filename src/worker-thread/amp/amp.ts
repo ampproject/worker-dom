@@ -21,7 +21,7 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { store } from '../strings';
 import { transfer } from '../MutationTransfer';
-import { DocumentStub } from '../dom/DocumentLite';
+import { DocumentStub } from '../dom/DocumentStub';
 
 export class AMP {
   private document: Document | DocumentStub;

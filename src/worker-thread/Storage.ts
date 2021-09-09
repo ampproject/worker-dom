@@ -20,7 +20,7 @@ import { StorageLocation } from '../transfer/TransferrableStorage';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { store } from './strings';
 import { transfer } from './MutationTransfer';
-import { DocumentStub } from './dom/DocumentLite';
+import { DocumentStub } from './dom/DocumentStub';
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Storage
