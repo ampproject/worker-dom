@@ -22,7 +22,7 @@ import { Node } from './dom/Node';
 import { Phase } from '../transfer/Phase';
 import { phase, set as setPhase } from './phase';
 import { Document } from './dom/Document';
-import { DocumentStub } from './dom/DocumentLite';
+import { DocumentStub } from './dom/DocumentStub';
 
 let pending = false;
 let pendingMutations: Array<number> = [];

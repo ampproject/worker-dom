@@ -56,7 +56,7 @@ import { CharacterData } from './dom/CharacterData';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { Element } from './dom/Element';
-import { DocumentStub } from './dom/DocumentLite';
+import { DocumentStub } from './dom/DocumentStub';
 
 /**
  * Should only contain properties that exist on Window.
