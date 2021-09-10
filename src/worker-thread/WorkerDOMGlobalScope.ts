@@ -57,6 +57,7 @@ import { DocumentFragment } from './dom/DocumentFragment';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { Element } from './dom/Element';
 import { DocumentStub } from './dom/DocumentStub';
+import { OffscreenCanvas } from './canvas/CanvasTypes';
 
 /**
  * Should only contain properties that exist on Window.
@@ -110,7 +111,7 @@ export interface GlobalScope {
   // implementation to enable setting readonly properties like currentTarget.
   Event: typeof WorkerDOMEvent;
   MutationObserver: typeof MutationObserver;
-  OffscreenCanvas?: typeof OffscreenCanvas;
+  OffscreenCanvas?: OffscreenCanvas;
   ImageBitmap?: typeof ImageBitmap;
   requestAnimationFrame: typeof requestAnimationFrame;
   cancelAnimationFrame: typeof cancelAnimationFrame;

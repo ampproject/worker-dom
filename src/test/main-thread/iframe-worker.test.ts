@@ -40,10 +40,10 @@ test.beforeEach((t) => {
   const iframe = (worker as any).iframe as HTMLIFrameElement;
 
   const oldPostMessage = iframe.contentWindow!.postMessage.bind(iframe.contentWindow);
-  iframe.contentWindow!.postMessage = (msg, targetOrigin, transferables) => {
+  iframe.contentWindow!.postMessage = ((msg, targetOrigin, transferables) => {
     sentToIframe.push(msg);
     oldPostMessage(msg, targetOrigin, transferables);
-  };
+  }) as typeof postMessage;
 
   function sendFromIframe(msg: Object): void {
     for (let listener of messageListeners) {
