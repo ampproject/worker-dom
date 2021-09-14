@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Hello World</title>
+  <title>Shadow Root</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="/demo.css" rel="stylesheet">
   <script src="/dist/main.mjs" type="module"></script>
@@ -12,10 +12,11 @@
   <!-- <script src="/dist/main.js" defer></script> -->
 </head>
 <body>
-  <div>Host</div>
-  <div src="hello-world.js" id="upgrade-me">
-    <div class="root">
-      <button>Insert Hello World!</button>
+  <div>Host Element</div>
+  <div src="shadow-root.js" id="upgrade-me" data-shadow-root>
+    <div id="root">
+      <div>Guest Element</div>
+      <button>Insert style tag</button>
     </div>
   </div>
   <script type="module">

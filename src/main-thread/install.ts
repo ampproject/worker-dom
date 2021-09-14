@@ -37,6 +37,13 @@ export function install(
   baseElement: HTMLElement,
   config: InboundWorkerDOMConfiguration,
 ): Promise<ExportedWorker | null> {
+  const shadowRootMode = baseElement.dataset['shadowRoot'];
+  if (shadowRootMode != null) {
+    const shadowRoot = baseElement.attachShadow({ mode: (shadowRootMode || 'open') as ShadowRootMode });
+    const clonedElement = baseElement.cloneNode(true) as HTMLElement;
+    shadowRoot.appendChild(clonedElement);
+    baseElement = clonedElement;
+  }
   const stringContext = new StringContext();
   const objectContext = new ObjectContext();
   const nodeContext = new NodeContext(stringContext, baseElement);
