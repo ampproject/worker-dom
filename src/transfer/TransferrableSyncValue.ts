@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TransferrableKeys } from './TransferrableKeys';
+import type { TransferrableKeys } from './TransferrableKeys';
 
 export interface TransferrableSyncValue {
   readonly [TransferrableKeys.index]: number;

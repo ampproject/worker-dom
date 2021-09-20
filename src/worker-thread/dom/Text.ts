@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
+import type { Node } from './Node';
+
 import { CharacterData } from './CharacterData';
-import { Node } from './Node';
 import { NodeType } from '../../transfer/TransferrableNodes';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text

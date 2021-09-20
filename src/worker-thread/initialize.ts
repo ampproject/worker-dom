@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
+import type { Document } from './dom/Document';
+import type { HydrateableNode } from '../transfer/TransferrableNodes';
+import type { WorkerStorageInit } from './initialize-storage';
+
 import { store as storeString } from './strings';
-import { Document } from './dom/Document';
-import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
 import { appendGlobalEventProperties } from './dom/HTMLElement';
 import { initializeStorage } from './initialize-storage';
-import { WorkerStorageInit } from './initialize-storage';
 
 export function initialize(
   document: Document,

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { Document } from './dom/Document';
+import type { Document } from './dom/Document';
+import type { DocumentStub } from './dom/DocumentStub';
+
 import { GetOrSet } from '../transfer/Messages';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { store } from './strings';
 import { transfer } from './MutationTransfer';
-import { DocumentStub } from './dom/DocumentStub';
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Storage

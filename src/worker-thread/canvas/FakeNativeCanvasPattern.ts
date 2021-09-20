@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { HTMLElement } from '../dom/HTMLElement';
-import { CanvasImageSource } from './CanvasTypes';
+import type { HTMLElement } from '../dom/HTMLElement';
+import type { CanvasImageSource } from './CanvasTypes';
+import type { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
 import { retrieveImageBitmap } from './canvas-utils';
-import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 /**

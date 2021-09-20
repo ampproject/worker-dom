@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-import { NodeContext } from './nodes';
-import { StringContext } from './strings';
-import { WorkerContext } from './worker';
+import type { NodeContext } from './nodes';
+import type { StringContext } from './strings';
+import type { WorkerContext } from './worker';
+import type { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
+import type { CommandExecutor } from './commands/interface';
+import type { Phase } from '../transfer/Phase';
+import type { ObjectContext } from './object-context';
+
 import { OffscreenCanvasProcessor } from './commands/offscreen-canvas';
 import { TransferrableMutationType, ReadableMutationType, isUserVisibleMutation } from '../transfer/TransferrableMutation';
 import { EventSubscriptionProcessor } from './commands/event-subscription';
@@ -26,12 +31,8 @@ import { AttributeProcessor } from './commands/attribute';
 import { CharacterDataProcessor } from './commands/character-data';
 import { PropertyProcessor } from './commands/property';
 import { LongTaskExecutor } from './commands/long-task';
-import { CommandExecutor } from './commands/interface';
-import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
-import { Phase } from '../transfer/Phase';
 import { ObjectMutationProcessor } from './commands/object-mutation';
 import { ObjectCreationProcessor } from './commands/object-creation';
-import { ObjectContext } from './object-context';
 import { ImageBitmapProcessor } from './commands/image-bitmap';
 import { StorageProcessor } from './commands/storage';
 import { FunctionProcessor } from './commands/function';

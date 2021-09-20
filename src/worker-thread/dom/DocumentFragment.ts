@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+import type { Node } from './Node';
 import { ParentNode } from './ParentNode';
 import { store as storeString } from '../strings';
-import { Node } from './Node';
 import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 

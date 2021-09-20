@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import { HydrateFunction } from './hydrate';
+import type { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope';
+import type { HydrateFunction } from './hydrate';
+import type { WorkerStorageInit } from './initialize-storage';
+
 import { AMP } from './amp/amp';
-import { callFunctionMessageHandler, exportFunction } from './function';
-import { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { DocumentStub } from './dom/DocumentStub';
+import { callFunctionMessageHandler, exportFunction } from './function';
 import { deleteGlobals } from './amp/delete-globals';
 import { initializeStorage } from './initialize-storage';
-import { WorkerStorageInit } from './initialize-storage';
 
 const noop = () => void 0;
 
