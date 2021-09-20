@@ -31,6 +31,7 @@ import type { HTMLMeterElement } from './dom/HTMLMeterElement';
 import type { HTMLModElement } from './dom/HTMLModElement';
 import type { HTMLOListElement } from './dom/HTMLOListElement';
 import type { HTMLOptionElement } from './dom/HTMLOptionElement';
+import type { OffscreenCanvas } from './canvas/CanvasTypes';
 import type { HTMLProgressElement } from './dom/HTMLProgressElement';
 import type { HTMLQuoteElement } from './dom/HTMLQuoteElement';
 import type { HTMLScriptElement } from './dom/HTMLScriptElement';
