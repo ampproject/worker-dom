@@ -1,19 +1,3 @@
-/**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS-IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import { Element } from './Element';
 import { toLower, toUpper } from '../../utils';
 import { Node } from './Node';
@@ -22,13 +6,15 @@ import { NodeType } from '../../transfer/TransferrableNodes';
 export type ConditionPredicate = (element: Element) => boolean;
 // To future authors: It would be great if we could enforce that elements are not modified by a ConditionPredicate.
 
-export const tagNameConditionPredicate = (tagNames: Array<string>): ConditionPredicate => (element: Element): boolean => {
-  console.assert(
-    tagNames.every((t) => t === toUpper(t)),
-    'tagNames must be all uppercase.',
-  );
-  return tagNames.includes(element.tagName);
-};
+export const tagNameConditionPredicate =
+  (tagNames: Array<string>): ConditionPredicate =>
+  (element: Element): boolean => {
+    console.assert(
+      tagNames.every((t) => t === toUpper(t)),
+      'tagNames must be all uppercase.',
+    );
+    return tagNames.includes(element.tagName);
+  };
 
 export const elementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 

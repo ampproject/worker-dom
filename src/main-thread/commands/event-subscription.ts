@@ -1,19 +1,3 @@
-/**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS-IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import { MessageType } from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import {
@@ -121,47 +105,49 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
    * @param index node index the event comes from (used to dispatchEvent in worker thread).
    * @return eventHandler function consuming event and dispatching to worker thread
    */
-  const eventHandler = (index: number, preventDefault: boolean) => (event: Event | KeyboardEvent | MouseEvent | TouchEvent): void => {
-    if (preventDefault) {
-      event.preventDefault();
-    }
-
-    if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
-      fireValueChange(workerContext, event.currentTarget as RenderableElement);
-    } else if (event.type === 'resize') {
-      const { innerWidth, innerHeight } = window;
-      if (cachedWindowSize[0] === innerWidth && cachedWindowSize[1] === innerHeight) {
-        return;
+  const eventHandler =
+    (index: number, preventDefault: boolean) =>
+    (event: Event | KeyboardEvent | MouseEvent | TouchEvent): void => {
+      if (preventDefault) {
+        event.preventDefault();
       }
-      cachedWindowSize = [window.innerWidth, window.innerHeight];
-      fireResizeChange(workerContext, cachedWindowSize);
-    }
 
-    workerContext.messageToWorker({
-      [TransferrableKeys.type]: MessageType.EVENT,
-      [TransferrableKeys.event]: {
-        [TransferrableKeys.index]: index,
-        [TransferrableKeys.bubbles]: event.bubbles,
-        [TransferrableKeys.cancelable]: event.cancelable,
-        [TransferrableKeys.cancelBubble]: event.cancelBubble,
-        [TransferrableKeys.currentTarget]: [(event.currentTarget as RenderableElement)._index_ || 0],
-        [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
-        [TransferrableKeys.eventPhase]: event.eventPhase,
-        [TransferrableKeys.isTrusted]: event.isTrusted,
-        [TransferrableKeys.returnValue]: event.returnValue,
-        [TransferrableKeys.target]: [(event.target as RenderableElement)._index_ || 0],
-        [TransferrableKeys.timeStamp]: event.timeStamp,
-        [TransferrableKeys.type]: event.type,
-        [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
-        [TransferrableKeys.pageX]: 'pageX' in event ? event.pageX : undefined,
-        [TransferrableKeys.pageY]: 'pageY' in event ? event.pageY : undefined,
-        [TransferrableKeys.offsetX]: 'offsetX' in event ? event.offsetX : undefined,
-        [TransferrableKeys.offsetY]: 'offsetY' in event ? event.offsetY : undefined,
-        [TransferrableKeys.touches]: 'touches' in event ? createTransferrableTouchList(event.touches) : undefined,
-        [TransferrableKeys.changedTouches]: 'changedTouches' in event ? createTransferrableTouchList(event.changedTouches) : undefined,
-      },
-    });
-  };
+      if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
+        fireValueChange(workerContext, event.currentTarget as RenderableElement);
+      } else if (event.type === 'resize') {
+        const { innerWidth, innerHeight } = window;
+        if (cachedWindowSize[0] === innerWidth && cachedWindowSize[1] === innerHeight) {
+          return;
+        }
+        cachedWindowSize = [window.innerWidth, window.innerHeight];
+        fireResizeChange(workerContext, cachedWindowSize);
+      }
+
+      workerContext.messageToWorker({
+        [TransferrableKeys.type]: MessageType.EVENT,
+        [TransferrableKeys.event]: {
+          [TransferrableKeys.index]: index,
+          [TransferrableKeys.bubbles]: event.bubbles,
+          [TransferrableKeys.cancelable]: event.cancelable,
+          [TransferrableKeys.cancelBubble]: event.cancelBubble,
+          [TransferrableKeys.currentTarget]: [(event.currentTarget as RenderableElement)._index_ || 0],
+          [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
+          [TransferrableKeys.eventPhase]: event.eventPhase,
+          [TransferrableKeys.isTrusted]: event.isTrusted,
+          [TransferrableKeys.returnValue]: event.returnValue,
+          [TransferrableKeys.target]: [(event.target as RenderableElement)._index_ || 0],
+          [TransferrableKeys.timeStamp]: event.timeStamp,
+          [TransferrableKeys.type]: event.type,
+          [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
+          [TransferrableKeys.pageX]: 'pageX' in event ? event.pageX : undefined,
+          [TransferrableKeys.pageY]: 'pageY' in event ? event.pageY : undefined,
+          [TransferrableKeys.offsetX]: 'offsetX' in event ? event.offsetX : undefined,
+          [TransferrableKeys.offsetY]: 'offsetY' in event ? event.offsetY : undefined,
+          [TransferrableKeys.touches]: 'touches' in event ? createTransferrableTouchList(event.touches) : undefined,
+          [TransferrableKeys.changedTouches]: 'changedTouches' in event ? createTransferrableTouchList(event.changedTouches) : undefined,
+        },
+      });
+    };
 
   /**
    * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,

@@ -1,38 +1,22 @@
-/**
- * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS-IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import { Component, h, render } from "preact";
-import { CandidateTable } from "./candidateTable.jsx";
-import { CandidateMap } from "./candidateMap.jsx";
+import { Component, h, render } from 'preact';
+import { CandidateTable } from './candidateTable.jsx';
+import { CandidateMap } from './candidateMap.jsx';
 
 const TOTAL_VOTES = 226628056;
 const CANDIDATE_DATA = [
   {
     victor: true,
-    name: "Elaine Barrish",
-    party: "Republican",
+    name: 'Elaine Barrish',
+    party: 'Republican',
     votes: 123818000,
   },
   {
     victor: false,
-    name: "Steven Armstrong",
-    party: "Democrat",
+    name: 'Steven Armstrong',
+    party: 'Democrat',
     votes: 102810012,
   },
-  { victor: false, name: "Benjamin Arthur", party: "Independent", votes: 42 },
+  { victor: false, name: 'Benjamin Arthur', party: 'Independent', votes: 42 },
 ];
 const REGION_DATA = [
   { total: 1000, candidates: [100, 900, 0] },
@@ -61,18 +45,9 @@ class App extends Component {
   render(props, state) {
     return (
       <div>
-        <CandidateTable
-          votes={TOTAL_VOTES}
-          totalData={CANDIDATE_DATA}
-          regionData={REGION_DATA}
-          focusedRegion={state.focusedRegion}
-        />
+        <CandidateTable votes={TOTAL_VOTES} totalData={CANDIDATE_DATA} regionData={REGION_DATA} focusedRegion={state.focusedRegion} />
         <h1>Precinct Map</h1>
-        <CandidateMap
-          regionData={REGION_DATA}
-          totalData={CANDIDATE_DATA}
-          focusRegion={this.handleRegionFocus}
-        />
+        <CandidateMap regionData={REGION_DATA} totalData={CANDIDATE_DATA} focusRegion={this.handleRegionFocus} />
       </div>
     );
   }
