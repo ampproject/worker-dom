@@ -61,5 +61,4 @@ type RenderableElement = (HTMLElement | SVGElement | Text | Comment) & {
 };
 
 declare const WORKER_DOM_DEBUG: boolean;
-declare const IS_SERVER: boolean;
 declare const IS_AMP: boolean;
