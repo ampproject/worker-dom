@@ -51,6 +51,7 @@
     "ava": "3.15.0",
     "babel-plugin-minify-replace": "0.5.0",
     "babel-plugin-transform-remove-console": "6.9.4",
+    "benchmark": "2.1.4",
     "cross-env": "7.0.3",
     "esm": "3.2.25",
     "husky": "7.0.2",
