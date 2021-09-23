@@ -39,7 +39,7 @@ class FakeOffscreenCanvas {
 
   constructor() {
     // this.x, y
-    this.context = ({} as unknown) as CanvasRenderingContext2D;
+    this.context = {} as unknown as CanvasRenderingContext2D;
   }
 
   getContext(c: string): CanvasRenderingContext2D {
