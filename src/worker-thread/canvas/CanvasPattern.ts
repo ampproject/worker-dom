@@ -1,5 +1,5 @@
 import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
-import { TransferrableObject } from '../worker-thread';
+import { TransferrableObject } from '../../transfer/TransferrableObject';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 /**

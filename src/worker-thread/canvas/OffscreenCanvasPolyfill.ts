@@ -18,7 +18,7 @@ import { store } from '../strings';
 import { HTMLElement } from '../dom/HTMLElement';
 import { serializeTransferrableObject } from '../serializeTransferrableObject';
 import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
-import { TransferrableObject } from '../worker-thread';
+import { TransferrableObject } from '../../transfer/TransferrableObject';
 import { CanvasGradient } from './CanvasGradient';
 import { CanvasPattern } from './CanvasPattern';
 import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';

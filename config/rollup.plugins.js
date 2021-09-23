@@ -18,6 +18,9 @@ export function babelPlugin({ transpileToES5, allowConsole = false, allowPostMes
   return babel({
     babelHelpers: 'bundled',
     exclude: 'node_modules/**',
+    assumptions: {
+      setPublicClassFields: true,
+    },
     presets: [
       [
         '@babel/env',

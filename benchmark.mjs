@@ -16,3 +16,7 @@ suite
     console.log(results.join('\n'));
   })
   .run();
+
+// Before any optimization:
+// createElement x 197,202 ops/sec ±5.21% (72 runs sampled)
+// appendChild x 127,340 ops/sec ±9.29% (63 runs sampled)

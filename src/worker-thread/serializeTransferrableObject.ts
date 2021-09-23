@@ -1,6 +1,6 @@
 import { store } from './strings';
 import { TransferrableObjectType } from '../transfer/TransferrableMutation';
-import { Serializable, TransferrableObject } from './worker-thread';
+import { TransferrableObject, Serializable } from '../transfer/TransferrableObject';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 const f32 = new Float32Array(1);

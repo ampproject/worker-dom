@@ -36,7 +36,6 @@ import { Text } from './Text';
 import { Comment } from './Comment';
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
-import { PostMessage } from '../worker-thread';
 import { NodeType, HTML_NAMESPACE, HydrateableNode } from '../../transfer/TransferrableNodes';
 import { Phase } from '../../transfer/Phase';
 import { propagate as propagateEvents } from '../Event';
@@ -54,7 +53,7 @@ export class Document extends Element {
   public body: Element;
 
   // Internal variables.
-  public postMessage: PostMessage;
+  public postMessage: typeof Worker.prototype.postMessage;
   public addGlobalEventListener: Function;
   public removeGlobalEventListener: Function;
   public [TransferrableKeys.allowTransfer]: boolean = true;
