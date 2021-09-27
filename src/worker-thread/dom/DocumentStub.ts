@@ -1,3 +1,4 @@
+import { PostMessage } from '../worker-thread';
 import { Phase } from '../../transfer/Phase';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { set as setPhase } from '../phase';
@@ -9,7 +10,7 @@ import { WorkerNoDOMGlobalScope } from '../WorkerDOMGlobalScope';
 export class DocumentStub {
   // Internal variables.
   public defaultView: WorkerNoDOMGlobalScope;
-  public postMessage: typeof Worker.prototype.postMessage;
+  public postMessage: PostMessage;
   public addGlobalEventListener: Function;
   public removeGlobalEventListener: Function;
   public [TransferrableKeys.allowTransfer]: boolean = true;
