@@ -35,7 +35,6 @@ const ESModules = [
         transpileToES5: false,
         allowConsole: false,
       }),
-      ...compilePlugins,
     ],
   },
   {
