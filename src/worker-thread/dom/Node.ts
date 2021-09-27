@@ -52,7 +52,7 @@ export abstract class Node {
     this.nodeType = nodeType;
     this.nodeName = nodeName;
     this.ownerDocument = ownerDocument || this;
-    if (IS_SERVER) {
+    if (process.env.SERVER) {
       return;
     }
 

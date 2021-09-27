@@ -9,7 +9,7 @@ const mapping: Map<string, number> = new Map();
  */
 export function store(value: string): number {
   // Server version of the lib never transfers.
-  if (IS_SERVER) {
+  if (process.env.SERVER) {
     return 0;
   }
 

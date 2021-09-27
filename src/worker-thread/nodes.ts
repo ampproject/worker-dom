@@ -16,7 +16,7 @@ const mapping: Map<number, Node> = new Map();
  */
 export function storeOverride(node: Node, override: number): number {
   // Server version of the lib never transfers.
-  if (IS_SERVER) {
+  if (process.env.SERVER) {
     return 0;
   }
 
@@ -34,7 +34,7 @@ export function storeOverride(node: Node, override: number): number {
  */
 export function store(node: Node): number {
   // Server version of the lib never transfers.
-  if (IS_SERVER) {
+  if (process.env.SERVER) {
     return 0;
   }
 

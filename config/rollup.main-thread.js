@@ -1,7 +1,6 @@
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
-import replace from '@rollup/plugin-replace';
-import { babelPlugin, removeDebugCommandExecutors, removeWorkerWhitespace } from './rollup.plugins.js';
+import { babelPlugin, removeDebugCommandExecutors, removeWorkerWhitespace, replacePlugin } from './rollup.plugins.js';
 
 const ESModules = [
   {
@@ -14,13 +13,7 @@ const ESModules = [
     plugins: [
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: false,
-          IS_AMP: false,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin(),
       babelPlugin({
         transpileToES5: false,
         allowConsole: false,
@@ -38,13 +31,7 @@ const ESModules = [
     },
     plugins: [
       removeWorkerWhitespace(),
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: true,
-          IS_AMP: false,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin({ debug: true }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: true,
@@ -61,13 +48,7 @@ const ESModules = [
     plugins: [
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: false,
-          IS_AMP: true,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin({ amp: true }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: false,
@@ -85,13 +66,7 @@ const ESModules = [
     },
     plugins: [
       removeWorkerWhitespace(),
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: true,
-          IS_AMP: true,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin({ debug: true, amp: true }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: true,
@@ -112,13 +87,7 @@ const IIFEModules = [
     plugins: [
       removeWorkerWhitespace(),
       removeDebugCommandExecutors(),
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: false,
-          IS_AMP: false,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin(),
       babelPlugin({
         transpileToES5: true,
         allowConsole: false,
@@ -137,13 +106,7 @@ const IIFEModules = [
     },
     plugins: [
       removeWorkerWhitespace(),
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: true,
-          IS_AMP: false,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin({ debug: true, amp: true }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: true,

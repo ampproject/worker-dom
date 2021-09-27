@@ -28,7 +28,7 @@ export function emitter(document: Document): Emitter {
     subscribers.delete(callback);
   }
 
-  document.postMessage = (message: MutationFromWorker, buffers: Array<ArrayBuffer>) => {
+  document.postMessage = ((message: MutationFromWorker, buffers: Array<ArrayBuffer>) => {
     strings.push(...message[TransferrableKeys.strings]);
 
     let copy = new Map(subscribers);
@@ -38,7 +38,7 @@ export function emitter(document: Document): Emitter {
       }
       callback(strings, message, buffers);
     });
-  };
+  }) as any;
   document[TransferrableKeys.observe]();
 
   return {
