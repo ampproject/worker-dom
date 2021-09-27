@@ -50,7 +50,6 @@ const ESModules = [
       replace({
         values: {
           WORKER_DOM_DEBUG: false,
-          IS_SERVER: false,
         },
         preventAssignment: true,
       }),
@@ -73,7 +72,6 @@ const ESModules = [
       replace({
         values: {
           WORKER_DOM_DEBUG: true,
-          IS_SERVER: false,
         },
         preventAssignment: true,
       }),
@@ -95,7 +93,6 @@ const ESModules = [
       replace({
         values: {
           WORKER_DOM_DEBUG: false,
-          IS_SERVER: false,
         },
         preventAssignment: true,
       }),

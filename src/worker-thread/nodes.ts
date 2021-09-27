@@ -15,6 +15,11 @@ const mapping: Map<number, Node> = new Map();
  * NOTE: THIS IS ONLY TO BE USED DURING INITIALIZATION.
  */
 export function storeOverride(node: Node, override: number): number {
+  // Server version of the lib never transfers.
+  if (IS_SERVER) {
+    return 0;
+  }
+
   if (phase === Phase.Initializing) {
     mapping.set((node[TransferrableKeys.index] = override), node);
     count = Math.max(count, override);
@@ -28,6 +33,11 @@ export function storeOverride(node: Node, override: number): number {
  * @return index Node was stored with in mapping
  */
 export function store(node: Node): number {
+  // Server version of the lib never transfers.
+  if (IS_SERVER) {
+    return 0;
+  }
+
   if (node[TransferrableKeys.index] !== undefined) {
     return node[TransferrableKeys.index];
   }
