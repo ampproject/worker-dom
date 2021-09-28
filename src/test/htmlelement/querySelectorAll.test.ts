@@ -45,11 +45,10 @@ test.serial('server=true: test Element.querySelectorAll on id selectors', (t) =>
   try {
     const document = createTestingDocument();
     const testEl = document.createElement('test-el');
-    const id = 'TEST_EL_ID';
-    testEl.setAttribute('id', id);
+    testEl.setAttribute('id', 'TEST_EL_ID');
     document.appendChild(testEl);
 
-    const result = document.querySelectorAll(`#${id}`);
+    const result = document.querySelectorAll('#TEST_EL_ID');
     t.deepEqual(result, [testEl]);
   } finally {
     delete process.env.SERVER;
