@@ -8,6 +8,11 @@ const mapping: Map<string, number> = new Map();
  * @return location in map
  */
 export function store(value: string): number {
+  // Server version of the lib never transfers.
+  if (process.env.SERVER) {
+    return 0;
+  }
+
   if (mapping.has(value)) {
     // Safe to cast since we verified the mapping contains the value
     return mapping.get(value) as number;

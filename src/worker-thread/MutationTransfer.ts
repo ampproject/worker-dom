@@ -13,6 +13,10 @@ let pendingMutations: Array<number> = [];
 
 // TODO(choumx): Change `mutation` to Array<Uint16> to prevent casting errors e.g. integer underflow, precision loss.
 export function transfer(document: Document | DocumentStub, mutation: Array<number>): void {
+  if (process.env.SERVER) {
+    return;
+  }
+
   if (phase > Phase.Initializing && document[TransferrableKeys.allowTransfer]) {
     pending = true;
     pendingMutations = pendingMutations.concat(mutation);

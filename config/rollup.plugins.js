@@ -1,4 +1,5 @@
 import babel from '@rollup/plugin-babel';
+import replace from '@rollup/plugin-replace';
 import MagicString from 'magic-string';
 import fs from 'fs';
 import * as path from 'path';
@@ -18,6 +19,9 @@ export function babelPlugin({ transpileToES5, allowConsole = false, allowPostMes
   return babel({
     babelHelpers: 'bundled',
     exclude: 'node_modules/**',
+    assumptions: {
+      setPublicClassFields: true,
+    },
     presets: [
       [
         '@babel/env',
@@ -138,4 +142,15 @@ export function removeWorkerWhitespace() {
       };
     },
   };
+}
+
+export function replacePlugin({ debug = false, server = false, amp = false } = {}) {
+  return replace({
+    values: {
+      WORKER_DOM_DEBUG: debug,
+      IS_AMP: amp,
+      'process.env.SERVER': server,
+    },
+    preventAssignment: true,
+  });
 }

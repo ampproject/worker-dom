@@ -51,10 +51,12 @@ export abstract class Node {
   constructor(nodeType: NodeType, nodeName: NodeName, ownerDocument: Node | null, overrideIndex?: number) {
     this.nodeType = nodeType;
     this.nodeName = nodeName;
-
     this.ownerDocument = ownerDocument || this;
-    this[TransferrableKeys.scopingRoot] = this;
+    if (process.env.SERVER) {
+      return;
+    }
 
+    this[TransferrableKeys.scopingRoot] = this;
     this[TransferrableKeys.index] = overrideIndex ? storeOverrideNodeMapping(this, overrideIndex) : storeNodeMapping(this);
     this[TransferrableKeys.transferredFormat] = [this[TransferrableKeys.index]];
   }

@@ -1,7 +1,6 @@
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
-import replace from '@rollup/plugin-replace';
-import { babelPlugin } from './rollup.plugins.js';
+import { babelPlugin, replacePlugin } from './rollup.plugins.js';
 
 // Compile plugins should always be added at the end of the plugin list.
 const compilePlugins = [
@@ -24,17 +23,11 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: false,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin({ server: true }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: false,
       }),
-      ...compilePlugins,
     ],
   },
   {
@@ -46,12 +39,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: false,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin(),
       babelPlugin({
         transpileToES5: false,
         allowConsole: false,
@@ -68,12 +56,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: true,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin({ debug: true }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: true,
@@ -89,12 +72,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: false,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin(),
       babelPlugin({
         transpileToES5: false,
         allowConsole: false,
@@ -111,6 +89,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      replacePlugin({ debug: true }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: true,
@@ -126,12 +105,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: false,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin({}),
       babelPlugin({
         transpileToES5: true,
         allowConsole: false,
@@ -148,12 +122,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: true,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin({ debug: true }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: true,
@@ -169,12 +138,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: false,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin(),
       babelPlugin({
         transpileToES5: false,
         allowConsole: true,
@@ -191,12 +155,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: true,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin({ debug: true }),
       babelPlugin({
         transpileToES5: false,
         allowConsole: true,
@@ -212,12 +171,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: false,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin(),
       babelPlugin({
         transpileToES5: true,
         allowConsole: false,
@@ -234,12 +188,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: true,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin({ debug: true }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: true,
@@ -258,12 +207,7 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: false,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin(),
       babelPlugin({
         transpileToES5: true,
         allowConsole: false,
@@ -280,12 +224,7 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      replace({
-        values: {
-          WORKER_DOM_DEBUG: true,
-        },
-        preventAssignment: true,
-      }),
+      replacePlugin({ debug: true }),
       babelPlugin({
         transpileToES5: true,
         allowConsole: true,

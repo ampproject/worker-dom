@@ -76,8 +76,8 @@ export class Element extends ParentNode {
 
   public localName: NodeName;
   public attributes: Attr[] = [];
-  public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
+  private style_: CSSStyleDeclaration | undefined;
 
   /**
    * Element "kind" dictates certain behaviors e.g. start/end tag semantics.
@@ -98,6 +98,15 @@ export class Element extends ParentNode {
       0,
       this.namespaceURI === null ? 0 : storeString(this.namespaceURI),
     ];
+  }
+
+  // We lazily instantiate the CSSStyleDeclaration to keep element creation cheap
+  // See https://github.com/ampproject/worker-dom/pull/1096 for context.
+  get style(): CSSStyleDeclaration {
+    if (!this.style_) {
+      this.style_ = new CSSStyleDeclaration(this);
+    }
+    return this.style_;
   }
 
   // Unimplemented properties
