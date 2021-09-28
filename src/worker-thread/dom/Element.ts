@@ -100,6 +100,8 @@ export class Element extends ParentNode {
     ];
   }
 
+  // We lazily instantiate the CSSStyleDeclaration to keep element creation cheap
+  // See https://github.com/ampproject/worker-dom/pull/1096 for context.
   get style(): CSSStyleDeclaration {
     if (!this.style_) {
       this.style_ = new CSSStyleDeclaration(this);
