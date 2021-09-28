@@ -39,6 +39,22 @@ test('test Element.querySelectorAll on id selectors', (t) => {
   t.deepEqual(document.querySelectorAll(`#${DIV_ID}`), [div]);
 });
 
+// TODO: create better solution for parameterizing server tests.
+test.serial('server=true: test Element.querySelectorAll on id selectors', (t) => {
+  process.env.SERVER = 'true';
+  try {
+    const document = createTestingDocument();
+    const testEl = document.createElement('test-el');
+    testEl.setAttribute('id', 'TEST_EL_ID');
+    document.appendChild(testEl);
+
+    const result = document.querySelectorAll('#TEST_EL_ID');
+    t.deepEqual(result, [testEl]);
+  } finally {
+    delete process.env.SERVER;
+  }
+});
+
 test('test Element.querySelectorAll on class selectors', (t) => {
   const { document, div } = t.context;
 
