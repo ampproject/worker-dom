@@ -12,7 +12,6 @@
   <!-- <script src="/dist/main.js" defer></script> -->
 </head>
 <body>
-  <div>Host</div>
   <div src="hello-world.js" id="upgrade-me">
     <div class="root">
       <button>Insert Hello World!</button>
@@ -21,6 +20,11 @@
   <script type="module">
     import {upgradeElement} from '/dist/main.mjs';
     upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
+  </script>
+  <script nomodule async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
+    }, false);
   </script>
   <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
   <!-- Comment either block to enable module/nomodule or disable it. -->

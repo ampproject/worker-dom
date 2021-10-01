@@ -7,10 +7,6 @@ btn.addEventListener('click', async () => {
 
   const boundingClientRect = await h1.getBoundingClientRectAsync();
   h1.textContent = h1.textContent + JSON.stringify(boundingClientRect);
-
-  const style = document.createElement('style');
-  style.textContent = `* { color: red !important }`;
-  document.body.appendChild(style);
 });
 
 requestAnimationFrame(() => console.log('animation'));
