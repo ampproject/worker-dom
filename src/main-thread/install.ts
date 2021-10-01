@@ -37,9 +37,9 @@ export function install(
   baseElement: HTMLElement,
   config: InboundWorkerDOMConfiguration,
 ): Promise<ExportedWorker | null> {
-  const shadowRootMode = baseElement.dataset['shadowRoot'];
-  if (shadowRootMode != null) {
-    const shadowRoot = baseElement.attachShadow({ mode: (shadowRootMode || 'open') as ShadowRootMode });
+  const mode = baseElement.dataset['shadowDom'];
+  if (mode != null) {
+    const shadowRoot = baseElement.attachShadow({ mode: (mode || 'open') as ShadowRootMode });
     const clonedElement = baseElement.cloneNode(true) as HTMLElement;
     shadowRoot.appendChild(clonedElement);
     baseElement = clonedElement;
