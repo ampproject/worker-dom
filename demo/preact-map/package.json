@@ -20,11 +20,11 @@
     "css-loader": "6.3.0",
     "mini-css-extract-plugin": "2.3.0",
     "style-loader": "3.3.0",
-    "webpack": "5.54.0",
+    "webpack": "5.56.1",
     "webpack-cli": "4.8.0"
   },
   "volta": {
-    "node": "14.17.6",
-    "yarn": "1.22.11"
+    "node": "14.18.0",
+    "yarn": "1.22.15"
   }
 }
