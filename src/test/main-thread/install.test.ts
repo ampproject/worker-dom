@@ -39,3 +39,16 @@ test.serial('terminate the worker-dom', (t) => {
     t.is(worker.terminated, true);
   });
 });
+
+test.serial('attach shadow dom', async (t) => {
+  const { baseElement } = t.context;
+  baseElement.setAttribute('data-shadow-dom', 'open');
+
+  const fetchPromise = Promise.all([Promise.resolve('workerDOMScript'), Promise.resolve('authorScript')]);
+  await install(fetchPromise, baseElement, {
+    authorURL: 'authorURL',
+    domURL: 'domURL',
+  });
+
+  t.not(baseElement.shadowRoot, null);
+});
