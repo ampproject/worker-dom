@@ -33,7 +33,7 @@ export function fetchAndInstall(baseElement: HTMLElement, config: InboundWorkerD
  * @param config
  */
 export function install(
-  fetchPromise: Promise<[string, string]>,
+  fetchPromise: Promise<[workerScript: string, authorScript: string]>,
   baseElement: HTMLElement,
   config: InboundWorkerDOMConfiguration,
 ): Promise<ExportedWorker | null> {
