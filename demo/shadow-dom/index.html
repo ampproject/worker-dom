@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Hello World</title>
+  <title>Shadow Root</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="/demo.css" rel="stylesheet">
   <script src="/dist/main.mjs" type="module"></script>
@@ -12,19 +12,16 @@
   <!-- <script src="/dist/main.js" defer></script> -->
 </head>
 <body>
-  <div src="hello-world.js" id="upgrade-me">
-    <div class="root">
-      <button>Insert Hello World!</button>
+  <div>Host Element</div>
+  <div src="shadow-dom.js" id="upgrade-me" data-shadow-dom="open">
+    <div id="root">
+      <div>Guest Element</div>
+      <button>Insert style tag</button>
     </div>
   </div>
   <script type="module">
     import {upgradeElement} from '/dist/main.mjs';
     upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
-  </script>
-  <script nomodule async=false defer>
-    document.addEventListener('DOMContentLoaded', function() {
-      MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.js');
-    }, false);
   </script>
   <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
   <!-- Comment either block to enable module/nomodule or disable it. -->
