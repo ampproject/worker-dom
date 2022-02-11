@@ -105,7 +105,7 @@
       "brotli": "4.5 kB"
     },
     "./dist/amp-production/worker/worker.mjs": {
-      "brotli": "13 kB"
+      "brotli": "14 kB"
     },
     "./dist/amp-production/worker/worker.nodom.mjs": {
       "brotli": "2 kB"
