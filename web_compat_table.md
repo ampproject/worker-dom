@@ -747,8 +747,8 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | NodeList.keys()                                     | ✖️     |                                                  | 
 | NodeList.length                                     | ✖️     |                                                  | 
 | NodeList.values()                                   | ✖️     |                                                  | 
-| NonDocumentTypeChildNode.nextElementSibling         | ✖️     |                                                  | 
-| NonDocumentTypeChildNode.previousElementSibling     | ✖️     |                                                  | 
+| NonDocumentTypeChildNode.nextElementSibling         | ✔️     |                                                  | 
+| NonDocumentTypeChildNode.previousElementSibling     | ️✔️     |                                                  | 
 | ParentNode.append()                                 | ✖️     |                                                  | 
 | ParentNode.childElementCount                        | ✔️     |                                                  | 
 | ParentNode.children                                 | ✔️     |                                                  | 
