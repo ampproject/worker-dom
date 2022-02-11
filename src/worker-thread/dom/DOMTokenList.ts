@@ -103,7 +103,11 @@ export class DOMTokenList {
    */
   public add(...tokens: string[]): void {
     const oldValue = this.value;
-    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...new Set(this[TransferrableKeys.tokens].concat(tokens)));
+    this[TransferrableKeys.tokens].splice(
+      0,
+      this[TransferrableKeys.tokens].length,
+      ...Array.from(new Set(this[TransferrableKeys.tokens].concat(tokens))),
+    );
     this[TransferrableKeys.mutated](oldValue, this.value);
   }
 
@@ -119,7 +123,7 @@ export class DOMTokenList {
     this[TransferrableKeys.tokens].splice(
       0,
       this[TransferrableKeys.tokens].length,
-      ...new Set(this[TransferrableKeys.tokens].filter((token) => !tokens.includes(token))),
+      ...Array.from(new Set(this[TransferrableKeys.tokens].filter((token) => !tokens.includes(token)))),
     );
     this[TransferrableKeys.mutated](oldValue, this.value);
   }
@@ -142,7 +146,7 @@ export class DOMTokenList {
         set.add(newToken);
       }
     }
-    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...set);
+    this[TransferrableKeys.tokens].splice(0, this[TransferrableKeys.tokens].length, ...Array.from(set));
     this[TransferrableKeys.mutated](oldValue, this.value);
   }
 
