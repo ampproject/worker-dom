@@ -57,5 +57,7 @@ test('nextElementSibling skips over text nodes', (t) => {
   node.appendChild(textNodeTwo);
 
   t.is(child.nextElementSibling, childTwo);
+  t.is(textNode.nextElementSibling, childTwo);
   t.is(childTwo.nextElementSibling, null);
+  t.is(textNodeTwo.nextElementSibling, null);
 });
