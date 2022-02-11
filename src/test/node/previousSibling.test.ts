@@ -1,14 +1,16 @@
 import anyTest, { TestInterface } from 'ava';
+import { Comment } from '../../worker-thread/dom/Comment';
 import { Element } from '../../worker-thread/dom/Element';
-import { Node } from '../../worker-thread/dom/Node';
+import { Text } from '../../worker-thread/dom/Text';
 import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   node: Element;
   child: Element;
   childTwo: Element;
-  textNode: Node;
-  textNodeTwo: Node;
+  textNode: Text;
+  textNodeTwo: Text;
+  commentNode: Comment;
 }>;
 
 test.beforeEach((t) => {
@@ -20,6 +22,7 @@ test.beforeEach((t) => {
     childTwo: document.createElement('div'),
     textNode: document.createTextNode('Hello world'),
     textNodeTwo: document.createTextNode('World'),
+    commentNode: document.createComment('comment'),
   };
 });
 
@@ -47,15 +50,18 @@ test('when a node is the first child of a parent, the previous sibling is null',
 });
 
 test('previousElementSibling skips over text nodes', (t) => {
-  const { node, child, childTwo, textNode, textNodeTwo } = t.context;
+  const { node, child, childTwo, textNode, textNodeTwo, commentNode } = t.context;
 
   node.appendChild(child);
+  node.appendChild(commentNode);
   node.appendChild(textNode);
   node.appendChild(textNodeTwo);
   node.appendChild(childTwo);
 
-  t.is(childTwo.previousElementSibling, child);
+  t.is(commentNode.previousElementSibling, child);
+  t.is(textNode.previousElementSibling, child);
   t.is(textNodeTwo.previousElementSibling, child);
+  t.is(childTwo.previousElementSibling, child);
 
   node.innerHTML = '';
   node.appendChild(textNode);

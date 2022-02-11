@@ -1,14 +1,16 @@
 import anyTest, { TestInterface } from 'ava';
+import { Comment } from '../../worker-thread/dom/Comment';
 import { Element } from '../../worker-thread/dom/Element';
-import { Node } from '../../worker-thread/dom/Node';
+import { Text } from '../../worker-thread/dom/Text';
 import { createTestingDocument } from '../DocumentCreation';
 
 const test = anyTest as TestInterface<{
   node: Element;
   child: Element;
   childTwo: Element;
-  textNode: Node;
-  textNodeTwo: Node;
+  textNode: Text;
+  textNodeTwo: Text;
+  commentNode: Comment;
 }>;
 
 test.beforeEach((t) => {
@@ -20,6 +22,7 @@ test.beforeEach((t) => {
     childTwo: document.createElement('div'),
     textNode: document.createTextNode('Hello'),
     textNodeTwo: document.createTextNode('World'),
+    commentNode: document.createComment('comment'),
   };
 });
 
@@ -48,15 +51,17 @@ test('when a node is the last child of a parent, the next sibling is null', (t) 
   t.is(childTwo.nextElementSibling, null);
 });
 
-test('nextElementSibling skips over text nodes', (t) => {
-  const { node, child, childTwo, textNode, textNodeTwo } = t.context;
+test('nextElementSibling skips over non-element nodes', (t) => {
+  const { node, child, childTwo, textNode, textNodeTwo, commentNode } = t.context;
 
   node.appendChild(child);
+  node.appendChild(commentNode);
   node.appendChild(textNode);
   node.appendChild(childTwo);
   node.appendChild(textNodeTwo);
 
   t.is(child.nextElementSibling, childTwo);
+  t.is(commentNode.nextElementSibling, childTwo);
   t.is(textNode.nextElementSibling, childTwo);
   t.is(childTwo.nextElementSibling, null);
   t.is(textNodeTwo.nextElementSibling, null);
