@@ -115,9 +115,7 @@ export class Element extends ParentNode {
   // Element.clientTop – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientTop
   // Element.clientWidth – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth
   // set Element.innerHTML – https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
-  // NonDocumentTypeChildNode.nextElementSibling – https://developer.mozilla.org/en-US/docs/Web/API/NonDocumentTypeChildNode/nextElementSibling
   // Element.prefix – https://developer.mozilla.org/en-US/docs/Web/API/Element/prefix
-  // NonDocummentTypeChildNode.previousElementSibling – https://developer.mozilla.org/en-US/docs/Web/API/NonDocumentTypeChildNode/previousElementSibling
   // Element.scrollHeight – https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight
   // Element.scrollLeft – https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollLeft
   // Element.scrollLeftMax – https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollLeftMax
@@ -160,6 +158,36 @@ export class Element extends ParentNode {
 
   // Mixins not implemented
   // Slotable.assignedSlot – https://developer.mozilla.org/en-US/docs/Web/API/Slotable/assignedSlot
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/previousElementSibling
+   * Returns the Element immediately prior to the specified one in its parent's children list,
+   * or null if the specified element is the first one in the list.
+   */
+  get previousElementSibling() {
+    let parentChildren = this.parentNode?.children;
+    if (!parentChildren) {
+      return null;
+    }
+
+    const nextIndex = parentChildren.indexOf(this) + 1;
+    return parentChildren[nextIndex] ?? null;
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/nextElementSibling
+   * Returns the element immediately following the specified one in its parent's children list,
+   * or null if the specified element is the last one in the list.
+   */
+  get nextElementSibling() {
+    let parentChildren = this.parentNode?.children;
+    if (!parentChildren) {
+      return null;
+    }
+
+    const nextIndex = parentChildren.indexOf(this) + 1;
+    return parentChildren[nextIndex] ?? null;
+  }
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/outerHTML
