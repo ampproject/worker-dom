@@ -19,6 +19,7 @@ import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../
 import { parse } from '../../third_party/html-parser/html-parser';
 import { propagate } from './Node';
 import { Event } from '../Event';
+import { getNextElementSibling, getPreviousElementSibling } from './elementSibling';
 
 export const NS_NAME_TO_CLASS: { [key: string]: typeof Element } = {};
 export const registerSubclass = (localName: string, subclass: typeof Element, namespace: string = HTML_NAMESPACE): any =>
@@ -164,29 +165,17 @@ export class Element extends ParentNode {
    * Returns the Element immediately prior to the specified one in its parent's children list,
    * or null if the specified element is the first one in the list.
    */
-  get previousElementSibling() {
-    let parentChildren = this.parentNode && this.parentNode.children;
-    if (!parentChildren) {
-      return null;
-    }
-
-    const nextIndex = parentChildren.indexOf(this) - 1;
-    return parentChildren[nextIndex] || null;
+  get previousElementSibling(): Node | null {
+    return getPreviousElementSibling(this);
   }
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/nextElementSibling
-   * Returns the element immediately following the specified one in its parent's children list,
+   * Returns the Element immediately following the specified one in its parent's children list,
    * or null if the specified element is the last one in the list.
    */
-  get nextElementSibling() {
-    let parentChildren = this.parentNode && this.parentNode.children;
-    if (!parentChildren) {
-      return null;
-    }
-
-    const nextIndex = parentChildren.indexOf(this) + 1;
-    return parentChildren[nextIndex] || null;
+  get nextElementSibling(): Node | null {
+    return getNextElementSibling(this);
   }
 
   /**

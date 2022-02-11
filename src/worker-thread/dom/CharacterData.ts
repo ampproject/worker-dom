@@ -6,6 +6,7 @@ import { Document } from './Document';
 import { NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { getNextElementSibling, getPreviousElementSibling } from './elementSibling';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 export abstract class CharacterData extends Node {
@@ -72,5 +73,23 @@ export abstract class CharacterData extends Node {
    */
   set nodeValue(value: string) {
     this.data = value;
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/previousElementSibling
+   * Returns the Element immediately prior to the specified one in its parent's children list,
+   * or null if the specified element is the first one in the list.
+   */
+  get previousElementSibling(): Node | null {
+    return getPreviousElementSibling(this);
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/nextElementSibling
+   * Returns the Element immediately following the specified one in its parent's children list,
+   * or null if the specified element is the last one in the list.
+   */
+  get nextElementSibling(): Node | null {
+    return getNextElementSibling(this);
   }
 }

@@ -8,6 +8,7 @@ const test = anyTest as TestInterface<{
   child: Element;
   childTwo: Element;
   textNode: Node;
+  textNodeTwo: Node;
 }>;
 
 test.beforeEach((t) => {
@@ -18,6 +19,7 @@ test.beforeEach((t) => {
     child: document.createElement('div'),
     childTwo: document.createElement('div'),
     textNode: document.createTextNode('Hello world'),
+    textNodeTwo: document.createTextNode('World'),
   };
 });
 
@@ -45,10 +47,18 @@ test('when a node is the first child of a parent, the previous sibling is null',
 });
 
 test('previousElementSibling skips over text nodes', (t) => {
-  const { node, child, childTwo, textNode } = t.context;
+  const { node, child, childTwo, textNode, textNodeTwo } = t.context;
 
   node.appendChild(child);
-  node.appendChild(textNode)
+  node.appendChild(textNode);
+  node.appendChild(textNodeTwo);
   node.appendChild(childTwo);
+
   t.is(childTwo.previousElementSibling, child);
+  t.is(textNodeTwo.previousElementSibling, child);
+
+  node.innerHTML = '';
+  node.appendChild(textNode);
+  node.appendChild(textNodeTwo);
+  t.is(textNodeTwo.previousElementSibling, null);
 });
