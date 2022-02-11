@@ -17,7 +17,7 @@ test.beforeEach((t) => {
     node: document.createElement('div'),
     child: document.createElement('div'),
     childTwo: document.createElement('div'),
-    textNode: document.createTextNode('Hello world');
+    textNode: document.createTextNode('Hello world'),
   };
 });
 

@@ -165,13 +165,13 @@ export class Element extends ParentNode {
    * or null if the specified element is the first one in the list.
    */
   get previousElementSibling() {
-    let parentChildren = this.parentNode?.children;
+    let parentChildren = this.parentNode && this.parentNode.children;
     if (!parentChildren) {
       return null;
     }
 
-    const nextIndex = parentChildren.indexOf(this) + 1;
-    return parentChildren[nextIndex] ?? null;
+    const nextIndex = parentChildren.indexOf(this) - 1;
+    return parentChildren[nextIndex] || null;
   }
 
   /**
@@ -180,13 +180,13 @@ export class Element extends ParentNode {
    * or null if the specified element is the last one in the list.
    */
   get nextElementSibling() {
-    let parentChildren = this.parentNode?.children;
+    let parentChildren = this.parentNode && this.parentNode.children;
     if (!parentChildren) {
       return null;
     }
 
     const nextIndex = parentChildren.indexOf(this) + 1;
-    return parentChildren[nextIndex] ?? null;
+    return parentChildren[nextIndex] || null;
   }
 
   /**
