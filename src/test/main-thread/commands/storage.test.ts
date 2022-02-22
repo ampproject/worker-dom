@@ -11,13 +11,17 @@ import { TransferrableKeys } from '../../../transfer/TransferrableKeys';
 
 const test = anyTest as TestInterface<{}>;
 
+type SetStorageMeta = { location: StorageLocation; key: string | null; value: string | null };
+
 function getStorageProcessor(strings: string[]): {
   processor: CommandExecutor;
   messages: Array<MessageToWorker>;
+  getLastSetStorage: () => any;
 } {
   const stringCtx = new StringContext();
   stringCtx.storeValues(strings);
   const messages: Array<MessageToWorker> = [];
+  let lastSetStorage: null | SetStorageMeta = null;
 
   const processor = StorageProcessor(
     stringCtx,
@@ -34,12 +38,16 @@ function getStorageProcessor(strings: string[]): {
         getStorage() {
           return Promise.resolve({ hello: 'world' });
         },
+        setStorage(location: StorageLocation, key: string | null, value: string | null) {
+          lastSetStorage = { location, key, value };
+        },
       } as unknown as Sanitizer,
     } as WorkerDOMConfiguration,
   );
   return {
     processor,
     messages,
+    getLastSetStorage: () => lastSetStorage,
   };
 }
 
@@ -62,4 +70,19 @@ test('StorageProcessor sends storage value event to worker', async (t) => {
   };
   t.is(messages.length, 1);
   t.deepEqual(messages, [expectedMessage]);
+});
+
+test('StorageProcessor handles deletion event from worker', async (t) => {
+  const { processor, getLastSetStorage } = getStorageProcessor(['t', 'hello']);
+  const mutation: number[] = [];
+  mutation[StorageMutationIndex.Operation] = GetOrSet.SET;
+  mutation[StorageMutationIndex.Location] = StorageLocation.Local;
+  mutation[StorageMutationIndex.Key] = 1;
+  mutation[StorageMutationIndex.Value] = -1;
+  const mutations = new Uint16Array(mutation);
+
+  processor.execute(mutations, 0, true);
+  await Promise.resolve(setTimeout);
+
+  t.deepEqual(getLastSetStorage(), { location: StorageLocation.Local, key: 'hello', value: null });
 });

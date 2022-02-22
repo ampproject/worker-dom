@@ -63,7 +63,7 @@ export function createStorage(document: Document | DocumentStub, location: Stora
         GetOrSet.SET,
         location,
         store(key),
-        0, // value == 0 represents deletion.
+        -1, // value == -1 represents deletion.
       ]);
     },
   });
@@ -77,8 +77,8 @@ export function createStorage(document: Document | DocumentStub, location: Stora
         TransferrableMutationType.STORAGE,
         GetOrSet.SET,
         location,
-        0, // key == 0 represents all keys.
-        0, // value == 0 represents deletion.
+        -1, // key == -1 represents all keys.
+        -1, // value == -1 represents deletion.
       ]);
     },
   });

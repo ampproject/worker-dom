@@ -107,3 +107,7 @@ export const enum ResolveOrReject {
   RESOLVE = 1,
   REJECT = 2,
 }
+
+// Mutations are are modeled as Uint16Array.
+// Deletion is specified as a -1, which when placed into the array becomes 2^16-1.
+export const DELETION_INDEX = 2 ** 16 - 1;
