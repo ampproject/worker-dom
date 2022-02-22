@@ -1,5 +1,5 @@
 import { Document } from './dom/Document';
-import { GetOrSet } from '../transfer/Messages';
+import { DELETION_INDEX, GetOrSet } from '../transfer/Messages';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { store } from './strings';
@@ -58,13 +58,7 @@ export function createStorage(document: Document | DocumentStub, location: Stora
     value(key: string): void {
       delete this[key];
 
-      transfer(document, [
-        TransferrableMutationType.STORAGE,
-        GetOrSet.SET,
-        location,
-        store(key),
-        -1, // value == -1 represents deletion.
-      ]);
+      transfer(document, [TransferrableMutationType.STORAGE, GetOrSet.SET, location, store(key), DELETION_INDEX]);
     },
   });
   define(storage, 'clear', {
@@ -73,13 +67,7 @@ export function createStorage(document: Document | DocumentStub, location: Stora
         delete this[key];
       });
 
-      transfer(document, [
-        TransferrableMutationType.STORAGE,
-        GetOrSet.SET,
-        location,
-        -1, // key == -1 represents all keys.
-        -1, // value == -1 represents deletion.
-      ]);
+      transfer(document, [TransferrableMutationType.STORAGE, GetOrSet.SET, location, DELETION_INDEX, DELETION_INDEX]);
     },
   });
   return storage as Storage;
