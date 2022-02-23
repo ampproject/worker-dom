@@ -55,7 +55,7 @@ test('Deserializes float arguments', (t) => {
 test('Deserializes string arguments', (t) => {
   const { stringContext, nodeContext } = t.context;
 
-  const serializedArgs = [TransferrableObjectType.String, storeString(stringContext, 'textArg')];
+  const serializedArgs = [TransferrableObjectType.String, stringContext.store('textArg')];
   const buffer = new Uint16Array(serializedArgs);
   const { args: deserializedArgs } = deserializeTransferrableObject(buffer, 0, 1, stringContext, nodeContext);
 
@@ -104,7 +104,7 @@ test('Deserializes varying types', (t) => {
 
   // argument 2: String
   const stringArg = 'textArg';
-  const stringId = storeString(stringContext, stringArg);
+  const stringId = stringContext.store(stringArg);
 
   // argument 3: Object
   const objectId = 7;
@@ -154,13 +154,6 @@ test('Returns the correct end offset', (t) => {
 
   t.is(buffer[endOffset], 32);
 });
-
-// main-thread's strings API does not return an ID when storing a string
-// so for convenience:
-function storeString(stringContext: StringContext, text: string, currentIndex = 0) {
-  stringContext.store(text);
-  return ++currentIndex;
-}
 
 /**
  * Used to compare float value similarity in tests.

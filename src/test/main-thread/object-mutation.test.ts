@@ -242,7 +242,7 @@ test('Mutation starts at a non-zero offset', (t) => {
 
   const mutation = [
     TransferrableMutationType.OBJECT_MUTATION,
-    storeString(stringContext, methodName),
+    stringContext.store(methodName),
     4, // arg count
     TransferrableObjectType.CanvasRenderingContext2D,
     canvasElement._index_,
@@ -280,7 +280,7 @@ test('Returns correct end offset', (t) => {
 
   const mutation = [
     TransferrableMutationType.OBJECT_MUTATION,
-    storeString(stringContext, methodName),
+    stringContext.store(methodName),
     4, // arg count
     TransferrableObjectType.CanvasRenderingContext2D,
     canvasElement._index_,
@@ -304,24 +304,10 @@ function executeCall(
   stringContext: StringContext,
   argCount: number,
   serializedArgs: number[],
-  stringsIndex?: number,
 ) {
   return mutationProcessor.execute(
-    new Uint16Array([
-      TransferrableMutationType.OBJECT_MUTATION,
-      storeString(stringContext, fnName, stringsIndex),
-      argCount,
-      ...serializedTargetObject,
-      ...serializedArgs,
-    ]),
+    new Uint16Array([TransferrableMutationType.OBJECT_MUTATION, stringContext.store(fnName), argCount, ...serializedTargetObject, ...serializedArgs]),
     0,
     /* allow */ true,
   );
-}
-
-// main-thread's strings API does not return an ID when storing a string
-// so for convenience:
-function storeString(stringContext: StringContext, text: string, currentIndex = 0) {
-  stringContext.store(text);
-  return ++currentIndex;
 }

@@ -67,8 +67,8 @@ test.beforeEach((t) => {
 test('setting property to a new string', (t) => {
   const { stringContext, propertyProcessor, inputElement } = t.context;
   const newValue = 'new value';
-  const storedValueKey = storeString(stringContext, 'value');
-  const storedNewValue = storeString(stringContext, newValue, storedValueKey);
+  const storedValueKey = stringContext.store('value');
+  const storedNewValue = stringContext.store(newValue);
 
   propertyProcessor.execute(
     new Uint16Array([TransferrableMutationType.PROPERTIES, inputElement._index_, storedValueKey, NumericBoolean.FALSE, storedNewValue]),
@@ -82,9 +82,9 @@ test('setting property back to an empty string', (t) => {
   const { stringContext, propertyProcessor, inputElement } = t.context;
   const firstUpdateValue = 'new value';
   const secondUpdateValue = '';
-  const storedValueKey = storeString(stringContext, 'value');
-  const storedFirstUpdateValue = storeString(stringContext, firstUpdateValue, storedValueKey);
-  const storedSecondUpdateValue = storeString(stringContext, secondUpdateValue, storedFirstUpdateValue);
+  const storedValueKey = stringContext.store('value');
+  const storedFirstUpdateValue = stringContext.store(firstUpdateValue);
+  const storedSecondUpdateValue = stringContext.store(secondUpdateValue);
 
   propertyProcessor.execute(
     new Uint16Array([TransferrableMutationType.PROPERTIES, inputElement._index_, storedValueKey, NumericBoolean.FALSE, storedFirstUpdateValue]),
@@ -100,8 +100,3 @@ test('setting property back to an empty string', (t) => {
   );
   t.is(inputElement.value, secondUpdateValue);
 });
-
-function storeString(stringContext: StringContext, text: string, currentIndex = 0) {
-  stringContext.store(text);
-  return ++currentIndex;
-}

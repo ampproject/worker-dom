@@ -95,7 +95,7 @@ test('Object creation with mutation at a zero offset', (t) => {
   objectCreationProcessor.execute(
     new Uint16Array([
       TransferrableMutationType.OBJECT_CREATION,
-      storeString(stringContext, methodName),
+      stringContext.store(methodName),
       objectId,
       4, // arg count
       ...serializedTarget,
@@ -141,7 +141,7 @@ test('Object creation with mutation at non-zero offset', (t) => {
 
   const mutation = [
     TransferrableMutationType.OBJECT_CREATION,
-    storeString(stringContext, methodName),
+    stringContext.store(methodName),
     objectId,
     4, // arg count
     ...serializedTarget,
@@ -180,7 +180,7 @@ test('Returns correct end offset', (t) => {
 
   const mutation = [
     TransferrableMutationType.OBJECT_CREATION,
-    storeString(stringContext, methodName),
+    stringContext.store(methodName),
     1, // object ID (not important for this test)
     4, // arg count
     TransferrableObjectType.CanvasRenderingContext2D,
@@ -196,8 +196,3 @@ test('Returns correct end offset', (t) => {
 
   t.is(mutationsArray[endOffset], 32);
 });
-
-function storeString(stringContext: StringContext, text: string, currentIndex = 0) {
-  stringContext.store(text);
-  return ++currentIndex;
-}

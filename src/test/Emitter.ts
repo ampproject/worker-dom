@@ -17,7 +17,7 @@ export interface Emitter {
  */
 const strings: Array<string> = [
   // First index reserved to signify deletion.
-  null as unknown as string,
+  null as any,
 ];
 
 /**

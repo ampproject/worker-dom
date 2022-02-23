@@ -27,11 +27,10 @@ export class StringContext {
 
   /**
    * Stores a string in mapping and returns the index of the location.
-   * @param value string to store
-   * @return location in map
    */
-  store(value: string): void {
+  store(value: string): number {
     this.strings.push(value);
+    return this.strings.length - 1;
   }
 
   /**
