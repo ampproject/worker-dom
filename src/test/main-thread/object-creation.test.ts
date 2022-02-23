@@ -197,7 +197,7 @@ test('Returns correct end offset', (t) => {
   t.is(mutationsArray[endOffset], 32);
 });
 
-function storeString(stringContext: StringContext, text: string, currentIndex = -1) {
+function storeString(stringContext: StringContext, text: string, currentIndex = 0) {
   stringContext.store(text);
   return ++currentIndex;
 }

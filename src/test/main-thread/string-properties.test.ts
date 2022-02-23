@@ -101,7 +101,7 @@ test('setting property back to an empty string', (t) => {
   t.is(inputElement.value, secondUpdateValue);
 });
 
-function storeString(stringContext: StringContext, text: string, currentIndex = -1) {
+function storeString(stringContext: StringContext, text: string, currentIndex = 0) {
   stringContext.store(text);
   return ++currentIndex;
 }

@@ -1,6 +1,6 @@
 import anyTest, { TestInterface } from 'ava';
 import { Document } from '../../worker-thread/dom/Document';
-import { DELETION_INDEX, GetOrSet } from '../../transfer/Messages';
+import { GetOrSet } from '../../transfer/Messages';
 import { Storage, createStorage } from '../../worker-thread/Storage';
 import { StorageLocation } from '../../transfer/TransferrableStorage';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
@@ -54,7 +54,7 @@ test.serial.cb('Storage.removeItem', (t) => {
   const { document, storage } = t.context;
 
   expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, getForTesting('foo'), DELETION_INDEX]);
+    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, getForTesting('foo'), 0]);
     t.end();
   });
 
@@ -65,7 +65,7 @@ test.serial.cb('Storage.clear', (t) => {
   const { document, storage } = t.context;
 
   expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, DELETION_INDEX, DELETION_INDEX]);
+    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, 0, 0]);
     t.end();
   });
 

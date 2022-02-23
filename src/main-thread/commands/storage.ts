@@ -2,7 +2,7 @@ import { CommandExecutorInterface } from './interface';
 import { TransferrableMutationType, StorageMutationIndex } from '../../transfer/TransferrableMutation';
 import { StorageLocation } from '../../transfer/TransferrableStorage';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { MessageType, StorageValueToWorker, GetOrSet, DELETION_INDEX } from '../../transfer/Messages';
+import { MessageType, StorageValueToWorker, GetOrSet } from '../../transfer/Messages';
 
 export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.STORAGE);
@@ -64,8 +64,8 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
 
         // TODO(choumx): Clean up key/value strings (or don't store them in the first place)
         // to avoid leaking memory.
-        const key = keyIndex != DELETION_INDEX && keyIndex >= 0 ? strings.get(keyIndex) : '';
-        const value = valueIndex != DELETION_INDEX && valueIndex >= 0 ? strings.get(valueIndex) : null;
+        const key = keyIndex > 0 ? strings.get(keyIndex) : '';
+        const value = valueIndex > 0 ? strings.get(valueIndex) : null;
 
         if (operation === GetOrSet.GET) {
           get(location, key);
@@ -82,8 +82,8 @@ export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext,
       const keyIndex = mutations[startPosition + StorageMutationIndex.Key];
       const valueIndex = mutations[startPosition + StorageMutationIndex.Value];
 
-      const key = keyIndex >= 0 ? strings.get(keyIndex) : null;
-      const value = valueIndex >= 0 ? strings.get(valueIndex) : null;
+      const key = keyIndex > 0 ? strings.get(keyIndex) : null;
+      const value = valueIndex > 0 ? strings.get(valueIndex) : null;
 
       return {
         type: 'STORAGE',

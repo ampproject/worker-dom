@@ -321,7 +321,7 @@ function executeCall(
 
 // main-thread's strings API does not return an ID when storing a string
 // so for convenience:
-function storeString(stringContext: StringContext, text: string, currentIndex = -1) {
+function storeString(stringContext: StringContext, text: string, currentIndex = 0) {
   stringContext.store(text);
   return ++currentIndex;
 }

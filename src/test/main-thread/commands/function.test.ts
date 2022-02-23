@@ -29,7 +29,7 @@ test('Returns the value of a resolved function', async (t) => {
   const mutations: number[] = [];
   mutations[FunctionMutationIndex.Status] = ResolveOrReject.RESOLVE;
   mutations[FunctionMutationIndex.Index] = index;
-  mutations[FunctionMutationIndex.Value] = 0;
+  mutations[FunctionMutationIndex.Value] = 1;
 
   processor.execute(new Uint16Array(mutations), 0, true);
   t.deepEqual(await promise, { val: true });
@@ -41,7 +41,7 @@ test('Is able to return undefined', async (t) => {
   const mutations: number[] = [];
   mutations[FunctionMutationIndex.Status] = ResolveOrReject.RESOLVE;
   mutations[FunctionMutationIndex.Index] = index;
-  mutations[FunctionMutationIndex.Value] = 0;
+  mutations[FunctionMutationIndex.Value] = 1;
 
   processor.execute(new Uint16Array(mutations), 0, true);
   t.deepEqual(await promise, undefined);
@@ -53,7 +53,7 @@ test('Returns the value of a rejected value', (t) => {
   const mutations: number[] = [];
   mutations[FunctionMutationIndex.Status] = ResolveOrReject.REJECT;
   mutations[FunctionMutationIndex.Index] = index;
-  mutations[FunctionMutationIndex.Value] = 0;
+  mutations[FunctionMutationIndex.Value] = 1;
 
   processor.execute(new Uint16Array(mutations), 0, true);
   return promise.then(

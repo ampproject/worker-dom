@@ -56,7 +56,7 @@ test('StorageProcessor sends storage value event to worker', async (t) => {
   const mutation: number[] = [];
   mutation[StorageMutationIndex.Operation] = GetOrSet.GET;
   mutation[StorageMutationIndex.Location] = StorageLocation.AmpState;
-  mutation[StorageMutationIndex.Key] = 0;
+  mutation[StorageMutationIndex.Key] = 1;
   const mutations = new Uint16Array(mutation);
 
   processor.execute(mutations, 0, true);
@@ -77,8 +77,8 @@ test('StorageProcessor handles deletion event from worker', async (t) => {
   const mutation: number[] = [];
   mutation[StorageMutationIndex.Operation] = GetOrSet.SET;
   mutation[StorageMutationIndex.Location] = StorageLocation.Local;
-  mutation[StorageMutationIndex.Key] = 1;
-  mutation[StorageMutationIndex.Value] = -1;
+  mutation[StorageMutationIndex.Key] = 2;
+  mutation[StorageMutationIndex.Value] = 0;
   const mutations = new Uint16Array(mutation);
 
   processor.execute(mutations, 0, true);

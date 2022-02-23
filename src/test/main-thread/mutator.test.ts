@@ -70,9 +70,9 @@ test.serial('batch mutations', (t) => {
     new Uint16Array([
       TransferrableMutationType.ATTRIBUTES,
       2, // Base Node
+      1,
       0,
-      0,
-      0 + 1,
+      1 + 1,
     ]),
   );
   mutator.mutate(
@@ -82,9 +82,9 @@ test.serial('batch mutations', (t) => {
     new Uint16Array([
       TransferrableMutationType.ATTRIBUTES,
       2, // Base Node
-      1,
+      2,
       0,
-      1 + 1,
+      2 + 1,
     ]),
   );
 
@@ -102,9 +102,9 @@ test.serial('batch mutations', (t) => {
     new Uint16Array([
       TransferrableMutationType.ATTRIBUTES,
       2, // Base Node
-      2,
+      3,
       0,
-      2 + 1,
+      3 + 1,
     ]),
   );
 
@@ -140,9 +140,9 @@ test.serial('batch mutations with custom pump', (t) => {
     new Uint16Array([
       TransferrableMutationType.ATTRIBUTES,
       2, // Base Node
+      1,
       0,
-      0,
-      0 + 1,
+      1 + 1,
     ]),
   );
   mutator.mutate(
@@ -152,9 +152,9 @@ test.serial('batch mutations with custom pump', (t) => {
     new Uint16Array([
       TransferrableMutationType.ATTRIBUTES,
       2, // Base Node
-      1,
+      2,
       0,
-      1 + 1,
+      2 + 1,
     ]),
   );
 
@@ -174,9 +174,9 @@ test.serial('batch mutations with custom pump', (t) => {
     new Uint16Array([
       TransferrableMutationType.ATTRIBUTES,
       2, // Base Node
-      2,
+      3,
       0,
-      2 + 1,
+      3 + 1,
     ]),
   );
 
@@ -209,9 +209,9 @@ test.serial('leverage allowlist to exclude mutation type', (t) => {
     new Uint16Array([
       TransferrableMutationType.ATTRIBUTES,
       2, // Base Node
+      1,
       0,
-      0,
-      0 + 1,
+      1 + 1,
     ]),
   );
   mutator.mutate(
@@ -221,9 +221,9 @@ test.serial('leverage allowlist to exclude mutation type', (t) => {
     new Uint16Array([
       TransferrableMutationType.ATTRIBUTES,
       2, // Base Node
-      1,
+      2,
       0,
-      1 + 1,
+      2 + 1,
     ]),
   );
 
@@ -257,9 +257,9 @@ test.serial('split strings from mutations', (t) => {
     new Uint16Array([
       TransferrableMutationType.ATTRIBUTES,
       2, // Base Node
+      1,
       0,
-      0,
-      0 + 1,
+      1 + 1,
     ]),
   );
 

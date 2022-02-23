@@ -5,7 +5,11 @@ export class StringContext {
   private strings: Array<string>;
 
   constructor() {
-    this.strings = [];
+    this.strings = [
+      // The 0th index is reserved for meaning no value. Or delete.
+      // For example, the storage.removeItem code path.
+      null as any,
+    ];
   }
 
   /**
