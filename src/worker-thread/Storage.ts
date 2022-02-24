@@ -62,7 +62,7 @@ export function createStorage(document: Document | DocumentStub, location: Stora
         TransferrableMutationType.STORAGE,
         GetOrSet.SET,
         location,
-        store(key),
+        store(key) + 1,
         0, // value == 0 represents deletion.
       ]);
     },

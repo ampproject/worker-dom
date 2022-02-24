@@ -5,11 +5,7 @@ export class StringContext {
   private strings: Array<string>;
 
   constructor() {
-    this.strings = [
-      // The 0th index is reserved for meaning no value. Or delete.
-      // For example, the storage.removeItem code path.
-      null as any,
-    ];
+    this.strings = [];
   }
 
   /**
@@ -27,6 +23,8 @@ export class StringContext {
 
   /**
    * Stores a string in mapping and returns the index of the location.
+   * @param value string to store
+   * @return {number}
    */
   store(value: string): number {
     this.strings.push(value);

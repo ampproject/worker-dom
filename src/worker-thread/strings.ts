@@ -1,4 +1,4 @@
-let count: number = 1; // count starts from 1 since 0th index is reserved to mean "no value" or "delete".
+let count: number = 0;
 let transfer: Array<string> = [];
 const mapping: Map<string, number> = new Map();
 

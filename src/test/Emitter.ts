@@ -15,10 +15,7 @@ export interface Emitter {
  * mutation transfer state is also stored at the module-level.
  * TODO: Remove this and replace with strings.getForTesting() at call sites.
  */
-const strings: Array<string> = [
-  // First index reserved to signify deletion.
-  null as any,
-];
+const strings: Array<string> = [];
 
 /**
  * Stubs `document.postMessage` to invoke callbacks passed to `once()`.
