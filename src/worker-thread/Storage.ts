@@ -51,7 +51,7 @@ export function createStorage(document: Document | DocumentStub, location: Stora
       const stringValue = String(value);
       this[key] = stringValue;
 
-      transfer(document, [TransferrableMutationType.STORAGE, GetOrSet.SET, location, store(key), store(stringValue)]);
+      transfer(document, [TransferrableMutationType.STORAGE, GetOrSet.SET, location, store(key) + 1, store(stringValue) + 1]);
     },
   });
   define(storage, 'removeItem', {
