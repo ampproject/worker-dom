@@ -43,7 +43,13 @@ test.serial.cb('Storage.setItem', (t) => {
   const { document, storage } = t.context;
 
   expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, getForTesting('foo'), getForTesting('bar')]);
+    t.deepEqual(mutations, [
+      TransferrableMutationType.STORAGE,
+      GetOrSet.SET,
+      StorageLocation.Local,
+      getForTesting('foo')! + 1,
+      getForTesting('bar')! + 1,
+    ]);
     t.end();
   });
 
@@ -54,7 +60,7 @@ test.serial.cb('Storage.removeItem', (t) => {
   const { document, storage } = t.context;
 
   expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, getForTesting('foo'), 0]);
+    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, getForTesting('foo')! + 1, 0]);
     t.end();
   });
 
