@@ -64,6 +64,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | Document.createTouch()                              | ✖️     |                                                  | 
 | Document.createTouchList()                          | ✖️     |                                                  | 
 | Document.createTreeWalker()                         | ✖️     |                                                  | 
+| Document.cookie                                     | ✖️     |                                                  | 
 | Document.defaultView                                | ✔️     |                                                  | 
 | Document.designMode                                 | ✖️     |                                                  | 
 | Document.dir                                        | ✖️     |                                                  | 
