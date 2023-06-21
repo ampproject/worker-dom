@@ -9,3 +9,4 @@ demo/build/
 demo/example/
 demo/test/
 dist/*
+.husky/
