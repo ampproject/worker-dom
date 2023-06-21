@@ -34,7 +34,8 @@
     "presize": "npm-run-all build",
     "size": "filesize",
     "release": "HUSKY_SKIP_HOOKS=1 np --no-2fa",
-    "prepublishOnly": "npm-run-all clean build"
+    "prepublishOnly": "npm-run-all clean build",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@ampproject/filesize": "4.3.0",
@@ -54,9 +55,9 @@
     "benchmark": "2.1.4",
     "cross-env": "7.0.3",
     "esm": "3.2.25",
-    "husky": "7.0.4",
+    "husky": "8.0.3",
     "jsdom": "19.0.0",
-    "lint-staged": "12.3.5",
+    "lint-staged": "13.2.2",
     "magic-string": "0.26.1",
     "np": "7.6.0",
     "npm-run-all": "4.1.5",
