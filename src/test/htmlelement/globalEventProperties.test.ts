@@ -2,6 +2,7 @@ import anyTest, { TestInterface } from 'ava';
 import { HTMLElement, appendGlobalEventProperties } from '../../worker-thread/dom/HTMLElement';
 import { createTestingDocument } from '../DocumentCreation';
 import { Document } from '../../worker-thread/dom/Document';
+import { Event } from '../../worker-thread/Event';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 const test = anyTest as TestInterface<{
@@ -83,4 +84,18 @@ test('appending as many keys as there are TransferrableKeys functions', (t) => {
   t.is(element.ontouchmove, null);
   element.ontouchmove = handler;
   t.is(element.ontouchmove, handler);
+});
+
+test.serial('unsubscription with `null` value does not cause an error', (t) => {
+  const { element } = t.context;
+  const handler = (e: any) => console.log(e);
+
+  t.is(element.onclick, null);
+  element.onclick = handler;
+  t.is(element.onclick, handler);
+  element.dispatchEvent(new Event("click",  {}));
+
+  element.onclick = null;
+  t.is(element.onclick, null);
+  element.dispatchEvent(new Event("click",  {}));
 });

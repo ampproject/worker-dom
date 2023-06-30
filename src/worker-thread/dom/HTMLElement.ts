@@ -22,7 +22,9 @@ export const appendGlobalEventProperties = (keys: Array<string>): void => {
         if (stored) {
           this.removeEventListener(normalizedKey, stored);
         }
-        this.addEventListener(normalizedKey, value);
+        if (typeof value === 'function') {
+          this.addEventListener(normalizedKey, value);
+        }
         this[TransferrableKeys.propertyEventHandlers][normalizedKey] = value;
       },
     });
