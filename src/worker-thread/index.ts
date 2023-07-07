@@ -33,7 +33,15 @@ import { Document } from './dom/Document';
 import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
-import { Event as WorkerDOMEvent } from './Event';
+import {
+  Event as WorkerDOMEvent,
+  FocusEvent,
+  InputEvent,
+  KeyboardEvent,
+  MouseEvent,
+  TouchEvent,
+  WheelEvent
+} from './Event';
 import { Text } from './dom/Text';
 import { HTMLDataListElement } from './dom/HTMLDataListElement';
 import { CharacterData } from './dom/CharacterData';
@@ -87,6 +95,12 @@ const globalScope: GlobalScope = {
   SVGElement,
   Text,
   Event: WorkerDOMEvent,
+  MouseEvent,
+  TouchEvent,
+  FocusEvent,
+  KeyboardEvent,
+  WheelEvent,
+  InputEvent,
   MutationObserver,
   requestAnimationFrame: self.requestAnimationFrame || rafPolyfill,
   cancelAnimationFrame: self.cancelAnimationFrame || cafPolyfill,

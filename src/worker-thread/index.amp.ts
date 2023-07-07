@@ -7,7 +7,15 @@ import { Document } from './dom/Document';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { Element } from './dom/Element';
-import { Event as WorkerDOMEvent } from './Event';
+import {
+  Event as WorkerDOMEvent,
+  FocusEvent,
+  InputEvent,
+  KeyboardEvent,
+  MouseEvent,
+  TouchEvent,
+  WheelEvent
+} from './Event';
 import { GlobalScope, WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
@@ -93,6 +101,12 @@ const globalScope: GlobalScope = {
   SVGElement,
   Text,
   Event: WorkerDOMEvent,
+  MouseEvent,
+  TouchEvent,
+  FocusEvent,
+  KeyboardEvent,
+  WheelEvent,
+  InputEvent,
   MutationObserver,
   requestAnimationFrame: self.requestAnimationFrame || rafPolyfill,
   cancelAnimationFrame: self.cancelAnimationFrame || cafPolyfill,

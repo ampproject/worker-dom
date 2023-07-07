@@ -17,6 +17,11 @@ interface EventOptions {
   cancelable?: boolean;
 }
 
+interface UIEventOptions extends EventOptions {
+  view?: WorkerDOMGlobalScope;
+  detail?: number;
+}
+
 export type EventHandler = (event: Event) => any;
 
 export interface AddEventListenerOptions {
@@ -65,6 +70,12 @@ export class Event {
   public offsetY?: number;
   public touches?: TouchList;
   public changedTouches?: TouchList;
+  public clientX?: number;
+  public clientY?: number;
+  public button?: number;
+  public buttons?: number;
+  public detail?: number;
+
 
   constructor(type: string, opts: EventOptions) {
     this.type = type;
@@ -85,6 +96,66 @@ export class Event {
     this.type = type;
     this.bubbles = bubbles;
     this.cancelable = cancelable;
+  }
+}
+
+export class UIEvent extends Event {
+  public view: WorkerDOMGlobalScope | null;
+  public detail: number;
+
+  constructor(type: string, opts: UIEventOptions) {
+    super(type, opts);
+    this.view = opts.view || null;
+    this.detail = opts.detail || 0;
+  }
+
+  public initUIEvent(type: string, canBubble: boolean, cancelable: boolean, view: WorkerDOMGlobalScope, detail: number) {
+    super.initEvent(type, canBubble, cancelable);
+    this.view = view;
+    this.detail = detail;
+  }
+}
+
+export class MouseEvent extends UIEvent {}
+
+export class TouchEvent extends UIEvent {}
+
+export class FocusEvent extends UIEvent {}
+
+export class KeyboardEvent extends UIEvent {}
+
+export class WheelEvent extends MouseEvent {}
+
+export class InputEvent extends UIEvent {}
+
+const eventType = (type: string, opts: UIEventOptions) => {
+  switch (type) {
+    case 'click':
+    case 'dblclick':
+    case 'mouseup':
+    case 'mousedown':
+      return new MouseEvent(type, opts);
+    case 'touchstart':
+    case 'touchend':
+    case 'touchmove':
+    case 'touchcancel':
+      return new TouchEvent(type, opts);
+    case 'focusout':
+    case 'focusin':
+    case 'blur':
+    case 'focus':
+      return new FocusEvent(type, opts);
+    case 'keydown':
+    case 'keyup':
+    case 'keypress':
+      return new KeyboardEvent(type, opts);
+    case 'wheel':
+      return new WheelEvent(type, opts);
+    case 'beforeinput':
+    case 'input':
+      return new InputEvent(type, opts);
+    default:
+      return new Event(type, opts);
   }
 }
 
@@ -160,9 +231,10 @@ export function propagate(global: WorkerDOMGlobalScope): void {
     if (node !== null) {
       node.dispatchEvent(
         Object.assign(
-          new Event(event[TransferrableKeys.type], {
+          eventType(event[TransferrableKeys.type], {
             bubbles: event[TransferrableKeys.bubbles],
             cancelable: event[TransferrableKeys.cancelable],
+            view: global
           }),
           {
             cancelBubble: event[TransferrableKeys.cancelBubble],
@@ -180,6 +252,11 @@ export function propagate(global: WorkerDOMGlobalScope): void {
             offsetY: event[TransferrableKeys.offsetY],
             touches: touchListFromTransfer(global.document, event, TransferrableKeys.touches),
             changedTouches: touchListFromTransfer(global.document, event, TransferrableKeys.changedTouches),
+            clientX: event[TransferrableKeys.clientX],
+            clientY: event[TransferrableKeys.clientY],
+            button: event[TransferrableKeys.button],
+            buttons: event[TransferrableKeys.buttons],
+            detail: event[TransferrableKeys.detail],
           },
         ),
       );

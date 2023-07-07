@@ -141,6 +141,11 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
           [TransferrableKeys.offsetY]: 'offsetY' in event ? event.offsetY : undefined,
           [TransferrableKeys.touches]: 'touches' in event ? createTransferrableTouchList(event.touches) : undefined,
           [TransferrableKeys.changedTouches]: 'changedTouches' in event ? createTransferrableTouchList(event.changedTouches) : undefined,
+          [TransferrableKeys.clientX]: 'clientX' in event ? event.clientX : undefined,
+          [TransferrableKeys.clientY]: 'clientY' in event ? event.clientY : undefined,
+          [TransferrableKeys.button]: 'button' in event ? event.button : undefined,
+          [TransferrableKeys.buttons]: 'buttons' in event ? event.buttons : undefined,
+          [TransferrableKeys.detail]: 'detail' in event ? event.detail : undefined,
         },
       });
     };
