@@ -20,6 +20,7 @@ import { ImageBitmapProcessor } from './commands/image-bitmap';
 import { StorageProcessor } from './commands/storage';
 import { FunctionProcessor } from './commands/function';
 import { ScrollIntoViewProcessor } from './commands/scroll-into-view';
+import { CallFunctionProcessor } from "./commands/call-function";
 
 export class MutatorProcessor {
   private stringContext: StringContext;
@@ -74,6 +75,7 @@ export class MutatorProcessor {
       [TransferrableMutationType.STORAGE]: StorageProcessor.apply(null, args),
       [TransferrableMutationType.FUNCTION_CALL]: FunctionProcessor.apply(null, args),
       [TransferrableMutationType.SCROLL_INTO_VIEW]: ScrollIntoViewProcessor.apply(null, args),
+      [TransferrableMutationType.CALL_FUNCTION]: CallFunctionProcessor.apply(null, args),
     };
   }
 

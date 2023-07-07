@@ -14,6 +14,7 @@ export const enum TransferrableMutationType {
   STORAGE = 12,
   FUNCTION_CALL = 13,
   SCROLL_INTO_VIEW = 14,
+  CALL_FUNCTION = 15
 }
 
 /**
@@ -29,6 +30,7 @@ export const isUserVisibleMutation = (type: TransferrableMutationType): boolean 
     case TransferrableMutationType.STORAGE:
     case TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE:
     case TransferrableMutationType.FUNCTION_CALL:
+    case TransferrableMutationType.CALL_FUNCTION:
       return false;
     default:
       return true;
@@ -51,6 +53,7 @@ export const DefaultAllowedMutations = [
   TransferrableMutationType.STORAGE,
   TransferrableMutationType.FUNCTION_CALL,
   TransferrableMutationType.SCROLL_INTO_VIEW,
+  TransferrableMutationType.CALL_FUNCTION,
 ];
 
 export const ReadableMutationType: { [key: number]: string } = {
@@ -69,6 +72,7 @@ export const ReadableMutationType: { [key: number]: string } = {
   12: 'STORAGE',
   13: 'FUNCTION_INVOCATION',
   14: 'SCROLL_INTO_VIEW',
+  15: 'CALL_FUNCTION',
 };
 
 /**
@@ -224,6 +228,7 @@ export const enum TransferrableObjectType {
   TransferObject = 5,
   CanvasRenderingContext2D = 6,
   HTMLElement = 7,
+  Window = 8
 }
 
 /**
@@ -269,4 +274,13 @@ export const enum FunctionMutationIndex {
 export const enum ScrollIntoViewMutationIndex {
   Target = 1,
   End = 2,
+}
+
+export const enum CallFunctionMutationIndex {
+  TargetType = 1,
+  Target = 2,
+  FunctionName = 3,
+  Index = 4,
+  ArgumentCount = 5,
+  Arguments = 6
 }

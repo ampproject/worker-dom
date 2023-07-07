@@ -1,12 +1,79 @@
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { Document } from './dom/Document';
-import { MessageToWorker, MessageType, FunctionCallToWorker, ResolveOrReject } from '../transfer/Messages';
-import { transfer } from './MutationTransfer';
-import { TransferrableMutationType } from '../transfer/TransferrableMutation';
-import { store } from './strings';
-import { DocumentStub } from './dom/DocumentStub';
+import {TransferrableKeys} from '../transfer/TransferrableKeys';
+import {Document} from './dom/Document';
+import {
+  CallFunctionResultToWorker,
+  FunctionCallToWorker,
+  MessageToWorker,
+  MessageType,
+  ResolveOrReject
+} from '../transfer/Messages';
+import {transfer} from './MutationTransfer';
+import {TransferrableMutationType, TransferrableObjectType} from '../transfer/TransferrableMutation';
+import {store} from './strings';
+import {DocumentStub} from './dom/DocumentStub';
+import {TransferrableObject} from "./worker-thread";
+import {serializeTransferrableObject} from "./serializeTransferrableObject";
 
 const exportedFunctions: { [fnIdent: string]: Function } = {};
+
+let fnCallCount = 0;
+
+export function callFunction(document: Document | DocumentStub,
+                             target: TransferrableObject,
+                             functionName: string,
+                             args: any[],
+                             global: boolean = false,
+                             timeout?: number): Promise<any> {
+
+  return new Promise((resolve, reject) => {
+    // Wraparound to 0 in case someone attempts to register over 9 quadrillion promises.
+    if (fnCallCount >= Number.MAX_VALUE) {
+      fnCallCount = 0;
+    }
+    const rid = ++fnCallCount;
+
+    let timeoutObg: any = null;
+
+    const messageHandler = ({ data }: { data: MessageToWorker }) => {
+      if (data[TransferrableKeys.type] === MessageType.CALL_FUNCTION_RESULT) {
+        const msg: CallFunctionResultToWorker = data as CallFunctionResultToWorker;
+        if (msg[TransferrableKeys.index] === rid) {
+          clearTimeout(timeoutObg);
+          document.removeGlobalEventListener('message', messageHandler);
+          const result: any = msg[TransferrableKeys.value];
+
+          if (msg[TransferrableKeys.success]) {
+            resolve(result);
+          } else {
+            reject(new Error(result));
+          }
+        }
+      }
+    };
+
+    if (!document.addGlobalEventListener) {
+      reject();
+    } else {
+      document.addGlobalEventListener('message', messageHandler);
+
+      const serialized = global ? [TransferrableObjectType.Window, 0] : target[TransferrableKeys.serializeAsTransferrableObject]();
+
+      transfer(document, [
+        TransferrableMutationType.CALL_FUNCTION,
+        serialized[0], // type
+        serialized[1], // id
+        store(functionName),
+        rid,
+        args.length,
+        ...serializeTransferrableObject(args),
+      ]);
+
+      if (timeout && timeout > 0) {
+        timeoutObg = setTimeout(reject, timeout, new Error("Timeout"));
+      }
+    }
+  });
+}
 
 export function callFunctionMessageHandler(event: MessageEvent, document: Document | DocumentStub) {
   const msg = event.data as MessageToWorker;

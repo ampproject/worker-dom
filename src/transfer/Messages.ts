@@ -20,6 +20,7 @@ export const enum MessageType {
   IMAGE_BITMAP_INSTANCE = 10,
   GET_STORAGE = 11,
   FUNCTION = 12,
+  CALL_FUNCTION_RESULT = 13,
   // NAVIGATION_PUSH_STATE = 8,
   // NAVIGATION_REPLACE_STATE = 9,
   // NAVIGATION_POP_STATE = 10,
@@ -82,6 +83,13 @@ export interface FunctionCallToWorker {
   [TransferrableKeys.functionArguments]: string;
 }
 
+export interface CallFunctionResultToWorker {
+  [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT;
+  [TransferrableKeys.index]: number;
+  [TransferrableKeys.success]: boolean;
+  [TransferrableKeys.value]: any; // function result
+}
+
 export type MessageToWorker =
   | EventToWorker
   | ValueSyncToWorker
@@ -90,7 +98,8 @@ export type MessageToWorker =
   | OffscreenCanvasToWorker
   | ImageBitmapToWorker
   | StorageValueToWorker
-  | FunctionCallToWorker;
+  | FunctionCallToWorker
+  | CallFunctionResultToWorker;
 
 /**
  * Can parameterize a method invocation message as a getter or setter.

@@ -12,7 +12,7 @@ import {
   MessageToWorker,
   ValueSyncToWorker,
   BoundingClientRectToWorker,
-  StorageValueToWorker,
+  StorageValueToWorker, CallFunctionResultToWorker,
 } from '../transfer/Messages';
 import { HydrateableNode, TransferredNode, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
 import { NodeContext } from './nodes';
@@ -70,6 +70,7 @@ const isValueSync = (message: MessageToWorker): message is ValueSyncToWorker => 
 const isBoundingClientRect = (message: MessageToWorker): message is BoundingClientRectToWorker =>
   message[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT;
 const isGetStorage = (message: MessageToWorker): message is StorageValueToWorker => message[TransferrableKeys.type] === MessageType.GET_STORAGE;
+const isCallFunctionResult = (message: MessageToWorker): message is CallFunctionResultToWorker => message[TransferrableKeys.type] === MessageType.CALL_FUNCTION_RESULT;
 
 /**
  * @param nodeContext {NodeContext}
@@ -138,6 +139,13 @@ export function readableMessageToWorker(nodeContext: NodeContext, message: Messa
       key: message[TransferrableKeys.storageKey],
       location: message[TransferrableKeys.storageLocation],
       value: message[TransferrableKeys.value],
+    };
+  } else if (isCallFunctionResult(message)) {
+    return {
+      type: 'CALL_FUNCTION_RESULT',
+      index: message[TransferrableKeys.index],
+      value: message[TransferrableKeys.value],
+      success: message[TransferrableKeys.success],
     };
   } else {
     return 'Unrecognized MessageToWorker type: ' + message[TransferrableKeys.type];

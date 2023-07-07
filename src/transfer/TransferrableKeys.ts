@@ -84,6 +84,7 @@ export const enum TransferrableKeys {
   buttons = 82,
   detail = 83,
   listenableProperties = 84,
+  success = 85,
   // This must always be the last numerically ordered Key, for testing purposes.
-  END = 85,
+  END = 86,
 }
