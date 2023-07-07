@@ -1,37 +1,35 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { HTMLImageElement } from '../../worker-thread/dom/HTMLImageElement';
 import { createTestingDocument } from '../DocumentCreation';
 import { testReflectedListenableProperty } from '../reflectListenablePropertiesHelper';
+import { HTMLAudioElement } from '../../worker-thread/dom/HTMLAudioElement';
 
 const test = anyTest as TestInterface<{
-  element: HTMLImageElement;
+  element: HTMLAudioElement;
 }>;
 
 test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
-    element: document.createElement('img') as HTMLImageElement,
+    element: document.createElement('audio') as HTMLAudioElement,
   };
 });
 
 testReflectedProperties([
-  { alt: [''] },
+  { autoplay: [false] },
+  { controls: [false] },
   { crossOrigin: [''] },
-  { height: [0] },
-  { isMap: [false] },
-  { referrerPolicy: [''] },
+  { disableRemotePlayback: [false] },
+  { preload: [''] },
+  { preservesPitch: [false] },
   { src: [''] },
-  { sizes: [''] },
-  { srcset: [''] },
-  { useMap: [''] },
-  { width: [0] },
 ]);
 
 testReflectedListenableProperty({
-  naturalHeight: 0,
-  naturalWidth: 0,
+  readyState: 0,
+  duration: Number.NaN,
   currentSrc: '',
-  complete: false,
+  seeking: false,
+  seeked: false,
 });

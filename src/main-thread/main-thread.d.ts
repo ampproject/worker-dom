@@ -54,6 +54,7 @@ declare interface HTMLCanvasElement {
 
 interface Node {
   _index_: number;
+  _listenableProperties_: number[];
 }
 
 type RenderableElement = (HTMLElement | SVGElement | Text | Comment) & {

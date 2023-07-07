@@ -51,6 +51,9 @@ import { DocumentFragment } from './dom/DocumentFragment';
 import { Element } from './dom/Element';
 import { rafPolyfill, cafPolyfill } from './AnimationFrame';
 import { HydrateFunction } from './hydrate';
+import { HTMLMediaElement } from './dom/HTMLMediaElement';
+import { HTMLAudioElement } from './dom/HTMLAudioElement';
+import { HTMLVideoElement } from './dom/HTMLVideoElement';
 
 const globalScope: GlobalScope = {
   innerWidth: 0,
@@ -93,6 +96,9 @@ const globalScope: GlobalScope = {
   HTMLTableSectionElement,
   HTMLTimeElement,
   SVGElement,
+  HTMLMediaElement,
+  HTMLAudioElement,
+  HTMLVideoElement,
   Text,
   Event: WorkerDOMEvent,
   MouseEvent,

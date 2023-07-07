@@ -1,7 +1,7 @@
-import { Node, NodeName, NamespaceURI } from './Node';
+import { NamespaceURI, Node, NodeName, propagate } from './Node';
 import { ParentNode } from './ParentNode';
 import { DOMTokenList, synchronizedAccessor } from './DOMTokenList';
-import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
+import { Attr, matchPredicate as matchAttrPredicate, toString as attrsToString } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { toLower, toUpper } from '../../utils';
@@ -12,12 +12,11 @@ import { store as storeString } from '../strings';
 import { Document } from './Document';
 import { transfer } from '../MutationTransfer';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { NodeType, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { HTML_NAMESPACE, NodeType } from '../../transfer/TransferrableNodes';
 import { TransferrableBoundingClientRect } from '../../transfer/TransferrableBoundClientRect';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { MessageToWorker, MessageType, BoundingClientRectToWorker } from '../../transfer/Messages';
+import { BoundingClientRectToWorker, MessageToWorker, MessageType } from '../../transfer/Messages';
 import { parse } from '../../third_party/html-parser/html-parser';
-import { propagate } from './Node';
 import { Event } from '../Event';
 import { getNextElementSibling, getPreviousElementSibling } from './elementSibling';
 
@@ -92,12 +91,16 @@ export class Element extends ParentNode {
     this.localName = localName;
     this.kind = VOID_ELEMENTS.includes(this.tagName) ? ElementKind.VOID : ElementKind.NORMAL;
 
+    const listenableProperties: number[] = ((this[TransferrableKeys.listenableProperties] || []) as string[]).map((value) => storeString(value));
+
     this[TransferrableKeys.creationFormat] = [
       this[TransferrableKeys.index],
       this.nodeType,
       storeString(this.localName),
       0,
       this.namespaceURI === null ? 0 : storeString(this.namespaceURI),
+      listenableProperties.length,
+      ...listenableProperties,
     ];
   }
 
@@ -583,5 +586,6 @@ export class Element extends ParentNode {
     return this._classList || (this._classList = new DOMTokenList(this, 'class'));
   }
 }
+
 synchronizedAccessor(Element, 'classList', 'className');
 reflectProperties([{ id: [''] }], Element);

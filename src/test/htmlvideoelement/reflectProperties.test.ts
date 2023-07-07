@@ -1,37 +1,41 @@
 import anyTest, { TestInterface } from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { HTMLImageElement } from '../../worker-thread/dom/HTMLImageElement';
 import { createTestingDocument } from '../DocumentCreation';
 import { testReflectedListenableProperty } from '../reflectListenablePropertiesHelper';
+import { HTMLVideoElement } from '../../worker-thread/dom/HTMLVideoElement';
 
 const test = anyTest as TestInterface<{
-  element: HTMLImageElement;
+  element: HTMLVideoElement;
 }>;
 
 test.beforeEach((t) => {
   const document = createTestingDocument();
 
   t.context = {
-    element: document.createElement('img') as HTMLImageElement,
+    element: document.createElement('video') as HTMLVideoElement,
   };
 });
 
 testReflectedProperties([
-  { alt: [''] },
+  { autoplay: [false] },
+  { controls: [false] },
   { crossOrigin: [''] },
-  { height: [0] },
-  { isMap: [false] },
-  { referrerPolicy: [''] },
+  { disableRemotePlayback: [false] },
+  { preload: [''] },
+  { preservesPitch: [false] },
   { src: [''] },
-  { sizes: [''] },
-  { srcset: [''] },
-  { useMap: [''] },
+  { poster: [''] },
+  { playsInline: [false] },
   { width: [0] },
+  { height: [0] },
 ]);
 
 testReflectedListenableProperty({
-  naturalHeight: 0,
-  naturalWidth: 0,
+  readyState: 0,
+  duration: Number.NaN,
   currentSrc: '',
-  complete: false,
+  seeking: false,
+  seeked: false,
+  videoWidth: 0,
+  videoHeight: 0,
 });

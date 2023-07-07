@@ -45,6 +45,7 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.button]?: number;
   readonly [TransferrableKeys.buttons]?: number;
   readonly [TransferrableKeys.detail]?: number;
+  readonly [TransferrableKeys.listenableProperties]?: any[];
 }
 
 /**

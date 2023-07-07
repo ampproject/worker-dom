@@ -119,6 +119,21 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
         fireResizeChange(workerContext, cachedWindowSize);
       }
 
+      const listenableProperties: any[] = [];
+      const target = nodeContext.getNode(index);
+
+      if (target && target._listenableProperties_) {
+        target._listenableProperties_
+          .map(prop => strings.get(prop))
+          .map(name => {
+            if (name.length > 0 && name in target) {
+              return target[name];
+            }
+            return null;
+          })
+          .forEach(value => listenableProperties.push(value));
+      }
+
       workerContext.messageToWorker({
         [TransferrableKeys.type]: MessageType.EVENT,
         [TransferrableKeys.event]: {
@@ -146,6 +161,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
           [TransferrableKeys.button]: 'button' in event ? event.button : undefined,
           [TransferrableKeys.buttons]: 'buttons' in event ? event.buttons : undefined,
           [TransferrableKeys.detail]: 'detail' in event ? event.detail : undefined,
+          [TransferrableKeys.listenableProperties]: listenableProperties.length > 0 ? listenableProperties : undefined,
         },
       });
     };

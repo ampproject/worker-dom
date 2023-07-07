@@ -27,7 +27,7 @@ test.serial.cb('document.createElementNS creation format is valid', (t) => {
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.nodes])),
-      [svg[TransferrableKeys.index], NodeType.ELEMENT_NODE, strings.indexOf(svg.localName), 0, strings.indexOf(svg.namespaceURI)],
+      [svg[TransferrableKeys.index], NodeType.ELEMENT_NODE, strings.indexOf(svg.localName), 0, strings.indexOf(svg.namespaceURI), 0],
       'creation format is as expected',
     );
     t.end();

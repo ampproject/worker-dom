@@ -50,6 +50,9 @@ import { DOMTokenList } from './dom/DOMTokenList';
 import { Element } from './dom/Element';
 import { DocumentStub } from './dom/DocumentStub';
 import { OffscreenCanvas } from './canvas/CanvasTypes';
+import { HTMLMediaElement } from './dom/HTMLMediaElement';
+import { HTMLAudioElement } from './dom/HTMLAudioElement';
+import { HTMLVideoElement } from './dom/HTMLVideoElement';
 
 /**
  * Should only contain properties that exist on Window.
@@ -98,6 +101,9 @@ export interface GlobalScope {
   HTMLTableSectionElement: typeof HTMLTableSectionElement;
   HTMLTimeElement: typeof HTMLTimeElement;
   SVGElement: typeof SVGElement;
+  HTMLMediaElement: typeof HTMLMediaElement;
+  HTMLAudioElement: typeof HTMLAudioElement;
+  HTMLVideoElement: typeof HTMLVideoElement;
   Text: typeof Text;
   // Event exists natively in web workers but override with our synthetic event
   // implementation to enable setting readonly properties like currentTarget.

@@ -1,8 +1,9 @@
 import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
+import { reflectProperties, registerListenableProperties } from './enhanceElement';
 
 export class HTMLImageElement extends HTMLElement {}
+
 registerSubclass('img', HTMLImageElement);
 
 // Reflected Properties
@@ -32,7 +33,7 @@ reflectProperties(
   HTMLImageElement,
 );
 
-// Unimplmented Properties
+// Implemented Listenable Properties
 // HTMLImageElement.complete Read only
 // Returns a Boolean that is true if the browser has finished fetching the image, whether successful or not. It also shows true, if the image has no src value.
 // HTMLImageElement.currentSrc Read only
@@ -41,3 +42,13 @@ reflectProperties(
 // Returns a unsigned long representing the intrinsic height of the image in CSS pixels, if it is available; else, it shows 0.
 // HTMLImageElement.naturalWidth Read only
 // Returns a unsigned long representing the intrinsic width of the image in CSS pixels, if it is available; otherwise, it will show 0.
+
+registerListenableProperties(
+  {
+    complete: false,
+    currentSrc: '',
+    naturalHeight: 0,
+    naturalWidth: 0,
+  },
+  HTMLImageElement,
+);

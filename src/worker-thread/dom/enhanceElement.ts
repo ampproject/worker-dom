@@ -1,5 +1,6 @@
 import { Element } from './Element';
 import { toLower } from '../../utils';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 type PropertyValue = string | boolean | number;
 type AttributeName = string;
@@ -54,5 +55,31 @@ export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typ
         },
       });
     }
+  });
+};
+
+export const registerListenableProperties = (properties: { [key: string]: any }, defineOn: typeof Element): void => {
+  const listenableProperties: string[] = [];
+  for (const propertyName in properties) {
+    if (!(propertyName in defineOn.prototype)) {
+      listenableProperties.push(propertyName);
+
+      Object.defineProperty(defineOn.prototype, propertyName, {
+        enumerable: true,
+        writable: true,
+        value: properties[propertyName],
+      });
+    }
+  }
+
+  if (TransferrableKeys.listenableProperties in defineOn.prototype) {
+    // parent properties
+    listenableProperties.push(...defineOn.prototype[TransferrableKeys.listenableProperties]);
+  }
+
+  Object.defineProperty(defineOn.prototype, TransferrableKeys.listenableProperties, {
+    enumerable: true,
+    writable: false,
+    value: listenableProperties,
   });
 };

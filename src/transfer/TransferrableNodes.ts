@@ -55,5 +55,6 @@ export const enum TransferrableNodeIndex {
   NodeName = 2,
   TextContent = 3,
   Namespace = 4,
-  End = 5,
+  ListenableProperties = 5,
+  End = 6,
 }
