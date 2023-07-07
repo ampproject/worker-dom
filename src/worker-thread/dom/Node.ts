@@ -408,27 +408,19 @@ export abstract class Node {
    */
   public addEventListener(type: string, handler: EventHandler, options: AddEventListenerOptions | undefined = {}): void {
     const lowerType = toLower(type);
-    const storedType = storeString(lowerType);
     const handlers: EventHandler[] = this[TransferrableKeys.handlers][lowerType];
-    let index: number = 0;
-    if (handlers) {
-      index = handlers.push(handler);
+    if (handlers && handlers.length > 0) {
+      handlers.push(handler);
     } else {
       this[TransferrableKeys.handlers][lowerType] = [handler];
+      transfer(this.ownerDocument as Document, [
+        TransferrableMutationType.EVENT_SUBSCRIPTION,
+        this[TransferrableKeys.index],
+        1,
+        storeString(lowerType),
+        Number(Boolean(options.workerDOMPreventDefault)),
+      ]);
     }
-
-    transfer(this.ownerDocument as Document, [
-      TransferrableMutationType.EVENT_SUBSCRIPTION,
-      this[TransferrableKeys.index],
-      0,
-      1,
-      storedType,
-      index,
-      Number(Boolean(options.capture)),
-      Number(Boolean(options.once)),
-      Number(Boolean(options.passive)),
-      Number(Boolean(options.workerDOMPreventDefault)),
-    ]);
   }
 
   /**
@@ -444,14 +436,15 @@ export abstract class Node {
 
     if (index >= 0) {
       handlers.splice(index, 1);
-      transfer(this.ownerDocument as Document, [
-        TransferrableMutationType.EVENT_SUBSCRIPTION,
-        this[TransferrableKeys.index],
-        1,
-        0,
-        storeString(lowerType),
-        index,
-      ]);
+      if (handlers.length == 0) {
+        transfer(this.ownerDocument as Document, [
+          TransferrableMutationType.EVENT_SUBSCRIPTION,
+          this[TransferrableKeys.index],
+          0,
+          storeString(lowerType),
+          0
+        ]);
+      }
     }
   }
 

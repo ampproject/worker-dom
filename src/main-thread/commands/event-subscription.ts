@@ -1,11 +1,8 @@
 import { MessageType } from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import {
-  ADD_EVENT_SUBSCRIPTION_LENGTH,
-  REMOVE_EVENT_SUBSCRIPTION_LENGTH,
   EventSubscriptionMutationIndex,
   TransferrableTouchList,
-  AddEventRegistrationIndex,
 } from '../../transfer/TransferrableEvent';
 import { WorkerContext } from '../worker';
 import { CommandExecutorInterface } from './interface';
@@ -95,7 +92,6 @@ const createTransferrableTouchList = (touchList: TouchList): TransferrableTouchL
   ]);
 
 export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
-  const knownListeners: Array<(event: Event) => any> = [];
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.EVENT_SUBSCRIPTION);
   let cachedWindowSize: [number, number] = [window.innerWidth, window.innerHeight];
 
@@ -153,20 +149,22 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
    * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to,
    * ensure that only a single 'change' event is attached to prevent sending values multiple times.
    * @param target node to change listeners on
+   * @param type event type
    * @param addEvent is this an 'addEvent' or 'removeEvent' change
-   * @param mutations Uint16Array for this set of changes
-   * @param iterator current location in array to perform this change on
+   * @param preventDefault prevent default flag, use only if addEvent is true
    */
-  const processListenerChange = (target: RenderableElement, addEvent: boolean, mutations: Uint16Array, iterator: number): void => {
-    const type = strings.get(mutations[iterator]);
-    const eventIndex = mutations[iterator + AddEventRegistrationIndex.Index];
+  const processListenerChange = (target: RenderableElement, type: string, addEvent: boolean, preventDefault: boolean): void => {
+    target._knownListeners_ = target._knownListeners_ || {} as {[key: string] : (event: Event) => any};
 
     if (target === nodeContext.baseElement) {
       if (addEvent) {
-        const preventDefault = Boolean(mutations[iterator + AddEventRegistrationIndex.WorkerDOMPreventDefault]);
-        addEventListener(type, (knownListeners[eventIndex] = eventHandler(BASE_ELEMENT_INDEX, preventDefault)));
+        if (target._knownListeners_[type]) {
+          removeEventListener(type, target._knownListeners_[type]);
+        }
+        addEventListener(type, (target._knownListeners_[type] = eventHandler(BASE_ELEMENT_INDEX, preventDefault)));
       } else {
-        removeEventListener(type, knownListeners[eventIndex]);
+        removeEventListener(type, target._knownListeners_[type]);
+        delete target._knownListeners_[type];
       }
       return;
     }
@@ -178,13 +176,16 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
         inputEventSubscribed = true;
         target.onchange = null;
       }
-      const preventDefault = Boolean(mutations[iterator + AddEventRegistrationIndex.WorkerDOMPreventDefault]);
-      (target as HTMLElement).addEventListener(type, (knownListeners[eventIndex] = eventHandler(target._index_, preventDefault)));
+      if (target._knownListeners_[type]) {
+        (target as HTMLElement).removeEventListener(type, target._knownListeners_[type]);
+      }
+      (target as HTMLElement).addEventListener(type, (target._knownListeners_[type] = eventHandler(target._index_, preventDefault)));
     } else {
       if (isChangeEvent) {
         inputEventSubscribed = false;
       }
-      (target as HTMLElement).removeEventListener(type, knownListeners[eventIndex]);
+      (target as HTMLElement).removeEventListener(type, target._knownListeners_[type]);
+      delete target._knownListeners_[type];
     }
     if (shouldTrackChanges(target as HTMLElement)) {
       if (!inputEventSubscribed) applyDefaultInputListener(workerContext, target as RenderableElement);
@@ -194,65 +195,38 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
 
   return {
     execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
-      const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
-      const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
-      const addEventListenersPosition =
-        startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
-      const endPosition =
-        startPosition +
-        EventSubscriptionMutationIndex.Events +
-        addEventListenerCount * ADD_EVENT_SUBSCRIPTION_LENGTH +
-        removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
 
       if (allowedExecution && allowedMutation) {
         const targetIndex = mutations[startPosition + EventSubscriptionMutationIndex.Target];
         const target = nodeContext.getNode(targetIndex);
 
         if (target) {
-          let iterator = startPosition + EventSubscriptionMutationIndex.Events;
-          while (iterator < endPosition) {
-            const isRemoveEvent = iterator <= addEventListenersPosition;
-            processListenerChange(target, isRemoveEvent, mutations, iterator);
-            iterator += isRemoveEvent ? REMOVE_EVENT_SUBSCRIPTION_LENGTH : ADD_EVENT_SUBSCRIPTION_LENGTH;
-          }
+          const type = strings.get(mutations[startPosition + EventSubscriptionMutationIndex.EventType]);
+          const addEvent = mutations[startPosition + EventSubscriptionMutationIndex.IsAddEvent] === 1;
+          const preventDefault = addEvent ? Boolean(mutations[startPosition + EventSubscriptionMutationIndex.PreventDefault]) : false;
+
+          processListenerChange(target, type, addEvent, preventDefault);
+
         } else {
           console.error(`getNode(${targetIndex}) is null.`);
         }
       }
 
-      return endPosition;
+      return startPosition + EventSubscriptionMutationIndex.End;
     },
     print(mutations: Uint16Array, startPosition: number): {} {
-      const addEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.AddEventListenerCount];
-      const removeEventListenerCount = mutations[startPosition + EventSubscriptionMutationIndex.RemoveEventListenerCount];
-      const addEventListenersPosition =
-        startPosition + EventSubscriptionMutationIndex.Events + removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
-      const endPosition =
-        startPosition +
-        EventSubscriptionMutationIndex.Events +
-        addEventListenerCount * ADD_EVENT_SUBSCRIPTION_LENGTH +
-        removeEventListenerCount * REMOVE_EVENT_SUBSCRIPTION_LENGTH;
       const targetIndex = mutations[startPosition + EventSubscriptionMutationIndex.Target];
       const target = nodeContext.getNode(targetIndex);
-      const removedEventListeners: Array<{ type: string; index: number }> = [];
-      const addedEventListeners: Array<{ type: string; index: number }> = [];
-
-      let iterator = startPosition + EventSubscriptionMutationIndex.Events;
-      while (iterator < endPosition) {
-        const isRemoveEvent = iterator <= addEventListenersPosition;
-        const eventList = isRemoveEvent ? addedEventListeners : removedEventListeners;
-        eventList.push({
-          type: strings.get(mutations[iterator]),
-          index: mutations[iterator + 1],
-        });
-        iterator += isRemoveEvent ? REMOVE_EVENT_SUBSCRIPTION_LENGTH : ADD_EVENT_SUBSCRIPTION_LENGTH;
-      }
+      const type = strings.get(mutations[startPosition + EventSubscriptionMutationIndex.EventType]);
+      const addEvent = mutations[startPosition + EventSubscriptionMutationIndex.IsAddEvent] === 1;
+      const preventDefault = addEvent ? Boolean(mutations[startPosition + EventSubscriptionMutationIndex.EventType]) : false;
 
       return {
         target,
         allowedExecution,
-        removedEventListeners,
-        addedEventListeners,
+        type,
+        addEvent,
+        preventDefault,
       };
     },
   };
