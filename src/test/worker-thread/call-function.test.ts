@@ -1,15 +1,14 @@
-import anyTest, {TestInterface} from 'ava';
-import {callFunction, resetForTesting} from '../../worker-thread/function';
-import {createTestingDocument} from '../DocumentCreation';
-import {MessageType, MutationFromWorker} from '../../transfer/Messages';
-import {TransferrableKeys} from '../../transfer/TransferrableKeys';
-import {Document} from '../../worker-thread/dom/Document';
-import {TransferrableMutationType} from '../../transfer/TransferrableMutation';
-import {store} from '../../worker-thread/strings';
+import anyTest, { TestInterface } from 'ava';
+import { callFunction, resetForTesting } from '../../worker-thread/function';
+import { createTestingDocument } from '../DocumentCreation';
+import { MessageType, MutationFromWorker } from '../../transfer/Messages';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { Document } from '../../worker-thread/dom/Document';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import * as phase from '../../worker-thread/phase';
-import {Phase} from '../../transfer/Phase';
-import {TransferrableObject} from "../../worker-thread/worker-thread";
-import {serializeTransferrableObject} from "../../worker-thread/serializeTransferrableObject";
+import { Phase } from '../../transfer/Phase';
+import { TransferrableObject } from '../../worker-thread/worker-thread';
+import { serializeTransferableMessage } from '../../worker-thread/serializeTransferrableObject';
 
 let index = 0;
 
@@ -25,20 +24,19 @@ test.beforeEach((t) => {
   document[TransferrableKeys.observe]();
   document.listeners = {};
 
-  document.removeGlobalEventListener = (type: string, listener: Function) => {
-  }
+  document.removeGlobalEventListener = (type: string, listener: Function) => {};
   document.addGlobalEventListener = (type: string, listener: Function) => {
     document.listeners[type] = listener;
-  }
+  };
 
   const mutationPromise: any = new Promise((resolve) => {
     document.postMessage = (message: MutationFromWorker) => {
-      const mutation = Array.from(new Uint16Array(message[TransferrableKeys.mutations]));
+      const mutation = message[TransferrableKeys.mutations];
       resolve(mutation);
     };
   });
 
-  t.context = {document, mutationPromise};
+  t.context = { document, mutationPromise };
 });
 
 function getCallFunctionResultEvent(index: number, success: boolean, value: any): MessageEvent {
@@ -52,133 +50,117 @@ function getCallFunctionResultEvent(index: number, success: boolean, value: any)
   } as any;
 }
 
-function getFunctionMutation(target: TransferrableObject, functionNameIdx: number, rid: number, args: number[]): Array<any> {
-  return [
-    TransferrableMutationType.CALL_FUNCTION,
-    ...target[TransferrableKeys.serializeAsTransferrableObject](),
-    functionNameIdx,
-    rid,
-    args.length,
-    ...serializeTransferrableObject(args),
-  ]
+function getFunctionMutation(target: TransferrableObject, functionName: string, rid: number, args: number[]): Array<any> {
+  return [serializeTransferableMessage([TransferrableMutationType.CALL_FUNCTION, target, functionName, rid, args]).buffer];
 }
 
 test.serial('Call void function w/o arguments', async (t) => {
-  const {document, mutationPromise} = t.context;
+  const { document, mutationPromise } = t.context;
   const obj = {
-    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2]
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
   } as TransferrableObject;
-  const functionName = "test";
-  const functionNameIdx = store(functionName);
+  const functionName = 'test';
   const rid = ++index;
 
-  const result = callFunction(document, obj as TransferrableObject, functionName, [], false, 1000);
+  const result = callFunction(document, obj as TransferrableObject, functionName, [], 1000);
   const mutation = await mutationPromise;
 
-  t.deepEqual(mutation, getFunctionMutation(obj, functionNameIdx, rid, []));
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, []));
 
-  t.true(!!document.listeners["message"])
-  document.listeners["message"](getCallFunctionResultEvent(rid, true, undefined));
+  t.true(!!document.listeners['message']);
+  document.listeners['message'](getCallFunctionResultEvent(rid, true, undefined));
 
-  t.deepEqual(await result, undefined)
+  t.deepEqual(await result, undefined);
 });
-
 
 test.serial('Call void function w/ arguments', async (t) => {
-  const {document, mutationPromise} = t.context;
+  const { document, mutationPromise } = t.context;
   const obj = {
-    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2]
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
   } as TransferrableObject;
-  const functionName = "test";
-  const functionNameIdx = store(functionName);
+  const functionName = 'test';
   const rid = ++index;
 
-  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], false, 1000);
+  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000);
   const mutation = await mutationPromise;
 
-  t.deepEqual(mutation, getFunctionMutation(obj, functionNameIdx, rid, [1, 2, 3, 4]));
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, [1, 2, 3, 4]));
 
-  t.true(!!document.listeners["message"])
-  document.listeners["message"](getCallFunctionResultEvent(rid, true, undefined));
+  t.true(!!document.listeners['message']);
+  document.listeners['message'](getCallFunctionResultEvent(rid, true, undefined));
 
-  t.deepEqual(await result, undefined)
+  t.deepEqual(await result, undefined);
 });
 
-
 test.serial('Call function w/o arguments', async (t) => {
-  const {document, mutationPromise} = t.context;
+  const { document, mutationPromise } = t.context;
   const obj = {
-    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2]
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
   } as TransferrableObject;
-  const functionName = "test";
-  const functionNameIdx = store(functionName);
+  const functionName = 'test';
   const rid = ++index;
 
-  const result = callFunction(document, obj as TransferrableObject, functionName, [], false, 1000);
+  const result = callFunction(document, obj as TransferrableObject, functionName, [], 1000);
   const mutation = await mutationPromise;
 
-  t.deepEqual(mutation, getFunctionMutation(obj, functionNameIdx, rid, []));
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, []));
 
-  t.true(!!document.listeners["message"])
-  document.listeners["message"](getCallFunctionResultEvent(rid, true, {done: true}));
+  t.true(!!document.listeners['message']);
+  document.listeners['message'](getCallFunctionResultEvent(rid, true, { done: true }));
 
-  t.deepEqual(await result, {done: true})
+  t.deepEqual(await result, { done: true });
 });
 
 test.serial('Call function w/ arguments', async (t) => {
-  const {document, mutationPromise} = t.context;
+  const { document, mutationPromise } = t.context;
   const obj = {
-    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2]
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
   } as TransferrableObject;
-  const functionName = "test";
-  const functionNameIdx = store(functionName);
+  const functionName = 'test';
   const rid = ++index;
 
-  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], false, 1000);
+  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000);
   const mutation = await mutationPromise;
 
-  t.deepEqual(mutation, getFunctionMutation(obj, functionNameIdx, rid, [1, 2, 3, 4]));
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, [1, 2, 3, 4]));
 
-  t.true(!!document.listeners["message"])
-  document.listeners["message"](getCallFunctionResultEvent(rid, true, "done"));
+  t.true(!!document.listeners['message']);
+  document.listeners['message'](getCallFunctionResultEvent(rid, true, 'done'));
 
-  t.deepEqual(await result, "done")
+  t.deepEqual(await result, 'done');
 });
 
 test.serial('Call function w/ timeout', async (t) => {
-  const {document, mutationPromise} = t.context;
+  const { document, mutationPromise } = t.context;
   const obj = {
-    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2]
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
   } as TransferrableObject;
-  const functionName = "test";
-  const functionNameIdx = store(functionName);
+  const functionName = 'test';
   const rid = ++index;
 
-  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], false, 1000);
+  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000);
   const mutation = await mutationPromise;
 
-  t.deepEqual(mutation, getFunctionMutation(obj, functionNameIdx, rid, [1, 2, 3, 4]));
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, [1, 2, 3, 4]));
 
-  await t.throwsAsync( () => result );
+  await t.throwsAsync(() => result);
 });
 
 test.serial('Call function w/ error', async (t) => {
-  const {document, mutationPromise} = t.context;
+  const { document, mutationPromise } = t.context;
   const obj = {
-    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2]
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
   } as TransferrableObject;
-  const functionName = "test";
-  const functionNameIdx = store(functionName);
+  const functionName = 'test';
   const rid = ++index;
 
-  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], false, 1000);
+  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000);
   const mutation = await mutationPromise;
 
-  t.deepEqual(mutation, getFunctionMutation(obj, functionNameIdx, rid, [1, 2, 3, 4]));
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, [1, 2, 3, 4]));
 
+  t.true(!!document.listeners['message']);
+  document.listeners['message'](getCallFunctionResultEvent(rid, false, 'Error'));
 
-  t.true(!!document.listeners["message"])
-  document.listeners["message"](getCallFunctionResultEvent(rid, false, "Error"));
-
-  await t.throwsAsync( () => result );
+  await t.throwsAsync(() => result);
 });

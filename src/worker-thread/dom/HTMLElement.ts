@@ -1,7 +1,6 @@
 import { Element } from './Element';
 import { reflectProperties } from './enhanceElement';
 import { matchNearestParent, tagNameConditionPredicate } from './matchElements';
-import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export const appendGlobalEventProperties = (keys: Array<string>): void => {
@@ -43,10 +42,6 @@ export class HTMLElement extends Element {
    */
   get form(): Element | null {
     return matchNearestParent(this, tagNameConditionPredicate(['FORM']));
-  }
-
-  [TransferrableKeys.serializeAsTransferrableObject](): number[] {
-    return [TransferrableObjectType.HTMLElement, this[TransferrableKeys.index]];
   }
 }
 

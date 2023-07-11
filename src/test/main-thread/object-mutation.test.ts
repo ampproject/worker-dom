@@ -9,7 +9,6 @@ import { NodeContext } from '../../main-thread/nodes';
 import { WorkerContext } from '../../main-thread/worker';
 import { normalizeConfiguration } from '../../main-thread/configuration';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 
 const test = anyTest as TestInterface<{
   sandbox: sinon.SinonSandbox;
@@ -77,15 +76,7 @@ test('Method call with no arguments', (t) => {
   }
 
   const stub = ((targetObject[methodName] as sinon.SinonStub) = sandbox.stub());
-  executeCall(
-    objectMutationProcessor,
-    canvasElement,
-    [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_],
-    methodName,
-    stringContext,
-    0,
-    [],
-  );
+  executeCall(objectMutationProcessor, canvasElement, targetObject, methodName, stringContext, []);
   t.true(stub.withArgs().calledOnce);
 });
 
@@ -93,16 +84,6 @@ test('Method with arguments', (t) => {
   const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'fillRect';
-  const serializedArgs = [
-    TransferrableObjectType.SmallInt,
-    1,
-    TransferrableObjectType.SmallInt,
-    2,
-    TransferrableObjectType.SmallInt,
-    3,
-    TransferrableObjectType.SmallInt,
-    4,
-  ];
   const targetObject = canvasElement.getContext('2d');
 
   if (!targetObject) {
@@ -110,15 +91,7 @@ test('Method with arguments', (t) => {
   }
 
   const stub = ((targetObject[methodName] as sinon.SinonStub) = sandbox.stub());
-  executeCall(
-    objectMutationProcessor,
-    canvasElement,
-    [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_],
-    methodName,
-    stringContext,
-    4,
-    serializedArgs,
-  );
+  executeCall(objectMutationProcessor, canvasElement, targetObject, methodName, stringContext, [1, 2, 3, 4]);
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
 });
 
@@ -137,17 +110,7 @@ test('Setter', (t) => {
   (targetObject[methodName] as any) = 'existent';
   sandbox.stub(targetObject, methodName).set(setter);
 
-  const serializedArg = [TransferrableObjectType.SmallInt, 5];
-
-  executeCall(
-    objectMutationProcessor,
-    canvasElement,
-    [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_],
-    methodName,
-    stringContext,
-    1,
-    serializedArg,
-  );
+  executeCall(objectMutationProcessor, canvasElement, targetObject, methodName, stringContext, [5]);
   t.true(setter.withArgs(5).calledOnce);
 });
 
@@ -155,16 +118,6 @@ test('Method on prototype', (t) => {
   const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
 
   const methodName = 'fillRect';
-  const serializedArgs = [
-    TransferrableObjectType.SmallInt,
-    1,
-    TransferrableObjectType.SmallInt,
-    2,
-    TransferrableObjectType.SmallInt,
-    3,
-    TransferrableObjectType.SmallInt,
-    4,
-  ];
   const targetObject = canvasElement.getContext('2d');
 
   if (!targetObject) {
@@ -174,15 +127,7 @@ test('Method on prototype', (t) => {
   const prototype = Object.getPrototypeOf(targetObject);
 
   const stub = ((prototype[methodName] as sinon.SinonStub) = sandbox.stub());
-  executeCall(
-    objectMutationProcessor,
-    canvasElement,
-    [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_],
-    methodName,
-    stringContext,
-    4,
-    serializedArgs,
-  );
+  executeCall(objectMutationProcessor, canvasElement, prototype, methodName, stringContext, [1, 2, 3, 4]);
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
 });
 
@@ -203,111 +148,17 @@ test('Setter on prototype', (t) => {
   (prototype[methodName] as any) = 'existent';
   sandbox.stub(prototype, methodName).set(setter);
 
-  const serializedArg = [TransferrableObjectType.SmallInt, 5];
-
-  executeCall(
-    objectMutationProcessor,
-    canvasElement,
-    [TransferrableObjectType.CanvasRenderingContext2D, canvasElement._index_],
-    methodName,
-    stringContext,
-    1,
-    serializedArg,
-  );
+  executeCall(objectMutationProcessor, canvasElement, prototype, methodName, stringContext, [5]);
   t.true(setter.withArgs(5).calledOnce);
-});
-
-test('Mutation starts at a non-zero offset', (t) => {
-  const { stringContext, objectMutationProcessor, sandbox, canvasElement } = t.context;
-
-  const methodName = 'fillRect';
-  const targetObject = canvasElement.getContext('2d');
-
-  if (!targetObject) {
-    throw new Error('targetObject is not defined.');
-  }
-
-  const stub = ((targetObject[methodName] as sinon.SinonStub) = sandbox.stub());
-  const args = [1, 2, 3, 4];
-  const serializedArgs = [
-    TransferrableObjectType.SmallInt,
-    1,
-    TransferrableObjectType.SmallInt,
-    2,
-    TransferrableObjectType.SmallInt,
-    3,
-    TransferrableObjectType.SmallInt,
-    4,
-  ];
-
-  const mutation = [
-    TransferrableMutationType.OBJECT_MUTATION,
-    stringContext.store(methodName),
-    4, // arg count
-    TransferrableObjectType.CanvasRenderingContext2D,
-    canvasElement._index_,
-    ...serializedArgs,
-  ];
-
-  // add three values to the start of the mutation and change the offset
-  const mutationsArray = new Uint16Array([1, 2, 3].concat(mutation));
-  objectMutationProcessor.execute(mutationsArray, 3, /* allow */ true);
-
-  t.true(stub.withArgs(...args).calledOnce);
-});
-
-test('Returns correct end offset', (t) => {
-  const { stringContext, objectMutationProcessor, canvasElement, sandbox } = t.context;
-
-  const targetObject = canvasElement.getContext('2d');
-
-  if (!targetObject) {
-    throw new Error('targetObject is not defined.');
-  }
-
-  const methodName = 'fillRect';
-  (targetObject[methodName] as sinon.SinonStub) = sandbox.stub();
-  const serializedArgs = [
-    TransferrableObjectType.SmallInt,
-    1,
-    TransferrableObjectType.SmallInt,
-    2,
-    TransferrableObjectType.SmallInt,
-    3,
-    TransferrableObjectType.SmallInt,
-    4,
-  ];
-
-  const mutation = [
-    TransferrableMutationType.OBJECT_MUTATION,
-    stringContext.store(methodName),
-    4, // arg count
-    TransferrableObjectType.CanvasRenderingContext2D,
-    canvasElement._index_,
-    ...serializedArgs,
-
-    // add an extra value after the OBJECT_MUTATION, which should be at end offset after processing
-    32,
-  ];
-
-  const mutationsArray = new Uint16Array([1, 2, 3].concat(mutation));
-  const endOffset = objectMutationProcessor.execute(mutationsArray, 3, /* allow */ true);
-
-  t.is(mutationsArray[endOffset], 32);
 });
 
 function executeCall(
   mutationProcessor: CommandExecutor,
   target: RenderableElement,
-  serializedTargetObject: number[],
+  targetObject: any,
   fnName: string,
   stringContext: StringContext,
-  argCount: number,
   serializedArgs: number[],
 ) {
-  return mutationProcessor.execute(
-    new Uint16Array([TransferrableMutationType.OBJECT_MUTATION, stringContext.store(fnName), argCount, ...serializedTargetObject, ...serializedArgs]),
-    0,
-    /* allow */ true,
-  );
+  return mutationProcessor.execute([TransferrableMutationType.OBJECT_MUTATION, fnName, targetObject, serializedArgs], /* allow */ true);
 }

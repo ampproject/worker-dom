@@ -7,7 +7,7 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 type RenderableElement = HTMLElement | SVGElement | Text | Comment;
 type PostMessage = (message: any, transfer?: Transferable[]) => void;
 
-type SerializableType = TransferrableObject | number | string;
+type SerializableType = TransferrableObject | number | string | boolean | undefined;
 type Serializable = SerializableType | SerializableType[];
 
 export interface TransferrableObject {

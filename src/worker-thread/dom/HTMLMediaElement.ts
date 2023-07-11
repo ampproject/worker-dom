@@ -2,11 +2,7 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties, registerListenableProperties } from './enhanceElement';
 import { transfer } from '../MutationTransfer';
 import { Document } from './Document';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { store, store as storeString } from '../strings';
-import { NumericBoolean } from '../../utils';
-import { serializeTransferrableObject } from '../serializeTransferrableObject';
 import { registerSubclass } from './Element';
 
 export class HTMLMediaElement extends HTMLElement {
@@ -34,7 +30,7 @@ export class HTMLMediaElement extends HTMLElement {
       return;
     }
 
-    this._setProperty('currentTime', time, false);
+    this._setProperty('currentTime', time);
 
     this.seeking = true;
     this._currentTime = time;
@@ -84,7 +80,7 @@ export class HTMLMediaElement extends HTMLElement {
       return;
     }
     this._loop = !!value;
-    this._setProperty('loop', this._loop, true);
+    this._setProperty('loop', this._loop);
   }
 
   get playbackRate(): number {
@@ -96,7 +92,7 @@ export class HTMLMediaElement extends HTMLElement {
       return;
     }
     this._playbackRate = value;
-    this._setProperty('playbackRate', this._playbackRate, false);
+    this._setProperty('playbackRate', this._playbackRate);
   }
 
   get muted(): boolean {
@@ -108,7 +104,7 @@ export class HTMLMediaElement extends HTMLElement {
       return;
     }
     this._muted = !!value;
-    this._setProperty('muted', this._muted, true);
+    this._setProperty('muted', this._muted);
   }
 
   get volume(): number {
@@ -120,27 +116,15 @@ export class HTMLMediaElement extends HTMLElement {
       return;
     }
     this._volume = value;
-    this._setProperty('volume', value, false);
+    this._setProperty('volume', value);
   }
 
-  private _setProperty(name: string, value: any, isBoolean: boolean) {
-    transfer(this.ownerDocument as Document, [
-      TransferrableMutationType.PROPERTIES,
-      this[TransferrableKeys.index],
-      storeString(name),
-      isBoolean ? NumericBoolean.TRUE : NumericBoolean.FALSE,
-      isBoolean ? (value ? NumericBoolean.TRUE : NumericBoolean.FALSE) : storeString(String(value)),
-    ]);
+  private _setProperty(name: string, value: any) {
+    transfer(this.ownerDocument as Document, [TransferrableMutationType.PROPERTIES, this, name, value]);
   }
 
   private _callFunction(fnName: string, args: any[]) {
-    transfer(this.ownerDocument as Document, [
-      TransferrableMutationType.OBJECT_MUTATION,
-      store(fnName),
-      args.length, // arg count
-      ...this[TransferrableKeys.serializeAsTransferrableObject](),
-      ...serializeTransferrableObject(args),
-    ]);
+    transfer(this.ownerDocument as Document, [TransferrableMutationType.OBJECT_MUTATION, fnName, this, args]);
   }
 }
 

@@ -1,9 +1,6 @@
 import { MessageType } from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import {
-  EventSubscriptionMutationIndex,
-  TransferrableTouchList,
-} from '../../transfer/TransferrableEvent';
+import { EventSubscriptionMutationIndex, TransferrableTouchList } from '../../transfer/TransferrableEvent';
 import { WorkerContext } from '../worker';
 import { CommandExecutorInterface } from './interface';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
@@ -62,7 +59,7 @@ const fireValueChange = (workerContext: WorkerContext, node: RenderableElement):
       [TransferrableKeys.index]: node._index_,
       [TransferrableKeys.value]: node.value,
     },
-  });
+  }, []);
 
 /**
  * Tell WorkerDOM what the window dimensions are.
@@ -73,7 +70,7 @@ const fireResizeChange = (workerContext: WorkerContext, cachedWindowSize: [numbe
   workerContext.messageToWorker({
     [TransferrableKeys.type]: MessageType.RESIZE,
     [TransferrableKeys.sync]: cachedWindowSize,
-  });
+  }, []);
 
 /**
  * Convert a TouchList into a TransferrableTouchList
@@ -124,46 +121,49 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
 
       if (target && target._listenableProperties_) {
         target._listenableProperties_
-          .map(prop => strings.get(prop))
-          .map(name => {
+          .map((prop) => strings.get(prop))
+          .map((name) => {
             if (name.length > 0 && name in target) {
               return target[name];
             }
             return null;
           })
-          .forEach(value => listenableProperties.push(value));
+          .forEach((value) => listenableProperties.push(value));
       }
 
-      workerContext.messageToWorker({
-        [TransferrableKeys.type]: MessageType.EVENT,
-        [TransferrableKeys.event]: {
-          [TransferrableKeys.index]: index,
-          [TransferrableKeys.bubbles]: event.bubbles,
-          [TransferrableKeys.cancelable]: event.cancelable,
-          [TransferrableKeys.cancelBubble]: event.cancelBubble,
-          [TransferrableKeys.currentTarget]: [(event.currentTarget as RenderableElement)._index_ || 0],
-          [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
-          [TransferrableKeys.eventPhase]: event.eventPhase,
-          [TransferrableKeys.isTrusted]: event.isTrusted,
-          [TransferrableKeys.returnValue]: event.returnValue,
-          [TransferrableKeys.target]: [(event.target as RenderableElement)._index_ || 0],
-          [TransferrableKeys.timeStamp]: event.timeStamp,
-          [TransferrableKeys.type]: event.type,
-          [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
-          [TransferrableKeys.pageX]: 'pageX' in event ? event.pageX : undefined,
-          [TransferrableKeys.pageY]: 'pageY' in event ? event.pageY : undefined,
-          [TransferrableKeys.offsetX]: 'offsetX' in event ? event.offsetX : undefined,
-          [TransferrableKeys.offsetY]: 'offsetY' in event ? event.offsetY : undefined,
-          [TransferrableKeys.touches]: 'touches' in event ? createTransferrableTouchList(event.touches) : undefined,
-          [TransferrableKeys.changedTouches]: 'changedTouches' in event ? createTransferrableTouchList(event.changedTouches) : undefined,
-          [TransferrableKeys.clientX]: 'clientX' in event ? event.clientX : undefined,
-          [TransferrableKeys.clientY]: 'clientY' in event ? event.clientY : undefined,
-          [TransferrableKeys.button]: 'button' in event ? event.button : undefined,
-          [TransferrableKeys.buttons]: 'buttons' in event ? event.buttons : undefined,
-          [TransferrableKeys.detail]: 'detail' in event ? event.detail : undefined,
-          [TransferrableKeys.listenableProperties]: listenableProperties.length > 0 ? listenableProperties : undefined,
+      workerContext.messageToWorker(
+        {
+          [TransferrableKeys.type]: MessageType.EVENT,
+          [TransferrableKeys.event]: {
+            [TransferrableKeys.index]: index,
+            [TransferrableKeys.bubbles]: event.bubbles,
+            [TransferrableKeys.cancelable]: event.cancelable,
+            [TransferrableKeys.cancelBubble]: event.cancelBubble,
+            [TransferrableKeys.currentTarget]: [(event.currentTarget as RenderableElement)._index_ || 0],
+            [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
+            [TransferrableKeys.eventPhase]: event.eventPhase,
+            [TransferrableKeys.isTrusted]: event.isTrusted,
+            [TransferrableKeys.returnValue]: event.returnValue,
+            [TransferrableKeys.target]: [(event.target as RenderableElement)._index_ || 0],
+            [TransferrableKeys.timeStamp]: event.timeStamp,
+            [TransferrableKeys.type]: event.type,
+            [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
+            [TransferrableKeys.pageX]: 'pageX' in event ? event.pageX : undefined,
+            [TransferrableKeys.pageY]: 'pageY' in event ? event.pageY : undefined,
+            [TransferrableKeys.offsetX]: 'offsetX' in event ? event.offsetX : undefined,
+            [TransferrableKeys.offsetY]: 'offsetY' in event ? event.offsetY : undefined,
+            [TransferrableKeys.touches]: 'touches' in event ? createTransferrableTouchList(event.touches) : undefined,
+            [TransferrableKeys.changedTouches]: 'changedTouches' in event ? createTransferrableTouchList(event.changedTouches) : undefined,
+            [TransferrableKeys.clientX]: 'clientX' in event ? event.clientX : undefined,
+            [TransferrableKeys.clientY]: 'clientY' in event ? event.clientY : undefined,
+            [TransferrableKeys.button]: 'button' in event ? event.button : undefined,
+            [TransferrableKeys.buttons]: 'buttons' in event ? event.buttons : undefined,
+            [TransferrableKeys.detail]: 'detail' in event ? event.detail : undefined,
+            [TransferrableKeys.listenableProperties]: listenableProperties.length > 0 ? listenableProperties : undefined,
+          },
         },
-      });
+        [],
+      );
     };
 
   /**
@@ -175,7 +175,7 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
    * @param preventDefault prevent default flag, use only if addEvent is true
    */
   const processListenerChange = (target: RenderableElement, type: string, addEvent: boolean, preventDefault: boolean): void => {
-    target._knownListeners_ = target._knownListeners_ || {} as {[key: string] : (event: Event) => any};
+    target._knownListeners_ = target._knownListeners_ || ({} as { [key: string]: (event: Event) => any });
 
     if (target === nodeContext.baseElement) {
       if (addEvent) {
@@ -215,32 +215,26 @@ export const EventSubscriptionProcessor: CommandExecutorInterface = (strings, no
   };
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
-
+    execute(mutations: any[], allowedMutation: boolean) {
       if (allowedExecution && allowedMutation) {
-        const targetIndex = mutations[startPosition + EventSubscriptionMutationIndex.Target];
-        const target = nodeContext.getNode(targetIndex);
+        const target = mutations[EventSubscriptionMutationIndex.Target];
 
         if (target) {
-          const type = strings.get(mutations[startPosition + EventSubscriptionMutationIndex.EventType]);
-          const addEvent = mutations[startPosition + EventSubscriptionMutationIndex.IsAddEvent] === 1;
-          const preventDefault = addEvent ? Boolean(mutations[startPosition + EventSubscriptionMutationIndex.PreventDefault]) : false;
+          const type = mutations[EventSubscriptionMutationIndex.EventType];
+          const addEvent = mutations[EventSubscriptionMutationIndex.IsAddEvent];
+          const preventDefault = addEvent ? mutations[EventSubscriptionMutationIndex.PreventDefault] : false;
 
           processListenerChange(target, type, addEvent, preventDefault);
-
         } else {
-          console.error(`getNode(${targetIndex}) is null.`);
+          console.error(`target is null.`);
         }
       }
-
-      return startPosition + EventSubscriptionMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number): {} {
-      const targetIndex = mutations[startPosition + EventSubscriptionMutationIndex.Target];
-      const target = nodeContext.getNode(targetIndex);
-      const type = strings.get(mutations[startPosition + EventSubscriptionMutationIndex.EventType]);
-      const addEvent = mutations[startPosition + EventSubscriptionMutationIndex.IsAddEvent] === 1;
-      const preventDefault = addEvent ? Boolean(mutations[startPosition + EventSubscriptionMutationIndex.EventType]) : false;
+    print(mutations: any[]): {} {
+      const target = mutations[EventSubscriptionMutationIndex.Target];
+      const type = mutations[EventSubscriptionMutationIndex.EventType];
+      const addEvent = mutations[EventSubscriptionMutationIndex.IsAddEvent];
+      const preventDefault = addEvent ? mutations[EventSubscriptionMutationIndex.PreventDefault] : false;
 
       return {
         target,

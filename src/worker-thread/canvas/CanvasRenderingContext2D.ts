@@ -1,15 +1,15 @@
 import {
-  CanvasRenderingContext2D,
   CanvasDirection,
   CanvasFillRule,
+  CanvasGradient,
   CanvasImageSource,
   CanvasLineCap,
   CanvasLineJoin,
+  CanvasPattern,
+  CanvasRenderingContext2D,
   CanvasTextAlign,
   CanvasTextBaseline,
   ImageSmoothingQuality,
-  CanvasGradient,
-  CanvasPattern,
 } from './CanvasTypes';
 import { MessageType, OffscreenCanvasToWorker } from '../../transfer/Messages';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
@@ -101,7 +101,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
         }
       } else {
         document.addGlobalEventListener('message', messageHandler);
-        transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas[TransferrableKeys.index]]);
+        transfer(canvas.ownerDocument as Document, [TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE, canvas]);
       }
     }).then((instance: { getContext(c: '2d'): CanvasRenderingContext2D }) => {
       this.goodImplementation = instance.getContext('2d');

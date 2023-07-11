@@ -5,6 +5,7 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { emitter, Emitter } from '../Emitter';
 import { createTestingDocument } from '../DocumentCreation';
+import { serializeTransferableMessage } from '../../worker-thread/serializeTransferrableObject';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -25,11 +26,9 @@ test.serial.cb('Text, set data', (t) => {
   const text = document.createTextNode('original text');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.CHARACTER_DATA, text[TransferrableKeys.index], strings.indexOf('new text')],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([TransferrableMutationType.CHARACTER_DATA, text, 'new text']);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 
@@ -44,11 +43,9 @@ test.serial.cb('Text, set textContent', (t) => {
   const text = document.createTextNode('original text');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.CHARACTER_DATA, text[TransferrableKeys.index], strings.indexOf('new text')],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([TransferrableMutationType.CHARACTER_DATA, text, 'new text']);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 

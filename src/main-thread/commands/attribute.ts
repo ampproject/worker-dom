@@ -8,21 +8,19 @@ export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, wor
    * @param mutations
    * @param startPosition
    */
-  const getValue = (mutations: Uint16Array, startPosition: number): string | null => {
-    const value = mutations[startPosition + AttributeMutationIndex.Value];
+  const getValue = (mutations: any[]): string | null => {
+    const value = mutations[AttributeMutationIndex.Value];
     // Value is sent as 0 when it's the default value or removal.
     // Value is sent as index + 1 when it's a valid value.
     return value !== 0 ? strings.get(value - 1) : null;
   };
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
+    execute(mutations: any[], allowedMutation: boolean) {
       if (allowedExecution && allowedMutation) {
-        const targetIndex = mutations[startPosition + AttributeMutationIndex.Target];
-        const target = nodes.getNode(targetIndex);
-
-        const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);
-        const value = getValue(mutations, startPosition);
+        const target = mutations[AttributeMutationIndex.Target];
+        const attributeName = mutations[AttributeMutationIndex.Name];
+        const value = getValue(mutations);
 
         if (target) {
           if (attributeName != null) {
@@ -40,16 +38,14 @@ export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, wor
             }
           }
         } else {
-          console.error(`ATTR_LIST: getNode(${targetIndex}) is null.`);
+          console.error(`ATTR_LIST: target is null.`);
         }
       }
-      return startPosition + AttributeMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number): {} {
-      const targetIndex = mutations[startPosition + AttributeMutationIndex.Target];
-      const target = nodes.getNode(targetIndex);
-      const attributeName = strings.get(mutations[startPosition + AttributeMutationIndex.Name]);
-      const value = getValue(mutations, startPosition);
+    print(mutations: any[]): {} {
+      const target = mutations[AttributeMutationIndex.Target];
+      const attributeName = mutations[AttributeMutationIndex.Name];
+      const value = getValue(mutations);
 
       return {
         target,

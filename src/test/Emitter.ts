@@ -56,7 +56,7 @@ export function emitter(document: Document): Emitter {
   };
 }
 
-type ExpectMutationsCallback = (mutations: number[]) => void;
+type ExpectMutationsCallback = (mutations: any[]) => void;
 
 /**
  * Stubs `document.postMessage` to invoke `callback`.
@@ -67,7 +67,7 @@ type ExpectMutationsCallback = (mutations: number[]) => void;
 export const expectMutations = (document: Document, callback: ExpectMutationsCallback): void => {
   document[TransferrableKeys.observe]();
   document.postMessage = (message: MutationFromWorker) => {
-    const mutations = Array.from(new Uint16Array(message[TransferrableKeys.mutations]));
+    const mutations = message[TransferrableKeys.mutations];
     callback(mutations);
   };
 };

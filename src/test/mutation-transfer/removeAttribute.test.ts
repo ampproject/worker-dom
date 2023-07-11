@@ -6,6 +6,7 @@ import { TransferrableMutationType } from '../../transfer/TransferrableMutation'
 import { emitter, Emitter } from '../Emitter';
 import { createTestingDocument } from '../DocumentCreation';
 import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { serializeTransferableMessage } from '../../worker-thread/serializeTransferrableObject';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -26,11 +27,9 @@ test.serial.cb('Element.removeAttribute transfer', (t) => {
   const div = document.createElement('div');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('data-foo'), strings.indexOf(HTML_NAMESPACE), 0],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([TransferrableMutationType.ATTRIBUTES, div, 'data-foo', HTML_NAMESPACE, 0]);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 
@@ -47,11 +46,9 @@ test.serial.cb('Element.removeAttribute transfer, with namespace', (t) => {
   const div = document.createElement('div');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('data-foo'), strings.indexOf('namespace'), 0],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([TransferrableMutationType.ATTRIBUTES, div, 'data-foo', 'namespace', 0]);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 

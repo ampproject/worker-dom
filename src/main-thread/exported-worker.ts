@@ -37,7 +37,7 @@ export class ExportedWorker {
       [TransferrableKeys.functionArguments]: JSON.stringify(functionArguments),
       [TransferrableKeys.index]: index,
     };
-    this.workerContext_.messageToWorker(msg);
+    this.workerContext_.messageToWorker(msg, []);
     return promise;
   }
 

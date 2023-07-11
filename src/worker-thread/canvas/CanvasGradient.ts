@@ -1,10 +1,7 @@
 import { Document } from '../dom/Document';
 import { transfer } from '../MutationTransfer';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { serializeTransferrableObject } from '../serializeTransferrableObject';
-import { store } from '../strings';
+import { TransferrableMutationType, TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableObject } from '../worker-thread';
-import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 /**
@@ -20,13 +17,7 @@ export class CanvasGradient implements TransferrableObject {
   }
 
   addColorStop(offset: number, color: string) {
-    transfer(this.document, [
-      TransferrableMutationType.OBJECT_MUTATION,
-      store('addColorStop'),
-      2, // arg count
-      ...this[TransferrableKeys.serializeAsTransferrableObject](),
-      ...serializeTransferrableObject([...arguments]),
-    ]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'addColorStop', this, [offset, color]]);
   }
 
   [TransferrableKeys.serializeAsTransferrableObject](): number[] {

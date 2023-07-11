@@ -3,7 +3,7 @@ import { StorageProcessor } from '../../../main-thread/commands/storage';
 import { StringContext } from '../../../main-thread/strings';
 import { WorkerDOMConfiguration } from '../../../main-thread/configuration';
 import { CommandExecutor } from '../../../main-thread/commands/interface';
-import { TransferrableMutationType, StorageMutationIndex } from '../../../transfer/TransferrableMutation';
+import { StorageMutationIndex, TransferrableMutationType } from '../../../transfer/TransferrableMutation';
 import { StorageLocation } from '../../../transfer/TransferrableStorage';
 import { GetOrSet, MessageToWorker, MessageType, StorageValueToWorker } from '../../../transfer/Messages';
 import { WorkerContext } from '../../../main-thread/worker';
@@ -57,9 +57,8 @@ test('StorageProcessor sends storage value event to worker', async (t) => {
   mutation[StorageMutationIndex.Operation] = GetOrSet.GET;
   mutation[StorageMutationIndex.Location] = StorageLocation.AmpState;
   mutation[StorageMutationIndex.Key] = 1;
-  const mutations = new Uint16Array(mutation);
 
-  processor.execute(mutations, 0, true);
+  processor.execute(mutation, true);
   await Promise.resolve(setTimeout);
 
   const expectedMessage: StorageValueToWorker = {
@@ -79,9 +78,8 @@ test('StorageProcessor handles deletion event from worker', async (t) => {
   mutation[StorageMutationIndex.Location] = StorageLocation.Local;
   mutation[StorageMutationIndex.Key] = 2;
   mutation[StorageMutationIndex.Value] = 0;
-  const mutations = new Uint16Array(mutation);
 
-  processor.execute(mutations, 0, true);
+  processor.execute(mutation, true);
   await Promise.resolve(setTimeout);
 
   t.deepEqual(getLastSetStorage(), { location: StorageLocation.Local, key: 'hello', value: null });

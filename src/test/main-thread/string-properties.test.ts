@@ -9,7 +9,6 @@ import { WorkerContext } from '../../main-thread/worker';
 import { PropertyProcessor } from '../../main-thread/commands/property';
 import { normalizeConfiguration } from '../../main-thread/configuration';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { NumericBoolean } from '../../utils';
 
 const test = anyTest as TestInterface<{
   stringContext: StringContext;
@@ -65,38 +64,21 @@ test.beforeEach((t) => {
 });
 
 test('setting property to a new string', (t) => {
-  const { stringContext, propertyProcessor, inputElement } = t.context;
+  const { propertyProcessor, inputElement } = t.context;
   const newValue = 'new value';
-  const storedValueKey = stringContext.store('value');
-  const storedNewValue = stringContext.store(newValue);
 
-  propertyProcessor.execute(
-    new Uint16Array([TransferrableMutationType.PROPERTIES, inputElement._index_, storedValueKey, NumericBoolean.FALSE, storedNewValue]),
-    0,
-    /* allow */ true,
-  );
+  propertyProcessor.execute([TransferrableMutationType.PROPERTIES, inputElement, 'value', newValue], /* allow */ true);
   t.is(inputElement.value, newValue);
 });
 
 test('setting property back to an empty string', (t) => {
-  const { stringContext, propertyProcessor, inputElement } = t.context;
+  const { propertyProcessor, inputElement } = t.context;
   const firstUpdateValue = 'new value';
   const secondUpdateValue = '';
-  const storedValueKey = stringContext.store('value');
-  const storedFirstUpdateValue = stringContext.store(firstUpdateValue);
-  const storedSecondUpdateValue = stringContext.store(secondUpdateValue);
 
-  propertyProcessor.execute(
-    new Uint16Array([TransferrableMutationType.PROPERTIES, inputElement._index_, storedValueKey, NumericBoolean.FALSE, storedFirstUpdateValue]),
-    0,
-    /* allow */ true,
-  );
+  propertyProcessor.execute([TransferrableMutationType.PROPERTIES, inputElement, 'value', firstUpdateValue], /* allow */ true);
   t.is(inputElement.value, firstUpdateValue);
 
-  propertyProcessor.execute(
-    new Uint16Array([TransferrableMutationType.PROPERTIES, inputElement._index_, storedValueKey, NumericBoolean.FALSE, storedSecondUpdateValue]),
-    0,
-    /* allow */ true,
-  );
+  propertyProcessor.execute([TransferrableMutationType.PROPERTIES, inputElement, 'value', secondUpdateValue], /* allow */ true);
   t.is(inputElement.value, secondUpdateValue);
 });

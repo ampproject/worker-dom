@@ -1,4 +1,4 @@
-import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
+import { MessageFromWorker, MessageType, MutationFromWorker } from '../transfer/Messages';
 import { MutatorProcessor } from './mutator';
 import { NodeContext } from './nodes';
 import { StringContext } from './strings';
@@ -63,7 +63,7 @@ export function install(
           (data as MutationFromWorker)[TransferrableKeys.phase],
           (data as MutationFromWorker)[TransferrableKeys.nodes],
           (data as MutationFromWorker)[TransferrableKeys.strings],
-          new Uint16Array(data[TransferrableKeys.mutations]),
+          (data as MutationFromWorker)[TransferrableKeys.mutations],
         );
 
         if (config.onReceiveMessage) {

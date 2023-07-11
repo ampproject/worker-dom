@@ -4,10 +4,12 @@ import { MutatorProcessor } from '../../main-thread/mutator';
 import { NodeContext } from '../../main-thread/nodes';
 import { StringContext } from '../../main-thread/strings';
 import { WorkerContext } from '../../main-thread/worker';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { TransferrableMutationType, TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { Phase } from '../../transfer/Phase';
 import { normalizeConfiguration } from '../../main-thread/configuration';
 import { ObjectContext } from '../../main-thread/object-context';
+import { serializeTransferableMessage } from '../../worker-thread/serializeTransferrableObject';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -16,6 +18,7 @@ const test = anyTest as TestInterface<{
   nodeContext: NodeContext;
   workerContext: WorkerContext;
   objectContext: ObjectContext;
+  baseElementTransferable: any;
 }>;
 
 test.beforeEach((t) => {
@@ -34,6 +37,11 @@ test.beforeEach((t) => {
     messageToWorker() {},
   } as unknown as WorkerContext;
 
+  const baseElementTransferable = {
+    [TransferrableKeys.serializeAsTransferrableObject]: () => {
+      return [TransferrableObjectType.HTMLElement, 2];
+    },
+  };
   t.context = {
     env,
     baseElement,
@@ -41,6 +49,7 @@ test.beforeEach((t) => {
     nodeContext,
     workerContext,
     objectContext,
+    baseElementTransferable,
   };
 });
 
@@ -50,7 +59,7 @@ test.afterEach((t) => {
 });
 
 test.serial('batch mutations', (t) => {
-  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
+  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext, baseElementTransferable } = t.context;
   const { rafTasks } = env;
   const mutator = new MutatorProcessor(
     stringContext,
@@ -67,25 +76,29 @@ test.serial('batch mutations', (t) => {
     Phase.Mutating,
     new ArrayBuffer(0),
     ['hidden'],
-    new Uint16Array([
-      TransferrableMutationType.ATTRIBUTES,
-      2, // Base Node
-      0,
-      0,
-      0 + 1,
-    ]),
+    [
+      serializeTransferableMessage([
+        TransferrableMutationType.ATTRIBUTES,
+        baseElementTransferable, // Base Node
+        'hidden',
+        0,
+        0 + 1,
+      ]).buffer,
+    ],
   );
   mutator.mutate(
     Phase.Mutating,
     new ArrayBuffer(0),
     ['data-one'],
-    new Uint16Array([
-      TransferrableMutationType.ATTRIBUTES,
-      2, // Base Node
-      1,
-      0,
-      1 + 1,
-    ]),
+    [
+      serializeTransferableMessage([
+        TransferrableMutationType.ATTRIBUTES,
+        baseElementTransferable, // Base Node
+        'data-one',
+        0,
+        1 + 1,
+      ]).buffer,
+    ],
   );
 
   t.is(baseElement.getAttribute('hidden'), null);
@@ -99,13 +112,15 @@ test.serial('batch mutations', (t) => {
     Phase.Mutating,
     new ArrayBuffer(0),
     ['data-two'],
-    new Uint16Array([
-      TransferrableMutationType.ATTRIBUTES,
-      2, // Base Node
-      2,
-      0,
-      2 + 1,
-    ]),
+    [
+      serializeTransferableMessage([
+        TransferrableMutationType.ATTRIBUTES,
+        baseElementTransferable, // Base Node
+        'data-two',
+        0,
+        2 + 1,
+      ]).buffer,
+    ],
   );
 
   t.is(baseElement.getAttribute('data-two'), null);
@@ -115,7 +130,7 @@ test.serial('batch mutations', (t) => {
 });
 
 test.serial('batch mutations with custom pump', (t) => {
-  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
+  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext, baseElementTransferable } = t.context;
   const { rafTasks } = env;
 
   const tasks: Array<{ phase: Phase; flush: Function }> = [];
@@ -137,25 +152,29 @@ test.serial('batch mutations with custom pump', (t) => {
     Phase.Mutating,
     new ArrayBuffer(0),
     ['hidden'],
-    new Uint16Array([
-      TransferrableMutationType.ATTRIBUTES,
-      2, // Base Node
-      0,
-      0,
-      0 + 1,
-    ]),
+    [
+      serializeTransferableMessage([
+        TransferrableMutationType.ATTRIBUTES,
+        baseElementTransferable, // Base Node
+        'hidden',
+        0,
+        0 + 1,
+      ]).buffer,
+    ],
   );
   mutator.mutate(
     Phase.Mutating,
     new ArrayBuffer(0),
     ['data-one'],
-    new Uint16Array([
-      TransferrableMutationType.ATTRIBUTES,
-      2, // Base Node
-      1,
-      0,
-      1 + 1,
-    ]),
+    [
+      serializeTransferableMessage([
+        TransferrableMutationType.ATTRIBUTES,
+        baseElementTransferable, // Base Node
+        'data-one',
+        0,
+        1 + 1,
+      ]).buffer,
+    ],
   );
 
   t.is(baseElement.getAttribute('hidden'), null);
@@ -171,13 +190,15 @@ test.serial('batch mutations with custom pump', (t) => {
     Phase.Mutating,
     new ArrayBuffer(0),
     ['data-two'],
-    new Uint16Array([
-      TransferrableMutationType.ATTRIBUTES,
-      2, // Base Node
-      2,
-      0,
-      2 + 1,
-    ]),
+    [
+      serializeTransferableMessage([
+        TransferrableMutationType.ATTRIBUTES,
+        baseElementTransferable, // Base Node
+        'data-two',
+        0,
+        2 + 1,
+      ]).buffer,
+    ],
   );
 
   t.is(baseElement.getAttribute('data-two'), null);
@@ -188,7 +209,7 @@ test.serial('batch mutations with custom pump', (t) => {
 });
 
 test.serial('leverage allowlist to exclude mutation type', (t) => {
-  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
+  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext, baseElementTransferable } = t.context;
   const { rafTasks } = env;
   const mutator = new MutatorProcessor(
     stringContext,
@@ -206,25 +227,29 @@ test.serial('leverage allowlist to exclude mutation type', (t) => {
     Phase.Mutating,
     new ArrayBuffer(0),
     ['hidden'],
-    new Uint16Array([
-      TransferrableMutationType.ATTRIBUTES,
-      2, // Base Node
-      0,
-      0,
-      0 + 1,
-    ]),
+    [
+      serializeTransferableMessage([
+        TransferrableMutationType.ATTRIBUTES,
+        baseElementTransferable, // Base Node
+        'hidden',
+        0,
+        0 + 1,
+      ]).buffer,
+    ],
   );
   mutator.mutate(
     Phase.Mutating,
     new ArrayBuffer(0),
     ['data-one'],
-    new Uint16Array([
-      TransferrableMutationType.ATTRIBUTES,
-      2, // Base Node
-      1,
-      0,
-      1 + 1,
-    ]),
+    [
+      serializeTransferableMessage([
+        TransferrableMutationType.ATTRIBUTES,
+        baseElementTransferable, // Base Node
+        'data-one',
+        0,
+        1 + 1,
+      ]).buffer,
+    ],
   );
 
   t.is(baseElement.getAttribute('hidden'), null);
@@ -236,7 +261,7 @@ test.serial('leverage allowlist to exclude mutation type', (t) => {
 });
 
 test.serial('split strings from mutations', (t) => {
-  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext } = t.context;
+  const { env, baseElement, stringContext, nodeContext, workerContext, objectContext, baseElementTransferable } = t.context;
   const { rafTasks } = env;
   const mutator = new MutatorProcessor(
     stringContext,
@@ -249,18 +274,20 @@ test.serial('split strings from mutations', (t) => {
     objectContext,
   );
 
-  mutator.mutate(Phase.Mutating, new ArrayBuffer(0), ['hidden'], new Uint16Array([]));
+  mutator.mutate(Phase.Mutating, new ArrayBuffer(0), ['hidden'], []);
   mutator.mutate(
     Phase.Mutating,
     new ArrayBuffer(0),
     [],
-    new Uint16Array([
-      TransferrableMutationType.ATTRIBUTES,
-      2, // Base Node
-      0,
-      0,
-      0 + 1,
-    ]),
+    [
+      serializeTransferableMessage([
+        TransferrableMutationType.ATTRIBUTES,
+        baseElementTransferable, // Base Node
+        'hidden',
+        0,
+        0 + 1,
+      ]).buffer,
+    ],
   );
 
   t.is(baseElement.getAttribute('hidden'), null);

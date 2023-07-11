@@ -16,7 +16,7 @@ export abstract class CharacterData extends Node {
     super(nodeType, nodeName, ownerDocument, overrideIndex);
     this[TransferrableKeys.data] = data;
 
-    this[TransferrableKeys.creationFormat] = [this[TransferrableKeys.index], nodeType, storeString(nodeName), storeString(data), 0];
+    this[TransferrableKeys.creationFormat] = [this[TransferrableKeys.index], nodeType, storeString(nodeName), storeString(data), 0, 0];
   }
 
   // Unimplemented Methods
@@ -50,7 +50,7 @@ export abstract class CharacterData extends Node {
         value,
         oldValue,
       },
-      [TransferrableMutationType.CHARACTER_DATA, this[TransferrableKeys.index], storeString(value)],
+      [TransferrableMutationType.CHARACTER_DATA, this, value],
     );
   }
 

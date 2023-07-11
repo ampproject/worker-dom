@@ -169,8 +169,8 @@ export class CSSStyleDeclaration implements StyleDeclaration {
       },
       [
         TransferrableMutationType.ATTRIBUTES,
-        this[TransferrableKeys.target][TransferrableKeys.index],
-        storeString('style'),
+        this[TransferrableKeys.target],
+        'style',
         0, // Attribute Namespace is the default value.
         value !== null ? storeString(value) + 1 : 0,
       ],

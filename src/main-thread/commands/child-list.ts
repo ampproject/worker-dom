@@ -7,19 +7,16 @@ export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode 
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHILD_LIST);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
-      const appendNodeCount = mutations[startPosition + ChildListMutationIndex.AppendedNodeCount];
-      const removeNodeCount = mutations[startPosition + ChildListMutationIndex.RemovedNodeCount];
+    execute(mutations: any[], allowedMutation: boolean) {
+      const appendNodeCount = mutations[ChildListMutationIndex.AppendedNodeCount];
+      const removeNodeCount = mutations[ChildListMutationIndex.RemovedNodeCount];
       if (allowedExecution && allowedMutation) {
-        const targetIndex = mutations[startPosition + ChildListMutationIndex.Target];
+        const targetIndex = mutations[ChildListMutationIndex.Target];
         const target = getNode(targetIndex);
         if (target) {
           if (removeNodeCount > 0) {
             mutations
-              .slice(
-                startPosition + ChildListMutationIndex.Nodes + appendNodeCount,
-                startPosition + ChildListMutationIndex.Nodes + appendNodeCount + removeNodeCount,
-              )
+              .slice(ChildListMutationIndex.Nodes + appendNodeCount, ChildListMutationIndex.Nodes + appendNodeCount + removeNodeCount)
               .forEach((removeId) => {
                 const node = getNode(removeId);
                 if (node) {
@@ -30,46 +27,40 @@ export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode 
               });
           }
           if (appendNodeCount > 0) {
-            mutations
-              .slice(startPosition + ChildListMutationIndex.Nodes, startPosition + ChildListMutationIndex.Nodes + appendNodeCount)
-              .forEach((addId) => {
-                const nextSibling = mutations[startPosition + ChildListMutationIndex.NextSibling];
-                const newNode = getNode(addId);
-                if (newNode) {
-                  // TODO: Handle this case ---
-                  // Transferred nodes that are not stored were previously removed by the sanitizer.
-                  target.insertBefore(newNode, (nextSibling && getNode(nextSibling)) || null);
-                  applyDefaultInputListener(workerContext, newNode);
-                  sendValueChangeOnAttributeMutation(workerContext, newNode);
-                }
-              });
+            mutations.slice(ChildListMutationIndex.Nodes, ChildListMutationIndex.Nodes + appendNodeCount).forEach((addId) => {
+              const nextSibling = mutations[ChildListMutationIndex.NextSibling];
+              const newNode = getNode(addId);
+              if (newNode) {
+                // TODO: Handle this case ---
+                // Transferred nodes that are not stored were previously removed by the sanitizer.
+                target.insertBefore(newNode, (nextSibling && getNode(nextSibling)) || null);
+                applyDefaultInputListener(workerContext, newNode);
+                sendValueChangeOnAttributeMutation(workerContext, newNode);
+              }
+            });
           }
         } else {
           console.error(`CHILD_LIST: getNode(${targetIndex}) is null.`);
         }
       }
-      return startPosition + ChildListMutationIndex.End + appendNodeCount + removeNodeCount;
     },
-    print(mutations: Uint16Array, startPosition: number): {} {
-      const targetIndex = mutations[startPosition + ChildListMutationIndex.Target];
+    print(mutations: any[]): {} {
+      const targetIndex = mutations[ChildListMutationIndex.Target];
       const target = getNode(targetIndex);
-      const appendNodeCount = mutations[startPosition + ChildListMutationIndex.AppendedNodeCount];
-      const removeNodeCount = mutations[startPosition + ChildListMutationIndex.RemovedNodeCount];
+      const appendNodeCount = mutations[ChildListMutationIndex.AppendedNodeCount];
+      const removeNodeCount = mutations[ChildListMutationIndex.RemovedNodeCount];
       const removedNodes = Array.from(
-        mutations.slice(
-          startPosition + ChildListMutationIndex.Nodes + appendNodeCount,
-          startPosition + ChildListMutationIndex.Nodes + appendNodeCount + removeNodeCount,
-        ),
+        mutations.slice(ChildListMutationIndex.Nodes + appendNodeCount, ChildListMutationIndex.Nodes + appendNodeCount + removeNodeCount),
       ).map((index) => getNode(index) || index);
-      const addedNodes = Array.from(
-        mutations.slice(startPosition + ChildListMutationIndex.Nodes, startPosition + ChildListMutationIndex.Nodes + appendNodeCount),
-      ).map((index) => getNode(index) || index);
+      const addedNodes = Array.from(mutations.slice(ChildListMutationIndex.Nodes, ChildListMutationIndex.Nodes + appendNodeCount)).map(
+        (index) => getNode(index) || index,
+      );
 
       return {
         target,
         allowedExecution,
-        nextSibling: getNode(mutations[startPosition + ChildListMutationIndex.NextSibling]) || null,
-        previousSibling: getNode(mutations[startPosition + ChildListMutationIndex.PreviousSibling]) || null,
+        nextSibling: getNode(mutations[ChildListMutationIndex.NextSibling]) || null,
+        previousSibling: getNode(mutations[ChildListMutationIndex.PreviousSibling]) || null,
         addedNodes,
         removedNodes,
       };

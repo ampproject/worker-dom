@@ -1,5 +1,5 @@
 import { CommandExecutorInterface } from './interface';
-import { TransferrableMutationType, FunctionMutationIndex } from '../../transfer/TransferrableMutation';
+import { FunctionMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { ResolveOrReject } from '../../transfer/Messages';
 
 let fnCallCount = 0;
@@ -43,13 +43,13 @@ export const FunctionProcessor: CommandExecutorInterface = (strings, nodeContext
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.FUNCTION_CALL);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number): number {
+    execute(mutations: any[]) {
       if (allowedExecution) {
-        const status = mutations[startPosition + FunctionMutationIndex.Status];
-        const index = mutations[startPosition + FunctionMutationIndex.Index];
-        const value = mutations[startPosition + FunctionMutationIndex.Value];
+        const status = mutations[FunctionMutationIndex.Status];
+        const index = mutations[FunctionMutationIndex.Index];
+        const value = mutations[FunctionMutationIndex.Value];
 
-        const parsed = strings.hasIndex(value) ? JSON.parse(strings.get(value)) : undefined;
+        const parsed = value && value.length > 0 ? JSON.parse(value) : undefined;
         if (status === ResolveOrReject.RESOLVE) {
           promiseMap[index].resolve(parsed);
         } else {
@@ -57,19 +57,18 @@ export const FunctionProcessor: CommandExecutorInterface = (strings, nodeContext
         }
         delete promiseMap[index];
       }
-      return startPosition + FunctionMutationIndex.End;
     },
 
-    print(mutations: Uint16Array, startPosition: number): {} {
-      const status = mutations[startPosition + FunctionMutationIndex.Status];
-      const index = mutations[startPosition + FunctionMutationIndex.Index];
-      const value = mutations[startPosition + FunctionMutationIndex.Value];
+    print(mutations: any[]): {} {
+      const status = mutations[FunctionMutationIndex.Status];
+      const index = mutations[FunctionMutationIndex.Index];
+      const value = mutations[FunctionMutationIndex.Value];
 
       return {
         type: 'FUNCTION_INVOCATION',
         status,
         index,
-        value: strings.get(value),
+        value,
         allowedExecution,
       };
     },

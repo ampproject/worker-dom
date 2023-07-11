@@ -8,34 +8,33 @@ export const BoundingClientRectProcessor: CommandExecutorInterface = (strings, n
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.GET_BOUNDING_CLIENT_RECT);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
+    execute(mutations: any[], allowedMutation: boolean): void {
       if (allowedExecution && allowedMutation) {
-        const targetIndex = mutations[startPosition + BoundClientRectMutationIndex.Target];
-        const target = nodes.getNode(targetIndex);
+        const target = mutations[BoundClientRectMutationIndex.Target];
         if (target) {
           const boundingRect = target.getBoundingClientRect();
-          workerContext.messageToWorker({
-            [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
-            [TransferrableKeys.target]: [target._index_],
-            [TransferrableKeys.data]: [
-              boundingRect.top,
-              boundingRect.right,
-              boundingRect.bottom,
-              boundingRect.left,
-              boundingRect.width,
-              boundingRect.height,
-            ],
-          });
+          workerContext.messageToWorker(
+            {
+              [TransferrableKeys.type]: MessageType.GET_BOUNDING_CLIENT_RECT,
+              [TransferrableKeys.target]: [target._index_],
+              [TransferrableKeys.data]: [
+                boundingRect.top,
+                boundingRect.right,
+                boundingRect.bottom,
+                boundingRect.left,
+                boundingRect.width,
+                boundingRect.height,
+              ],
+            },
+            [],
+          );
         } else {
-          console.error(`GET_BOUNDING_CLIENT_RECT: getNode(${targetIndex}) is null.`);
+          console.error(`GET_BOUNDING_CLIENT_RECT: target is null.`);
         }
       }
-
-      return startPosition + BoundClientRectMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number): {} {
-      const targetIndex = mutations[startPosition + BoundClientRectMutationIndex.Target];
-      const target = nodes.getNode(targetIndex);
+    print(mutations: any[]): {} {
+      const target = mutations[BoundClientRectMutationIndex.Target];
       return {
         type: 'GET_BOUNDING_CLIENT_RECT',
         target,

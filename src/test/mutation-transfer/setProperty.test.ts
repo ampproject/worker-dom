@@ -5,7 +5,7 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { emitter, Emitter } from '../Emitter';
 import { createTestingDocument } from '../DocumentCreation';
-import { NumericBoolean } from '../../utils';
+import { serializeTransferableMessage } from '../../worker-thread/serializeTransferrableObject';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -26,11 +26,9 @@ test.serial.cb('HTMLOptionElement.selected transfers updated truthy property', (
   const el = document.createElement('option');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.PROPERTIES, el[TransferrableKeys.index], strings.indexOf('selected'), NumericBoolean.TRUE, NumericBoolean.TRUE],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([TransferrableMutationType.PROPERTIES, el, 'selected', true]);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 
@@ -45,11 +43,9 @@ test.serial.cb('HTMLOptionElement.selected transfers updated falsy property', (t
   const el = document.createElement('option');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.PROPERTIES, el[TransferrableKeys.index], strings.indexOf('selected'), NumericBoolean.TRUE, NumericBoolean.FALSE],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([TransferrableMutationType.PROPERTIES, el, 'selected', false]);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 
@@ -64,11 +60,9 @@ test.serial.cb('HTMLOptionElement.selected transfers updated true boolean proper
   const el = document.createElement('option');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.PROPERTIES, el[TransferrableKeys.index], strings.indexOf('selected'), NumericBoolean.TRUE, NumericBoolean.TRUE],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([TransferrableMutationType.PROPERTIES, el, 'selected', true]);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 
@@ -83,11 +77,9 @@ test.serial.cb('HTMLOptionElement.selected transfers updated false boolean prope
   const el = document.createElement('option');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.PROPERTIES, el[TransferrableKeys.index], strings.indexOf('selected'), NumericBoolean.TRUE, NumericBoolean.FALSE],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([TransferrableMutationType.PROPERTIES, el, 'selected', false]);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 
@@ -102,11 +94,9 @@ test.serial.cb('HTMLInputElement.value transfers updated empty string', (t) => {
   const el = document.createElement('input');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.PROPERTIES, el[TransferrableKeys.index], strings.indexOf('value'), NumericBoolean.FALSE, strings.indexOf('')],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([TransferrableMutationType.PROPERTIES, el, 'value', '']);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 

@@ -27,7 +27,7 @@ test.serial.cb('document.createTextNode creation format is valid', (t) => {
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.nodes])),
-      [comment[TransferrableKeys.index], NodeType.COMMENT_NODE, strings.indexOf('#comment'), strings.indexOf('comment'), 0],
+      [comment[TransferrableKeys.index], NodeType.COMMENT_NODE, strings.indexOf('#comment'), strings.indexOf('comment'), 0, 0],
       'creation format is as expected',
     );
     t.end();

@@ -4,10 +4,8 @@ import { reflectProperties } from './enhanceElement';
 import { registerSubclass } from './Element';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { store as storeString } from '../strings';
 import { Document } from './Document';
 import { transfer } from '../MutationTransfer';
-import { NumericBoolean } from '../../utils';
 
 export class HTMLInputElement extends HTMLElement {
   // Per spec, some attributes like 'value' and 'checked' change behavior based on dirty flags.
@@ -34,13 +32,7 @@ export class HTMLInputElement extends HTMLElement {
     // The worker may have a stale value since 'input' events aren't being forwarded.
     this[TransferrableKeys.value] = String(value);
     this.dirtyValue = true;
-    transfer(this.ownerDocument as Document, [
-      TransferrableMutationType.PROPERTIES,
-      this[TransferrableKeys.index],
-      storeString('value'),
-      NumericBoolean.FALSE,
-      storeString(value),
-    ]);
+    transfer(this.ownerDocument as Document, [TransferrableMutationType.PROPERTIES, this, 'value', this[TransferrableKeys.value]]);
   }
 
   get valueAsDate(): Date | null {
@@ -83,13 +75,7 @@ export class HTMLInputElement extends HTMLElement {
       return;
     }
     this[TransferrableKeys.checked] = !!value;
-    transfer(this.ownerDocument as Document, [
-      TransferrableMutationType.PROPERTIES,
-      this[TransferrableKeys.index],
-      storeString('checked'),
-      NumericBoolean.TRUE,
-      value === true ? NumericBoolean.TRUE : NumericBoolean.FALSE,
-    ]);
+    transfer(this.ownerDocument as Document, [TransferrableMutationType.PROPERTIES, this, 'checked', this[TransferrableKeys.checked]]);
   }
 
   /**
@@ -117,6 +103,7 @@ export class HTMLInputElement extends HTMLElement {
     return new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
   }
 }
+
 registerSubclass('input', HTMLInputElement);
 HTMLInputLabelsMixin(HTMLInputElement);
 

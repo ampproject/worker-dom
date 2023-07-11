@@ -1,14 +1,13 @@
 import { store as storeNodeMapping, storeOverride as storeOverrideNodeMapping } from '../nodes';
-import { Event, EventHandler, AddEventListenerOptions } from '../Event';
+import { AddEventListenerOptions, Event, EventHandler } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { store as storeString } from '../strings';
 import { Document } from './Document';
 import { transfer } from '../MutationTransfer';
-import { TransferredNode, NodeType } from '../../transfer/TransferrableNodes';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { NodeType, TransferredNode } from '../../transfer/TransferrableNodes';
+import { TransferrableMutationType, TransferrableObjectType } from '../../transfer/TransferrableMutation';
 
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 export type NamespaceURI = string;
@@ -59,6 +58,10 @@ export abstract class Node {
 
     this[TransferrableKeys.index] = overrideIndex ? storeOverrideNodeMapping(this, overrideIndex) : storeNodeMapping(this);
     this[TransferrableKeys.transferredFormat] = [this[TransferrableKeys.index]];
+  }
+
+  [TransferrableKeys.serializeAsTransferrableObject](): number[] {
+    return [TransferrableObjectType.HTMLElement, this[TransferrableKeys.index]];
   }
 
   // Unimplemented Properties
@@ -415,10 +418,10 @@ export abstract class Node {
       this[TransferrableKeys.handlers][lowerType] = [handler];
       transfer(this.ownerDocument as Document, [
         TransferrableMutationType.EVENT_SUBSCRIPTION,
-        this[TransferrableKeys.index],
-        1,
-        storeString(lowerType),
-        Number(Boolean(options.workerDOMPreventDefault)),
+        this,
+        true,
+        lowerType,
+        Boolean(options.workerDOMPreventDefault),
       ]);
     }
   }
@@ -437,13 +440,7 @@ export abstract class Node {
     if (index >= 0) {
       handlers.splice(index, 1);
       if (handlers.length == 0) {
-        transfer(this.ownerDocument as Document, [
-          TransferrableMutationType.EVENT_SUBSCRIPTION,
-          this[TransferrableKeys.index],
-          0,
-          storeString(lowerType),
-          0
-        ]);
+        transfer(this.ownerDocument as Document, [TransferrableMutationType.EVENT_SUBSCRIPTION, this, false, lowerType, false]);
       }
     }
   }

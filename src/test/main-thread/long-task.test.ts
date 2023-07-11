@@ -79,8 +79,8 @@ test.serial('should tolerate no callback', async (t) => {
     }),
   );
 
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_START, baseElement._index_], /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_END, baseElement._index_], /* allow */ true);
 
   await sleep(0);
   t.is(longTasks.length, 0);
@@ -89,13 +89,13 @@ test.serial('should tolerate no callback', async (t) => {
 test.serial('should create and release a long task', async (t) => {
   const { executor, longTasks, baseElement } = t.context;
 
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_START, baseElement._index_], /* allow */ true);
   await sleep(0);
   t.is(longTasks.length, 1);
   t.true(executor.active);
 
   // Ensure the promise is resolved in the end.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_END, baseElement._index_], /* allow */ true);
   await sleep(0);
   t.is(longTasks.length, 1);
   t.false(executor.active);
@@ -106,25 +106,25 @@ test.serial('should create and release a long task', async (t) => {
 test.serial('should nest long tasks', async (t) => {
   const { executor, longTasks, baseElement } = t.context;
 
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_START, baseElement._index_], /* allow */ true);
   await sleep(0);
   t.is(longTasks.length, 1);
   t.true(executor.active);
 
   // Nested: no new promise/task created.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_START, baseElement._index_], /* allow */ true);
   await sleep(0);
   t.is(longTasks.length, 1);
   t.true(executor.active);
 
   // Unnest: the task is still active.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_END, baseElement._index_], /* allow */ true);
   await sleep(0);
   t.is(longTasks.length, 1);
   t.true(executor.active);
 
   // Ensure the promise is resolved in the end.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_END, baseElement._index_], /* allow */ true);
   await sleep(0);
   t.is(longTasks.length, 1);
   t.false(executor.active);
@@ -140,12 +140,12 @@ test.serial('multiple long tasks should have their handlers fired in sequence ST
   };
 
   // Start 1st task.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_START, baseElement._index_], /* allow */ true);
   await sleep(0);
 
   // End 1st task and start the second without a sleep in between.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_END, baseElement._index_], /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_START, baseElement._index_], /* allow */ true);
   await sleep(0);
 
   t.deepEqual(handlerCallSequence, ['start', 'end', 'start']);
@@ -155,25 +155,25 @@ test.serial('should restart a next long tasks', async (t) => {
   const { executor, longTasks, baseElement } = t.context;
 
   // Start 1st task.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_START, baseElement._index_], /* allow */ true);
   await sleep(0);
   t.is(longTasks.length, 1);
   t.true(executor.active);
 
   // End 1st task.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_END, baseElement._index_], /* allow */ true);
   await sleep(0);
   t.is(longTasks.length, 1);
   t.false(executor.active);
 
   // Start 2nd task.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_START, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_START, baseElement._index_], /* allow */ true);
   await sleep(0);
   t.is(longTasks.length, 2);
   t.true(executor.active);
 
   // End 2nd task.
-  executor.execute(new Uint16Array([TransferrableMutationType.LONG_TASK_END, baseElement._index_]), 0, /* allow */ true);
+  executor.execute([TransferrableMutationType.LONG_TASK_END, baseElement._index_], /* allow */ true);
   await sleep(0);
   t.is(longTasks.length, 2);
   t.false(executor.active);

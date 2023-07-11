@@ -1,5 +1,5 @@
 import { CommandExecutor, CommandExecutorInterface } from './interface';
-import { TransferrableMutationType, ReadableMutationType, LongTaskMutationIndex } from '../../transfer/TransferrableMutation';
+import { ReadableMutationType, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { StringContext } from '../strings';
 import { NodeContext } from '../nodes';
 import { WorkerContext } from '../worker';
@@ -15,6 +15,7 @@ export interface LongTaskCommandExecutorInterface extends CommandExecutorInterfa
     config: WorkerDOMConfiguration,
   ): LongTaskCommandExecutor;
 }
+
 export interface LongTaskCommandExecutor extends CommandExecutor {
   active: boolean;
 }
@@ -31,9 +32,9 @@ export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
   let currentResolver: Function | null;
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
+    execute(mutations: any[], allowedMutation: boolean) {
       if (allowedExecution && allowedMutation && config.longTask) {
-        if (mutations[startPosition] === TransferrableMutationType.LONG_TASK_START) {
+        if (mutations[0] === TransferrableMutationType.LONG_TASK_START) {
           index++;
           if (!currentResolver) {
             const newResolver = new Promise((resolve) => (currentResolver = resolve));
@@ -45,7 +46,7 @@ export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
             // See: worker-dom/pull/989.
             Promise.resolve().then(() => config.longTask && config.longTask(newResolver));
           }
-        } else if (mutations[startPosition] === TransferrableMutationType.LONG_TASK_END) {
+        } else if (mutations[0] === TransferrableMutationType.LONG_TASK_END) {
           index--;
           if (currentResolver && index <= 0) {
             currentResolver();
@@ -54,11 +55,10 @@ export const LongTaskExecutor: LongTaskCommandExecutorInterface = (
           }
         }
       }
-      return startPosition + LongTaskMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number): {} {
+    print(mutations: any[]): {} {
       return {
-        type: ReadableMutationType[mutations[startPosition]],
+        type: ReadableMutationType[mutations[0]],
         allowedExecution,
       };
     },

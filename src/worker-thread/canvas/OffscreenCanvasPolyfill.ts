@@ -1,23 +1,20 @@
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { TransferrableMutationType, TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import {
-  CanvasRenderingContext2D,
-  ImageSmoothingQuality,
-  CanvasTextAlign,
-  CanvasTextBaseline,
-  CanvasLineCap,
-  CanvasLineJoin,
   CanvasDirection,
   CanvasFillRule,
   CanvasImageSource,
+  CanvasLineCap,
+  CanvasLineJoin,
+  CanvasRenderingContext2D,
+  CanvasTextAlign,
+  CanvasTextBaseline,
+  ImageSmoothingQuality,
 } from './CanvasTypes';
 import { transfer } from '../MutationTransfer';
 import { Document } from '../dom/Document';
 import { toLower } from '../../utils';
-import { store } from '../strings';
 import { HTMLElement } from '../dom/HTMLElement';
-import { serializeTransferrableObject } from '../serializeTransferrableObject';
-import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { TransferrableObject } from '../worker-thread';
 import { CanvasGradient } from './CanvasGradient';
 import { CanvasPattern } from './CanvasPattern';
@@ -59,13 +56,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   }
 
   private [TransferrableKeys.mutated](fnName: string, args: any[]) {
-    transfer(this.canvasElement.ownerDocument as Document, [
-      TransferrableMutationType.OBJECT_MUTATION,
-      store(fnName),
-      args.length,
-      ...this[TransferrableKeys.serializeAsTransferrableObject](),
-      ...serializeTransferrableObject(args),
-    ]);
+    transfer(this.canvasElement.ownerDocument as Document, [TransferrableMutationType.OBJECT_MUTATION, fnName, this, args]);
   }
 
   [TransferrableKeys.serializeAsTransferrableObject](): number[] {
@@ -79,14 +70,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
    * @param creationArgs Arguments to pass into the creation method.
    */
   private createObjectReference(objectId: number, creationMethod: string, creationArgs: any[]) {
-    transfer(this.canvasElement.ownerDocument as Document, [
-      TransferrableMutationType.OBJECT_CREATION,
-      store(creationMethod),
-      objectId,
-      creationArgs.length,
-      ...this[TransferrableKeys.serializeAsTransferrableObject](),
-      ...serializeTransferrableObject(creationArgs),
-    ]);
+    transfer(this.canvasElement.ownerDocument as Document, [TransferrableMutationType.OBJECT_CREATION, creationMethod, objectId, this, creationArgs]);
   }
 
   get canvas(): ElementType {

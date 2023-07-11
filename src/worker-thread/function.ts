@@ -1,32 +1,34 @@
-import {TransferrableKeys} from '../transfer/TransferrableKeys';
-import {Document} from './dom/Document';
-import {
-  CallFunctionResultToWorker,
-  FunctionCallToWorker,
-  MessageToWorker,
-  MessageType,
-  ResolveOrReject
-} from '../transfer/Messages';
-import {transfer} from './MutationTransfer';
-import {TransferrableMutationType, TransferrableObjectType} from '../transfer/TransferrableMutation';
-import {store} from './strings';
-import {DocumentStub} from './dom/DocumentStub';
-import {TransferrableObject} from "./worker-thread";
-import {serializeTransferrableObject} from "./serializeTransferrableObject";
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { Document } from './dom/Document';
+import { CallFunctionResultToWorker, FunctionCallToWorker, MessageToWorker, MessageType, ResolveOrReject } from '../transfer/Messages';
+import { transfer } from './MutationTransfer';
+import { TransferrableMutationType, TransferrableObjectType } from '../transfer/TransferrableMutation';
+import { DocumentStub } from './dom/DocumentStub';
+import { TransferrableObject } from './worker-thread';
 
 const exportedFunctions: { [fnIdent: string]: Function } = {};
 
+const windowTarget = {
+  // TODO: fix me
+  [TransferrableKeys.serializeAsTransferrableObject]: () => {
+    return [TransferrableObjectType.Window, 0];
+  },
+};
 let fnCallCount = 0;
 
-export function callFunction(document: Document | DocumentStub,
-                             target: TransferrableObject,
-                             functionName: string,
-                             args: any[],
-                             global: boolean = false,
-                             timeout?: number): Promise<any> {
+export function callGlobalFunction(document: Document | DocumentStub, functionName: string, args: any[], timeout?: number): Promise<any> {
+  return callFunction(document, windowTarget, functionName, args, timeout);
+}
 
+export function callFunction(
+  document: Document | DocumentStub,
+  target: TransferrableObject,
+  functionName: string,
+  args: any[],
+  timeout?: number,
+): Promise<any> {
   return new Promise((resolve, reject) => {
-    // Wraparound to 0 in case someone attempts to register over 9 quadrillion promises.
+    // Wraparound to 0 in case someone attempts to register over 9 quadrillion functions.
     if (fnCallCount >= Number.MAX_VALUE) {
       fnCallCount = 0;
     }
@@ -55,21 +57,10 @@ export function callFunction(document: Document | DocumentStub,
       reject();
     } else {
       document.addGlobalEventListener('message', messageHandler);
-
-      const serialized = global ? [TransferrableObjectType.Window, 0] : target[TransferrableKeys.serializeAsTransferrableObject]();
-
-      transfer(document, [
-        TransferrableMutationType.CALL_FUNCTION,
-        serialized[0], // type
-        serialized[1], // id
-        store(functionName),
-        rid,
-        args.length,
-        ...serializeTransferrableObject(args),
-      ]);
+      transfer(document, [TransferrableMutationType.CALL_FUNCTION, target, functionName, rid, args]);
 
       if (timeout && timeout > 0) {
-        timeoutObg = setTimeout(reject, timeout, new Error("Timeout"));
+        timeoutObg = setTimeout(reject, timeout, new Error('Timeout'));
       }
     }
   });
@@ -92,7 +83,7 @@ export function callFunctionMessageHandler(event: MessageEvent, document: Docume
       TransferrableMutationType.FUNCTION_CALL,
       ResolveOrReject.REJECT,
       index,
-      store(JSON.stringify(`[worker-dom]: Exported function "${fnIdentifier}" could not be found.`)),
+      JSON.stringify(`[worker-dom]: Exported function "${fnIdentifier}" could not be found.`),
     ]);
     return;
   }
@@ -101,7 +92,7 @@ export function callFunctionMessageHandler(event: MessageEvent, document: Docume
     .then((f) => f.apply(null, fnArguments))
     .then(
       (value) => {
-        transfer(document, [TransferrableMutationType.FUNCTION_CALL, ResolveOrReject.RESOLVE, index, store(JSON.stringify(value))]);
+        transfer(document, [TransferrableMutationType.FUNCTION_CALL, ResolveOrReject.RESOLVE, index, JSON.stringify(value)]);
       },
       (err: Error) => {
         const errorMessage = JSON.stringify(err.message || err);
@@ -110,11 +101,12 @@ export function callFunctionMessageHandler(event: MessageEvent, document: Docume
           TransferrableMutationType.FUNCTION_CALL,
           ResolveOrReject.REJECT,
           index,
-          store(JSON.stringify(`[worker-dom]: Function "${fnIdentifier}" threw: "${errorMessage}"`)),
+          JSON.stringify(`[worker-dom]: Function "${fnIdentifier}" threw: "${errorMessage}"`),
         ]);
       },
     );
 }
+
 export function exportFunction(name: string, fn: Function) {
   if (!name || name === '') {
     throw new Error(`[worker-dom]: Attempt to export function was missing an identifier.`);

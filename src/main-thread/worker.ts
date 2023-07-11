@@ -9,7 +9,13 @@ import { IframeWorker } from './iframe-worker';
 
 // TODO: Sanitizer storage init is likely broken, since the code currently
 // attempts to stringify a Promise.
-export type StorageInit = { storage: Storage | Promise<StorageValue>; errorMsg: null } | { storage: null; errorMsg: string };
+export type StorageInit =
+  | { storage: Storage | Promise<StorageValue>; errorMsg: null }
+  | {
+      storage: null;
+      errorMsg: string;
+    };
+
 export class WorkerContext {
   private [TransferrableKeys.worker]: Worker | IframeWorker;
   private nodeContext: NodeContext;
@@ -103,8 +109,62 @@ export class WorkerContext {
     if (this.config.onSendMessage) {
       this.config.onSendMessage(message);
     }
-    this.worker.postMessage(message, transferables || []);
+    transferables = transferables || findTransferable(message);
+    this.worker.postMessage(message, transferables);
   }
+}
+
+function isPotentialTransferable(object: any) {
+  return !!object && typeof object === 'object';
+}
+
+function findTransferable(object: any): any[] {
+  const transferables: any[] = [];
+
+  if (!isPotentialTransferable(object)) {
+    return transferables;
+  }
+
+  if (ArrayBuffer.isView(object)) {
+    transferables.push(object.buffer);
+    return transferables;
+  }
+
+  if (
+    object instanceof ArrayBuffer ||
+    object instanceof MessagePort ||
+    object instanceof ReadableStream ||
+    object instanceof WritableStream ||
+    object instanceof TransformStream ||
+    object instanceof RTCDataChannel ||
+    object instanceof ImageBitmap
+    // TS unsupported
+    // object instanceof WebTransportReceiveStream ||
+    // object instanceof AudioData ||
+    // object instanceof VideoFrame ||
+    // object instanceof OffscreenCanvas
+  ) {
+    transferables.push(object);
+    return transferables;
+  }
+
+  if (Array.isArray(object)) {
+    object
+      .filter((o) => isPotentialTransferable(o))
+      .forEach((o) => {
+        transferables.push(...findTransferable(o));
+      });
+    return transferables;
+  }
+
+  for (const key in object) {
+    const value = object[key];
+    if (isPotentialTransferable(value)) {
+      transferables.push(...findTransferable(value));
+    }
+  }
+
+  return transferables;
 }
 
 function getStorageInit(type: 'localStorage' | 'sessionStorage', sanitizer?: Sanitizer): StorageInit {

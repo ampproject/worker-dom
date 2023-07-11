@@ -3,6 +3,7 @@ import { MutationRecord } from './MutationRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { Document } from './dom/Document';
 import { transfer } from './MutationTransfer';
+import { Serializable } from './worker-thread';
 
 const observers: MutationObserver[] = [];
 
@@ -37,7 +38,7 @@ const pushMutation = (observer: MutationObserver, record: MutationRecord): void 
  * @param record
  * @param transferable
  */
-export function mutate(document: Document, record: MutationRecord, transferable: Array<number>): void {
+export function mutate(document: Document, record: MutationRecord, transferable: Array<Serializable>): void {
   // Post-message `transferable` to the main thread to apply mutations.
   transfer(document, transferable);
 

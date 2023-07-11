@@ -7,10 +7,9 @@ export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, node
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE);
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
+    execute(mutations: any[], allowedMutation: boolean) {
       if (allowedExecution && allowedMutation) {
-        const targetIndex = mutations[startPosition + OffscreenCanvasMutationIndex.Target];
-        const target = nodeContext.getNode(targetIndex);
+        const target = mutations[OffscreenCanvasMutationIndex.Target];
         if (target) {
           const offscreen = (target as HTMLCanvasElement).transferControlToOffscreen();
           workerContext.messageToWorker(
@@ -22,13 +21,11 @@ export const OffscreenCanvasProcessor: CommandExecutorInterface = (strings, node
             [offscreen],
           );
         } else {
-          console.error(`'OFFSCREEN_CANVAS_INSTANCE': getNode(${targetIndex}) is null.`);
+          console.error(`'OFFSCREEN_CANVAS_INSTANCE': target is null.`);
         }
       }
-
-      return startPosition + OffscreenCanvasMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number, target?: RenderableElement | null): {} {
+    print(mutations: any[], target?: RenderableElement | null): {} {
       return {
         type: 'OFFSCREEN_CANVAS_INSTANCE',
         target,

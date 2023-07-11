@@ -143,8 +143,7 @@ export const enum CharacterDataMutationIndex {
 export const enum PropertyMutationIndex {
   Target = 1,
   Name = 2,
-  IsBoolean = 3,
-  Value = 4,
+  Value = 3,
   End = 5,
 }
 
@@ -195,8 +194,8 @@ export const enum ImageBitmapMutationIndex {
  */
 export const enum ObjectMutationIndex {
   FunctionName = 1,
-  ArgumentCount = 2,
-  SerializedTarget = 3,
+  SerializedTarget = 2,
+  Arguments = 3,
   // "End" index is variable.
 }
 
@@ -211,8 +210,8 @@ export const enum ObjectMutationIndex {
 export const enum ObjectCreationIndex {
   FunctionName = 1,
   ObjectId = 2,
-  ArgumentCount = 3,
-  SerializedTarget = 4,
+  SerializedTarget = 3,
+  Arguments = 4,
   // "End" index is variable.
 }
 
@@ -221,14 +220,36 @@ export const enum ObjectCreationIndex {
  * passed in function parameters, e.g. <image> in CanvasRenderingContext2D.drawImage(<image>).
  */
 export const enum TransferrableObjectType {
-  SmallInt = 1,
-  Float = 2,
-  String = 3,
-  Array = 4,
-  TransferObject = 5,
-  CanvasRenderingContext2D = 6,
-  HTMLElement = 7,
-  Window = 8
+  Int8 = 1,
+  Int16 = 2,
+  Int32 = 3,
+  Int64 = 4,
+  Uint8 = 5,
+  Uint16 = 6,
+  Uint32 = 7,
+  Uint64 = 8,
+  Float32 = 9,
+  Float64 = 10,
+  String = 11,
+  Array = 12,
+  ArrayEmpty = 13,
+  TransferObject = 14,
+  CanvasRenderingContext2D = 15,
+  HTMLElement = 16,
+  Window = 17,
+  BooleanTrue = 18,
+  BooleanFalse = 19,
+  Uint8Array = 20,
+  Uint16Array = 21,
+  Uint32Array = 22,
+  Float32Array = 23,
+  Float64Array = 24,
+  Int8Array = 25,
+  Uint8ClampedArray = 26,
+  Int16Array = 27,
+  Int32Array = 28,
+  Null = 29,
+  Undefined = 30,
 }
 
 /**
@@ -277,10 +298,8 @@ export const enum ScrollIntoViewMutationIndex {
 }
 
 export const enum CallFunctionMutationIndex {
-  TargetType = 1,
-  Target = 2,
-  FunctionName = 3,
-  Index = 4,
-  ArgumentCount = 5,
-  Arguments = 6
+  Target = 1,
+  FunctionName = 2,
+  Index = 3,
+  Arguments = 4,
 }

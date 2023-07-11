@@ -5,6 +5,7 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { emitter, Emitter } from '../Emitter';
 import { createTestingDocument } from '../DocumentCreation';
+import { serializeTransferableMessage } from '../../worker-thread/serializeTransferrableObject';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -25,11 +26,17 @@ test.serial.cb('Node.removeChild transfer only child', (t) => {
   const div = document.createElement('div');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.CHILD_LIST, document.body[TransferrableKeys.index], 0, 0, 0, 1, div[TransferrableKeys.index]],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([
+      TransferrableMutationType.CHILD_LIST,
+      document.body[TransferrableKeys.index],
+      0,
+      0,
+      0,
+      1,
+      div[TransferrableKeys.index],
+    ]);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 
@@ -46,11 +53,17 @@ test.serial.cb('Node.removeChild transfer, one of siblings', (t) => {
   const p = document.createElement('p');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.CHILD_LIST, document.body[TransferrableKeys.index], 0, 0, 0, 1, div[TransferrableKeys.index]],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([
+      TransferrableMutationType.CHILD_LIST,
+      document.body[TransferrableKeys.index],
+      0,
+      0,
+      0,
+      1,
+      div[TransferrableKeys.index],
+    ]);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 
@@ -69,26 +82,27 @@ test.serial.cb('Node.removeChild transfer, multiple sibling nodes', (t) => {
   const input = document.createElement('input');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.CHILD_LIST,
-        document.body[TransferrableKeys.index],
-        0,
-        0,
-        0,
-        1,
-        div[TransferrableKeys.index],
-        TransferrableMutationType.CHILD_LIST,
-        document.body[TransferrableKeys.index],
-        0,
-        0,
-        0,
-        1,
-        input[TransferrableKeys.index],
-      ],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([
+      TransferrableMutationType.CHILD_LIST,
+      document.body[TransferrableKeys.index],
+      0,
+      0,
+      0,
+      1,
+      div[TransferrableKeys.index],
+    ]);
+
+    const expectedSecond = serializeTransferableMessage([
+      TransferrableMutationType.CHILD_LIST,
+      document.body[TransferrableKeys.index],
+      0,
+      0,
+      0,
+      1,
+      input[TransferrableKeys.index],
+    ]);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer, expectedSecond.buffer], 'mutation is as expected');
     t.end();
   }
 
@@ -108,11 +122,17 @@ test.serial.cb('Node.removeChild transfer, tree > 1 depth', (t) => {
   const p = document.createElement('p');
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.CHILD_LIST, div[TransferrableKeys.index], 0, 0, 0, 1, p[TransferrableKeys.index]],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([
+      TransferrableMutationType.CHILD_LIST,
+      div[TransferrableKeys.index],
+      0,
+      0,
+      0,
+      1,
+      p[TransferrableKeys.index],
+    ]);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 

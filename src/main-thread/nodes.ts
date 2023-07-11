@@ -1,5 +1,5 @@
-import { NodeType, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
-import { StringContext } from './strings';
+import {NodeType, TransferrableNodeIndex} from '../transfer/TransferrableNodes';
+import {StringContext} from './strings';
 
 /**
  * IE11 doesn't support NodeList.prototype.forEach
@@ -46,7 +46,11 @@ export class NodeContext {
     const nodeBuffer = new Uint16Array(buffer);
     const nodeBufferLength = nodeBuffer.length;
 
-    for (let iterator = 0; iterator < nodeBufferLength; iterator += nodeBuffer[iterator + TransferrableNodeIndex.ListenableProperties] + TransferrableNodeIndex.End) {
+    for (
+      let iterator = 0;
+      iterator < nodeBufferLength;
+      iterator += nodeBuffer[iterator + TransferrableNodeIndex.ListenableProperties] + TransferrableNodeIndex.End
+    ) {
       let node: Node;
       if (nodeBuffer[iterator + TransferrableNodeIndex.NodeType] === NodeType.TEXT_NODE) {
         node = document.createTextNode(this.stringContext.get(nodeBuffer[iterator + TransferrableNodeIndex.TextContent]));
@@ -79,10 +83,13 @@ export class NodeContext {
 
       const listenablePropertiesCount = nodeBuffer[iterator + TransferrableNodeIndex.ListenableProperties];
       if (listenablePropertiesCount > 0) {
-        node._listenableProperties_ = Array.from(nodeBuffer.subarray(iterator + TransferrableNodeIndex.ListenableProperties + 1,
-          iterator + TransferrableNodeIndex.ListenableProperties + listenablePropertiesCount + 1));
+        node._listenableProperties_ = Array.from(
+          nodeBuffer.subarray(
+            iterator + TransferrableNodeIndex.ListenableProperties + 1,
+            iterator + TransferrableNodeIndex.ListenableProperties + listenablePropertiesCount + 1,
+          ),
+        );
       }
-
 
       this.storeNode(node, nodeBuffer[iterator]);
     }

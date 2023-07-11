@@ -1,6 +1,5 @@
-import { TransferrableMutationType, ObjectCreationIndex } from '../../transfer/TransferrableMutation';
+import { ObjectCreationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
-import { deserializeTransferrableObject } from '../deserializeTransferrableObject';
 
 export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_CREATION);
@@ -10,22 +9,11 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
   }
 
   return {
-    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
-      const functionName = strings.get(mutations[startPosition + ObjectCreationIndex.FunctionName]);
-      const objectId = mutations[startPosition + ObjectCreationIndex.ObjectId];
-      const argCount = mutations[startPosition + ObjectCreationIndex.ArgumentCount];
-
-      const { offset: targetOffset, args: deserializedTarget } = deserializeTransferrableObject(
-        mutations,
-        startPosition + ObjectCreationIndex.SerializedTarget,
-        1, // argCount
-        strings,
-        nodeContext,
-        objectContext,
-      );
-      const target = deserializedTarget[0] as any;
-
-      const { offset: argsOffset, args } = deserializeTransferrableObject(mutations, targetOffset, argCount, strings, nodeContext, objectContext);
+    execute(mutations: any[], allowedMutation: boolean) {
+      const functionName = mutations[ObjectCreationIndex.FunctionName];
+      const objectId = mutations[ObjectCreationIndex.ObjectId];
+      const target = mutations[ObjectCreationIndex.SerializedTarget];
+      const args = mutations[ObjectCreationIndex.Arguments];
 
       if (allowedExecution && allowedMutation) {
         if (functionName === 'new') {
@@ -34,30 +22,19 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
           objectContext.store(objectId, target[functionName](...args));
         }
       }
-
-      return argsOffset;
     },
-    print(mutations: Uint16Array, startPosition: number): {} {
-      const functionName = strings.get(mutations[startPosition + ObjectCreationIndex.FunctionName]);
-      const objectId = mutations[startPosition + ObjectCreationIndex.ObjectId];
-      const argCount = mutations[startPosition + ObjectCreationIndex.ArgumentCount];
-
-      const { args: deserializedTarget } = deserializeTransferrableObject(
-        mutations,
-        startPosition + ObjectCreationIndex.SerializedTarget,
-        1, // argCount
-        strings,
-        nodeContext,
-        objectContext,
-      );
-      const target = deserializedTarget[0] as RenderableElement;
+    print(mutations: any[]): {} {
+      const functionName = mutations[ObjectCreationIndex.FunctionName];
+      const objectId = mutations[ObjectCreationIndex.ObjectId];
+      const args = mutations[ObjectCreationIndex.Arguments];
+      const target = mutations[ObjectCreationIndex.SerializedTarget];
 
       return {
         type: 'OBJECT_CREATION',
         target,
         functionName,
         objectId,
-        argCount,
+        args,
         allowedExecution,
       };
     },

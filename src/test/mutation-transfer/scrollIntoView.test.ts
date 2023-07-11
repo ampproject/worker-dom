@@ -4,7 +4,7 @@ import { TransferrableMutationType } from '../../transfer/TransferrableMutation'
 import { createTestingDocument } from '../DocumentCreation';
 import { expectMutations } from '../Emitter';
 import { Element } from '../../worker-thread/dom/Element';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { serializeTransferableMessage } from '../../worker-thread/serializeTransferrableObject';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -26,7 +26,9 @@ test.serial.cb('Element.scrollIntoView() transfer to main-thread', (t) => {
   element.isConnected = true;
 
   expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.SCROLL_INTO_VIEW, element[TransferrableKeys.index]]);
+    const expected = serializeTransferableMessage([TransferrableMutationType.SCROLL_INTO_VIEW, element]);
+
+    t.deepEqual(mutations, [expected.buffer]);
     t.end();
   });
 

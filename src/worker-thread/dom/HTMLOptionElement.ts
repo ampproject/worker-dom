@@ -1,15 +1,14 @@
-import { registerSubclass, definePropertyBackedAttributes } from './Element';
+import { definePropertyBackedAttributes, registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { transfer } from '../MutationTransfer';
 import { Document } from './Document';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { store as storeString } from '../strings';
-import { NumericBoolean } from '../../utils';
 
 export class HTMLOptionElement extends HTMLElement {
   private [TransferrableKeys.selected]: boolean = false;
+
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionElement
    * @return position of the option within the list of options it's within, or zero if there is no valid parent.
@@ -48,13 +47,7 @@ export class HTMLOptionElement extends HTMLElement {
    */
   set selected(value: any) {
     this[TransferrableKeys.selected] = !!value;
-    transfer(this.ownerDocument as Document, [
-      TransferrableMutationType.PROPERTIES,
-      this[TransferrableKeys.index],
-      storeString('selected'),
-      NumericBoolean.TRUE,
-      this[TransferrableKeys.selected] ? NumericBoolean.TRUE : NumericBoolean.FALSE,
-    ]);
+    transfer(this.ownerDocument as Document, [TransferrableMutationType.PROPERTIES, this, 'selected', this[TransferrableKeys.selected]]);
   }
 
   /**
@@ -90,6 +83,7 @@ export class HTMLOptionElement extends HTMLElement {
     this.setAttribute('value', value);
   }
 }
+
 registerSubclass('option', HTMLOptionElement);
 definePropertyBackedAttributes(HTMLOptionElement, {
   selected: [(el): string => String(el[TransferrableKeys.selected]), (el, value: string): boolean => (el.selected = value === 'true')],

@@ -7,26 +7,26 @@ import { Phase } from '../transfer/Phase';
 import { phase, set as setPhase } from './phase';
 import { Document } from './dom/Document';
 import { DocumentStub } from './dom/DocumentStub';
+import { serializeTransferableMessage } from './serializeTransferrableObject';
+import { Serializable } from './worker-thread';
 
 let pending = false;
-let pendingMutations: Array<number> = [];
+let pendingMutations: Array<ArrayBuffer> = [];
 
-// TODO(choumx): Change `mutation` to Array<Uint16> to prevent casting errors e.g. integer underflow, precision loss.
-export function transfer(document: Document | DocumentStub, mutation: Array<number>): void {
+export function transfer(document: Document | DocumentStub, mutation: Array<Serializable>): void {
   if (process.env.SERVER) {
     return;
   }
 
   if (phase > Phase.Initializing && document[TransferrableKeys.allowTransfer]) {
     pending = true;
-    pendingMutations = pendingMutations.concat(mutation);
+    pendingMutations.push(serializeTransferableMessage(mutation).buffer);
 
     Promise.resolve().then((_) => {
       if (pending) {
         const nodes = new Uint16Array(
           consumeNodes().reduce((acc: Array<number>, node: Node) => acc.concat(node[TransferrableKeys.creationFormat]), []),
         ).buffer;
-        const mutations = new Uint16Array(pendingMutations).buffer;
 
         document.postMessage(
           {
@@ -34,9 +34,9 @@ export function transfer(document: Document | DocumentStub, mutation: Array<numb
             [TransferrableKeys.type]: phase === Phase.Mutating ? MessageType.MUTATE : MessageType.HYDRATE,
             [TransferrableKeys.nodes]: nodes,
             [TransferrableKeys.strings]: consumeStrings(),
-            [TransferrableKeys.mutations]: mutations,
+            [TransferrableKeys.mutations]: pendingMutations,
           } as MutationFromWorker,
-          [nodes, mutations],
+          [nodes, ...pendingMutations],
         );
 
         pendingMutations = [];

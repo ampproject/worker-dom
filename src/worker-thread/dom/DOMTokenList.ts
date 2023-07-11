@@ -197,8 +197,8 @@ export class DOMTokenList {
       },
       [
         TransferrableMutationType.ATTRIBUTES,
-        this[TransferrableKeys.target][TransferrableKeys.index],
-        storeString(this[TransferrableKeys.attributeName]),
+        this[TransferrableKeys.target],
+        this[TransferrableKeys.attributeName],
         0, // Attribute Namespace is the default value.
         value !== null ? storeString(value) + 1 : 0,
       ],

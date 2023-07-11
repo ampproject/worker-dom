@@ -7,7 +7,7 @@ import { emitter, Emitter } from '../Emitter';
 import { createTestingDocument } from '../DocumentCreation';
 import { Element } from '../../worker-thread/dom/Element';
 import { Event } from '../../worker-thread/Event';
-import { NumericBoolean } from '../../utils';
+import { serializeTransferableMessage } from '../../worker-thread/serializeTransferrableObject';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -36,17 +36,9 @@ test.serial.cb('Node.addEventListener transfers an event subscription', (t) => {
   const { div, eventHandler, emitter } = t.context;
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.EVENT_SUBSCRIPTION,
-        div[TransferrableKeys.index],
-        1,
-        strings.indexOf('click'),
-        NumericBoolean.FALSE,
-      ],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([TransferrableMutationType.EVENT_SUBSCRIPTION, div, true, 'click', false]);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 
@@ -60,17 +52,9 @@ test.serial.cb('Node.addEventListener(..., {workerDOMPreventDefault: true}) tran
   const { div, eventHandler, emitter } = t.context;
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.EVENT_SUBSCRIPTION,
-        div[TransferrableKeys.index],
-        1,
-        strings.indexOf('click'),
-        NumericBoolean.TRUE,
-      ],
-      'mutation is as expected',
-    );
+    const expected = serializeTransferableMessage([TransferrableMutationType.EVENT_SUBSCRIPTION, div, true, 'click', true]);
+
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
     t.end();
   }
 
@@ -83,26 +67,18 @@ test.serial.cb('Node.addEventListener(..., {workerDOMPreventDefault: true}) tran
 });
 
 test.serial.cb('Node.addEventListener transfers an event subscription only once', (t) => {
-    const { div, eventHandler, emitter } = t.context;
+  const { div, eventHandler, emitter } = t.context;
 
-    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-        t.deepEqual(
-            Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-            [
-                TransferrableMutationType.EVENT_SUBSCRIPTION,
-                div[TransferrableKeys.index],
-                1,
-                strings.indexOf('click'),
-                NumericBoolean.FALSE,
-            ],
-            'mutation is as expected',
-        );
-        t.end();
-    }
+  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+    const expected = serializeTransferableMessage([TransferrableMutationType.EVENT_SUBSCRIPTION, div, true, 'click', false]);
 
-    Promise.resolve().then(() => {
-        emitter.once(transmitted);
-        div.addEventListener('click', (e) => console.log('0th listener'));
-        div.addEventListener('click', eventHandler);
-    });
+    t.deepEqual(message[TransferrableKeys.mutations], [expected.buffer], 'mutation is as expected');
+    t.end();
+  }
+
+  Promise.resolve().then(() => {
+    emitter.once(transmitted);
+    div.addEventListener('click', (e) => console.log('0th listener'));
+    div.addEventListener('click', eventHandler);
+  });
 });

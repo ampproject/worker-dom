@@ -1,13 +1,14 @@
 import anyTest, { TestInterface } from 'ava';
 import { Document } from '../../worker-thread/dom/Document';
 import { GetOrSet } from '../../transfer/Messages';
-import { Storage, createStorage } from '../../worker-thread/Storage';
+import { createStorage, Storage } from '../../worker-thread/Storage';
 import { StorageLocation } from '../../transfer/TransferrableStorage';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { createTestingDocument } from '../DocumentCreation';
 import { expectMutations } from '../Emitter';
 import { getForTesting } from '../../worker-thread/strings';
 import { setTimeout } from 'timers';
+import { serializeTransferableMessage } from '../../worker-thread/serializeTransferrableObject';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -43,13 +44,15 @@ test.serial.cb('Storage.setItem', (t) => {
   const { document, storage } = t.context;
 
   expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [
+    const expected = serializeTransferableMessage([
       TransferrableMutationType.STORAGE,
       GetOrSet.SET,
       StorageLocation.Local,
       getForTesting('foo')! + 1,
       getForTesting('bar')! + 1,
     ]);
+
+    t.deepEqual(mutations, [expected.buffer]);
     t.end();
   });
 
@@ -60,7 +63,15 @@ test.serial.cb('Storage.removeItem', (t) => {
   const { document, storage } = t.context;
 
   expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, getForTesting('foo')! + 1, 0]);
+    const expected = serializeTransferableMessage([
+      TransferrableMutationType.STORAGE,
+      GetOrSet.SET,
+      StorageLocation.Local,
+      getForTesting('foo')! + 1,
+      0,
+    ]);
+
+    t.deepEqual(mutations, [expected.buffer]);
     t.end();
   });
 
@@ -71,7 +82,9 @@ test.serial.cb('Storage.clear', (t) => {
   const { document, storage } = t.context;
 
   expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, 0, 0]);
+    const expected = serializeTransferableMessage([TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, 0, 0]);
+
+    t.deepEqual(mutations, [expected.buffer]);
     t.end();
   });
 

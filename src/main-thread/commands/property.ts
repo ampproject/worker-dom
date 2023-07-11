@@ -1,28 +1,15 @@
 import { PropertyMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { CommandExecutorInterface } from './interface';
-import { NumericBoolean } from '../../utils';
 
 export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.PROPERTIES);
 
-  const getValue = (mutations: Uint16Array, startPosition: number): boolean | string | null => {
-    const value = mutations[startPosition + PropertyMutationIndex.Value];
-    if (mutations[startPosition + PropertyMutationIndex.IsBoolean] === NumericBoolean.TRUE) {
-      return value === NumericBoolean.TRUE;
-    }
-    if (value !== 0) {
-      return strings.get(value);
-    }
-    return null;
-  };
-
   return {
-    execute(mutations: Uint16Array, startPosition: number, allowedMutation: boolean): number {
+    execute(mutations: any[], allowedMutation: boolean) {
       if (allowedExecution && allowedMutation) {
-        const targetIndex = mutations[startPosition + PropertyMutationIndex.Target];
-        const target = nodeContext.getNode(targetIndex);
-        const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
-        const value = getValue(mutations, startPosition);
+        const target = mutations[PropertyMutationIndex.Target];
+        const name = mutations[PropertyMutationIndex.Name];
+        const value = mutations[PropertyMutationIndex.Value];
 
         if (target) {
           if (name && value != null) {
@@ -36,17 +23,14 @@ export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext
             }
           }
         } else {
-          console.error(`PROPERTY: getNode(${targetIndex}) is null.`);
+          console.error(`PROPERTY: target is null.`);
         }
       }
-
-      return startPosition + PropertyMutationIndex.End;
     },
-    print(mutations: Uint16Array, startPosition: number): {} {
-      const targetIndex = mutations[startPosition + PropertyMutationIndex.Target];
-      const target = nodeContext.getNode(targetIndex);
-      const name = strings.get(mutations[startPosition + PropertyMutationIndex.Name]);
-      const value = getValue(mutations, startPosition);
+    print(mutations: any[]): {} {
+      const target = mutations[PropertyMutationIndex.Target];
+      const name = mutations[PropertyMutationIndex.Name];
+      const value = mutations[PropertyMutationIndex.Value];
 
       return {
         target,

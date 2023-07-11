@@ -2,7 +2,7 @@ import { NodeContext } from './nodes';
 import { StringContext } from './strings';
 import { WorkerContext } from './worker';
 import { OffscreenCanvasProcessor } from './commands/offscreen-canvas';
-import { TransferrableMutationType, ReadableMutationType, isUserVisibleMutation } from '../transfer/TransferrableMutation';
+import { isUserVisibleMutation, ReadableMutationType, TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { EventSubscriptionProcessor } from './commands/event-subscription';
 import { BoundingClientRectProcessor } from './commands/bounding-client-rect';
 import { ChildListProcessor } from './commands/child-list';
@@ -11,7 +11,7 @@ import { CharacterDataProcessor } from './commands/character-data';
 import { PropertyProcessor } from './commands/property';
 import { LongTaskExecutor } from './commands/long-task';
 import { CommandExecutor } from './commands/interface';
-import { WorkerDOMConfiguration, MutationPumpFunction } from './configuration';
+import { MutationPumpFunction, WorkerDOMConfiguration } from './configuration';
 import { Phase } from '../transfer/Phase';
 import { ObjectMutationProcessor } from './commands/object-mutation';
 import { ObjectCreationProcessor } from './commands/object-creation';
@@ -20,12 +20,15 @@ import { ImageBitmapProcessor } from './commands/image-bitmap';
 import { StorageProcessor } from './commands/storage';
 import { FunctionProcessor } from './commands/function';
 import { ScrollIntoViewProcessor } from './commands/scroll-into-view';
-import { CallFunctionProcessor } from "./commands/call-function";
+import { CallFunctionProcessor } from './commands/call-function';
+import { BytesStream } from '../transfer/BytesStream';
+import { deserializeTransferableMessage } from './deserializeTransferrableObject';
 
 export class MutatorProcessor {
   private stringContext: StringContext;
   private nodeContext: NodeContext;
-  private mutationQueue: Array<Uint16Array> = [];
+  private objectContext: ObjectContext;
+  private mutationQueue: Array<ArrayBuffer> = [];
   private pendingMutations: boolean = false;
   private mutationPumpFunction: MutationPumpFunction;
   private sanitizer: Sanitizer | undefined;
@@ -48,6 +51,7 @@ export class MutatorProcessor {
   ) {
     this.stringContext = stringContext;
     this.nodeContext = nodeContext;
+    this.objectContext = objectContext;
     this.sanitizer = config.sanitizer;
     this.mutationPumpFunction = config.mutationPump;
 
@@ -86,10 +90,10 @@ export class MutatorProcessor {
    * @param stringValues Additional string values to use in decoding messages.
    * @param mutations Changes to apply in both graph shape and content of Elements.
    */
-  public mutate(phase: Phase, nodes: ArrayBuffer, stringValues: Array<string>, mutations: Uint16Array): void {
+  public mutate(phase: Phase, nodes: ArrayBuffer, stringValues: Array<string>, mutations: Array<ArrayBuffer>): void {
     this.stringContext.storeValues(stringValues);
     this.nodeContext.createNodes(nodes, this.sanitizer);
-    this.mutationQueue = this.mutationQueue.concat(mutations);
+    this.mutationQueue.push(...mutations);
     if (!this.pendingMutations) {
       this.pendingMutations = true;
       this.mutationPumpFunction(this.syncFlush, phase);
@@ -110,13 +114,13 @@ export class MutatorProcessor {
       console.group('Mutations');
     }
     const disallowedMutations: TransferrableMutationType[] = [];
-    this.mutationQueue.forEach((mutationArray) => {
-      const length: number = mutationArray.length;
-      let operationStart: number = 0;
+    this.mutationQueue
+      .map((mutationArrayBuffer) => new BytesStream(mutationArrayBuffer))
+      .forEach((bytesStream) => {
+        const parameters = deserializeTransferableMessage(bytesStream, this.stringContext, this.nodeContext, this.objectContext);
 
-      while (operationStart < length) {
-        // TransferrableMutationType is always at position 0.
-        const mutationType = mutationArray[operationStart];
+        const mutationType = parameters[0]; // TransferrableMutationType is always at position 0.
+
         // TODO(worker-dom): Hoist `allow` up to entry point (index.amp.ts) to avoid bundling `isUserVisibleMutation`.
         const allow = allowVisibleMutations || !isUserVisibleMutation(mutationType);
         if (!allow) {
@@ -125,11 +129,11 @@ export class MutatorProcessor {
         }
         const executor = this.executors[mutationType];
         if (WORKER_DOM_DEBUG) {
-          console.log(allow ? '' : '[disallowed]', ReadableMutationType[mutationType], executor.print(mutationArray, operationStart));
+          console.log(allow ? '' : '[disallowed]', ReadableMutationType[mutationType], executor.print(parameters));
         }
-        operationStart = executor.execute(mutationArray, operationStart, allow);
-      }
-    });
+
+        executor.execute(parameters, allow);
+      });
     if (WORKER_DOM_DEBUG) {
       console.groupEnd();
     }

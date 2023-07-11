@@ -7,6 +7,7 @@ import { TransferrableMutationType } from '../../transfer/TransferrableMutation'
 import { createTestingDocument } from '../DocumentCreation';
 import { expectMutations } from '../Emitter';
 import { getForTesting } from '../../worker-thread/strings';
+import { serializeTransferableMessage } from '../../worker-thread/serializeTransferrableObject';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -32,7 +33,15 @@ test.serial.cb('AMP.getState(): string key', (t) => {
 
   expectMutations(document, (mutations) => {
     t.true(addGlobalEventListenerCalled);
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.GET, StorageLocation.AmpState, getForTesting('foo')! + 1, 0]);
+    const expected = serializeTransferableMessage([
+      TransferrableMutationType.STORAGE,
+      GetOrSet.GET,
+      StorageLocation.AmpState,
+      getForTesting('foo')! + 1,
+      0,
+    ]);
+
+    t.deepEqual(mutations, [expected.buffer]);
     t.end();
   });
 
@@ -49,7 +58,16 @@ test.serial.cb('AMP.getState(): falsy key', (t) => {
 
   expectMutations(document, (mutations) => {
     t.true(addGlobalEventListenerCalled);
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.GET, StorageLocation.AmpState, getForTesting('')! + 1, 0]);
+
+    const expected = serializeTransferableMessage([
+      TransferrableMutationType.STORAGE,
+      GetOrSet.GET,
+      StorageLocation.AmpState,
+      getForTesting('')! + 1,
+      0,
+    ]);
+
+    t.deepEqual(mutations, [expected.buffer]);
     t.end();
   });
 
@@ -60,7 +78,15 @@ test.serial.cb('AMP.setState()', (t) => {
   const { document, amp } = t.context;
 
   expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.AmpState, 0, getForTesting('{"foo":"bar"}')! + 1]);
+    const expected = serializeTransferableMessage([
+      TransferrableMutationType.STORAGE,
+      GetOrSet.SET,
+      StorageLocation.AmpState,
+      0,
+      getForTesting('{"foo":"bar"}')! + 1,
+    ]);
+
+    t.deepEqual(mutations, [expected.buffer]);
     t.end();
   });
 
