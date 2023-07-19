@@ -48,6 +48,8 @@ export class WorkerContext {
       }
     }
 
+    const webgl = getWebGLMetaData();
+
     // We skip assigning the globals for localStorage and sessionStorage because
     // We've already installed them. Also, accessing them can throw in incognito mode.
     const code = `
@@ -64,7 +66,8 @@ export class WorkerContext {
           ${JSON.stringify(globalEventHandlerKeys)},
           [${window.innerWidth}, ${window.innerHeight}],
           ${JSON.stringify(localStorageInit)},
-          ${JSON.stringify(sessionStorageInit)}
+          ${JSON.stringify(sessionStorageInit)},
+          ${JSON.stringify(webgl)}
         );
         workerDOM.document[${TransferrableKeys.observe}](this);
         Object.assign(self, workerDOM);
@@ -179,4 +182,107 @@ function getStorageInit(type: 'localStorage' | 'sessionStorage', sanitizer?: San
   } catch (err) {
     return { errorMsg: err.message, storage: null };
   }
+}
+
+function getWebGLMetaData(): any {
+  const result: {
+    [type: string]: {
+      extensions: string[] | null;
+      attributes: WebGLContextAttributes | null;
+      parameters: { [key: number]: any } | null;
+    } | null;
+  } = {};
+
+  ['webgl', 'webgl2', 'experimental-webgl'].forEach((type) => {
+    const contextMeta: {
+      extensions: string[] | null;
+      attributes: WebGLContextAttributes | null;
+      parameters: { [key: number]: any } | null;
+    } = {
+      extensions: null,
+      attributes: null,
+      parameters: null,
+    };
+
+    try {
+      const canvas = window.document.createElement('canvas');
+
+      const context = canvas.getContext(type) as any;
+      if (context !== null) {
+        const requiredParameters = [
+          context.VERSION,
+          context.RENDERER,
+          context.VENDOR,
+          context.SHADING_LANGUAGE_VERSION,
+          context.RED_BITS,
+          context.GREEN_BITS,
+          context.BLUE_BITS,
+          context.ALPHA_BITS,
+          context.DEPTH_BITS,
+          context.STENCIL_BITS,
+
+          context.MAX_RENDERBUFFER_SIZE,
+          context.MAX_COMBINED_TEXTURE_IMAGE_UNITS,
+          context.MAX_CUBE_MAP_TEXTURE_SIZE,
+          context.MAX_FRAGMENT_UNIFORM_VECTORS,
+          context.MAX_TEXTURE_IMAGE_UNITS,
+          context.MAX_TEXTURE_SIZE,
+          context.MAX_VARYING_VECTORS,
+          context.MAX_VERTEX_ATTRIBS,
+          context.MAX_VERTEX_TEXTURE_IMAGE_UNITS,
+          context.MAX_VERTEX_UNIFORM_VECTORS,
+          context.ALIASED_LINE_WIDTH_RANGE,
+          context.ALIASED_POINT_SIZE_RANGE,
+          context.MAX_VIEWPORT_DIMS,
+
+          //webgl2
+          context.MAX_VERTEX_UNIFORM_COMPONENTS,
+          context.MAX_VERTEX_UNIFORM_BLOCKS,
+          context.MAX_VERTEX_OUTPUT_COMPONENTS,
+          context.MAX_VARYING_COMPONENTS,
+          context.MAX_FRAGMENT_UNIFORM_COMPONENTS,
+          context.MAX_FRAGMENT_UNIFORM_BLOCKS,
+          context.MAX_FRAGMENT_INPUT_COMPONENTS,
+          context.MIN_PROGRAM_TEXEL_OFFSET,
+          context.MAX_PROGRAM_TEXEL_OFFSET,
+          context.MAX_DRAW_BUFFERS,
+          context.MAX_COLOR_ATTACHMENTS,
+          context.MAX_SAMPLES,
+          context.MAX_3D_TEXTURE_SIZE,
+          context.MAX_ARRAY_TEXTURE_LAYERS,
+          context.MAX_TEXTURE_LOD_BIAS,
+          context.MAX_UNIFORM_BUFFER_BINDINGS,
+          context.MAX_UNIFORM_BLOCK_SIZE,
+          context.UNIFORM_BUFFER_OFFSET_ALIGNMENT,
+          context.MAX_COMBINED_UNIFORM_BLOCKS,
+          context.MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS,
+          context.MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS,
+          context.MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS,
+          context.MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS,
+          context.MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS,
+          context.MAX_ELEMENT_INDEX,
+          context.MAX_SERVER_WAIT_TIMEOUT,
+        ];
+
+        const parameters: { [key: number]: any } = {};
+        requiredParameters
+          .filter((value) => !!value) // filter out unsupported parameters
+          .forEach((key) => {
+            parameters[key] = context.getParameter(key);
+          });
+
+        contextMeta.parameters = parameters;
+        contextMeta.extensions = context.getSupportedExtensions();
+        contextMeta.attributes = context.getContextAttributes();
+
+        result[type] = contextMeta;
+      } else {
+        result[type] = null;
+      }
+    } catch (err) {
+      console.warn(`Fail to get ${type} context meta data`, err);
+    }
+  });
+
+  return result;
 }

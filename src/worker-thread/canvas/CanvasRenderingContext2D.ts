@@ -169,6 +169,9 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   /* DRAWING RECTANGLES */
+  roundRect(x: number, y: number, w: number, h: number, radii?: number | DOMPointInit | (number | DOMPointInit)[] | undefined): void {
+    this.delegateFunc('roundRect', [...arguments]);
+  }
   clearRect(x: number, y: number, width: number, height: number): void {
     this.delegateFunc('clearRect', [...arguments]);
   }

@@ -1,22 +1,56 @@
 import { HTMLElement } from './HTMLElement';
 import { registerSubclass } from './Element';
-import { reflectProperties } from './enhanceElement';
+import { reflectProperties, registerListenableProperties } from './enhanceElement';
 import { CanvasRenderingContext2DShim } from '../canvas/CanvasRenderingContext2D';
+import { WebGLRenderingContextPolyfill } from '../canvas/WebGLRenderingContextPolyfill';
+import { Document } from './Document';
+import { createObjectReference } from '../object-reference';
 
 export class HTMLCanvasElement extends HTMLElement {
-  private context: CanvasRenderingContext2DShim<HTMLCanvasElement>;
+  public static webGLInfo: {
+    [contextType: string]: {
+      extensions: string[] | null;
+      attributes: WebGLContextAttributes | null;
+      parameters: { [key: number]: any } | null;
+    } | null;
+  } = {};
 
-  getContext(contextType: string): CanvasRenderingContext2DShim<HTMLCanvasElement> {
-    if (!this.context) {
-      if (contextType === '2D' || contextType === '2d') {
-        this.context = new CanvasRenderingContext2DShim<HTMLCanvasElement>(this);
-      } else {
-        throw new Error('Context type not supported.');
+  private context2d: CanvasRenderingContext2DShim<HTMLCanvasElement>;
+  private contextWebGLs: { [contextType: string]: WebGLRenderingContextPolyfill } = {};
+
+  getContext(contextType: string, contextAttributes?: {}): CanvasRenderingContext2DShim<HTMLCanvasElement> | WebGLRenderingContextPolyfill | null {
+    contextType = contextType.toLowerCase();
+    switch (contextType) {
+      case '2d':
+        if (!this.context2d) {
+          this.context2d = new CanvasRenderingContext2DShim<HTMLCanvasElement>(this);
+        }
+        return this.context2d;
+      case 'webgl':
+      case 'experimental-webgl':
+      case 'webgl2': {
+        const contextInfo = HTMLCanvasElement.webGLInfo[contextType];
+        if (!contextInfo) {
+          return null;
+        }
+
+        if (!(contextType in this.contextWebGLs)) {
+          const id = createObjectReference(this.ownerDocument as Document, this, 'getContext', [...arguments]);
+
+          contextAttributes = {
+            ...contextInfo.attributes,
+            ...(contextAttributes || {}),
+          };
+          this.contextWebGLs[contextType] = new WebGLRenderingContextPolyfill(id, this, contextAttributes, contextInfo);
+        }
+        return this.contextWebGLs[contextType];
       }
+      default:
+        throw new Error(`Context type "${contextType}" not supported.`);
     }
-    return this.context;
   }
 }
+
 registerSubclass('canvas', HTMLCanvasElement);
 
 // Reflected Properties
@@ -34,3 +68,11 @@ reflectProperties([{ height: [0] }, { width: [0] }], HTMLCanvasElement);
 // HTMLCanvasElement.toBlob()
 // HTMLCanvasElement.transferControlToOffscreen()
 // HTMLCanvasElement.mozGetAsFile()
+
+registerListenableProperties(
+  {
+    offsetLeft: 0,
+    offsetTop: 0,
+  },
+  HTMLCanvasElement,
+);

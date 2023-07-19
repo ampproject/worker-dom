@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <title>WebGL demo</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link href='/demo.css' rel='stylesheet'>
+  <script src='/dist/main.mjs' type='module'></script>
+  <script src='/dist/main.js' nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="/dist/main.js" defer></script> -->
+</head>
+<body>
+
+
+<div src='/webgl/webgl.js' id='upgrade-me'>
+  <p>You caught <strong>0</strong>. You missed <strong>0</strong>.</p>
+
+</div>
+<script type='module'>
+  import { upgradeElement } from '/dist/main.mjs';
+
+  upgradeElement(document.getElementById('upgrade-me'), '/dist/worker/worker.mjs');
+</script>
+<script nomodule async='false' defer>
+  document.addEventListener('DOMContentLoaded', function() {
+    MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/worker.js');
+  }, false);
+</script>
+<!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+<!-- Comment either block to enable module/nomodule or disable it. -->
+<!-- <script async=false defer>
+  document.addEventListener('DOMContentLoaded', function() {
+    MainThread.upgradeElement(document.getElementById('upgrade-me'), './dist/worker.js');
+  }, false);
+</script> -->
+
+
+</body>
+</html>

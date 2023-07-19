@@ -14,6 +14,10 @@ export class ObjectContext {
     this.objects.set(id, obj);
   }
 
+  delete(id: number): boolean {
+    return this.objects.delete(id);
+  }
+
   get(id: number): TransferObject {
     const obj = this.objects.get(id);
 

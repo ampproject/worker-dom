@@ -4,8 +4,8 @@ import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
 import { appendGlobalEventProperties } from './dom/HTMLElement';
-import { initializeStorage } from './initialize-storage';
-import { WorkerStorageInit } from './initialize-storage';
+import { initializeStorage, WorkerStorageInit } from './initialize-storage';
+import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 
 export function initialize(
   document: Document,
@@ -16,6 +16,13 @@ export function initialize(
   [innerWidth, innerHeight]: [number, number],
   localStorageInit: WorkerStorageInit,
   sessionStorageInit: WorkerStorageInit,
+  webGLInfo: {
+    [type: string]: {
+      extensions: string[] | null;
+      attributes: WebGLContextAttributes | null;
+      parameters: { [key: number]: any } | null;
+    } | null;
+  },
 ): void {
   addCssKeys(cssKeys);
   appendGlobalEventProperties(globalEventHandlerKeys);
@@ -27,4 +34,6 @@ export function initialize(
   window.innerWidth = innerWidth;
   window.innerHeight = innerHeight;
   initializeStorage(document, localStorageInit, sessionStorageInit);
+
+  HTMLCanvasElement.webGLInfo = webGLInfo;
 }

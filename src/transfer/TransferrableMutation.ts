@@ -14,7 +14,8 @@ export const enum TransferrableMutationType {
   STORAGE = 12,
   FUNCTION_CALL = 13,
   SCROLL_INTO_VIEW = 14,
-  CALL_FUNCTION = 15
+  CALL_FUNCTION = 15,
+  OBJECT_DELETION = 16,
 }
 
 /**
@@ -31,6 +32,7 @@ export const isUserVisibleMutation = (type: TransferrableMutationType): boolean 
     case TransferrableMutationType.OFFSCREEN_CANVAS_INSTANCE:
     case TransferrableMutationType.FUNCTION_CALL:
     case TransferrableMutationType.CALL_FUNCTION:
+    case TransferrableMutationType.OBJECT_DELETION:
       return false;
     default:
       return true;
@@ -54,6 +56,7 @@ export const DefaultAllowedMutations = [
   TransferrableMutationType.FUNCTION_CALL,
   TransferrableMutationType.SCROLL_INTO_VIEW,
   TransferrableMutationType.CALL_FUNCTION,
+  TransferrableMutationType.OBJECT_DELETION,
 ];
 
 export const ReadableMutationType: { [key: number]: string } = {
@@ -73,6 +76,7 @@ export const ReadableMutationType: { [key: number]: string } = {
   13: 'FUNCTION_INVOCATION',
   14: 'SCROLL_INTO_VIEW',
   15: 'CALL_FUNCTION',
+  16: 'OBJECT_DELETION',
 };
 
 /**
@@ -213,6 +217,10 @@ export const enum ObjectCreationIndex {
   SerializedTarget = 3,
   Arguments = 4,
   // "End" index is variable.
+}
+
+export const enum ObjectDeletionIndex {
+  ObjectId = 1
 }
 
 /**

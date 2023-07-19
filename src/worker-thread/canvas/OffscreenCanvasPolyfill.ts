@@ -20,6 +20,7 @@ import { CanvasGradient } from './CanvasGradient';
 import { CanvasPattern } from './CanvasPattern';
 import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
 import { HTMLImageElement } from '../dom/HTMLImageElement';
+import { createObjectReference } from '../object-reference';
 
 /**
  * Handles calls to a CanvasRenderingContext2D object in cases where the user's environment does not
@@ -46,9 +47,10 @@ export class OffscreenCanvasPolyfill<ElementType extends HTMLElement> {
 }
 
 class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement> implements CanvasRenderingContext2D, TransferrableObject {
+  private readonly imageDataStub = new Uint8ClampedArray([127, 127, 127, 127]);
+
   private canvasElement: ElementType;
   private lineDash: number[];
-  private objectIndex = 0;
 
   constructor(canvas: ElementType) {
     this.canvasElement = canvas;
@@ -63,18 +65,12 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     return [TransferrableObjectType.CanvasRenderingContext2D, this.canvasElement[TransferrableKeys.index]];
   }
 
-  /**
-   * Creates object in the main thread, and associates it with the id provided.
-   * @param objectId ID to associate the created object with.
-   * @param creationMethod Method to use for object creation.
-   * @param creationArgs Arguments to pass into the creation method.
-   */
-  private createObjectReference(objectId: number, creationMethod: string, creationArgs: any[]) {
-    transfer(this.canvasElement.ownerDocument as Document, [TransferrableMutationType.OBJECT_CREATION, creationMethod, objectId, this, creationArgs]);
-  }
-
   get canvas(): ElementType {
     return this.canvasElement;
+  }
+
+  roundRect(x: number, y: number, w: number, h: number, radii?: number | DOMPointInit | (number | DOMPointInit)[] | undefined): void {
+    this[TransferrableKeys.mutated]('roundRect', [...arguments]);
   }
 
   clearRect(x: number, y: number, w: number, h: number): void {
@@ -285,20 +281,17 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   }
 
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
-    const gradientId = this.objectIndex++;
-    this.createObjectReference(gradientId, 'createLinearGradient', [...arguments]);
+    const gradientId = createObjectReference(this.canvasElement.ownerDocument as Document, this, 'createLinearGradient', [...arguments]);
     return new CanvasGradient(gradientId, this.canvasElement.ownerDocument as Document);
   }
 
   createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
-    const gradientId = this.objectIndex++;
-    this.createObjectReference(gradientId, 'createRadialGradient', [...arguments]);
+    const gradientId = createObjectReference(this.canvasElement.ownerDocument as Document, this, 'createRadialGradient', [...arguments]);
     return new CanvasGradient(gradientId, this.canvasElement.ownerDocument as Document);
   }
 
   createPattern(image: HTMLCanvasElement | HTMLImageElement, repetition: string): CanvasPattern {
-    const patternId = this.objectIndex++;
-    this.createObjectReference(patternId, 'createPattern', [...arguments]);
+    const patternId = createObjectReference(this.canvasElement.ownerDocument as Document, this, 'createPattern', [...arguments]);
     return new CanvasPattern(patternId);
   }
 
@@ -306,15 +299,33 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     this[TransferrableKeys.mutated]('drawImage', [...arguments]);
   }
 
-  createImageData(): ImageData {
-    return {} as ImageData;
+  createImageData(sw: number, sh: number): ImageData;
+  createImageData(imagedata: ImageData): ImageData;
+  createImageData(sw: number | ImageData, sh?: number): ImageData {
+    sh = sh || 1;
+    if (typeof sw === 'object') {
+      sh = sw.height;
+      sw = sw.width;
+    }
+
+    return { data: new Uint8ClampedArray(sw * sh * 4), height: sh, width: sw } as ImageData;
   }
 
-  getImageData(): ImageData {
-    return {} as ImageData;
+  getImageData(x: number, y: number, sw: number, sh: number): ImageData {
+    const data = new Uint8ClampedArray(sw * sh * 4);
+    data[0] = this.imageDataStub[0];
+    data[1] = this.imageDataStub[1];
+    data[2] = this.imageDataStub[2];
+    data[3] = this.imageDataStub[3];
+
+    return { data, height: sh, width: sw } as ImageData;
   }
 
-  putImageData() {}
+  putImageData(imagedata: ImageData, dx: number, dy: number): void;
+  putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX: number, dirtyY: number, dirtyWidth: number, dirtyHeight: number): void;
+  putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX?: number, dirtyY?: number, dirtyWidth?: number, dirtyHeight?: number): void {
+    this[TransferrableKeys.mutated]('putImageData', [...arguments]);
+  }
 
   isPointInPath(): boolean {
     throw new Error('isPointInPath is not implemented.');

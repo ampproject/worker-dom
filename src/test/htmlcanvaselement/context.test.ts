@@ -66,7 +66,7 @@ test.beforeEach((t) => {
 
   t.context = {
     canvas,
-    context2d: canvas.getContext('2d'),
+    context2d: canvas.getContext('2d') as CanvasRenderingContext2DShim<HTMLCanvasElement>,
     deferredUpgrade: deferredUpgrades.get(canvas),
     sandbox,
     unUpgradedOffscreenContext: unUpgradedOffscreen.getContext('2d'),

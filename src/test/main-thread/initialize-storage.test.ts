@@ -21,7 +21,7 @@ test.serial('Should install throwing storage', (t) => {
     errorMsg: 'Access denied',
   };
   const { doc, self } = t.context;
-  initialize(doc, [], {} as HydrateableNode, [], [], [0, 0], unsupportedAccess, unsupportedAccess);
+  initialize(doc, [], {} as HydrateableNode, [], [], [0, 0], unsupportedAccess, unsupportedAccess, {});
   t.falsy(doc.defaultView.localStorage);
   t.falsy(doc.defaultView.sessionStorage);
   t.falsy(self.localStorage);
@@ -34,7 +34,7 @@ test.serial('Should install accessible storage', (t) => {
     errorMsg: null,
   };
   const { doc } = t.context;
-  initialize(doc, [], {} as HydrateableNode, [], [], [0, 0], supportedAccess, supportedAccess);
+  initialize(doc, [], {} as HydrateableNode, [], [], [0, 0], supportedAccess, supportedAccess, {});
   t.truthy(doc.defaultView.localStorage);
   t.truthy(doc.defaultView.sessionStorage);
 });

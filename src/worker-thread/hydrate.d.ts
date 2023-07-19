@@ -11,4 +11,11 @@ export type HydrateFunction = (
   [innerWidth, innerHeight]: [number, number],
   localStorageInit: WorkerStorageInit,
   sessionStorageInit: WorkerStorageInit,
+  webglInfo: {
+    [type: string]: {
+      extensions: string[] | null;
+      attributes: WebGLContextAttributes | null;
+      parameters: { [key: number]: any } | null;
+    } | null;
+  },
 ) => void;
