@@ -24,20 +24,31 @@ export function transfer(document: Document | DocumentStub, mutation: Array<Seri
 
     Promise.resolve().then((_) => {
       if (pending) {
-        const nodes = new Uint16Array(
-          consumeNodes().reduce((acc: Array<number>, node: Node) => acc.concat(node[TransferrableKeys.creationFormat]), []),
-        ).buffer;
+        const transferable = [];
+        const msg: any = {
+          [TransferrableKeys.type]: phase === Phase.Mutating ? MessageType.MUTATE : MessageType.HYDRATE,
+        };
 
-        document.postMessage(
-          {
-            [TransferrableKeys.phase]: phase,
-            [TransferrableKeys.type]: phase === Phase.Mutating ? MessageType.MUTATE : MessageType.HYDRATE,
-            [TransferrableKeys.nodes]: nodes,
-            [TransferrableKeys.strings]: consumeStrings(),
-            [TransferrableKeys.mutations]: pendingMutations,
-          } as MutationFromWorker,
-          [nodes, ...pendingMutations],
-        );
+        const nodes: Array<Node> = consumeNodes();
+        if (nodes.length > 0) {
+          const serialized = new Uint16Array(nodes.reduce((acc: Array<number>, node: Node) => acc.concat(node[TransferrableKeys.creationFormat]), []))
+            .buffer;
+
+          msg[TransferrableKeys.nodes] = serialized;
+          transferable.push(serialized);
+        }
+
+        const strings = consumeStrings();
+        if (strings.length > 0) {
+          msg[TransferrableKeys.strings] = strings;
+        }
+
+        if (pendingMutations.length > 0) {
+          msg[TransferrableKeys.mutations] = pendingMutations;
+          transferable.push(...pendingMutations);
+        }
+
+        document.postMessage(msg as MutationFromWorker, transferable);
 
         pendingMutations = [];
         pending = false;

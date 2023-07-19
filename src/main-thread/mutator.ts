@@ -12,7 +12,6 @@ import { PropertyProcessor } from './commands/property';
 import { LongTaskExecutor } from './commands/long-task';
 import { CommandExecutor } from './commands/interface';
 import { MutationPumpFunction, WorkerDOMConfiguration } from './configuration';
-import { Phase } from '../transfer/Phase';
 import { ObjectMutationProcessor } from './commands/object-mutation';
 import { ObjectCreationProcessor } from './commands/object-creation';
 import { ObjectContext } from './object-context';
@@ -23,6 +22,8 @@ import { ScrollIntoViewProcessor } from './commands/scroll-into-view';
 import { CallFunctionProcessor } from './commands/call-function';
 import { BytesStream } from '../transfer/BytesStream';
 import { deserializeTransferableMessage } from './deserializeTransferrableObject';
+import { MessageType } from '../transfer/Messages';
+import { Phase } from '../transfer/Phase';
 import { ObjectDeletionProcessor } from './commands/object-deletion';
 
 export class MutatorProcessor {
@@ -87,18 +88,24 @@ export class MutatorProcessor {
 
   /**
    * Process MutationRecords from worker thread applying changes to the existing DOM.
-   * @param phase Current Phase Worker Thread exists in.
+   * @param type message type.
    * @param nodes New nodes to add in the main thread with the incoming mutations.
    * @param stringValues Additional string values to use in decoding messages.
    * @param mutations Changes to apply in both graph shape and content of Elements.
    */
-  public mutate(phase: Phase, nodes: ArrayBuffer, stringValues: Array<string>, mutations: Array<ArrayBuffer>): void {
-    this.stringContext.storeValues(stringValues);
-    this.nodeContext.createNodes(nodes, this.sanitizer);
-    this.mutationQueue.push(...mutations);
-    if (!this.pendingMutations) {
-      this.pendingMutations = true;
-      this.mutationPumpFunction(this.syncFlush, phase);
+  public mutate(type: MessageType, nodes?: ArrayBuffer, stringValues?: Array<string>, mutations?: Array<ArrayBuffer>): void {
+    if (stringValues) {
+      this.stringContext.storeValues(stringValues);
+    }
+    if (nodes) {
+      this.nodeContext.createNodes(nodes, this.sanitizer);
+    }
+    if (mutations) {
+      this.mutationQueue.push(...mutations);
+      if (!this.pendingMutations) {
+        this.pendingMutations = true;
+        this.mutationPumpFunction(this.syncFlush, type == MessageType.HYDRATE ? Phase.Hydrating : Phase.Mutating);
+      }
     }
   }
 

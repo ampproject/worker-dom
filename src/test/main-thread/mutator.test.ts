@@ -10,6 +10,7 @@ import { normalizeConfiguration } from '../../main-thread/configuration';
 import { ObjectContext } from '../../main-thread/object-context';
 import { serializeTransferableMessage } from '../../worker-thread/serializeTransferrableObject';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { MessageType } from '../../transfer/Messages';
 
 const test = anyTest as TestInterface<{
   env: Env;
@@ -73,7 +74,7 @@ test.serial('batch mutations', (t) => {
   );
 
   mutator.mutate(
-    Phase.Mutating,
+    MessageType.MUTATE,
     new ArrayBuffer(0),
     ['hidden'],
     [
@@ -87,7 +88,7 @@ test.serial('batch mutations', (t) => {
     ],
   );
   mutator.mutate(
-    Phase.Mutating,
+    MessageType.MUTATE,
     new ArrayBuffer(0),
     ['data-one'],
     [
@@ -109,7 +110,7 @@ test.serial('batch mutations', (t) => {
   t.is(baseElement.getAttribute('data-one'), 'data-one');
 
   mutator.mutate(
-    Phase.Mutating,
+    MessageType.MUTATE,
     new ArrayBuffer(0),
     ['data-two'],
     [
@@ -149,7 +150,7 @@ test.serial('batch mutations with custom pump', (t) => {
   );
 
   mutator.mutate(
-    Phase.Mutating,
+    MessageType.MUTATE,
     new ArrayBuffer(0),
     ['hidden'],
     [
@@ -163,7 +164,7 @@ test.serial('batch mutations with custom pump', (t) => {
     ],
   );
   mutator.mutate(
-    Phase.Mutating,
+    MessageType.MUTATE,
     new ArrayBuffer(0),
     ['data-one'],
     [
@@ -187,7 +188,7 @@ test.serial('batch mutations with custom pump', (t) => {
   t.is(baseElement.getAttribute('data-one'), 'data-one');
 
   mutator.mutate(
-    Phase.Mutating,
+    MessageType.MUTATE,
     new ArrayBuffer(0),
     ['data-two'],
     [
@@ -224,7 +225,7 @@ test.serial('leverage allowlist to exclude mutation type', (t) => {
   );
 
   mutator.mutate(
-    Phase.Mutating,
+    MessageType.MUTATE,
     new ArrayBuffer(0),
     ['hidden'],
     [
@@ -238,7 +239,7 @@ test.serial('leverage allowlist to exclude mutation type', (t) => {
     ],
   );
   mutator.mutate(
-    Phase.Mutating,
+    MessageType.MUTATE,
     new ArrayBuffer(0),
     ['data-one'],
     [
@@ -274,9 +275,9 @@ test.serial('split strings from mutations', (t) => {
     objectContext,
   );
 
-  mutator.mutate(Phase.Mutating, new ArrayBuffer(0), ['hidden'], []);
+  mutator.mutate(MessageType.MUTATE, new ArrayBuffer(0), ['hidden'], []);
   mutator.mutate(
-    Phase.Mutating,
+    MessageType.MUTATE,
     new ArrayBuffer(0),
     [],
     [

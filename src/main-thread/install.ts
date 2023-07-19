@@ -60,7 +60,7 @@ export function install(
         }
 
         mutatorContext.mutate(
-          (data as MutationFromWorker)[TransferrableKeys.phase],
+          (data as MutationFromWorker)[TransferrableKeys.type],
           (data as MutationFromWorker)[TransferrableKeys.nodes],
           (data as MutationFromWorker)[TransferrableKeys.strings],
           (data as MutationFromWorker)[TransferrableKeys.mutations],

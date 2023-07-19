@@ -26,7 +26,7 @@ test.serial.cb('document.createElement creation format is valid', (t) => {
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.nodes])),
+      Array.from(new Uint16Array(message[TransferrableKeys.nodes] || [])),
       [div[TransferrableKeys.index], NodeType.ELEMENT_NODE, strings.indexOf(div.localName), 0, strings.indexOf(div.namespaceURI), 0],
       'creation format is as expected',
     );
@@ -46,8 +46,20 @@ test.serial.cb('document.createElement creation format is valid for listenable p
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.nodes])),
-      [audio[TransferrableKeys.index], NodeType.ELEMENT_NODE, strings.indexOf(audio.localName), 0, strings.indexOf(audio.namespaceURI), 5, 4, 5, 6, 7, 8],
+      Array.from(new Uint16Array(message[TransferrableKeys.nodes] || [])),
+      [
+        audio[TransferrableKeys.index],
+        NodeType.ELEMENT_NODE,
+        strings.indexOf(audio.localName),
+        0,
+        strings.indexOf(audio.namespaceURI),
+        5,
+        4,
+        5,
+        6,
+        7,
+        8,
+      ],
       'creation format is as expected',
     );
     t.end();

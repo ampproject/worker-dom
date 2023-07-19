@@ -29,7 +29,7 @@ export function emitter(document: Document): Emitter {
   }
 
   document.postMessage = (message: MutationFromWorker, buffers: Array<ArrayBuffer>) => {
-    strings.push(...message[TransferrableKeys.strings]);
+    strings.push(...(message[TransferrableKeys.strings] || []));
 
     let copy = new Map(subscribers);
     copy.forEach((once, callback) => {
@@ -67,7 +67,7 @@ type ExpectMutationsCallback = (mutations: any[]) => void;
 export const expectMutations = (document: Document, callback: ExpectMutationsCallback): void => {
   document[TransferrableKeys.observe]();
   document.postMessage = (message: MutationFromWorker) => {
-    const mutations = message[TransferrableKeys.mutations];
+    const mutations = message[TransferrableKeys.mutations] || [];
     callback(mutations);
   };
 };
