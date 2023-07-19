@@ -50,11 +50,18 @@ function getCallFunctionResultEvent(index: number, success: boolean, value: any)
   } as any;
 }
 
-function getFunctionMutation(target: TransferrableObject, functionName: string, rid: number, args: number[]): Array<any> {
-  return [serializeTransferableMessage([TransferrableMutationType.CALL_FUNCTION, target, functionName, rid, args]).buffer];
+function getFunctionMutation(
+  target: TransferrableObject,
+  functionName: string,
+  rid: number,
+  async: boolean,
+  args: number[],
+  objectId: number,
+): Array<any> {
+  return [serializeTransferableMessage([TransferrableMutationType.CALL_FUNCTION, target, functionName, rid, async, args, objectId]).buffer];
 }
 
-test.serial('Call void function w/o arguments', async (t) => {
+test.serial('Call sync void function w/o arguments', async (t) => {
   const { document, mutationPromise } = t.context;
   const obj = {
     [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
@@ -65,7 +72,7 @@ test.serial('Call void function w/o arguments', async (t) => {
   const result = callFunction(document, obj as TransferrableObject, functionName, [], 1000);
   const mutation = await mutationPromise;
 
-  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, []));
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, false, [], 0));
 
   t.true(!!document.listeners['message']);
   document.listeners['message'](getCallFunctionResultEvent(rid, true, undefined));
@@ -73,7 +80,7 @@ test.serial('Call void function w/o arguments', async (t) => {
   t.deepEqual(await result, undefined);
 });
 
-test.serial('Call void function w/ arguments', async (t) => {
+test.serial('Call sync void function w/ arguments', async (t) => {
   const { document, mutationPromise } = t.context;
   const obj = {
     [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
@@ -84,7 +91,7 @@ test.serial('Call void function w/ arguments', async (t) => {
   const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000);
   const mutation = await mutationPromise;
 
-  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, [1, 2, 3, 4]));
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, false, [1, 2, 3, 4], 0));
 
   t.true(!!document.listeners['message']);
   document.listeners['message'](getCallFunctionResultEvent(rid, true, undefined));
@@ -92,7 +99,7 @@ test.serial('Call void function w/ arguments', async (t) => {
   t.deepEqual(await result, undefined);
 });
 
-test.serial('Call function w/o arguments', async (t) => {
+test.serial('Call sync function w/o arguments', async (t) => {
   const { document, mutationPromise } = t.context;
   const obj = {
     [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
@@ -103,7 +110,7 @@ test.serial('Call function w/o arguments', async (t) => {
   const result = callFunction(document, obj as TransferrableObject, functionName, [], 1000);
   const mutation = await mutationPromise;
 
-  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, []));
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, false, [], 0));
 
   t.true(!!document.listeners['message']);
   document.listeners['message'](getCallFunctionResultEvent(rid, true, { done: true }));
@@ -111,7 +118,7 @@ test.serial('Call function w/o arguments', async (t) => {
   t.deepEqual(await result, { done: true });
 });
 
-test.serial('Call function w/ arguments', async (t) => {
+test.serial('Call sync function w/ arguments', async (t) => {
   const { document, mutationPromise } = t.context;
   const obj = {
     [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
@@ -122,7 +129,7 @@ test.serial('Call function w/ arguments', async (t) => {
   const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000);
   const mutation = await mutationPromise;
 
-  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, [1, 2, 3, 4]));
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, false, [1, 2, 3, 4], 0));
 
   t.true(!!document.listeners['message']);
   document.listeners['message'](getCallFunctionResultEvent(rid, true, 'done'));
@@ -130,7 +137,27 @@ test.serial('Call function w/ arguments', async (t) => {
   t.deepEqual(await result, 'done');
 });
 
-test.serial('Call function w/ timeout', async (t) => {
+test.serial('Call sync function w/ arguments and store object', async (t) => {
+  const { document, mutationPromise } = t.context;
+  const obj = {
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
+  } as TransferrableObject;
+  const functionName = 'test';
+  const objectId = 123;
+  const rid = ++index;
+
+  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000, false, objectId);
+  const mutation = await mutationPromise;
+
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, false, [1, 2, 3, 4], objectId));
+
+  t.true(!!document.listeners['message']);
+  document.listeners['message'](getCallFunctionResultEvent(rid, true, 'done'));
+
+  t.deepEqual(await result, 'done');
+});
+
+test.serial('Call sync function w/ timeout', async (t) => {
   const { document, mutationPromise } = t.context;
   const obj = {
     [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
@@ -141,12 +168,12 @@ test.serial('Call function w/ timeout', async (t) => {
   const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000);
   const mutation = await mutationPromise;
 
-  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, [1, 2, 3, 4]));
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, false, [1, 2, 3, 4], 0));
 
   await t.throwsAsync(() => result);
 });
 
-test.serial('Call function w/ error', async (t) => {
+test.serial('Call sync function w/ error', async (t) => {
   const { document, mutationPromise } = t.context;
   const obj = {
     [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
@@ -157,7 +184,139 @@ test.serial('Call function w/ error', async (t) => {
   const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000);
   const mutation = await mutationPromise;
 
-  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, [1, 2, 3, 4]));
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, false, [1, 2, 3, 4], 0));
+
+  t.true(!!document.listeners['message']);
+  document.listeners['message'](getCallFunctionResultEvent(rid, false, 'Error'));
+
+  await t.throwsAsync(() => result);
+});
+
+// async
+test.serial('Call async void function w/o arguments', async (t) => {
+  const { document, mutationPromise } = t.context;
+  const obj = {
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
+  } as TransferrableObject;
+  const functionName = 'test';
+  const rid = ++index;
+
+  const result = callFunction(document, obj as TransferrableObject, functionName, [], 1000, true);
+  const mutation = await mutationPromise;
+
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, true, [], 0));
+
+  t.true(!!document.listeners['message']);
+  document.listeners['message'](getCallFunctionResultEvent(rid, true, undefined));
+
+  t.deepEqual(await result, undefined);
+});
+
+test.serial('Call async void function w/ arguments', async (t) => {
+  const { document, mutationPromise } = t.context;
+  const obj = {
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
+  } as TransferrableObject;
+  const functionName = 'test';
+  const rid = ++index;
+
+  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000, true);
+  const mutation = await mutationPromise;
+
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, true, [1, 2, 3, 4], 0));
+
+  t.true(!!document.listeners['message']);
+  document.listeners['message'](getCallFunctionResultEvent(rid, true, undefined));
+
+  t.deepEqual(await result, undefined);
+});
+
+test.serial('Call async function w/o arguments', async (t) => {
+  const { document, mutationPromise } = t.context;
+  const obj = {
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
+  } as TransferrableObject;
+  const functionName = 'test';
+  const rid = ++index;
+
+  const result = callFunction(document, obj as TransferrableObject, functionName, [], 1000, true);
+  const mutation = await mutationPromise;
+
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, true, [], 0));
+
+  t.true(!!document.listeners['message']);
+  document.listeners['message'](getCallFunctionResultEvent(rid, true, { done: true }));
+
+  t.deepEqual(await result, { done: true });
+});
+
+test.serial('Call async function w/ arguments', async (t) => {
+  const { document, mutationPromise } = t.context;
+  const obj = {
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
+  } as TransferrableObject;
+  const functionName = 'test';
+  const rid = ++index;
+
+  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000, true);
+  const mutation = await mutationPromise;
+
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, true, [1, 2, 3, 4], 0));
+
+  t.true(!!document.listeners['message']);
+  document.listeners['message'](getCallFunctionResultEvent(rid, true, 'done'));
+
+  t.deepEqual(await result, 'done');
+});
+
+test.serial('Call async function w/ arguments with store object', async (t) => {
+  const { document, mutationPromise } = t.context;
+  const obj = {
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
+  } as TransferrableObject;
+  const functionName = 'test';
+  const rid = ++index;
+  const objectId = 124;
+
+  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000, true, objectId);
+  const mutation = await mutationPromise;
+
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, true, [1, 2, 3, 4], objectId));
+
+  t.true(!!document.listeners['message']);
+  document.listeners['message'](getCallFunctionResultEvent(rid, true, 'done'));
+
+  t.deepEqual(await result, 'done');
+});
+
+test.serial('Call async function w/ timeout', async (t) => {
+  const { document, mutationPromise } = t.context;
+  const obj = {
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
+  } as TransferrableObject;
+  const functionName = 'test';
+  const rid = ++index;
+
+  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000, true);
+  const mutation = await mutationPromise;
+
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, true, [1, 2, 3, 4], 0));
+
+  await t.throwsAsync(() => result);
+});
+
+test.serial('Call async function w/ error', async (t) => {
+  const { document, mutationPromise } = t.context;
+  const obj = {
+    [TransferrableKeys.serializeAsTransferrableObject]: () => [1, 2],
+  } as TransferrableObject;
+  const functionName = 'test';
+  const rid = ++index;
+
+  const result = callFunction(document, obj as TransferrableObject, functionName, [1, 2, 3, 4], 1000, true);
+  const mutation = await mutationPromise;
+
+  t.deepEqual(mutation, getFunctionMutation(obj, functionName, rid, true, [1, 2, 3, 4], 0));
 
   t.true(!!document.listeners['message']);
   document.listeners['message'](getCallFunctionResultEvent(rid, false, 'Error'));

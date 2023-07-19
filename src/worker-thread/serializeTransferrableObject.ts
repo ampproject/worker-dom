@@ -18,228 +18,267 @@ export function serializeTransferableMessage(args: Array<Serializable>, stream?:
   stream.appendUint32(args.length);
 
   for (let i = 0; i < args.length; i++) {
-    const arg: any = args[i];
-
-    if (arg === undefined) {
-      stream.appendUint8(TransferrableObjectType.Undefined);
-      continue;
-    }
-
-    if (arg === null) {
-      stream.appendUint8(TransferrableObjectType.Null);
-      continue;
-    }
-
-    const argType = typeof arg;
-
-    if (argType === 'number') {
-      appendNumber(arg, stream);
-      continue;
-    }
-
-    if (argType === 'bigint') {
-      if (arg < 0) {
-        stream.appendUint8(TransferrableObjectType.Int64);
-        stream.appendInt64(arg);
-      } else {
-        stream.appendUint8(TransferrableObjectType.Uint64);
-        stream.appendUint64(arg);
-      }
-      continue;
-    }
-
-    if (argType === 'string') {
-      stream.appendUint8(TransferrableObjectType.String);
-      stream.appendUint16(store(arg));
-      continue;
-    }
-
-    if (argType === 'boolean') {
-      stream.appendUint8(arg ? TransferrableObjectType.BooleanTrue : TransferrableObjectType.BooleanFalse);
-      continue;
-    }
-
-    if (Array.isArray(arg)) {
-      if (arg.length === 0) {
-        stream.appendUint8(TransferrableObjectType.ArrayEmpty);
-      } else {
-        stream.appendUint8(TransferrableObjectType.Array);
-        stream = serializeTransferableMessage(arg, stream);
-      }
-      continue;
-    }
-
-    if (ArrayBuffer.isView(arg)) {
-      if (arg instanceof Int8Array) {
-        stream.appendUint8(TransferrableObjectType.Int8Array);
-        stream.appendTypedArray(arg);
-        continue;
-      }
-      if (arg instanceof Int16Array) {
-        stream.appendUint8(TransferrableObjectType.Int16Array);
-        stream.appendTypedArray(arg);
-        continue;
-      }
-      if (arg instanceof Int32Array) {
-        stream.appendUint8(TransferrableObjectType.Int32Array);
-        stream.appendTypedArray(arg);
-        continue;
-      }
-      if (arg instanceof Uint8Array) {
-        stream.appendUint8(TransferrableObjectType.Uint8Array);
-        stream.appendTypedArray(arg);
-        continue;
-      }
-      if (arg instanceof Uint16Array) {
-        stream.appendUint8(TransferrableObjectType.Uint16Array);
-        stream.appendTypedArray(arg);
-        continue;
-      }
-      if (arg instanceof Uint32Array) {
-        stream.appendUint8(TransferrableObjectType.Uint32Array);
-        stream.appendTypedArray(arg);
-        continue;
-      }
-      if (arg instanceof Uint8ClampedArray) {
-        stream.appendUint8(TransferrableObjectType.Uint8ClampedArray);
-        stream.appendTypedArray(arg);
-        continue;
-      }
-      if (arg instanceof Float32Array) {
-        stream.appendUint8(TransferrableObjectType.Float32Array);
-        stream.appendTypedArray(arg);
-        continue;
-      }
-      if (arg instanceof Float64Array) {
-        stream.appendUint8(TransferrableObjectType.Float64Array);
-        stream.appendTypedArray(arg);
-        continue;
-      }
-    }
-
-    if (argType === 'object') {
-      const serializedObject = (arg as TransferrableObject)[TransferrableKeys.serializeAsTransferrableObject]();
-      stream.appendUint8(serializedObject[0]); // type
-      stream.appendUint16(serializedObject[1]); // id
-      continue;
-    }
-
-    throw new Error('Cannot serialize argument.');
+    serializeObject(args[i], stream);
   }
 
   return stream;
+}
+
+function serializeObject(arg: any, stream: BytesStream) {
+  if (arg === undefined) {
+    stream.appendUint8(TransferrableObjectType.Undefined);
+    return;
+  }
+
+  if (arg === null) {
+    stream.appendUint8(TransferrableObjectType.Null);
+    return;
+  }
+
+  const argType = typeof arg;
+
+  if (argType === 'number') {
+    appendNumber(arg, stream);
+    return;
+  }
+
+  if (argType === 'bigint') {
+    if (arg < 0) {
+      stream.appendUint8(TransferrableObjectType.Int64);
+      stream.appendInt64(arg);
+    } else {
+      stream.appendUint8(TransferrableObjectType.Uint64);
+      stream.appendUint64(arg);
+    }
+    return;
+  }
+
+  if (argType === 'string') {
+    stream.appendUint8(TransferrableObjectType.String);
+    stream.appendUint16(store(arg));
+    return;
+  }
+
+  if (argType === 'boolean') {
+    stream.appendUint8(arg ? TransferrableObjectType.BooleanTrue : TransferrableObjectType.BooleanFalse);
+    return;
+  }
+
+  if (Array.isArray(arg)) {
+    if (arg.length === 0) {
+      stream.appendUint8(TransferrableObjectType.ArrayEmpty);
+    } else {
+      stream.appendUint8(TransferrableObjectType.Array);
+      serializeTransferableMessage(arg, stream);
+    }
+    return;
+  }
+
+  if (ArrayBuffer.isView(arg)) {
+    if (arg instanceof Int8Array) {
+      stream.appendUint8(TransferrableObjectType.Int8Array);
+      stream.appendTypedArray(arg);
+      return;
+    }
+    if (arg instanceof Int16Array) {
+      stream.appendUint8(TransferrableObjectType.Int16Array);
+      stream.appendTypedArray(arg);
+      return;
+    }
+    if (arg instanceof Int32Array) {
+      stream.appendUint8(TransferrableObjectType.Int32Array);
+      stream.appendTypedArray(arg);
+      return;
+    }
+    if (arg instanceof Uint8Array) {
+      stream.appendUint8(TransferrableObjectType.Uint8Array);
+      stream.appendTypedArray(arg);
+      return;
+    }
+    if (arg instanceof Uint16Array) {
+      stream.appendUint8(TransferrableObjectType.Uint16Array);
+      stream.appendTypedArray(arg);
+      return;
+    }
+    if (arg instanceof Uint32Array) {
+      stream.appendUint8(TransferrableObjectType.Uint32Array);
+      stream.appendTypedArray(arg);
+      return;
+    }
+    if (arg instanceof Uint8ClampedArray) {
+      stream.appendUint8(TransferrableObjectType.Uint8ClampedArray);
+      stream.appendTypedArray(arg);
+      return;
+    }
+    if (arg instanceof Float32Array) {
+      stream.appendUint8(TransferrableObjectType.Float32Array);
+      stream.appendTypedArray(arg);
+      return;
+    }
+    if (arg instanceof Float64Array) {
+      stream.appendUint8(TransferrableObjectType.Float64Array);
+      stream.appendTypedArray(arg);
+      return;
+    }
+  }
+
+  if (arg instanceof ArrayBuffer) {
+    stream.appendUint8(TransferrableObjectType.ArrayBuffer);
+    stream.appendArrayBuffer(arg);
+    return;
+  }
+
+  if (argType === 'object') {
+    if (typeof arg[TransferrableKeys.serializeAsTransferrableObject] == 'function') {
+      // serializable
+      const serializedObject = (arg as TransferrableObject)[TransferrableKeys.serializeAsTransferrableObject]();
+      stream.appendUint8(serializedObject[0]); // type
+      stream.appendUint16(serializedObject[1]); // id
+    } else {
+      const entries = Object.entries(arg);
+      stream.appendUint8(TransferrableObjectType.Object);
+      stream.appendUint8(entries.length);
+
+      entries.forEach(([key, value]) => {
+        if (typeof value != 'undefined') {
+          serializeObject(key, stream); // key
+          serializeObject(value, stream); // value
+        }
+      });
+    }
+
+    return;
+  }
+  throw new Error('Cannot serialize argument.');
 }
 
 export function estimateSizeInBytes(args: any[]) {
   let size = Uint32Array.BYTES_PER_ELEMENT; // args count
   for (let i = 0; i < args.length; i++) {
     const arg: any = args[i];
+    size += estimateObjectSizeInBytes(arg);
+  }
+  return size;
+}
 
-    size += Uint8Array.BYTES_PER_ELEMENT; // type
+function estimateObjectSizeInBytes(obj: any) {
+  let size = Uint8Array.BYTES_PER_ELEMENT; // type
 
-    if (arg === undefined) {
-      continue;
-    }
+  if (obj === undefined || obj === null) {
+    return size;
+  }
 
-    if (arg === null) {
-      continue;
-    }
+  const argType = typeof obj;
 
-    const argType = typeof arg;
+  if (argType === 'boolean') {
+    return size;
+  }
 
-    if (argType === 'boolean') {
-      continue;
-    }
+  if (argType === 'string') {
+    size += Uint16Array.BYTES_PER_ELEMENT;
+    return size;
+  }
 
-    if (argType === 'string') {
-      size += Uint16Array.BYTES_PER_ELEMENT;
-      continue;
-    }
-
-    if (argType === 'number') {
-      if (Number.isInteger(arg)) {
-        if (arg < 0) {
-          // int type
-          if (arg >= -128) {
-            // int8
-            size += Int8Array.BYTES_PER_ELEMENT;
-            continue;
-          } else if (arg >= -32768) {
-            // int16
-            size += Int16Array.BYTES_PER_ELEMENT;
-            continue;
-          } else {
-            // int32
-            size += Int32Array.BYTES_PER_ELEMENT;
-            continue;
-          }
+  if (argType === 'number') {
+    if (Number.isInteger(obj)) {
+      if (obj < 0) {
+        // int type
+        if (obj >= -128) {
+          // int8
+          size += Int8Array.BYTES_PER_ELEMENT;
+          return size;
+        } else if (obj >= -32768) {
+          // int16
+          size += Int16Array.BYTES_PER_ELEMENT;
+          return size;
         } else {
-          // uint type
-          if (arg <= 255) {
-            // uint8
-            size += Uint8Array.BYTES_PER_ELEMENT;
-            continue;
-          } else if (arg <= 65535) {
-            // uint16
-            size += Uint16Array.BYTES_PER_ELEMENT;
-            continue;
-          } else {
-            // uint32
-            size += Uint32Array.BYTES_PER_ELEMENT;
-            continue;
-          }
+          // int32
+          size += Int32Array.BYTES_PER_ELEMENT;
+          return size;
         }
       } else {
-        if (arg >= -3.4e38 && arg <= 3.4e38) {
-          // float32
-          size += Float32Array.BYTES_PER_ELEMENT;
-          continue;
+        // uint type
+        if (obj <= 255) {
+          // uint8
+          size += Uint8Array.BYTES_PER_ELEMENT;
+          return size;
+        } else if (obj <= 65535) {
+          // uint16
+          size += Uint16Array.BYTES_PER_ELEMENT;
+          return size;
         } else {
-          size += Float64Array.BYTES_PER_ELEMENT;
-          continue;
+          // uint32
+          size += Uint32Array.BYTES_PER_ELEMENT;
+          return size;
         }
       }
-      continue;
-    }
-
-    if (argType === 'bigint') {
-      if (arg < 0) {
-        size += BigInt64Array.BYTES_PER_ELEMENT;
+    } else {
+      if (obj >= -3.4e38 && obj <= 3.4e38) {
+        // float32
+        size += Float32Array.BYTES_PER_ELEMENT;
+        return size;
       } else {
-        size += BigUint64Array.BYTES_PER_ELEMENT;
-      }
-      continue;
-    }
-
-    if (Array.isArray(arg)) {
-      if (arg.length > 0) {
-        size += estimateSizeInBytes(arg);
-      }
-      continue;
-    }
-
-    if (ArrayBuffer.isView(arg)) {
-      if (
-        arg instanceof Int8Array ||
-        arg instanceof Int16Array ||
-        arg instanceof Int32Array ||
-        arg instanceof Uint8Array ||
-        arg instanceof Uint8ClampedArray ||
-        arg instanceof Uint16Array ||
-        arg instanceof Uint32Array ||
-        arg instanceof Float32Array ||
-        arg instanceof Float64Array ||
-        arg instanceof BigInt64Array ||
-        arg instanceof BigUint64Array
-      ) {
-        size += estimateArraySizeInBytes(arg.length, arg.BYTES_PER_ELEMENT);
-        continue;
+        size += Float64Array.BYTES_PER_ELEMENT;
+        return size;
       }
     }
+  }
 
-    if (argType === 'object') {
+  if (argType === 'bigint') {
+    if (obj < 0) {
+      size += BigInt64Array.BYTES_PER_ELEMENT;
+      return size;
+    } else {
+      size += BigUint64Array.BYTES_PER_ELEMENT;
+      return size;
+    }
+  }
+
+  if (Array.isArray(obj)) {
+    if (obj.length > 0) {
+      size += estimateSizeInBytes(obj);
+      return size;
+    }
+  }
+
+  if (ArrayBuffer.isView(obj)) {
+    if (
+      obj instanceof Int8Array ||
+      obj instanceof Int16Array ||
+      obj instanceof Int32Array ||
+      obj instanceof Uint8Array ||
+      obj instanceof Uint8ClampedArray ||
+      obj instanceof Uint16Array ||
+      obj instanceof Uint32Array ||
+      obj instanceof Float32Array ||
+      obj instanceof Float64Array ||
+      obj instanceof BigInt64Array ||
+      obj instanceof BigUint64Array
+    ) {
+      size += estimateArraySizeInBytes(obj.length, obj.BYTES_PER_ELEMENT);
+      return size;
+    }
+  }
+
+  if (obj instanceof ArrayBuffer) {
+    size += estimateArraySizeInBytes(obj.byteLength / Uint8Array.BYTES_PER_ELEMENT, Uint8Array.BYTES_PER_ELEMENT);
+    return size;
+  }
+
+  if (argType === 'object') {
+    if (typeof obj[TransferrableKeys.serializeAsTransferrableObject] == 'function') {
       size += Uint16Array.BYTES_PER_ELEMENT;
-      continue;
+      return size;
+    } else {
+      size += Uint8Array.BYTES_PER_ELEMENT; // length
+
+      Object.entries(obj).forEach(([key, value]) => {
+        if (typeof value != 'undefined') {
+          size += estimateObjectSizeInBytes(key);
+          size += estimateObjectSizeInBytes(value);
+        }
+      });
+      return size;
     }
   }
   return size;

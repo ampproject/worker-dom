@@ -55,6 +55,25 @@ import { HTMLMediaElement } from './dom/HTMLMediaElement';
 import { HTMLAudioElement } from './dom/HTMLAudioElement';
 import { HTMLVideoElement } from './dom/HTMLVideoElement';
 import { Selection } from './dom/Selection';
+import { AudioContext } from './audio/AudioContext';
+import { AnalyserNode } from './audio/node/AnalyserNode';
+import { AudioBufferSourceNode } from './audio/node/AudioBufferSourceNode';
+import { BiquadFilterNode } from './audio/node/BiquadFilterNode';
+import { ChannelMergerNode } from './audio/node/ChannelMergerNode';
+import { ChannelSplitterNode } from './audio/node/ChannelSplitterNode';
+import { ConstantSourceNode } from './audio/node/ConstantSourceNode';
+import { ConvolverNode } from './audio/node/ConvolverNode';
+import { DelayNode } from './audio/node/DelayNode';
+import { DynamicsCompressorNode } from './audio/node/DynamicsCompressorNode';
+import { GainNode } from './audio/node/GainNode';
+import { IIRFilterNode } from './audio/node/IIRFilterNode';
+import { MediaElementAudioSourceNode } from './audio/node/MediaElementAudioSourceNode';
+import { OscillatorNode } from './audio/node/OscillatorNode';
+import { PannerNode } from './audio/node/PannerNode';
+import { StereoPannerNode } from './audio/node/StereoPannerNode';
+import { WaveShaperNode } from './audio/node/WaveShaperNode';
+import { AudioBuffer } from './audio/AudioBuffer';
+import { PeriodicWave } from './audio/PeriodicWave';
 
 /**
  * Should only contain properties that exist on Window.
@@ -121,6 +140,25 @@ export interface GlobalScope {
   ImageBitmap?: typeof ImageBitmap;
   requestAnimationFrame: typeof requestAnimationFrame;
   cancelAnimationFrame: typeof cancelAnimationFrame;
+  AudioContext: typeof AudioContext;
+  AnalyserNode: typeof AnalyserNode;
+  AudioBufferSourceNode: typeof AudioBufferSourceNode;
+  BiquadFilterNode: typeof BiquadFilterNode;
+  ChannelMergerNode: typeof ChannelMergerNode;
+  ChannelSplitterNode: typeof ChannelSplitterNode;
+  ConstantSourceNode: typeof ConstantSourceNode;
+  ConvolverNode: typeof ConvolverNode;
+  DelayNode: typeof DelayNode;
+  DynamicsCompressorNode: typeof DynamicsCompressorNode;
+  GainNode: typeof GainNode;
+  IIRFilterNode: typeof IIRFilterNode;
+  OscillatorNode: typeof OscillatorNode;
+  PannerNode: typeof PannerNode;
+  StereoPannerNode: typeof StereoPannerNode;
+  WaveShaperNode: typeof WaveShaperNode;
+  AudioBuffer: typeof AudioBuffer;
+  PeriodicWave: typeof PeriodicWave;
+  MediaElementAudioSourceNode: typeof MediaElementAudioSourceNode;
 }
 
 export interface WorkerDOMGlobalScope extends GlobalScope {

@@ -112,9 +112,28 @@ export class WorkerContext {
     if (this.config.onSendMessage) {
       this.config.onSendMessage(message);
     }
+    message = toCloneable(message);
     transferables = transferables || findTransferable(message);
     this.worker.postMessage(message, transferables);
   }
+}
+
+function toCloneable(object: any) {
+  if (!!object && typeof object === 'object') {
+    for (const [key, value] of Object.entries(object)) {
+      if (!!value && typeof value === 'object') {
+        if (value instanceof AudioBuffer) {
+          // extend list of not cloneable objects, in case of error like: 'AudioBuffer object could not be cloned.'
+          const { duration, length, numberOfChannels, sampleRate } = value;
+          object[key] = { duration, length, numberOfChannels, sampleRate };
+        } else {
+          object[key] = toCloneable(value);
+        }
+      }
+    }
+  }
+
+  return object;
 }
 
 function isPotentialTransferable(object: any) {

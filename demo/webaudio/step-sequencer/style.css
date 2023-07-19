@@ -1,0 +1,280 @@
+:root {
+    --orange: hsla(32, 100%, 50%, 1);
+    --yellow: hsla(49, 99%, 50%, 1);
+    --lime: hsla(82, 90%, 45%, 1);
+    --green: hsla(127, 81%, 41%, 1);
+    --red: hsla(342, 93%, 53%, 1);
+    --pink: hsla(314, 85%, 45%, 1);
+    --blue: hsla(211, 92%, 52%, 1);
+    --purple: hsla(283, 92%, 44%, 1);
+    --cyan: hsla(195, 98%, 55%, 1);
+    --white: hsla(0, 0%, 95%, 1);
+    --black: hsla(0, 0%, 10%, 1);
+
+    /* abstract our colours */
+    --boxMain: var(--pink);
+    --boxSecond: var(--purple);
+    --boxHigh: var(--yellow);
+    --border: 1vmin solid var(--black);
+    --borderRad: 2px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--white);
+    padding: 4vmax;
+    font-family: sans-serif, system-ui;
+    font-size: 120%;
+    color: var(--black);
+}
+
+h2 {
+    font-size: 1.2em;
+}
+
+/* loading ~~~~~~~~~~~~~~~~~~~~~ */
+.loading {
+    background: var(--white);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading p {
+    font-size: 200%;
+    text-align: center;
+    animation: loading ease-in-out 2s infinite;
+}
+
+@keyframes loading {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* sequencer ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+#sequencer {
+    width: 84vw;
+    max-width: 900px;
+    min-width: 600px;
+    margin: 0 auto;
+    background-color: var(--boxMain);
+    border: var(--border);
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~ top section */
+.controls-main {
+    padding: 2vw;
+    background-color: var(--boxSecond);
+    border-bottom: var(--border);
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: repeat(5, auto);
+    align-items: center;
+}
+
+.controls-main label {
+    justify-self: end;
+    padding-right: 10px;
+}
+
+.controls-main span {
+    padding-left: 10px;
+}
+
+/* play button */
+#playBtn:checked {
+    align-self: stretch;
+    border: var(--border);
+    border-radius: var(--borderRad);
+    background-color: var(--boxSecond);
+    cursor: pointer;
+}
+
+#playBtn {
+    appearance: none;
+    width: 9vw;
+    height: 6vw;
+    min-width: 36px;
+    min-height: 36px;
+    max-width: 112px;
+    max-height: 64x;
+    margin: 0;
+    padding: 0;
+    border: var(--border);
+    border-radius: var(--borderRad);
+    background: var(--pink) url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z" fill="black" /></svg>') no-repeat center center;
+    background-size: 60% 60%;
+    cursor: pointer;
+}
+
+#playBtn ~ label {
+    display: none;
+}
+
+#playBtn:hover,
+#playBtn:checked:hover {
+    background-color: var(--yellow);
+}
+
+#playBtn:checked {
+    background: var(--green) url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48z" fill="black" /></svg>') no-repeat center center;
+    background-size: 60% 60%;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~ main body */
+[class^="track"] {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 15% 35% 50%;
+    align-items: center;
+    padding: 2vmin;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~ sliders */
+.controls {
+    display: grid;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: 1fr 4fr;
+    align-items: center;
+}
+
+.controls label {
+    justify-self: end;
+    padding-right: 10px;
+}
+
+.controls input {
+    margin-right: 20px;
+}
+
+.controls input:nth-of-type(2),
+.controls label:nth-of-type(2) {
+    margin-top: 20px;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~ pads */
+.pads {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pads input {
+    appearance: none;
+    width: 9vw;
+    height: 9vw;
+    min-width: 56px;
+    min-height: 56px;
+    max-width: 96px;
+    max-height: 96px;
+    margin: 0;
+    padding: 0;
+    background-color: var(--white);
+    border: var(--border);
+}
+
+.pads input:checked {
+    background-color: var(--boxHigh);
+}
+
+.pads label {
+    display: none;
+}
+
+/* range input styling ~~~~~~~~~~~~~~~~~~~ */
+
+input[type="range"] {
+    -webkit-appearance: none;
+    background: transparent;
+}
+
+input[type="range"]::-ms-track {
+    width: 100%;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    margin-top: -1vh;
+    height: 4vh;
+    width: 2vw;
+    border: 0.5vmin solid var(--black);
+    border-radius: var(--borderRad);
+    background-color: var(--boxSecond);
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    height: 4vh;
+    width: 2vw;
+    border: 0.5vmin solid var(--black);
+    border-radius: var(--borderRad);
+    background-color: var(--boxSecond);
+    cursor: pointer;
+}
+
+input[type="range"]::-ms-thumb {
+    height: 4vh;
+    width: 2vw;
+    border: 0.5vmin solid var(--black);
+    border-radius: var(--borderRad);
+    background-color: var(--boxSecond);
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 2vh;
+    cursor: pointer;
+    background-color: var(--black);
+    border-radius: var(--borderRad);
+}
+
+input[type="range"]::-moz-range-track {
+    height: 2vh;
+    cursor: pointer;
+    background-color: var(--black);
+    border-radius: var(--borderRad);
+}
+
+input[type="range"]::-ms-track {
+    height: 2vh;
+    cursor: pointer;
+    background-color: var(--black);
+    border-radius: var(--borderRad);
+}
+
+input[type="range"]:focus {
+    outline: none;
+}
+
+input[type="range"]:focus::-webkit-slider-thumb {
+    background-color: var(--boxHigh);
+}
+
+input[type="range"]:focus::-moz-range-thumb {
+    background-color: var(--boxHigh);
+}
+
+input[type="range"]:focus::-ms-thumb {
+    background-color: var(--boxHigh);
+}

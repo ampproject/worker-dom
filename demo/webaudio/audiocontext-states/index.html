@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head lang='en'>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width' />
+
+  <title>Web Audio API examples: AudioContext object's states</title>
+
+
+  <script src='/dist/main.mjs' type='module'></script>
+  <script src='/dist/main.js' nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/main.js" defer></script> -->
+</head>
+
+<body>
+<h1>Web Audio API examples: AudioContext object's states</h1>
+<div src='main.js' id='upgrade-me'>
+
+  <button id='create'>Create context</button>
+  <button id='suspend'>Suspend context</button>
+  <button id='stop'>Stop context</button>
+
+  <p id='info'>Current context time: No context exists.</p>
+</div>
+
+<script type='module'>
+  import { upgradeElement } from '/dist/debug/main.mjs';
+
+  upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.mjs');
+</script>
+<script nomodule async='false' defer>
+  document.addEventListener('DOMContentLoaded', function() {
+    MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.js');
+  }, false);
+</script>
+</body>
+</html>

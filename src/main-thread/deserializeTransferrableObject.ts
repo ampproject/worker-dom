@@ -14,104 +14,90 @@ export function deserializeTransferableMessage(
   const args: any[] = new Array(count);
 
   for (let i = 0; i < count; i++) {
-    const type = buffer.readUint8() as TransferrableObjectType;
-    switch (type) {
-      case TransferrableObjectType.Undefined:
-        args[i] = undefined;
-        break;
-      case TransferrableObjectType.Null:
-        args[i] = null;
-        break;
-      case TransferrableObjectType.Int8:
-        args[i] = buffer.readInt8();
-        break;
-      case TransferrableObjectType.Int16:
-        args[i] = buffer.readInt16();
-        break;
-      case TransferrableObjectType.Int32:
-        args[i] = buffer.readInt32();
-        break;
-      case TransferrableObjectType.Int64:
-        args[i] = buffer.readInt64();
-        break;
-      case TransferrableObjectType.Uint8:
-        args[i] = buffer.readUint8();
-        break;
-      case TransferrableObjectType.Uint16:
-        args[i] = buffer.readUint16();
-        break;
-      case TransferrableObjectType.Uint32:
-        args[i] = buffer.readUint32();
-        break;
-      case TransferrableObjectType.Uint64:
-        args[i] = buffer.readUint64();
-        break;
-      case TransferrableObjectType.Float32:
-        args[i] = buffer.readFloat32();
-        break;
-      case TransferrableObjectType.Float64:
-        args[i] = buffer.readFloat64();
-        break;
-      case TransferrableObjectType.String:
-        args[i] = stringContext.get(buffer.readUint16());
-        break;
-      case TransferrableObjectType.BooleanTrue:
-        args[i] = true;
-        break;
-      case TransferrableObjectType.BooleanFalse:
-        args[i] = false;
-        break;
-      case TransferrableObjectType.ArrayEmpty:
-        args[i] = [];
-        break;
-      case TransferrableObjectType.Array:
-        args[i] = deserializeTransferableMessage(buffer, stringContext, nodeContext, objectContext);
-        break;
-      case TransferrableObjectType.TransferObject:
-        args[i] = objectContext.get(buffer.readUint16());
-        break;
-      case TransferrableObjectType.CanvasRenderingContext2D:
-        const canvas = nodeContext.getNode(buffer.readUint16()) as HTMLCanvasElement;
-        args[i] = canvas.getContext('2d');
-        break;
-      case TransferrableObjectType.HTMLElement:
-        args[i] = nodeContext.getNode(buffer.readUint16());
-        break;
-      case TransferrableObjectType.Window:
-        args[i] = window;
-        buffer.readUint16(); // TODO: fix
-        break;
-      case TransferrableObjectType.Int8Array:
-        args[i] = buffer.readTypedArray(Int8Array);
-        break;
-      case TransferrableObjectType.Int16Array:
-        args[i] = buffer.readTypedArray(Int16Array);
-        break;
-      case TransferrableObjectType.Int32Array:
-        args[i] = buffer.readTypedArray(Int32Array);
-        break;
-      case TransferrableObjectType.Uint8ClampedArray:
-        args[i] = buffer.readTypedArray(Uint8ClampedArray);
-        break;
-      case TransferrableObjectType.Uint8Array:
-        args[i] = buffer.readTypedArray(Uint8Array);
-        break;
-      case TransferrableObjectType.Uint16Array:
-        args[i] = buffer.readTypedArray(Uint16Array);
-        break;
-      case TransferrableObjectType.Uint32Array:
-        args[i] = buffer.readTypedArray(Uint32Array);
-        break;
-      case TransferrableObjectType.Float32Array:
-        args[i] = buffer.readTypedArray(Float32Array);
-        break;
-      case TransferrableObjectType.Float64Array:
-        args[i] = buffer.readTypedArray(Float64Array);
-        break;
-
-      default:
-        throw new Error('Cannot deserialize argument.');
-    }
+    args[i] = deserializeNext(buffer, stringContext, nodeContext, objectContext);
   }
   return args;
+}
+
+function deserializeNext(buffer: BytesStream, stringContext: StringContext, nodeContext: NodeContext, objectContext: ObjectContext): any {
+  const type = buffer.readUint8() as TransferrableObjectType;
+  switch (type) {
+    case TransferrableObjectType.Undefined:
+      return undefined;
+    case TransferrableObjectType.Null:
+      return null;
+    case TransferrableObjectType.Int8:
+      return buffer.readInt8();
+    case TransferrableObjectType.Int16:
+      return buffer.readInt16();
+    case TransferrableObjectType.Int32:
+      return buffer.readInt32();
+    case TransferrableObjectType.Int64:
+      return buffer.readInt64();
+    case TransferrableObjectType.Uint8:
+      return buffer.readUint8();
+    case TransferrableObjectType.Uint16:
+      return buffer.readUint16();
+    case TransferrableObjectType.Uint32:
+      return buffer.readUint32();
+    case TransferrableObjectType.Uint64:
+      return buffer.readUint64();
+    case TransferrableObjectType.Float32:
+      return buffer.readFloat32();
+    case TransferrableObjectType.Float64:
+      return buffer.readFloat64();
+    case TransferrableObjectType.String:
+      return stringContext.get(buffer.readUint16());
+    case TransferrableObjectType.BooleanTrue:
+      return true;
+    case TransferrableObjectType.BooleanFalse:
+      return false;
+    case TransferrableObjectType.ArrayEmpty:
+      return [];
+    case TransferrableObjectType.Array:
+      return deserializeTransferableMessage(buffer, stringContext, nodeContext, objectContext);
+    case TransferrableObjectType.TransferObject:
+      return objectContext.get(buffer.readUint16());
+    case TransferrableObjectType.CanvasRenderingContext2D:
+      const canvas = nodeContext.getNode(buffer.readUint16()) as HTMLCanvasElement;
+      return canvas.getContext('2d');
+    case TransferrableObjectType.HTMLElement:
+      return nodeContext.getNode(buffer.readUint16());
+    case TransferrableObjectType.Window:
+      buffer.readUint16(); // TODO: fix
+      return window;
+    case TransferrableObjectType.Int8Array:
+      return buffer.readTypedArray(Int8Array);
+    case TransferrableObjectType.Int16Array:
+      return buffer.readTypedArray(Int16Array);
+    case TransferrableObjectType.Int32Array:
+      return buffer.readTypedArray(Int32Array);
+    case TransferrableObjectType.Uint8ClampedArray:
+      return buffer.readTypedArray(Uint8ClampedArray);
+    case TransferrableObjectType.Uint8Array:
+      return buffer.readTypedArray(Uint8Array);
+    case TransferrableObjectType.Uint16Array:
+      return buffer.readTypedArray(Uint16Array);
+    case TransferrableObjectType.Uint32Array:
+      return buffer.readTypedArray(Uint32Array);
+    case TransferrableObjectType.Float32Array:
+      return buffer.readTypedArray(Float32Array);
+    case TransferrableObjectType.Float64Array:
+      return buffer.readTypedArray(Float64Array);
+    case TransferrableObjectType.ArrayBuffer:
+      return buffer.readArrayBuffer();
+    case TransferrableObjectType.Object:
+      const object: any = {};
+      const keysCount = buffer.readUint8();
+
+      for (let i = 0; i < keysCount; i++) {
+        const key = deserializeNext(buffer, stringContext, nodeContext, objectContext); // expect string
+        const value = deserializeNext(buffer, stringContext, nodeContext, objectContext); // any
+        object[key] = value;
+      }
+
+      return object;
+    default:
+      throw new Error('Cannot deserialize argument.');
+  }
 }

@@ -33,15 +33,7 @@ import { Document } from './dom/Document';
 import { GlobalScope } from './WorkerDOMGlobalScope';
 import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
-import {
-  Event as WorkerDOMEvent,
-  FocusEvent,
-  InputEvent,
-  KeyboardEvent,
-  MouseEvent,
-  TouchEvent,
-  WheelEvent
-} from './Event';
+import { Event as WorkerDOMEvent, FocusEvent, InputEvent, KeyboardEvent, MouseEvent, TouchEvent, WheelEvent } from './Event';
 import { Text } from './dom/Text';
 import { HTMLDataListElement } from './dom/HTMLDataListElement';
 import { CharacterData } from './dom/CharacterData';
@@ -49,11 +41,30 @@ import { Comment } from './dom/Comment';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { Element } from './dom/Element';
-import { rafPolyfill, cafPolyfill } from './AnimationFrame';
+import { cafPolyfill, rafPolyfill } from './AnimationFrame';
 import { HydrateFunction } from './hydrate';
 import { HTMLMediaElement } from './dom/HTMLMediaElement';
 import { HTMLAudioElement } from './dom/HTMLAudioElement';
 import { HTMLVideoElement } from './dom/HTMLVideoElement';
+import { AudioContext } from './audio/AudioContext';
+import { AnalyserNode } from './audio/node/AnalyserNode';
+import { AudioBufferSourceNode } from './audio/node/AudioBufferSourceNode';
+import { BiquadFilterNode } from './audio/node/BiquadFilterNode';
+import { ChannelMergerNode } from './audio/node/ChannelMergerNode';
+import { ChannelSplitterNode } from './audio/node/ChannelSplitterNode';
+import { ConstantSourceNode } from './audio/node/ConstantSourceNode';
+import { ConvolverNode } from './audio/node/ConvolverNode';
+import { DelayNode } from './audio/node/DelayNode';
+import { DynamicsCompressorNode } from './audio/node/DynamicsCompressorNode';
+import { GainNode } from './audio/node/GainNode';
+import { IIRFilterNode } from './audio/node/IIRFilterNode';
+import { MediaElementAudioSourceNode } from './audio/node/MediaElementAudioSourceNode';
+import { OscillatorNode } from './audio/node/OscillatorNode';
+import { PannerNode } from './audio/node/PannerNode';
+import { StereoPannerNode } from './audio/node/StereoPannerNode';
+import { WaveShaperNode } from './audio/node/WaveShaperNode';
+import { AudioBuffer } from './audio/AudioBuffer';
+import { PeriodicWave } from './audio/PeriodicWave';
 
 const globalScope: GlobalScope = {
   innerWidth: 0,
@@ -110,6 +121,25 @@ const globalScope: GlobalScope = {
   MutationObserver,
   requestAnimationFrame: self.requestAnimationFrame || rafPolyfill,
   cancelAnimationFrame: self.cancelAnimationFrame || cafPolyfill,
+  AudioContext,
+  AnalyserNode,
+  AudioBufferSourceNode,
+  BiquadFilterNode,
+  ChannelMergerNode,
+  ChannelSplitterNode,
+  ConstantSourceNode,
+  ConvolverNode,
+  DelayNode,
+  DynamicsCompressorNode,
+  GainNode,
+  IIRFilterNode,
+  OscillatorNode,
+  PannerNode,
+  StereoPannerNode,
+  WaveShaperNode,
+  AudioBuffer,
+  PeriodicWave,
+  MediaElementAudioSourceNode,
 };
 
 const noop = () => void 0;
@@ -131,6 +161,9 @@ export const workerDOM = (function (postMessage, addEventListener, removeEventLi
 
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
+
+  AudioContext.document = document;
+  AudioBuffer.document = document;
 
   return document.defaultView;
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);

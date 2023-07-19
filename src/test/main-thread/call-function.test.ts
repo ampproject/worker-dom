@@ -187,6 +187,39 @@ test('Method with arguments', (t) => {
   );
 });
 
+test('Method with arguments and store result', (t) => {
+  const { objectContext, stringContext, callFunctionProcessor, workerContextStub } = t.context;
+
+  const args = [1, 2, 3, 4];
+  const methodName = 'stroke';
+  const objectId = 111;
+  const targetObject = {
+    [methodName]: (a: number, b: number, c: number, d: number) => {
+      console.log('stroke called with args: ', a, b, c, d);
+      return { run: a + b + c + d };
+    },
+  };
+
+  const rid = 200;
+
+  executeCall(callFunctionProcessor, targetObject, methodName, stringContext, rid, args, false, objectId);
+
+  t.true(
+    workerContextStub.withArgs(
+      ...[
+        {
+          [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT,
+          [TransferrableKeys.index]: rid,
+          [TransferrableKeys.success]: true,
+          [TransferrableKeys.value]: { run: 10 },
+        },
+      ],
+    ).calledOnce,
+  );
+
+  t.deepEqual(objectContext.get(objectId) as any, { run: 10 });
+});
+
 test('Global Method call', (t) => {
   const { stringContext, callFunctionProcessor, workerContextStub } = t.context;
 
@@ -293,12 +326,189 @@ test('Method call exception', (t) => {
           [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT,
           [TransferrableKeys.index]: rid,
           [TransferrableKeys.success]: false,
-          [TransferrableKeys.value]: new Error('canvasElement stroke called exception').message,
+          [TransferrableKeys.value]: String(new Error('canvasElement stroke called exception')),
         },
       ],
     ).calledOnce,
   );
 });
+
+test('Method async with arguments', async (t) => {
+  const { stringContext, callFunctionProcessor, workerContextStub } = t.context;
+
+  const args = [1, 2, 3, 4];
+  const methodName = 'stroke';
+  const targetObject = {
+    [methodName]: async (a: number, b: number, c: number, d: number) => {
+      console.log('stroke called with args: ', a, b, c, d);
+      return a + b + c + d;
+    },
+  };
+
+  const rid = 200;
+
+  executeCall(callFunctionProcessor, targetObject, methodName, stringContext, rid, args, true);
+  await sleep(0);
+  t.true(
+    workerContextStub.withArgs(
+      ...[
+        {
+          [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT,
+          [TransferrableKeys.index]: rid,
+          [TransferrableKeys.success]: true,
+          [TransferrableKeys.value]: 10,
+        },
+      ],
+    ).calledOnce,
+  );
+});
+
+test('Method async with arguments and error', async (t) => {
+  const { stringContext, callFunctionProcessor, workerContextStub } = t.context;
+
+  const args = [1, 2, 3, 4];
+  const methodName = 'stroke';
+  const targetObject = {
+    [methodName]: async (a: number, b: number, c: number, d: number) => {
+      console.log('stroke called with args: ', a, b, c, d);
+      throw new Error('error');
+    },
+  };
+
+  const rid = 200;
+
+  executeCall(callFunctionProcessor, targetObject, methodName, stringContext, rid, args, true);
+  await sleep(0);
+  t.true(
+    workerContextStub.withArgs(
+      ...[
+        {
+          [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT,
+          [TransferrableKeys.index]: rid,
+          [TransferrableKeys.success]: false,
+          [TransferrableKeys.value]: 'Error: error',
+        },
+      ],
+    ).calledOnce,
+  );
+});
+
+test('Method async with arguments and store object', async (t) => {
+  const { objectContext, stringContext, callFunctionProcessor, workerContextStub } = t.context;
+
+  const args = [1, 2, 3, 4];
+  const methodName = 'stroke';
+  const objectId = 112;
+  const targetObject = {
+    [methodName]: async (a: number, b: number, c: number, d: number) => {
+      console.log('stroke called with args: ', a, b, c, d);
+      return { test: a + b + c + d };
+    },
+  };
+
+  const rid = 200;
+
+  executeCall(callFunctionProcessor, targetObject, methodName, stringContext, rid, args, true, objectId);
+  await sleep(0);
+  t.true(
+    workerContextStub.withArgs(
+      ...[
+        {
+          [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT,
+          [TransferrableKeys.index]: rid,
+          [TransferrableKeys.success]: true,
+          [TransferrableKeys.value]: { test: 10 },
+        },
+      ],
+    ).calledOnce,
+  );
+
+  t.deepEqual(objectContext.get(objectId) as any, { test: 10 });
+});
+
+test('Method with callback with arguments and store object', (t) => {
+  const { objectContext, stringContext, callFunctionProcessor, workerContextStub } = t.context;
+
+  const methodName = 'stroke';
+  const objectId = 122;
+  const targetObject = {
+    [methodName]: (a: number, b: number, success: (val: any) => void, error: (reason: string) => void): void => {
+      console.log('stroke called with args: ', a, b);
+      success({ test: a + b });
+    },
+  };
+
+  const rid = 200;
+
+  executeCall(
+    callFunctionProcessor,
+    targetObject,
+    methodName,
+    stringContext,
+    rid,
+    [1, 2, '__successCallback__', '__errorCallback__'],
+    true,
+    objectId,
+  );
+  t.true(
+    workerContextStub.withArgs(
+      ...[
+        {
+          [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT,
+          [TransferrableKeys.index]: rid,
+          [TransferrableKeys.success]: true,
+          [TransferrableKeys.value]: { test: 3 },
+        },
+      ],
+    ).calledOnce,
+  );
+
+  t.deepEqual(objectContext.get(objectId) as any, { test: 3 });
+});
+
+test('Method with callback with arguments and store object and error', (t) => {
+  const { objectContext, stringContext, callFunctionProcessor, workerContextStub } = t.context;
+
+  const methodName = 'stroke';
+  const objectId = 122;
+  const targetObject = {
+    [methodName]: (a: number, b: number, success: (val: any) => void, error: (reason: string) => void): void => {
+      console.log('stroke called with args: ', a, b);
+      error('error !!!');
+    },
+  };
+
+  const rid = 200;
+
+  executeCall(
+    callFunctionProcessor,
+    targetObject,
+    methodName,
+    stringContext,
+    rid,
+    [1, 2, '__successCallback__', '__errorCallback__'],
+    true,
+    objectId,
+  );
+  t.true(
+    workerContextStub.withArgs(
+      ...[
+        {
+          [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT,
+          [TransferrableKeys.index]: rid,
+          [TransferrableKeys.success]: false,
+          [TransferrableKeys.value]: 'error !!!',
+        },
+      ],
+    ).calledOnce,
+  );
+
+  t.throws(() => objectContext.get(objectId));
+});
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise((res) => setTimeout(res, ms));
+}
 
 function executeCall(
   callFunctionProcessor: CommandExecutor,
@@ -306,7 +516,13 @@ function executeCall(
   fnName: string,
   stringContext: StringContext,
   rid: number,
-  serializedArgs: number[],
+  serializedArgs: any[],
+  isFunctionAsync: boolean = false,
+  storeResultObjectId: number = 0,
 ) {
-  return callFunctionProcessor.execute([TransferrableMutationType.CALL_FUNCTION, targetObject, fnName, rid, serializedArgs], /* allow */ true);
+  console.log('!!!!!!2 ', serializedArgs);
+  return callFunctionProcessor.execute(
+    [TransferrableMutationType.CALL_FUNCTION, targetObject, fnName, rid, isFunctionAsync, serializedArgs, storeResultObjectId],
+    /* allow */ true,
+  );
 }

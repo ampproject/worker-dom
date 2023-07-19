@@ -52,6 +52,7 @@ import { Range, Selection } from './Selection';
 const DOCUMENT_NAME = '#document';
 
 export class Document extends Element {
+  public readonly creationTime = performance.now();
   public defaultView: WorkerDOMGlobalScope;
   public documentElement: Document;
   public body: Element;

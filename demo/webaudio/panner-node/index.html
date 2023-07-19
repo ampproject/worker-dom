@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width' />
+
+  <title>Room of metal</title>
+
+  <link
+    href='https://fonts.googleapis.com/css?family=UnifrakturMaguntia'
+    rel='stylesheet'
+    type='text/css'
+  />
+  <link rel='stylesheet' href='style.css' />
+
+  <script src='/dist/main.mjs' type='module'></script>
+  <script src='/dist/main.js' nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/main.js" defer></script> -->
+</head>
+
+<body>
+<h1>Room of metal</h1>
+
+<div src='main.js' id='upgrade-me'>
+
+  <button class='play'>Play</button>
+  <button class='stop'>Stop</button>
+
+  <p class='listener-data'>Listener data:</p>
+  <p class='panner-data'>Panner data:</p>
+
+  <section class='room'>
+    <div class='flex-wrapper'>
+      <div class='pulse-wrapper'>
+        <div class='boom-box'></div>
+      </div>
+    </div>
+    <button class='move zoom-in'></button>
+    <button class='move zoom-out'></button>
+    <button class='move left'></button>
+    <button class='move right'></button>
+  </section>
+
+  <p>
+    <strong>Instructions:</strong> After pressing Play, use the left, right,
+    zoom in and zoom out buttons to control your position relative to the boom
+    box.
+  </p>
+  <p>
+    <em
+    >Run this on a computer with stereo sound to see how this affects the
+      sound spatialisation.</em
+    >
+  </p>
+
+  <p>
+    Boom box icons courtesy of
+    <a
+      href='http://www.flaticon.com/free-icon/boom-box-with-controls-and-settings_26643'
+    >flatiron.com</a
+    >, and created by
+    <a href='http://www.flaticon.com/authors/freepik'>Freepik</a>,
+    <a href='http://www.flaticon.com/authors/appzgear'>Appzgear</a> and
+    <a href='http://www.flaticon.com/authors/adam-whitcroft'
+    >Adam Whitcroft</a
+    >
+  </p>
+</div>
+
+<script type='module'>
+  import { upgradeElement } from '/dist/debug/main.mjs';
+
+  upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.mjs');
+</script>
+<script nomodule async='false' defer>
+  document.addEventListener('DOMContentLoaded', function() {
+    MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.js');
+  }, false);
+</script>
+</body>
+</html>

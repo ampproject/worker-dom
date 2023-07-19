@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width' />
+
+  <title>Web Audio API examples: AudioParam</title>
+
+  <script src='/dist/main.mjs' type='module'></script>
+  <script src='/dist/main.js' nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/main.js" defer></script> -->
+</head>
+
+<body>
+<h1>Web Audio API examples: AudioParam</h1>
+<div src='main.js' id='upgrade-me'>
+  <audio controls>
+    <source src='viper.ogg' type='audio/ogg' />
+    <source src='viper.mp3' type='audio/mp3' />
+    <p>This demo needs a browser supporting the &lt;audio&gt; element.</p>
+  </audio>
+  <div class='button-bar'>
+    <button class='set-target-at-time-plus'>
+      Set gain +0.25 in 1 second
+    </button>
+    <button class='set-target-at-time-minus'>
+      Set gain -0.25 in 1 second
+    </button
+    >
+    <br />
+    <button class='linear-ramp-plus'>
+      Linear ramp gain to 1 in 2 seconds
+    </button>
+    <button class='linear-ramp-minus'>
+      Linear ramp gain to 0 in 2 seconds
+    </button
+    >
+    <br />
+    <button class='exp-ramp-plus'>
+      Exponential ramp gain to 1 in 2 seconds
+    </button>
+    <button class='exp-ramp-minus'>
+      Exponential ramp gain to 0 in 2 seconds
+    </button
+    >
+    <br />
+    <button class='at-time-plus'>Target at time 1 in 1s</button>
+    <button class='at-time-minus'>Target at time 0 in 1s</button>
+    <br />
+    <button class='value-curve'>Value curve</button>
+  </div>
+</div>
+<script type='module'>
+  import { upgradeElement } from '/dist/debug/main.mjs';
+
+  upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.mjs');
+</script>
+<script nomodule async='false' defer>
+  document.addEventListener('DOMContentLoaded', function() {
+    MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.js');
+  }, false);
+</script>
+</body>
+
+</html>

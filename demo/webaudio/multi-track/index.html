@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8' />
+  <title>Web Audio API examples: Loading audio files</title>
+  <meta
+    name='description'
+    content='A way to make sure files have loaded before playing them'
+  />
+  <meta
+    name='viewport'
+    content='width=device-width, initial-scale=1, shrink-to-fit=no'
+  />
+  <link rel='stylesheet' type='text/css' href='style.css' />
+  <script src='/dist/main.mjs' type='module'></script>
+  <script src='/dist/main.js' nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/main.js" defer></script> -->
+</head>
+<body>
+<div src='main.js' id='upgrade-me'>
+  <!--
+     Some browsers' autoplay policy requires that an AudioContext be initialized
+     during an input event in order to correctly synchronize.
+
+     So provide a simple button to get things started.
+-->
+  <button id='startbutton'>Press to load tracks</button>
+
+  <div class='wrapper'>
+    <section id='tracks'>
+      <ul>
+        <li data-loading='true'>
+          <a href='http://localhost:3001/webaudio/multi-track/leadguitar.mp3' class='track'>Lead Guitar</a>
+          <p class='loading-text'>Loading...</p>
+          <button
+            aria-decribedby='guitar-play-label'
+            class='playbutton ready'
+          >
+            <span id='guitar-play-label'>Play</span>
+          </button>
+        </li>
+        <li data-loading='true'>
+          <a href='http://localhost:3001/webaudio/multi-track/bassguitar.mp3' class='track'>Bass Guitar</a>
+          <p class='loading-text'>Loading...</p>
+          <button
+            aria-describedby='bass-play-label'
+            class='playbutton ready'
+          >
+            <span id='bass-play-label'>Play</span>
+          </button>
+        </li>
+        <li data-loading='true'>
+          <a href='http://localhost:3001/webaudio/multi-track/drums.mp3' class='track'>Drums</a>
+          <p class='loading-text'>Loading...</p>
+          <button
+            aria-describedby='drums-play-label'
+            class='playbutton ready'
+          >
+            <span id='drums-play-label'>Play</span>
+          </button>
+        </li>
+        <li data-loading='true'>
+          <a href='http://localhost:3001/webaudio/multi-track/horns.mp3' class='track'>Horns</a>
+          <p class='loading-text'>Loading...</p>
+          <button
+            aria-describedby='horns-play-label'
+            class='playbutton ready'
+          >
+            <span id='horns-play-label'>Play</span>
+          </button>
+        </li>
+        <li data-loading='true'>
+          <a href='http://localhost:3001/webaudio/multi-track/clav.mp3' class='track'>Clavi</a>
+          <p class='loading-text'>Loading...</p>
+          <button
+            aria-describedby='clavi-play-label'
+            class='playbutton ready'
+          >
+            <span id='clavi-play-label'>Play</span>
+          </button>
+        </li>
+      </ul>
+      <p class='sourced'>
+        All tracks sourced from <a href='http://jplayer.org/'>jplayer.org</a>
+      </p>
+    </section>
+  </div>
+</div>
+<script type='module'>
+  import { upgradeElement } from '/dist/debug/main.mjs';
+
+  upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.mjs');
+</script>
+<script nomodule async='false' defer>
+  document.addEventListener('DOMContentLoaded', function() {
+    MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.js');
+  }, false);
+</script>
+</body>
+</html>

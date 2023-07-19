@@ -33,14 +33,7 @@ import { MutationObserver } from '../worker-thread/MutationObserver';
 import { GlobalScope } from '../worker-thread/WorkerDOMGlobalScope';
 import { HTMLCanvasElement } from '../worker-thread/dom/HTMLCanvasElement';
 import { CanvasRenderingContext2D } from '../worker-thread/canvas/CanvasTypes';
-import {
-  Event as WorkerDOMEvent,
-  FocusEvent, InputEvent,
-  KeyboardEvent,
-  MouseEvent,
-  TouchEvent,
-  WheelEvent
-} from '../worker-thread/Event';
+import { Event as WorkerDOMEvent, FocusEvent, InputEvent, KeyboardEvent, MouseEvent, TouchEvent, WheelEvent } from '../worker-thread/Event';
 import { createStorage } from '../worker-thread/Storage';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 import { CharacterData } from '../worker-thread/dom/CharacterData';
@@ -50,10 +43,29 @@ import { Text } from '../worker-thread/dom/Text';
 import { DOMTokenList } from '../worker-thread/dom/DOMTokenList';
 import { HTMLDataListElement } from '../worker-thread/dom/HTMLDataListElement';
 import { Element } from '../worker-thread/dom/Element';
-import { rafPolyfill, cafPolyfill } from '../worker-thread/AnimationFrame';
+import { cafPolyfill, rafPolyfill } from '../worker-thread/AnimationFrame';
 import { HTMLMediaElement } from '../worker-thread/dom/HTMLMediaElement';
 import { HTMLAudioElement } from '../worker-thread/dom/HTMLAudioElement';
 import { HTMLVideoElement } from '../worker-thread/dom/HTMLVideoElement';
+import { AudioContext } from '../worker-thread/audio/AudioContext';
+import { AnalyserNode } from '../worker-thread/audio/node/AnalyserNode';
+import { AudioBufferSourceNode } from '../worker-thread/audio/node/AudioBufferSourceNode';
+import { BiquadFilterNode } from '../worker-thread/audio/node/BiquadFilterNode';
+import { ChannelMergerNode } from '../worker-thread/audio/node/ChannelMergerNode';
+import { ChannelSplitterNode } from '../worker-thread/audio/node/ChannelSplitterNode';
+import { ConstantSourceNode } from '../worker-thread/audio/node/ConstantSourceNode';
+import { ConvolverNode } from '../worker-thread/audio/node/ConvolverNode';
+import { DelayNode } from '../worker-thread/audio/node/DelayNode';
+import { DynamicsCompressorNode } from '../worker-thread/audio/node/DynamicsCompressorNode';
+import { GainNode } from '../worker-thread/audio/node/GainNode';
+import { IIRFilterNode } from '../worker-thread/audio/node/IIRFilterNode';
+import { OscillatorNode } from '../worker-thread/audio/node/OscillatorNode';
+import { PannerNode } from '../worker-thread/audio/node/PannerNode';
+import { StereoPannerNode } from '../worker-thread/audio/node/StereoPannerNode';
+import { WaveShaperNode } from '../worker-thread/audio/node/WaveShaperNode';
+import { AudioBuffer } from '../worker-thread/audio/AudioBuffer';
+import { PeriodicWave } from '../worker-thread/audio/PeriodicWave';
+import { MediaElementAudioSourceNode } from '../worker-thread/audio/node/MediaElementAudioSourceNode';
 
 Object.defineProperty(global, 'ServiceWorkerContainer', {
   configurable: true,
@@ -133,6 +145,25 @@ const GlobalScope: GlobalScope = {
   MutationObserver,
   requestAnimationFrame: rafPolyfill,
   cancelAnimationFrame: cafPolyfill,
+  AudioContext,
+  AnalyserNode,
+  AudioBufferSourceNode,
+  BiquadFilterNode,
+  ChannelMergerNode,
+  ChannelSplitterNode,
+  ConstantSourceNode,
+  ConvolverNode,
+  DelayNode,
+  DynamicsCompressorNode,
+  GainNode,
+  IIRFilterNode,
+  OscillatorNode,
+  PannerNode,
+  StereoPannerNode,
+  WaveShaperNode,
+  AudioBuffer,
+  PeriodicWave,
+  MediaElementAudioSourceNode,
 };
 
 /**
@@ -148,6 +179,8 @@ export function createTestingDocument(overrides: {} | null = null): Document {
 
   customGlobal.localStorage = createStorage(document, StorageLocation.Local, {});
   customGlobal.sessionStorage = createStorage(document, StorageLocation.Session, {});
+
+  AudioContext.document = document;
 
   return document;
 }

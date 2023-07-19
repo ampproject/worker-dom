@@ -213,9 +213,10 @@ export const enum ObjectMutationIndex {
  */
 export const enum ObjectCreationIndex {
   FunctionName = 1,
-  ObjectId = 2,
-  SerializedTarget = 3,
-  Arguments = 4,
+  IsConstructor = 2,
+  ObjectId = 3,
+  SerializedTarget = 4,
+  Arguments = 5,
   // "End" index is variable.
 }
 
@@ -258,6 +259,8 @@ export const enum TransferrableObjectType {
   Int32Array = 28,
   Null = 29,
   Undefined = 30,
+  Object = 31,
+  ArrayBuffer = 32,
 }
 
 /**
@@ -309,5 +312,7 @@ export const enum CallFunctionMutationIndex {
   Target = 1,
   FunctionName = 2,
   Index = 3,
-  Arguments = 4,
+  IsFunctionAsync = 4,
+  Arguments = 5,
+  StoreResultObjectId = 6,
 }

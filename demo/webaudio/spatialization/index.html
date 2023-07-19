@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8' />
+  <title>Web Audio Spacialisation</title>
+  <meta name='description' content='Panner node demo for Web Audio API' />
+  <meta
+    name='viewport'
+    content='width=device-width, initial-scale=1, shrink-to-fit=no'
+  />
+  <link rel='stylesheet' type='text/css' href='style.css' />
+
+  <script src='/dist/main.mjs' type='module'></script>
+  <script src='/dist/main.js' nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/main.js" defer></script> -->
+</head>
+<body>
+<div src='main.js' id='upgrade-me'>
+
+  <div id='boombox'>
+    <div class='boombox-body'>
+      <div class='bb-front'>
+        <section class='master-controls'>
+          <input
+            type='range'
+            id='volume'
+            class='control-volume'
+            min='0'
+            max='2'
+            value='1'
+            list='gain-vals'
+            step='0.01'
+            action='volume'
+          />
+          <datalist id='gain-vals'>
+            <option value='0' label='min'></option>
+            <option value='2' label='max'></option>
+          </datalist>
+          <label for='volume'>VOL</label>
+
+          <input
+            type='range'
+            id='panner'
+            class='control-panner'
+            list='pan-vals'
+            min='-1'
+            max='1'
+            value='0'
+            step='0.01'
+            action='panner'
+          />
+          <datalist id='pan-vals'>
+            <option value='-1' label='left'></option>
+            <option value='1' label='right'></option>
+          </datalist>
+          <label for='panner'>PAN</label>
+
+          <button
+            class='control-power'
+            role='switch'
+            aria-checked='false'
+            power='on'
+          >
+            <span>On/Off</span>
+          </button>
+        </section>
+
+        <section class='tape'>
+          <audio src='outfoxing.mp3' crossorigin='anonymous'></audio>
+
+          <button
+            playing='false'
+            class='tape-controls-play'
+            role='switch'
+            aria-checked='false'
+          >
+            <span>Play/Pause</span>
+          </button>
+        </section>
+      </div>
+      <!--bb-front-->
+
+      <div class='bb-top'></div>
+      <div class='bb-right'></div>
+      <div class='bb-bottom'></div>
+      <div class='bb-left'></div>
+      <div class='bb-back'></div>
+    </div>
+    <!-- boombox-body -->
+  </div>
+
+  <div id='move-controls' aria-labelledby='move-boombox'>
+    <h3 id='move-boombox'>Move Boombox</h3>
+
+    <section class='move-controls_xy'>
+      <button control='left' aria-labelledby='move-boombox left-label'>
+        <span id='left-label'>Left</span>
+      </button>
+      <button control='up' aria-labelledby='move-boombox up-label'>
+        <span id='up-label'>Up</span>
+      </button>
+      <button control='right' aria-labelledby='move-boombox right-label'>
+        <span id='right-label'>Right</span>
+      </button>
+      <button control='down' aria-labelledby='move-boombox down-label'>
+        <span id='down-label'>Down</span>
+      </button>
+    </section>
+
+    <section class='move-controls_z'>
+      <button control='back' aria-labelledby='move-boombox back-label'>
+        <span id='back-label'>Back</span>
+      </button>
+      <button control='forward' aria-labelledby='move-boombox for-label'>
+        <span id='for-label'>Forward</span>
+      </button>
+    </section>
+
+    <section class='move-controls_rotate'>
+      <button
+        control='rotate-left'
+        aria-labelledby='move-boombox rleft-label'
+      >
+        <span id='rleft-label'>Rotate left</span>
+      </button>
+      <button
+        control='rotate-down'
+        aria-labelledby='move-boombox rdown-label'
+      >
+        <span id='rdown-label'>Rotate downwards</span>
+      </button>
+      <button
+        control='rotate-right'
+        aria-labelledby='move-boombox rright-label'
+      >
+        <span id='-label'>Rotate right</span>
+      </button>
+      <button
+        control='rotate-up'
+        aria-labelledby='move-boombox rup-label'
+      >
+        <span id='rup-label'>Rotate upwards</span>
+      </button>
+    </section>
+  </div>
+</div>
+
+<script type='module'>
+  import { upgradeElement } from '/dist/debug/main.mjs';
+
+  upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.mjs');
+</script>
+<script nomodule async='false' defer>
+  document.addEventListener('DOMContentLoaded', function() {
+    MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.js');
+  }, false);
+</script>
+</body>
+</html>

@@ -7,15 +7,7 @@ import { Document } from './dom/Document';
 import { DocumentFragment } from './dom/DocumentFragment';
 import { DOMTokenList } from './dom/DOMTokenList';
 import { Element } from './dom/Element';
-import {
-  Event as WorkerDOMEvent,
-  FocusEvent,
-  InputEvent,
-  KeyboardEvent,
-  MouseEvent,
-  TouchEvent,
-  WheelEvent
-} from './Event';
+import { Event as WorkerDOMEvent, FocusEvent, InputEvent, KeyboardEvent, MouseEvent, TouchEvent, WheelEvent } from './Event';
 import { GlobalScope, WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { HTMLAnchorElement } from './dom/HTMLAnchorElement';
 import { HTMLButtonElement } from './dom/HTMLButtonElement';
@@ -50,7 +42,7 @@ import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { initialize } from './initialize';
 import { MutationObserver } from './MutationObserver';
-import { rafPolyfill, cafPolyfill } from './AnimationFrame';
+import { cafPolyfill, rafPolyfill } from './AnimationFrame';
 import { SVGElement } from './dom/SVGElement';
 import { Text } from './dom/Text';
 import { wrap as longTaskWrap } from './long-task';
@@ -58,6 +50,25 @@ import { HydrateFunction } from './hydrate';
 import { HTMLMediaElement } from './dom/HTMLMediaElement';
 import { HTMLAudioElement } from './dom/HTMLAudioElement';
 import { HTMLVideoElement } from './dom/HTMLVideoElement';
+import { AudioContext } from './audio/AudioContext';
+import { AnalyserNode } from './audio/node/AnalyserNode';
+import { AudioBufferSourceNode } from './audio/node/AudioBufferSourceNode';
+import { BiquadFilterNode } from './audio/node/BiquadFilterNode';
+import { ChannelMergerNode } from './audio/node/ChannelMergerNode';
+import { ChannelSplitterNode } from './audio/node/ChannelSplitterNode';
+import { ConstantSourceNode } from './audio/node/ConstantSourceNode';
+import { ConvolverNode } from './audio/node/ConvolverNode';
+import { DelayNode } from './audio/node/DelayNode';
+import { DynamicsCompressorNode } from './audio/node/DynamicsCompressorNode';
+import { GainNode } from './audio/node/GainNode';
+import { IIRFilterNode } from './audio/node/IIRFilterNode';
+import { MediaElementAudioSourceNode } from './audio/node/MediaElementAudioSourceNode';
+import { OscillatorNode } from './audio/node/OscillatorNode';
+import { PannerNode } from './audio/node/PannerNode';
+import { StereoPannerNode } from './audio/node/StereoPannerNode';
+import { WaveShaperNode } from './audio/node/WaveShaperNode';
+import { AudioBuffer } from './audio/AudioBuffer';
+import { PeriodicWave } from './audio/PeriodicWave';
 
 declare const WORKER_DOM_DEBUG: boolean;
 
@@ -116,6 +127,25 @@ const globalScope: GlobalScope = {
   MutationObserver,
   requestAnimationFrame: self.requestAnimationFrame || rafPolyfill,
   cancelAnimationFrame: self.cancelAnimationFrame || cafPolyfill,
+  AudioContext,
+  AnalyserNode,
+  AudioBufferSourceNode,
+  BiquadFilterNode,
+  ChannelMergerNode,
+  ChannelSplitterNode,
+  ConstantSourceNode,
+  ConvolverNode,
+  DelayNode,
+  DynamicsCompressorNode,
+  GainNode,
+  IIRFilterNode,
+  OscillatorNode,
+  PannerNode,
+  StereoPannerNode,
+  WaveShaperNode,
+  AudioBuffer,
+  PeriodicWave,
+  MediaElementAudioSourceNode,
 };
 
 const noop = () => void 0;

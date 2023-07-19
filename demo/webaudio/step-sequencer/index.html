@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8' />
+  <title>Step Sequencer: MDModemnz</title>
+  <meta
+    name='description'
+    content='Making an instrument with the Web Audio API'
+  />
+  <meta
+    name='viewport'
+    content='width=device-width, initial-scale=1, shrink-to-fit=no'
+  />
+  <link rel='stylesheet' type='text/css' href='style.css' />
+
+  <script src='/dist/main.mjs' type='module'></script>
+  <script src='/dist/main.js' nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/main.js" defer></script> -->
+</head>
+<body>
+<div src='main.js' id='upgrade-me'>
+
+  <div class='loading'>
+    <p>Loading...</p>
+  </div>
+
+  <div id='sequencer'>
+    <section class='controls-main'>
+      <h1>ModemDN</h1>
+      <label for='bpm'>BPM</label>
+      <input
+        name='bpm'
+        id='bpm'
+        type='range'
+        min='60'
+        max='180'
+        value='120'
+        step='1'
+      />
+      <span id='bpmval'>120</span>
+      <input type='checkbox' id='playBtn' />
+      <label for='playBtn'>Play</label>
+    </section>
+
+    <div id='tracks'>
+      <!-- track one: bleep -->
+      <section class='track-one'>
+        <h2>Sweep</h2>
+        <section class='controls'>
+          <label for='attack'>Att</label>
+          <input
+            name='attack'
+            id='attack'
+            type='range'
+            min='0'
+            max='1'
+            value='0.2'
+            step='0.1'
+          />
+          <label for='release'>Rel</label>
+          <input
+            name='release'
+            id='release'
+            type='range'
+            min='0'
+            max='1'
+            value='0.5'
+            step='0.1'
+          />
+        </section>
+
+        <section class='pads'>
+          <input type='checkbox' id='v1n1' />
+          <label for='v1n1'>Voice 1, Note 1</label>
+
+          <input type='checkbox' id='v1n2' />
+          <label for='v1n2'>Voice 1, Note 2</label>
+
+          <input type='checkbox' id='v1n3' />
+          <label for='v1n3'>Voice 1, Note 3</label>
+
+          <input type='checkbox' id='v1n4' />
+          <label for='v1n4'>Voice 1, Note 4</label>
+        </section>
+      </section>
+
+      <!-- track two: pad/sweep -->
+      <section class='track-two'>
+        <h2>Pulse</h2>
+        <section class='controls'>
+          <label for='hz'>Hz</label>
+          <input
+            name='hz'
+            id='hz'
+            type='range'
+            min='660'
+            max='1320'
+            value='880'
+            step='1'
+          />
+          <label for='lfo'>LFO</label>
+          <input
+            name='lfo'
+            id='lfo'
+            type='range'
+            min='20'
+            max='40'
+            value='30'
+            step='1'
+          />
+        </section>
+        <!--
+
+        -->
+        <section class='pads'>
+          <input type='checkbox' id='v2n1' />
+          <label for='v2n1'>Voice 2, Note 1</label>
+
+          <input type='checkbox' id='v1n2' />
+          <label for='v2n2'>Voice 2, Note 2</label>
+
+          <input type='checkbox' id='v1n3' />
+          <label for='v2n3'>Voice 2, Note 3</label>
+
+          <input type='checkbox' id='v1n4' />
+          <label for='v2n4'>Voice 2, Note 4</label>
+        </section>
+      </section>
+
+      <!-- track three: noise -->
+      <section class='track-three'>
+        <h2>Noise</h2>
+        <section class='controls'>
+          <label for='duration'>Dur</label>
+          <input
+            name='duration'
+            id='duration'
+            type='range'
+            min='0'
+            max='2'
+            value='1'
+            step='0.1'
+          />
+          <label for='band'>Band</label>
+          <input
+            name='band'
+            id='band'
+            type='range'
+            min='400'
+            max='1200'
+            value='1000'
+            step='5'
+          />
+        </section>
+
+        <section class='pads'>
+          <input type='checkbox' id='v3n1' />
+          <label for='v3n1'>Voice 3, Note 1</label>
+
+          <input type='checkbox' id='v3n2' />
+          <label for='v3n2'>Voice 3, Note 2</label>
+
+          <input type='checkbox' id='v3n3' />
+          <label for='v3n3'>Voice 3, Note 3</label>
+
+          <input type='checkbox' id='v3n4' />
+          <label for='v3n4'>Voice 3, Note 4</label>
+        </section>
+      </section>
+
+      <!-- track four: drill -->
+      <section class='track-four'>
+        <h2>DTMF</h2>
+        <section class='controls'>
+          <label for='rate'>Rate</label>
+          <input
+            name='rate'
+            id='rate'
+            type='range'
+            min='0.1'
+            max='2'
+            value='1'
+            step='0.1'
+          />
+        </section>
+        <!--
+
+        -->
+        <section class='pads'>
+          <input type='checkbox' id='v4n1' />
+          <label for='v4n1'>Voice 4, Note 1</label>
+
+          <input type='checkbox' id='v4n2' />
+          <label for='v4n2'>Voice 4, Note 2</label>
+
+          <input type='checkbox' id='v4n3' />
+          <label for='v4n3'>Voice 4, Note 3</label>
+
+          <input type='checkbox' id='v4n4' />
+          <label for='v4n4'>Voice 4, Note 4</label>
+        </section>
+      </section>
+    </div>
+  </div>
+</div>
+<script type='module'>
+  import { upgradeElement } from '/dist/debug/main.mjs';
+
+  upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.mjs');
+</script>
+<script nomodule async='false' defer>
+  document.addEventListener('DOMContentLoaded', function() {
+    MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.js');
+  }, false);
+</script>
+</body>
+</html>

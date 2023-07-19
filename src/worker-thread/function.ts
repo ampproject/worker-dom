@@ -8,7 +8,7 @@ import { TransferrableObject } from './worker-thread';
 
 const exportedFunctions: { [fnIdent: string]: Function } = {};
 
-const windowTarget = {
+export const windowTarget = {
   // TODO: fix me
   [TransferrableKeys.serializeAsTransferrableObject]: () => {
     return [TransferrableObjectType.Window, 0];
@@ -26,6 +26,8 @@ export function callFunction(
   functionName: string,
   args: any[],
   timeout?: number,
+  isFunctionAsync: boolean = false,
+  resultObjectId: number = 0,
 ): Promise<any> {
   return new Promise((resolve, reject) => {
     // Wraparound to 0 in case someone attempts to register over 9 quadrillion functions.
@@ -57,7 +59,7 @@ export function callFunction(
       reject();
     } else {
       document.addGlobalEventListener('message', messageHandler);
-      transfer(document, [TransferrableMutationType.CALL_FUNCTION, target, functionName, rid, args]);
+      transfer(document, [TransferrableMutationType.CALL_FUNCTION, target, functionName, rid, isFunctionAsync, args, resultObjectId]);
 
       if (timeout && timeout > 0) {
         timeoutObg = setTimeout(reject, timeout, new Error('Timeout'));

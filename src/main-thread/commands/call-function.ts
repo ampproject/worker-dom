@@ -2,49 +2,82 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { MessageType } from '../../transfer/Messages';
 import { CommandExecutorInterface } from './interface';
 import { CallFunctionMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { WorkerContext } from '../worker';
+
+const successCallbackArg = '__successCallback__';
+const errorCallbackArg = '__errorCallback__';
 
 export const CallFunctionProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CALL_FUNCTION);
 
   return {
     execute(mutations: any[], allowedMutation: boolean) {
-      const target = mutations[CallFunctionMutationIndex.Target];
-      const functionName = mutations[CallFunctionMutationIndex.FunctionName];
       const index = mutations[CallFunctionMutationIndex.Index];
-      const args = mutations[CallFunctionMutationIndex.Arguments];
-
-      let result = null;
-      let success = false;
-
       if (allowedExecution) {
+        const target = mutations[CallFunctionMutationIndex.Target];
         if (target) {
-          try {
-            result = target[functionName](...args);
-            success = true;
-          } catch (e) {
-            console.error(`Method ${functionName} execution failed`, target, args, e);
-            result = e.message;
+          const functionName = mutations[CallFunctionMutationIndex.FunctionName];
+          const args = mutations[CallFunctionMutationIndex.Arguments];
+          const resultObjectId = mutations[CallFunctionMutationIndex.StoreResultObjectId];
+          const isFunctionAsync: boolean = mutations[CallFunctionMutationIndex.IsFunctionAsync];
+
+          function successCallback(value: any) {
+            sendCallback(workerContext, index, true, value);
+            if (resultObjectId > 0) {
+              objectContext.store(resultObjectId, value);
+            }
+          }
+
+          function errorCallback(reason: any) {
+            if (typeof reason === 'object') {
+              reason = String(reason);
+            }
+            sendCallback(workerContext, index, false, reason);
+          }
+
+          if (isFunctionAsync) {
+            // handle async
+            if (args.length > 0 && (args.includes(successCallbackArg) || args.includes(errorCallbackArg))) {
+              // cb
+              for (let idx = 0; idx < args.length; idx++) {
+                const arg = args[idx];
+                if (arg == successCallbackArg) {
+                  args[idx] = successCallback;
+                }
+                if (arg == errorCallbackArg) {
+                  args[idx] = errorCallback;
+                }
+              }
+              target[functionName](...args);
+            } else {
+              // promise
+              Promise.resolve(target[functionName](...args))
+                .then(successCallback)
+                .catch(errorCallback);
+            }
+          } else {
+            try {
+              const value = target[functionName](...args);
+              successCallback(value);
+            } catch (reason) {
+              errorCallback(reason);
+            }
           }
         } else {
           console.error(`CALL_FUNCTION: target is null.`);
-          result = new Error('Target object not found.').message;
+          sendCallback(workerContext, index, false, 'Target object not found.');
         }
       } else {
-        result = new Error('Execution not allowed.').message;
+        sendCallback(workerContext, index, false, 'Execution not allowed.');
       }
-
-      workerContext.messageToWorker({
-        [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT,
-        [TransferrableKeys.index]: index,
-        [TransferrableKeys.success]: success,
-        [TransferrableKeys.value]: result,
-      });
     },
     print(mutations: any[]): {} {
       const target: any = mutations[CallFunctionMutationIndex.Target];
       const functionName = mutations[CallFunctionMutationIndex.FunctionName];
       const requestId = mutations[CallFunctionMutationIndex.Index];
       const args = mutations[CallFunctionMutationIndex.Arguments];
+      const resultObjectId = mutations[CallFunctionMutationIndex.StoreResultObjectId];
+      const isFunctionAsync: boolean = mutations[CallFunctionMutationIndex.IsFunctionAsync];
 
       return {
         type: 'CALL_FUNCTION',
@@ -53,7 +86,18 @@ export const CallFunctionProcessor: CommandExecutorInterface = (strings, nodes, 
         functionName,
         requestId,
         args,
+        resultObjectId,
+        isFunctionAsync,
       };
     },
   };
 };
+
+function sendCallback(workerContext: WorkerContext, index: number, success: boolean, value: any) {
+  workerContext.messageToWorker({
+    [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT,
+    [TransferrableKeys.index]: index,
+    [TransferrableKeys.success]: success,
+    [TransferrableKeys.value]: value,
+  });
+}

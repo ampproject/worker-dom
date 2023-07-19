@@ -79,8 +79,25 @@ test('Object creation with mutation at a zero offset', (t) => {
   const objectId = 111; // give a sample id
   t.throws(() => objectContext.get(objectId));
 
-  objectCreationProcessor.execute([TransferrableMutationType.OBJECT_CREATION, methodName, objectId, targetObject, [1, 2, 3, 4]], /* allow */ true);
+  objectCreationProcessor.execute(
+    [TransferrableMutationType.OBJECT_CREATION, methodName, false, objectId, targetObject, [1, 2, 3, 4]],
+    /* allow */ true,
+  );
 
   t.true(stub.withArgs(1, 2, 3, 4).calledOnce);
   t.is(objectContext.get(objectId), gradientObject);
+});
+
+test('Object creation with constructor', (t) => {
+  const { objectContext, objectCreationProcessor } = t.context;
+
+  const objectId = 112; // give a sample id
+  t.throws(() => objectContext.get(objectId));
+
+  objectCreationProcessor.execute(
+    [TransferrableMutationType.OBJECT_CREATION, 'String', true, objectId, window, ['test constructor']],
+    /* allow */ true,
+  );
+
+  t.deepEqual(objectContext.get(objectId) as any, new String('test constructor'));
 });

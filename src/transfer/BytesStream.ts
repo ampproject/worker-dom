@@ -88,7 +88,7 @@ export class BytesStream {
 
   // `uint8`: [0, 255] (1 byte)
   public appendUint8(value: number): void {
-    if (value >= 255 || value < 0) {
+    if (value > 255 || value < 0) {
       console.warn('appendUint8 value out of range', value);
     }
     this.allocate(1);
@@ -139,6 +139,16 @@ export class BytesStream {
     this._offset += 8;
   }
 
+  public appendArrayBuffer(arrayBuffer: ArrayBuffer): void {
+    const array = new Uint8Array(arrayBuffer);
+    this.appendTypedArray(array);
+  }
+
+  public readArrayBuffer(): ArrayBuffer {
+    const array = this.readTypedArray(Uint8Array);
+    return array.buffer;
+  }
+
   public appendTypedArray(
     array: Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array,
   ): void {
@@ -155,7 +165,7 @@ export class BytesStream {
     this._offset += array.byteLength;
   }
 
-  public readTypedArray<T extends RelativeIndexable<number>>(
+  public readTypedArray(
     type:
       | typeof Int8Array
       | typeof Uint8Array
@@ -166,7 +176,7 @@ export class BytesStream {
       | typeof Uint32Array
       | typeof Float32Array
       | typeof Float64Array,
-  ): RelativeIndexable<number> {
+  ): Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array {
     const length = this.readUint32();
     this._offset += type.BYTES_PER_ELEMENT - (this._offset % type.BYTES_PER_ELEMENT);
     const array = new type(this._buffer, this._offset, length);

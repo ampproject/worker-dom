@@ -1,0 +1,128 @@
+:root {
+    --orange: hsla(32, 100%, 50%, 1);
+    --yellow: hsla(49, 99%, 50%, 1);
+    --lime: hsla(82, 90%, 45%, 1);
+    --green: hsla(127, 81%, 41%, 1);
+    --red: hsla(342, 93%, 53%, 1);
+    --pink: hsla(314, 85%, 45%, 1);
+    --blue: hsla(211, 92%, 52%, 1);
+    --purple: hsla(283, 92%, 44%, 1);
+    --cyan: hsla(195, 98%, 55%, 1);
+    --white: hsla(0, 0%, 95%, 1);
+    --black: hsla(0, 0%, 10%, 1);
+
+    /* abstract our colours */
+    --boxMain: var(--cyan);
+    --boxSecond: var(--blue);
+    --boxHigh: var(--yellow);
+    --border: 1vmin solid var(--black);
+    --borderRad: 2px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--white);
+    padding: 4vmax;
+    font-family: sans-serif, system-ui;
+    font-size: 120%;
+    color: var(--black);
+}
+
+#startbutton {
+    width: 12vw;
+    line-height: 3;
+    background-color: var(--boxMain);
+    border: var(--border);
+    border-radius: var(--borderRad);
+    position: absolute;
+    top: 1px;
+    left: 1px;
+}
+
+#startbutton:hover {
+    background-color: var(--boxSecond);
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#tracks {
+}
+
+#tracks ul {
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+    width: 62vw;
+    background-color: var(--boxMain);
+    border: var(--border);
+    border-radius: var(--borderRad);
+}
+
+#tracks li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2vw;
+    border-bottom: var(--border);
+}
+
+#tracks li:last-child {
+    border-bottom: none;
+}
+
+#tracks li[data-loading="true"] {
+    background-color: var(--boxHigh);
+}
+
+.loading-text,
+.track,
+.playbutton {
+}
+
+.loading-text {
+}
+
+.track {
+    color: var(--black);
+}
+
+.track:hover {
+    text-decoration: none;
+}
+
+.playbutton {
+    display: none;
+    padding: 30px;
+    border: var(--border);
+    border-radius: var(--borderRad);
+    font-size: 100%;
+    cursor: pointer;
+}
+
+.playbutton span {
+    display: none;
+}
+
+.ready {
+    background: var(--red) url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z" fill="black" /></svg>') no-repeat center center;
+    background-size: 60% 60%;
+}
+
+.playing:hover,
+.playing {
+    background-color: var(--green);
+url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z" fill="black" /></svg>') no-repeat center center;
+    background-size: 60% 60%;
+}
+
+.sourced {
+    font-size: 86%;
+    text-align: right;
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width' />
+
+  <title>Web Audio API examples: decodeAudioData()</title>
+
+  <script src='/dist/main.mjs' type='module'></script>
+  <script src='/dist/main.js' nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/main.js" defer></script> -->
+</head>
+
+<body>
+<h1>Web Audio API examples: decodeAudioData()</h1>
+
+<div src='main.js' id='upgrade-me'>
+
+  <button id='play' disabled>Play</button>
+  <button id='stop'>Stop</button>
+
+  <h2>Set playback rate</h2>
+  <input
+    id='playback-rate-control'
+    type='range'
+    min='0.25'
+    max='3'
+    step='0.05'
+    value='1'
+    disabled />
+  <span id='playback-rate-value'>1.0</span>
+
+  <h2>Set loop start and loop end</h2>
+  <input
+    id='loopstart-control'
+    type='range'
+    min='0'
+    max='20'
+    step='1'
+    value='0'
+    disabled />
+  <span id='loopstart-value'>0</span>
+
+  <input
+    id='loopend-control'
+    type='range'
+    min='0'
+    max='20'
+    step='1'
+    value='0'
+    disabled />
+  <span id='loopend-value'>0</span>
+</div>
+<script type='module'>
+  import { upgradeElement } from '/dist/debug/main.mjs';
+
+  upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.mjs');
+</script>
+<script nomodule async='false' defer>
+  document.addEventListener('DOMContentLoaded', function() {
+    MainThread.upgradeElement(document.getElementById('upgrade-me'), '/dist/debug/worker/worker.js');
+  }, false);
+</script>
+</body>
+</html>

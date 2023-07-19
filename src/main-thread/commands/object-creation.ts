@@ -10,17 +10,24 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
 
   return {
     execute(mutations: any[], allowedMutation: boolean) {
-      const functionName = mutations[ObjectCreationIndex.FunctionName];
-      const objectId = mutations[ObjectCreationIndex.ObjectId];
-      const target = mutations[ObjectCreationIndex.SerializedTarget];
-      const args = mutations[ObjectCreationIndex.Arguments];
-
       if (allowedExecution && allowedMutation) {
-        if (functionName === 'new') {
-          // deal with constructor case here
+        const functionName = mutations[ObjectCreationIndex.FunctionName];
+        const isConstructor = mutations[ObjectCreationIndex.IsConstructor];
+        const objectId = mutations[ObjectCreationIndex.ObjectId];
+        const target = mutations[ObjectCreationIndex.SerializedTarget];
+        const args = mutations[ObjectCreationIndex.Arguments];
+
+        let object;
+
+        if (isConstructor) {
+          object = new target[functionName](...args);
+        } else if (isGetter(target, functionName)) {
+          object = target[functionName];
         } else {
-          objectContext.store(objectId, target[functionName](...args));
+          object = target[functionName](...args);
         }
+
+        objectContext.store(objectId, object);
       }
     },
     print(mutations: any[]): {} {
@@ -28,15 +35,33 @@ export const ObjectCreationProcessor: CommandExecutorInterface = (strings, nodeC
       const objectId = mutations[ObjectCreationIndex.ObjectId];
       const args = mutations[ObjectCreationIndex.Arguments];
       const target = mutations[ObjectCreationIndex.SerializedTarget];
+      const isConstructor = mutations[ObjectCreationIndex.IsConstructor];
+      const getter = isGetter(target, functionName);
 
       return {
         type: 'OBJECT_CREATION',
         target,
         functionName,
+        isConstructor,
         objectId,
         args,
+        getter,
         allowedExecution,
       };
     },
   };
 };
+
+function isGetter(object: {}, name: string): boolean {
+  if (!object) {
+    throw new Error(`Property ${name} does not exist on ${object}.`);
+  }
+
+  const descriptor = Object.getOwnPropertyDescriptor(object, name);
+
+  if (descriptor !== undefined) {
+    return 'get' in descriptor;
+  }
+
+  return isGetter(Object.getPrototypeOf(object), name);
+}
