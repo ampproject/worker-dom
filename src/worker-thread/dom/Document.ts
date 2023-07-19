@@ -37,14 +37,17 @@ import { Comment } from './Comment';
 import { toLower } from '../../utils';
 import { DocumentFragment } from './DocumentFragment';
 import { PostMessage } from '../worker-thread';
-import { NodeType, HTML_NAMESPACE, HydrateableNode } from '../../transfer/TransferrableNodes';
+import { HTML_NAMESPACE, HydrateableNode, NodeType } from '../../transfer/TransferrableNodes';
 import { Phase } from '../../transfer/Phase';
 import { propagate as propagateEvents } from '../Event';
 import { propagate as propagateSyncValues } from '../SyncValuePropagation';
 import { propagate as propagateResize } from '../ResizePropagation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { WorkerDOMGlobalScope, GlobalScope } from '../WorkerDOMGlobalScope';
+import { GlobalScope, WorkerDOMGlobalScope } from '../WorkerDOMGlobalScope';
 import { set as setPhase } from '../phase';
+import { callGlobalFunction } from '../function';
+import { createObjectReference } from '../object-reference';
+import { Range, Selection } from './Selection';
 
 const DOCUMENT_NAME = '#document';
 
@@ -69,6 +72,10 @@ export class Document extends Element {
       document: this,
       addEventListener: this.addEventListener.bind(this),
       removeEventListener: this.removeEventListener.bind(this),
+      getSelection: this.getSelection.bind(this),
+      focus: () => {
+        callGlobalFunction(this, 'focus', []).catch((reason) => console.log('Fail to focus window.', reason));
+      },
     });
   }
 
@@ -150,5 +157,15 @@ export class Document extends Element {
    */
   public getElementById(id: string): Element | null {
     return matchChildElement(this.body, (element) => element.id === id);
+  }
+
+  public getSelection(): Selection {
+    const id = createObjectReference(this, this, 'getSelection', []);
+    return new Selection(id, this);
+  }
+
+  public createRange() {
+    const id = createObjectReference(this, this, 'createRange', []);
+    return new Range(id, this);
   }
 }

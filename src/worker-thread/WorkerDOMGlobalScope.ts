@@ -29,13 +29,14 @@ import { HTMLTableSectionElement } from './dom/HTMLTableSectionElement';
 import { HTMLTimeElement } from './dom/HTMLTimeElement';
 import { Document } from './dom/Document';
 import {
-  EventHandler,
   Event as WorkerDOMEvent,
+  EventHandler,
+  FocusEvent,
+  InputEvent,
+  KeyboardEvent,
   MouseEvent,
   TouchEvent,
-  FocusEvent,
-  KeyboardEvent,
-  WheelEvent, InputEvent
+  WheelEvent,
 } from './Event';
 import { MutationObserver } from './MutationObserver';
 import { Storage } from './Storage';
@@ -53,6 +54,7 @@ import { OffscreenCanvas } from './canvas/CanvasTypes';
 import { HTMLMediaElement } from './dom/HTMLMediaElement';
 import { HTMLAudioElement } from './dom/HTMLAudioElement';
 import { HTMLVideoElement } from './dom/HTMLVideoElement';
+import { Selection } from './dom/Selection';
 
 /**
  * Should only contain properties that exist on Window.
@@ -125,6 +127,8 @@ export interface WorkerDOMGlobalScope extends GlobalScope {
   document: Document;
   addEventListener: (type: string, handler: EventHandler) => void;
   removeEventListener: (type: string, handler: EventHandler) => void;
+  focus: () => void;
+  getSelection: () => Selection;
 }
 
 export interface WorkerNoDOMGlobalScope {
