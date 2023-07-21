@@ -64,10 +64,11 @@ export class WorkerContext {
           ${JSON.stringify(skeleton)},
           ${JSON.stringify(cssKeys)},
           ${JSON.stringify(globalEventHandlerKeys)},
-          [${window.innerWidth}, ${window.innerHeight}],
+          [${window.innerWidth}, ${window.innerHeight}, ${window.devicePixelRatio}],
           ${JSON.stringify(localStorageInit)},
           ${JSON.stringify(sessionStorageInit)},
-          ${JSON.stringify(webgl)}
+          ${JSON.stringify(webgl)},
+          ${JSON.stringify(window.location)},
         );
         workerDOM.document[${TransferrableKeys.observe}](this);
         Object.assign(self, workerDOM);

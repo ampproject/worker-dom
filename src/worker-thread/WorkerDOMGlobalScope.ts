@@ -74,12 +74,14 @@ import { StereoPannerNode } from './audio/node/StereoPannerNode';
 import { WaveShaperNode } from './audio/node/WaveShaperNode';
 import { AudioBuffer } from './audio/AudioBuffer';
 import { PeriodicWave } from './audio/PeriodicWave';
+import { History } from './dom/History';
 
 /**
  * Should only contain properties that exist on Window.
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Window
  */
 export interface GlobalScope {
+  devicePixelRatio: number;
   innerWidth: number;
   innerHeight: number;
   localStorage?: Storage;
@@ -159,6 +161,7 @@ export interface GlobalScope {
   AudioBuffer: typeof AudioBuffer;
   PeriodicWave: typeof PeriodicWave;
   MediaElementAudioSourceNode: typeof MediaElementAudioSourceNode;
+  history?: History;
 }
 
 export interface WorkerDOMGlobalScope extends GlobalScope {

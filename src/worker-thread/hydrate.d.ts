@@ -8,7 +8,7 @@ export type HydrateFunction = (
   hydrateableNode: HydrateableNode,
   cssKeys: Array<string>,
   globalEventHandlerKeys: Array<string>,
-  [innerWidth, innerHeight]: [number, number],
+  [innerWidth, innerHeight, devicePixelRatio]: [number, number, number],
   localStorageInit: WorkerStorageInit,
   sessionStorageInit: WorkerStorageInit,
   webglInfo: {
@@ -18,4 +18,5 @@ export type HydrateFunction = (
       parameters: { [key: number]: any } | null;
     } | null;
   },
+  location: { [type: string]: any },
 ) => void;

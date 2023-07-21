@@ -91,6 +91,7 @@ declare var OffscreenCanvas: {
 };
 
 const GlobalScope: GlobalScope = {
+  devicePixelRatio: 1,
   innerWidth: 0,
   innerHeight: 0,
   CharacterData,

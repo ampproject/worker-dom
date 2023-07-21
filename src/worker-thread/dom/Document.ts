@@ -45,9 +45,10 @@ import { propagate as propagateResize } from '../ResizePropagation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { GlobalScope, WorkerDOMGlobalScope } from '../WorkerDOMGlobalScope';
 import { set as setPhase } from '../phase';
-import { callGlobalFunction } from '../function';
+import { callGlobalFunction, windowTarget } from '../function';
 import { createObjectReference } from '../object-reference';
 import { Range, Selection } from './Selection';
+import { Location } from './Location';
 
 const DOCUMENT_NAME = '#document';
 
@@ -56,6 +57,7 @@ export class Document extends Element {
   public defaultView: WorkerDOMGlobalScope;
   public documentElement: Document;
   public body: Element;
+  public _location: Location;
 
   // Internal variables.
   public postMessage: PostMessage;
@@ -121,6 +123,17 @@ export class Document extends Element {
         (skeleton[TransferrableKeys.childNodes] || []).forEach((child) => node.appendChild(this[TransferrableKeys.hydrateNode](strings, child)));
         return node;
     }
+  }
+
+  public get location() {
+    if (this._location) {
+      return this._location;
+    }
+
+    const locationId = createObjectReference(this, windowTarget, 'location', []);
+    this._location = new Location(locationId, this, this.locationInfo);
+
+    return this._location;
   }
 
   public createElement(name: string): Element {

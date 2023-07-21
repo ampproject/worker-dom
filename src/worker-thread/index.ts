@@ -67,6 +67,7 @@ import { AudioBuffer } from './audio/AudioBuffer';
 import { PeriodicWave } from './audio/PeriodicWave';
 
 const globalScope: GlobalScope = {
+  devicePixelRatio: 1,
   innerWidth: 0,
   innerHeight: 0,
   CharacterData,

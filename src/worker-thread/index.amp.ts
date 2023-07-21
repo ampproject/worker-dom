@@ -73,6 +73,7 @@ import { PeriodicWave } from './audio/PeriodicWave';
 declare const WORKER_DOM_DEBUG: boolean;
 
 const globalScope: GlobalScope = {
+  devicePixelRatio: 1,
   innerWidth: 0,
   innerHeight: 0,
   CharacterData,
