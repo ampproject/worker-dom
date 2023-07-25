@@ -1,6 +1,5 @@
 import {
   AudioContextState,
-  BaseAudioContextEventMap,
   DecodeErrorCallback,
   DecodeSuccessCallback,
   IAnalyserNode,
@@ -50,10 +49,10 @@ import { AudioDestinationNode } from './node/AudioDestinationNode';
 import { AudioListener } from './AudioListener';
 import { AudioWorklet } from './AudioWorklet';
 import { nextObjectId } from '../object-reference';
+import { Document } from '../dom/Document';
 
 export abstract class BaseAudioContext extends TransferrableAudio implements IBaseAudioContext {
   public readonly sampleRate: number = 48000; // TODO: implement
-  public onstatechange: ((this: IBaseAudioContext, ev: Event) => any) | null;
 
   private _currentTime: number = performance.now();
   private _audioWorklet: IAudioWorklet;
@@ -61,13 +60,18 @@ export abstract class BaseAudioContext extends TransferrableAudio implements IBa
   private _listener: IAudioListener;
   private _state: AudioContextState = 'running'; // TODO: https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/state#resuming_interrupted_play_states_in_ios_safari
 
+  constructor(id: number, document: Document, keys?: Array<string>) {
+    keys = keys || [];
+    keys.push('onstatechange');
+
+    super(id, document, keys);
+  }
+
   get audioWorklet(): IAudioWorklet {
     if (this._audioWorklet) {
       return this._audioWorklet;
     }
-
-    const id = this.createObjectReference('audioWorklet', []);
-    this._audioWorklet = new AudioWorklet(id, this.document);
+    this._audioWorklet = this.createObjectReference('audioWorklet', [], (id) => new AudioWorklet(id, this.document));
     return this._audioWorklet;
   }
 
@@ -84,9 +88,7 @@ export abstract class BaseAudioContext extends TransferrableAudio implements IBa
       return this._destination;
     }
 
-    const id = this.createObjectReference('destination', []);
-    this._destination = new AudioDestinationNode(id, this);
-
+    this._destination = this.createObjectReference('destination', [], (id) => new AudioDestinationNode(id, this));
     return this._destination;
   }
 
@@ -95,9 +97,7 @@ export abstract class BaseAudioContext extends TransferrableAudio implements IBa
       return this._listener;
     }
 
-    const id = this.createObjectReference('listener', []);
-    this._listener = new AudioListener(id, this);
-
+    this._listener = this.createObjectReference('listener', [], (id) => new AudioListener(id, this));
     return this._listener;
   }
 
@@ -106,117 +106,132 @@ export abstract class BaseAudioContext extends TransferrableAudio implements IBa
   }
 
   createAnalyser(): IAnalyserNode {
-    const id = this.createObjectReference('createAnalyser', []);
-    return new AnalyserNode(this, {}, id);
+    return this.createObjectReference('createAnalyser', [], (id) => new AnalyserNode(this, {}, id));
   }
 
   createBiquadFilter(): IBiquadFilterNode {
-    const id = this.createObjectReference('createBiquadFilter', []);
-    return new BiquadFilterNode(this, {}, id);
+    return this.createObjectReference('createBiquadFilter', [], (id) => new BiquadFilterNode(this, {}, id));
   }
 
   createBuffer(numberOfChannels: number, length: number, sampleRate: number): IAudioBuffer {
-    const id = this.createObjectReference('createBuffer', [...arguments]);
-    return new AudioBuffer(
-      {
-        numberOfChannels,
-        length,
-        sampleRate,
-      },
-      id,
+    return this.createObjectReference(
+      'createBuffer',
+      [...arguments],
+      (id) =>
+        new AudioBuffer(
+          {
+            numberOfChannels,
+            length,
+            sampleRate,
+          },
+          id,
+        ),
     );
   }
 
   createBufferSource(): IAudioBufferSourceNode {
-    const id = this.createObjectReference('createBufferSource', []);
-    return new AudioBufferSourceNode(this, {}, id);
+    return this.createObjectReference('createBufferSource', [], (id) => new AudioBufferSourceNode(this, {}, id));
   }
 
   createChannelMerger(numberOfInputs?: number): IChannelMergerNode {
-    const id = this.createObjectReference('createChannelMerger', [...arguments]);
-    return new ChannelMergerNode(
-      this,
-      {
-        numberOfInputs,
-      },
-      id,
+    return this.createObjectReference(
+      'createChannelMerger',
+      [...arguments],
+      (id) =>
+        new ChannelMergerNode(
+          this,
+          {
+            numberOfInputs,
+          },
+          id,
+        ),
     );
   }
 
   createChannelSplitter(numberOfOutputs?: number): IChannelSplitterNode {
-    const id = this.createObjectReference('createChannelSplitter', [...arguments]);
-    return new ChannelSplitterNode(
-      this,
-      {
-        numberOfOutputs,
-      },
-      id,
+    return this.createObjectReference(
+      'createChannelSplitter',
+      [...arguments],
+      (id) =>
+        new ChannelSplitterNode(
+          this,
+          {
+            numberOfOutputs,
+          },
+          id,
+        ),
     );
   }
 
   createConstantSource(): IConstantSourceNode {
-    const id = this.createObjectReference('createConstantSource', []);
-    return new ConstantSourceNode(this, {}, id);
+    return this.createObjectReference('createConstantSource', [], (id) => new ConstantSourceNode(this, {}, id));
   }
 
   createConvolver(): IConvolverNode {
-    const id = this.createObjectReference('createConvolver', []);
-    return new ConvolverNode(this, {}, id);
+    return this.createObjectReference('createConvolver', [], (id) => new ConvolverNode(this, {}, id));
   }
 
   createDelay(maxDelayTime?: number): IDelayNode {
-    const id = this.createObjectReference('createDelay', [...arguments]);
-    return new DelayNode(
-      this,
-      {
-        maxDelayTime,
-      },
-      id,
+    return this.createObjectReference(
+      'createDelay',
+      [...arguments],
+      (id) =>
+        new DelayNode(
+          this,
+          {
+            maxDelayTime,
+          },
+          id,
+        ),
     );
   }
 
   createDynamicsCompressor(): IDynamicsCompressorNode {
-    const id = this.createObjectReference('createDynamicsCompressor', []);
-    return new DynamicsCompressorNode(this, {}, id);
+    return this.createObjectReference('createDynamicsCompressor', [], (id) => new DynamicsCompressorNode(this, {}, id));
   }
 
   createGain(): IGainNode {
-    const gainId = this.createObjectReference('createGain', []);
-    return new GainNode(this, {}, gainId);
+    return this.createObjectReference('createGain', [], (id) => new GainNode(this, {}, id));
   }
 
   createIIRFilter(feedforward: number[], feedback: number[]): IIIRFilterNode {
-    const id = this.createObjectReference('createIIRFilter', [...arguments]);
-    return new IIRFilterNode(
-      this,
-      {
-        feedforward,
-        feedback,
-      },
-      id,
+    return this.createObjectReference(
+      'createIIRFilter',
+      [...arguments],
+      (id) =>
+        new IIRFilterNode(
+          this,
+          {
+            feedforward,
+            feedback,
+          },
+          id,
+        ),
     );
   }
 
   createOscillator(): IOscillatorNode {
-    const id = this.createObjectReference('createOscillator', []);
-    return new OscillatorNode(this, {}, id);
+    return this.createObjectReference('createOscillator', [], (id) => new OscillatorNode(this, {}, id));
   }
 
   createPanner(): IPannerNode {
-    const id = this.createObjectReference('createPanner', []);
-    return new PannerNode(this, {}, id);
+    return this.createObjectReference('createPanner', [], (id) => new PannerNode(this, {}, id));
   }
 
   createPeriodicWave(real: number[] | Float32Array, imag: number[] | Float32Array, constraints?: PeriodicWaveConstraints): IPeriodicWave {
-    const id = this.createObjectReference('createPeriodicWave', [...arguments]);
-    return new PeriodicWave(
-      this,
-      {
-        real,
-        imag,
-        disableNormalization: constraints ? !!constraints.disableNormalization : true,
-      },
-      id,
+    return this.createObjectReference(
+      'createPeriodicWave',
+      [...arguments],
+      (id) =>
+        new PeriodicWave(
+          this,
+          {
+            real,
+            imag,
+            disableNormalization: constraints ? !!constraints.disableNormalization : true,
+          },
+          id,
+        ),
     );
   }
 
@@ -225,13 +240,11 @@ export abstract class BaseAudioContext extends TransferrableAudio implements IBa
   }
 
   createStereoPanner(): IStereoPannerNode {
-    const id = this.createObjectReference('createStereoPanner', []);
-    return new StereoPannerNode(this, {}, id);
+    return this.createObjectReference('createStereoPanner', [], (id) => new StereoPannerNode(this, {}, id));
   }
 
   createWaveShaper(): IWaveShaperNode {
-    const id = this.createObjectReference('createWaveShaper', []);
-    return new WaveShaperNode(this, {}, id);
+    return this.createObjectReference('createWaveShaper', [], (id) => new WaveShaperNode(this, {}, id));
   }
 
   decodeAudioData(
@@ -272,44 +285,6 @@ export abstract class BaseAudioContext extends TransferrableAudio implements IBa
         this._currentTime = performance.now() - this._currentTime;
       }
       this._state = value;
-
-      if (this.onstatechange) {
-        this.onstatechange(new Event('statechange', {}));
-      }
     }
-  }
-
-  dispatchEvent(event: Event): boolean {
-    throw new Error('NOT IMPLEMENTED');
-  }
-
-  addEventListener<K extends keyof BaseAudioContextEventMap>(
-    type: K,
-    listener: (this: BaseAudioContext, ev: BaseAudioContextEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-  addEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: AddEventListenerOptions | boolean): void;
-  addEventListener(
-    type: string | keyof BaseAudioContextEventMap,
-    listener: EventListenerOrEventListenerObject | null,
-    options?: boolean | AddEventListenerOptions,
-  ): void {
-    throw new Error('NOT IMPLEMENTED');
-  }
-
-  removeEventListener<K extends keyof BaseAudioContextEventMap>(
-    type: K,
-    listener: (this: BaseAudioContext, ev: BaseAudioContextEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void;
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-  removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;
-  removeEventListener(
-    type: string | keyof BaseAudioContextEventMap,
-    listener: EventListenerOrEventListenerObject | null,
-    options?: boolean | EventListenerOptions,
-  ): void {
-    throw new Error('NOT IMPLEMENTED');
   }
 }

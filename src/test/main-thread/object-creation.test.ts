@@ -99,5 +99,8 @@ test('Object creation with constructor', (t) => {
     /* allow */ true,
   );
 
-  t.deepEqual(objectContext.get(objectId) as any, new String('test constructor'));
+  const expected = new String('test constructor') as any;
+  expected._index_ = objectId;
+
+  t.deepEqual(objectContext.get(objectId) as any, expected);
 });

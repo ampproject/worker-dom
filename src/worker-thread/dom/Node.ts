@@ -1,13 +1,11 @@
 import { store as storeNodeMapping, storeOverride as storeOverrideNodeMapping } from '../nodes';
-import { AddEventListenerOptions, Event, EventHandler } from '../Event';
-import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { Document } from './Document';
-import { transfer } from '../MutationTransfer';
 import { NodeType, TransferredNode } from '../../transfer/TransferrableNodes';
 import { TransferrableMutationType, TransferrableObjectType } from '../../transfer/TransferrableMutation';
+import { EventTarget } from '../event-subscription/EventTarget';
 
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 export type NamespaceURI = string;
@@ -29,7 +27,7 @@ export const propagate = (node: Node, property: string | number, value: any): vo
 // Please note, in this implmentation Node doesn't extend EventTarget.
 // This is intentional to reduce the number of classes.
 
-export abstract class Node {
+export abstract class Node extends EventTarget {
   [index: string]: any; // TODO(choumx): Remove this typing escape hatch.
   public ownerDocument: Node; // TODO(choumx): Should be a Document.
   // https://drafts.csswg.org/selectors-4/#scoping-root
@@ -43,11 +41,9 @@ export abstract class Node {
   public [TransferrableKeys.transferredFormat]: TransferredNode;
   public [TransferrableKeys.creationFormat]: Array<number>;
   public abstract cloneNode(deep: boolean): Node;
-  private [TransferrableKeys.handlers]: {
-    [index: string]: EventHandler[];
-  } = {};
 
   constructor(nodeType: NodeType, nodeName: NodeName, ownerDocument: Node | null, overrideIndex?: number) {
+    super(ownerDocument as Document);
     this.nodeType = nodeType;
     this.nodeName = nodeName;
     this.ownerDocument = ownerDocument || this;
@@ -403,68 +399,7 @@ export abstract class Node {
     }
   }
 
-  /**
-   * Add an event listener to callback when a specific event type is dispatched.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
-   * @param type Event Type (i.e 'click')
-   * @param handler Function called when event is dispatched.
-   */
-  public addEventListener(type: string, handler: EventHandler, options: AddEventListenerOptions | undefined = {}): void {
-    const lowerType = toLower(type);
-    const handlers: EventHandler[] = this[TransferrableKeys.handlers][lowerType];
-    if (handlers && handlers.length > 0) {
-      handlers.push(handler);
-    } else {
-      this[TransferrableKeys.handlers][lowerType] = [handler];
-      transfer(this.ownerDocument as Document, [
-        TransferrableMutationType.EVENT_SUBSCRIPTION,
-        this,
-        true,
-        lowerType,
-        Boolean(options.workerDOMPreventDefault),
-      ]);
-    }
-  }
-
-  /**
-   * Remove a registered event listener for a specific event type.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener
-   * @param type Event Type (i.e 'click')
-   * @param handler Function to stop calling when event is dispatched.
-   */
-  public removeEventListener(type: string, handler: EventHandler): void {
-    const lowerType = toLower(type);
-    const handlers = this[TransferrableKeys.handlers][lowerType];
-    const index = !!handlers ? handlers.indexOf(handler) : -1;
-
-    if (index >= 0) {
-      handlers.splice(index, 1);
-      if (handlers.length == 0) {
-        transfer(this.ownerDocument as Document, [TransferrableMutationType.EVENT_SUBSCRIPTION, this, false, lowerType, false]);
-      }
-    }
-  }
-
-  /**
-   * Dispatch an event for this Node.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
-   * @param event Event to dispatch to this node and potentially cascade to parents.
-   */
-  public dispatchEvent(event: Event): boolean {
-    let target: Node | null = (event.currentTarget = this);
-    let handlers: EventHandler[] | null;
-    let iterator: number;
-
-    do {
-      handlers = target && target[TransferrableKeys.handlers] && target[TransferrableKeys.handlers][toLower(event.type)];
-      if (handlers) {
-        for (iterator = handlers.length; iterator--; ) {
-          if ((handlers[iterator].call(target, event) === false || event[TransferrableKeys.end]) && event.cancelable) {
-            break;
-          }
-        }
-      }
-    } while (event.bubbles && !(event.cancelable && event[TransferrableKeys.stop]) && (target = target && target.parentNode));
-    return !event.defaultPrevented;
+  parent(): any {
+    return this.parentNode;
   }
 }

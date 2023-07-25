@@ -129,7 +129,11 @@ function serializeObject(arg: any, stream: BytesStream) {
   }
 
   if (argType === 'object') {
-    if (typeof arg[TransferrableKeys.serializeAsTransferrableObject] == 'function') {
+    if (isDocument(arg)) {
+      stream.appendUint8(TransferrableObjectType.Document);
+    } else if (isSelf(arg)) {
+      stream.appendUint8(TransferrableObjectType.Window);
+    } else if (typeof arg[TransferrableKeys.serializeAsTransferrableObject] == 'function') {
       // serializable
       const serializedObject = (arg as TransferrableObject)[TransferrableKeys.serializeAsTransferrableObject]();
       stream.appendUint8(serializedObject[0]); // type
@@ -164,7 +168,7 @@ export function estimateSizeInBytes(args: any[]) {
 function estimateObjectSizeInBytes(obj: any) {
   let size = Uint8Array.BYTES_PER_ELEMENT; // type
 
-  if (obj === undefined || obj === null) {
+  if (obj === undefined || obj === null || isSelf(obj) || isDocument(obj)) {
     return size;
   }
 
@@ -336,5 +340,21 @@ function appendNumber(value: number, stream: BytesStream): void {
       stream.appendUint8(TransferrableObjectType.Float64);
       stream.appendFloat64(value);
     }
+  }
+}
+
+function isSelf(arg: any): boolean {
+  try {
+    return self === arg;
+  } catch (e) {
+    return false;
+  }
+}
+
+function isDocument(arg: any): boolean {
+  try {
+    return (self as any).document === arg;
+  } catch (e) {
+    return false;
   }
 }

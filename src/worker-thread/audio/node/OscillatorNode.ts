@@ -36,8 +36,7 @@ export class OscillatorNode extends AudioScheduledSourceNode implements IOscilla
       return this._detune;
     }
 
-    const id = this.createObjectReference('detune', []);
-    this._detune = new AudioParam(id, this.context, 'a-rate', this._detuneDefaultValue);
+    this._detune = this.createObjectReference('detune', [], (id) => new AudioParam(id, this.context, 'a-rate', this._detuneDefaultValue));
     return this._detune;
   }
 
@@ -46,8 +45,7 @@ export class OscillatorNode extends AudioScheduledSourceNode implements IOscilla
       return this._frequency;
     }
 
-    const id = this.createObjectReference('frequency', []);
-    this._frequency = new AudioParam(id, this.context, 'a-rate', this._frequencyDefaultValue);
+    this._frequency = this.createObjectReference('frequency', [], (id) => new AudioParam(id, this.context, 'a-rate', this._frequencyDefaultValue));
     return this._frequency;
   }
 

@@ -37,8 +37,7 @@ export class BiquadFilterNode extends AudioNode implements IBiquadFilterNode {
       return this._Q;
     }
 
-    const id = this.createObjectReference('Q', []);
-    this._Q = new AudioParam(id, this.context, 'a-rate', this._QDefaultValue);
+    this._Q = this.createObjectReference('Q', [], (id) => new AudioParam(id, this.context, 'a-rate', this._QDefaultValue));
     return this._Q;
   }
 
@@ -47,8 +46,7 @@ export class BiquadFilterNode extends AudioNode implements IBiquadFilterNode {
       return this._detune;
     }
 
-    const id = this.createObjectReference('detune', []);
-    this._detune = new AudioParam(id, this.context, 'a-rate', this._detuneDefaultValue);
+    this._detune = this.createObjectReference('detune', [], (id) => new AudioParam(id, this.context, 'a-rate', this._detuneDefaultValue));
     return this._detune;
   }
 
@@ -57,8 +55,7 @@ export class BiquadFilterNode extends AudioNode implements IBiquadFilterNode {
       return this._frequency;
     }
 
-    const id = this.createObjectReference('frequency', []);
-    this._frequency = new AudioParam(id, this.context, 'a-rate', this._frequencyDefaultValue);
+    this._frequency = this.createObjectReference('frequency', [], (id) => new AudioParam(id, this.context, 'a-rate', this._frequencyDefaultValue));
     return this._frequency;
   }
 
@@ -67,8 +64,7 @@ export class BiquadFilterNode extends AudioNode implements IBiquadFilterNode {
       return this._gain;
     }
 
-    const id = this.createObjectReference('gain', []);
-    this._gain = new AudioParam(id, this.context, 'a-rate', this._gainDefaultValue);
+    this._gain = this.createObjectReference('gain', [], (id) => new AudioParam(id, this.context, 'a-rate', this._gainDefaultValue));
     return this._gain;
   }
 

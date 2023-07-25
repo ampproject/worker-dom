@@ -26,9 +26,7 @@ export class GainNode extends AudioNode implements IGainNode {
       return this._gain;
     }
 
-    const gainId = this.createObjectReference('gain', []);
-    this._gain = new AudioParam(gainId, this.context, 'a-rate', this._gainDefaultValue);
-
+    this._gain = this.createObjectReference('gain', [], (id) => new AudioParam(id, this.context, 'a-rate', this._gainDefaultValue));
     return this._gain;
   }
 }

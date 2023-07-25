@@ -62,8 +62,7 @@ export class Selection implements TransferrableObject {
   }
 
   getRangeAt(index: number): Range {
-    const id = createObjectReference(this.document, this, 'getRangeAt', [...arguments]);
-    return new Range(id, this.document);
+    return createObjectReference(this.document, this, 'getRangeAt', [...arguments], (id) => new Range(id, this.document));
   }
 
   removeAllRanges(): void {
@@ -116,8 +115,7 @@ export class Range implements TransferrableObject {
   }
 
   cloneRange(): Range {
-    const id = createObjectReference(this.document, this, 'cloneRange', []);
-    return new Range(id, this.document);
+    return createObjectReference(this.document, this, 'cloneRange', [], (id) => new Range(id, this.document));
   }
 
   collapse(toStart?: boolean): void {

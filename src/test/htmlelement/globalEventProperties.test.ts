@@ -1,9 +1,10 @@
 import anyTest, { TestInterface } from 'ava';
-import { HTMLElement, appendGlobalEventProperties } from '../../worker-thread/dom/HTMLElement';
+import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 import { createTestingDocument } from '../DocumentCreation';
 import { Document } from '../../worker-thread/dom/Document';
 import { Event } from '../../worker-thread/Event';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { appendGlobalEventProperties } from '../../worker-thread/event-subscription/EventTarget';
 
 const test = anyTest as TestInterface<{
   document: Document;
@@ -23,7 +24,7 @@ test.serial('appending keys mutates existing instance', (t) => {
   const { element } = t.context;
 
   t.is(element.onclick, undefined);
-  appendGlobalEventProperties(['onclick']);
+  appendGlobalEventProperties(HTMLElement, ['onclick']);
   t.is(element.onclick, null);
 });
 
@@ -62,15 +63,15 @@ test('appending keys mutates all known instances', (t) => {
 
   t.is(firstElement.onmouseenter, undefined);
   t.is(secondElement.onmouseenter, undefined);
-  appendGlobalEventProperties(['onmouseenter']);
+  appendGlobalEventProperties(HTMLElement, ['onmouseenter']);
   t.is(firstElement.onmouseenter, null);
   t.is(secondElement.onmouseenter, null);
 });
 
 test('reappending a key does not cause an error', (t) => {
   const { element } = t.context;
-  appendGlobalEventProperties(['onmouseexit']);
-  appendGlobalEventProperties(['onmouseexit']);
+  appendGlobalEventProperties(HTMLElement, ['onmouseexit']);
+  appendGlobalEventProperties(HTMLElement, ['onmouseexit']);
 
   t.is(element.onmouseexit, null);
 });
@@ -78,8 +79,11 @@ test('reappending a key does not cause an error', (t) => {
 test('appending as many keys as there are TransferrableKeys functions', (t) => {
   const { element } = t.context;
   const handler = (e: any) => console.log(e);
-  appendGlobalEventProperties(['ontouchmove']);
-  appendGlobalEventProperties(Array.from(Array(TransferrableKeys.END), (d, i) => i + 'key'));
+  appendGlobalEventProperties(HTMLElement, ['ontouchmove']);
+  appendGlobalEventProperties(
+    HTMLElement,
+    Array.from(Array(TransferrableKeys.END), (d, i) => i + 'key'),
+  );
 
   t.is(element.ontouchmove, null);
   element.ontouchmove = handler;
@@ -93,9 +97,9 @@ test.serial('unsubscription with `null` value does not cause an error', (t) => {
   t.is(element.onclick, null);
   element.onclick = handler;
   t.is(element.onclick, handler);
-  element.dispatchEvent(new Event("click",  {}));
+  element.dispatchEvent(new Event('click', {}));
 
   element.onclick = null;
   t.is(element.onclick, null);
-  element.dispatchEvent(new Event("click",  {}));
+  element.dispatchEvent(new Event('click', {}));
 });

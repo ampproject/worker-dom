@@ -96,7 +96,7 @@ test('Deserializes object argument', (t) => {
   const obj = {} as CanvasGradient;
   objectContext.store(id, obj);
 
-  const buffer = new BytesStream(estimateSizeInBytes([obj]));
+  const buffer = new BytesStream(10);
   buffer.appendUint32(1);
   buffer.appendUint8(TransferrableObjectType.TransferObject);
   buffer.appendUint16(id);
@@ -121,7 +121,7 @@ test('Deserializes varying types', (t) => {
   const object = {} as CanvasGradient;
   objectContext.store(objectId, object);
 
-  const buffer = new BytesStream(estimateSizeInBytes([smallInt, stringArg, object]));
+  const buffer = new BytesStream(100);
   buffer.appendUint32(3);
   buffer.appendUint8(TransferrableObjectType.Uint8);
   buffer.appendUint8(smallInt);

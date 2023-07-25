@@ -77,6 +77,17 @@ export class Element extends ParentNode {
   public localName: NodeName;
   public attributes: Attr[] = [];
   public namespaceURI: NamespaceURI;
+  public boundingClientRect: ClientRect = {
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  };
+
   private style_: CSSStyleDeclaration | undefined;
 
   /**
@@ -502,6 +513,10 @@ export class Element extends ParentNode {
     return clone;
   }
 
+  public getBoundingClientRect(): ClientRect {
+    return this.boundingClientRect;
+  }
+
   /**
    * Return the ClientRect for an Element once determined by the main thread.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
@@ -510,17 +525,6 @@ export class Element extends ParentNode {
    * Note: Edge and IE11 do not return the x/y value, but top/left are equivalent. Normalize the values here.
    */
   public getBoundingClientRectAsync(): Promise<ClientRect> {
-    const defaultValue = {
-      left: 0,
-      top: 0,
-      right: 0,
-      bottom: 0,
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-    };
-
     return new Promise((resolve) => {
       const messageHandler = ({ data }: { data: MessageToWorker }) => {
         if (
@@ -529,7 +533,8 @@ export class Element extends ParentNode {
         ) {
           this.ownerDocument.removeGlobalEventListener('message', messageHandler);
           const transferredBoundingClientRect: TransferrableBoundingClientRect = (data as BoundingClientRectToWorker)[TransferrableKeys.data];
-          resolve({
+
+          this.boundingClientRect = {
             top: transferredBoundingClientRect[0],
             right: transferredBoundingClientRect[1],
             bottom: transferredBoundingClientRect[2],
@@ -538,18 +543,20 @@ export class Element extends ParentNode {
             height: transferredBoundingClientRect[5],
             x: transferredBoundingClientRect[0],
             y: transferredBoundingClientRect[3],
-          });
+          };
+
+          resolve(this.boundingClientRect);
         }
       };
 
       if (!this.ownerDocument.addGlobalEventListener || !this.isConnected) {
         // Elements run within Node runtimes are missing addEventListener as a global.
         // In this case, treat the return value the same as a disconnected node.
-        resolve(defaultValue);
+        resolve(this.boundingClientRect);
       } else {
         this.ownerDocument.addGlobalEventListener('message', messageHandler);
         transfer(this.ownerDocument as Document, [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this]);
-        setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.
+        setTimeout(resolve, 500, this.boundingClientRect); // TODO: Why a magical constant, define and explain.
       }
     });
   }

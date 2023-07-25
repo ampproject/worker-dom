@@ -1,4 +1,3 @@
-import { TransferredNode } from './TransferrableNodes';
 import { TransferrableKeys } from './TransferrableKeys';
 
 interface TransferrableTouch {
@@ -20,16 +19,17 @@ export interface TransferrableTouchList {
 
 export interface TransferrableEvent {
   readonly [TransferrableKeys.index]: number;
+  readonly [TransferrableKeys.nodeType]: number;
   readonly [TransferrableKeys.bubbles]?: boolean;
   readonly [TransferrableKeys.cancelable]?: boolean;
   [TransferrableKeys.cancelBubble]?: boolean;
-  readonly [TransferrableKeys.currentTarget]?: TransferredNode;
+  readonly [TransferrableKeys.currentTarget]?: number;
   readonly [TransferrableKeys.defaultPrevented]?: boolean;
   readonly [TransferrableKeys.eventPhase]?: number;
   readonly [TransferrableKeys.isTrusted]?: boolean;
   [TransferrableKeys.returnValue]?: boolean;
   // readonly srcElement: TransferrableTarget | null;
-  readonly [TransferrableKeys.target]: TransferredNode | null;
+  readonly [TransferrableKeys.target]: number;
   readonly [TransferrableKeys.timeStamp]?: number;
   readonly [TransferrableKeys.type]: string;
   readonly [TransferrableKeys.scoped]?: boolean;
@@ -46,6 +46,7 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.buttons]?: number;
   readonly [TransferrableKeys.detail]?: number;
   readonly [TransferrableKeys.listenableProperties]?: any[];
+  readonly [TransferrableKeys.boundingClientRect]?: DOMRect;
 }
 
 /**

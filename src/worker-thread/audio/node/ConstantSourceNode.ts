@@ -12,7 +12,7 @@ export class ConstantSourceNode extends AudioScheduledSourceNode implements ICon
   constructor(context: BaseAudioContext, options: ConstantSourceOptions = {}, id?: number) {
     id = id || createWindowObjectReferenceConstructor(context.document, 'ConstantSourceNode', [...arguments]);
 
-    super(id, context, 0, 1);
+    super(id, context, 0, 1, {});
 
     this._offsetDefaultValue = options.offset || 1.0;
   }
@@ -22,8 +22,7 @@ export class ConstantSourceNode extends AudioScheduledSourceNode implements ICon
       return this._offset;
     }
 
-    const id = this.createObjectReference('offset', []);
-    this._offset = new AudioParam(id, this.context, 'a-rate', this._offsetDefaultValue);
+    this._offset = this.createObjectReference('offset', [], (id) => new AudioParam(id, this.context, 'a-rate', this._offsetDefaultValue));
     return this._offset;
   }
 }

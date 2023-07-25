@@ -4,6 +4,7 @@ import { transfer } from '../MutationTransfer';
 import { Document } from './Document';
 import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
 import { registerSubclass } from './Element';
+import { callFunction } from '../function';
 
 export class HTMLMediaElement extends HTMLElement {
   private _paused: boolean = true;
@@ -32,7 +33,6 @@ export class HTMLMediaElement extends HTMLElement {
 
     this._setProperty('currentTime', time);
 
-    this.seeking = true;
     this._currentTime = time;
 
     if (!this.paused) {
@@ -50,9 +50,7 @@ export class HTMLMediaElement extends HTMLElement {
       return Promise.resolve();
     }
 
-    this._callFunction('play', []);
-
-    return Promise.resolve().then((_) => {
+    return callFunction(this.ownerDocument as Document, this, 'play', [], 0, true).then(() => {
       this._playTime = Date.now();
       this._paused = false;
     });
@@ -149,7 +147,6 @@ registerListenableProperties(
     duration: Number.NaN,
     currentSrc: '',
     seeking: false,
-    seeked: false,
   },
   HTMLMediaElement,
 );

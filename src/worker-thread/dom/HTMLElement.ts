@@ -3,33 +3,6 @@ import { reflectProperties } from './enhanceElement';
 import { matchNearestParent, tagNameConditionPredicate } from './matchElements';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
-export const appendGlobalEventProperties = (keys: Array<string>): void => {
-  const keysToAppend = keys.filter((key) => !HTMLElement.prototype.hasOwnProperty(key));
-  if (keysToAppend.length <= 0) {
-    return;
-  }
-
-  keysToAppend.forEach((key: string): void => {
-    const normalizedKey = key.replace(/on/, '');
-    Object.defineProperty(HTMLElement.prototype, key, {
-      enumerable: true,
-      get(): string {
-        return this[TransferrableKeys.propertyEventHandlers][normalizedKey] || null;
-      },
-      set(value) {
-        const stored = this[TransferrableKeys.propertyEventHandlers][normalizedKey];
-        if (stored) {
-          this.removeEventListener(normalizedKey, stored);
-        }
-        if (typeof value === 'function') {
-          this.addEventListener(normalizedKey, value);
-        }
-        this[TransferrableKeys.propertyEventHandlers][normalizedKey] = value;
-      },
-    });
-  });
-};
-
 export class HTMLElement extends Element {
   public [TransferrableKeys.propertyEventHandlers]: {
     [key: string]: Function;

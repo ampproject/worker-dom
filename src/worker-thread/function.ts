@@ -2,27 +2,21 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { Document } from './dom/Document';
 import { CallFunctionResultToWorker, FunctionCallToWorker, MessageToWorker, MessageType, ResolveOrReject } from '../transfer/Messages';
 import { transfer } from './MutationTransfer';
-import { TransferrableMutationType, TransferrableObjectType } from '../transfer/TransferrableMutation';
+import { TransferrableMutationType } from '../transfer/TransferrableMutation';
 import { DocumentStub } from './dom/DocumentStub';
 import { TransferrableObject } from './worker-thread';
 
 const exportedFunctions: { [fnIdent: string]: Function } = {};
 
-export const windowTarget = {
-  // TODO: fix me
-  [TransferrableKeys.serializeAsTransferrableObject]: () => {
-    return [TransferrableObjectType.Window, 0];
-  },
-};
 let fnCallCount = 0;
 
 export function callGlobalFunction(document: Document | DocumentStub, functionName: string, args: any[], timeout?: number): Promise<any> {
-  return callFunction(document, windowTarget, functionName, args, timeout);
+  return callFunction(document, self, functionName, args, timeout);
 }
 
 export function callFunction(
   document: Document | DocumentStub,
-  target: TransferrableObject,
+  target: TransferrableObject | Document | typeof globalThis,
   functionName: string,
   args: any[],
   timeout?: number,
@@ -62,7 +56,11 @@ export function callFunction(
       transfer(document, [TransferrableMutationType.CALL_FUNCTION, target, functionName, rid, isFunctionAsync, args, resultObjectId]);
 
       if (timeout && timeout > 0) {
-        timeoutObg = setTimeout(reject, timeout, new Error('Timeout'));
+        timeoutObg = setTimeout(() => {
+          document.removeGlobalEventListener('message', messageHandler);
+          clearTimeout(timeoutObg);
+          reject(new Error('Timeout'));
+        }, timeout);
       }
     }
   });

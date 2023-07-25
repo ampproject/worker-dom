@@ -32,6 +32,5 @@ testReflectedProperties([
 testReflectedListenableProperty({
   naturalHeight: 0,
   naturalWidth: 0,
-  currentSrc: '',
   complete: false,
 });

@@ -3,23 +3,36 @@ import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { TransferrableMutationType, TransferrableObjectType } from '../../transfer/TransferrableMutation';
 import { transfer } from '../MutationTransfer';
 import { Document } from '../dom/Document';
-import { createObjectReference } from '../object-reference';
+import { createObjectReference, setObjectReference } from '../object-reference';
+import { appendGlobalEventProperties, EventTarget } from '../event-subscription/EventTarget';
 
-export abstract class TransferrableAudio implements TransferrableObject {
+export abstract class TransferrableAudio extends EventTarget implements TransferrableObject {
   public readonly id: number;
   public readonly document: Document;
+  public [TransferrableKeys.propertyEventHandlers]: {
+    [key: string]: Function;
+  } = {};
 
-  constructor(id: number, document: Document) {
+  constructor(id: number, document: Document, keys?: Array<string>) {
+    super(document);
     this.id = id;
     this.document = document;
+    if (keys) {
+      appendGlobalEventProperties(TransferrableAudio, keys);
+    }
+    setObjectReference(id, this);
+  }
+
+  parent(): any {
+    return null;
   }
 
   [TransferrableKeys.serializeAsTransferrableObject](): number[] {
     return [TransferrableObjectType.TransferObject, this.id];
   }
 
-  createObjectReference(creationMethod: string, creationArgs: any[]): number {
-    return createObjectReference(this.document, this, creationMethod, creationArgs);
+  createObjectReference<T>(creationMethod: string, creationArgs: any[], instanceCreationFn: (id: number) => T): T {
+    return createObjectReference(this.document, this, creationMethod, creationArgs, instanceCreationFn);
   }
 
   protected [TransferrableKeys.mutated](fnName: string, args: any[]) {

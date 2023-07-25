@@ -64,8 +64,9 @@ function deserializeNext(buffer: BytesStream, stringContext: StringContext, node
     case TransferrableObjectType.HTMLElement:
       return nodeContext.getNode(buffer.readUint16());
     case TransferrableObjectType.Window:
-      buffer.readUint16(); // TODO: fix
       return window;
+    case TransferrableObjectType.Document:
+      return document;
     case TransferrableObjectType.Int8Array:
       return buffer.readTypedArray(Int8Array);
     case TransferrableObjectType.Int16Array:

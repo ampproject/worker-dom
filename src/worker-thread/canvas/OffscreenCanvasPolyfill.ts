@@ -281,18 +281,27 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   }
 
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
-    const gradientId = createObjectReference(this.canvasElement.ownerDocument as Document, this, 'createLinearGradient', [...arguments]);
-    return new CanvasGradient(gradientId, this.canvasElement.ownerDocument as Document);
+    return createObjectReference(
+      this.canvasElement.ownerDocument as Document,
+      this,
+      'createLinearGradient',
+      [...arguments],
+      (id) => new CanvasGradient(id, this.canvasElement.ownerDocument as Document),
+    );
   }
 
   createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
-    const gradientId = createObjectReference(this.canvasElement.ownerDocument as Document, this, 'createRadialGradient', [...arguments]);
-    return new CanvasGradient(gradientId, this.canvasElement.ownerDocument as Document);
+    return createObjectReference(
+      this.canvasElement.ownerDocument as Document,
+      this,
+      'createRadialGradient',
+      [...arguments],
+      (id) => new CanvasGradient(id, this.canvasElement.ownerDocument as Document),
+    );
   }
 
   createPattern(image: HTMLCanvasElement | HTMLImageElement, repetition: string): CanvasPattern {
-    const patternId = createObjectReference(this.canvasElement.ownerDocument as Document, this, 'createPattern', [...arguments]);
-    return new CanvasPattern(patternId);
+    return createObjectReference(this.canvasElement.ownerDocument as Document, this, 'createPattern', [...arguments], (id) => new CanvasPattern(id));
   }
 
   drawImage(image: CanvasImageSource, dx: number, dy: number) {

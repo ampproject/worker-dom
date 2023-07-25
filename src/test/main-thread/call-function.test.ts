@@ -211,13 +211,13 @@ test('Method with arguments and store result', (t) => {
           [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT,
           [TransferrableKeys.index]: rid,
           [TransferrableKeys.success]: true,
-          [TransferrableKeys.value]: { run: 10 },
+          [TransferrableKeys.value]: { run: 10, _index_: objectId },
         },
       ],
     ).calledOnce,
   );
 
-  t.deepEqual(objectContext.get(objectId) as any, { run: 10 });
+  t.deepEqual(objectContext.get(objectId) as any, { run: 10, _index_: objectId });
 });
 
 test('Global Method call', (t) => {
@@ -417,13 +417,13 @@ test('Method async with arguments and store object', async (t) => {
           [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT,
           [TransferrableKeys.index]: rid,
           [TransferrableKeys.success]: true,
-          [TransferrableKeys.value]: { test: 10 },
+          [TransferrableKeys.value]: { test: 10, _index_: objectId },
         },
       ],
     ).calledOnce,
   );
 
-  t.deepEqual(objectContext.get(objectId) as any, { test: 10 });
+  t.deepEqual(objectContext.get(objectId) as any, { test: 10, _index_: objectId });
 });
 
 test('Method with callback with arguments and store object', (t) => {
@@ -457,13 +457,13 @@ test('Method with callback with arguments and store object', (t) => {
           [TransferrableKeys.type]: MessageType.CALL_FUNCTION_RESULT,
           [TransferrableKeys.index]: rid,
           [TransferrableKeys.success]: true,
-          [TransferrableKeys.value]: { test: 3 },
+          [TransferrableKeys.value]: { test: 3, _index_: objectId },
         },
       ],
     ).calledOnce,
   );
 
-  t.deepEqual(objectContext.get(objectId) as any, { test: 3 });
+  t.deepEqual(objectContext.get(objectId) as any, { test: 3, _index_: objectId });
 });
 
 test('Method with callback with arguments and store object and error', (t) => {
@@ -520,7 +520,6 @@ function executeCall(
   isFunctionAsync: boolean = false,
   storeResultObjectId: number = 0,
 ) {
-  console.log('!!!!!!2 ', serializedArgs);
   return callFunctionProcessor.execute(
     [TransferrableMutationType.CALL_FUNCTION, targetObject, fnName, rid, isFunctionAsync, serializedArgs, storeResultObjectId],
     /* allow */ true,

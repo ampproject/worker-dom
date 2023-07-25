@@ -68,8 +68,11 @@ export class PannerNode extends AudioNode implements IPannerNode {
       return this._orientationX;
     }
 
-    const id = this.createObjectReference('orientationX', []);
-    this._orientationX = new AudioParam(id, this.context, 'a-rate', this._orientationXDefaultValue);
+    this._orientationX = this.createObjectReference(
+      'orientationX',
+      [],
+      (id) => new AudioParam(id, this.context, 'a-rate', this._orientationXDefaultValue),
+    );
     return this._orientationX;
   }
 
@@ -78,8 +81,11 @@ export class PannerNode extends AudioNode implements IPannerNode {
       return this._orientationY;
     }
 
-    const id = this.createObjectReference('orientationY', []);
-    this._orientationY = new AudioParam(id, this.context, 'a-rate', this._orientationYDefaultValue);
+    this._orientationY = this.createObjectReference(
+      'orientationY',
+      [],
+      (id) => new AudioParam(id, this.context, 'a-rate', this._orientationYDefaultValue),
+    );
     return this._orientationY;
   }
 
@@ -88,8 +94,11 @@ export class PannerNode extends AudioNode implements IPannerNode {
       return this._orientationZ;
     }
 
-    const id = this.createObjectReference('orientationZ', []);
-    this._orientationZ = new AudioParam(id, this.context, 'a-rate', this._orientationZDefaultValue);
+    this._orientationZ = this.createObjectReference(
+      'orientationZ',
+      [],
+      (id) => new AudioParam(id, this.context, 'a-rate', this._orientationZDefaultValue),
+    );
     return this._orientationZ;
   }
 
@@ -98,8 +107,7 @@ export class PannerNode extends AudioNode implements IPannerNode {
       return this._positionX;
     }
 
-    const id = this.createObjectReference('positionX', []);
-    this._positionX = new AudioParam(id, this.context, 'a-rate', this._positionXDefaultValue);
+    this._positionX = this.createObjectReference('positionX', [], (id) => new AudioParam(id, this.context, 'a-rate', this._positionXDefaultValue));
     return this._positionX;
   }
 
@@ -108,8 +116,7 @@ export class PannerNode extends AudioNode implements IPannerNode {
       return this._positionY;
     }
 
-    const id = this.createObjectReference('positionY', []);
-    this._positionY = new AudioParam(id, this.context, 'a-rate', this._positionYDefaultValue);
+    this._positionY = this.createObjectReference('positionY', [], (id) => new AudioParam(id, this.context, 'a-rate', this._positionYDefaultValue));
     return this._positionY;
   }
 
@@ -118,8 +125,7 @@ export class PannerNode extends AudioNode implements IPannerNode {
       return this._positionZ;
     }
 
-    const id = this.createObjectReference('positionZ', []);
-    this._positionZ = new AudioParam(id, this.context, 'a-rate', this._positionZDefaultValue);
+    this._positionZ = this.createObjectReference('positionZ', [], (id) => new AudioParam(id, this.context, 'a-rate', this._positionZDefaultValue));
     return this._positionZ;
   }
 

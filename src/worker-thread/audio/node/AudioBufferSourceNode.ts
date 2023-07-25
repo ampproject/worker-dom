@@ -37,8 +37,7 @@ export class AudioBufferSourceNode extends AudioScheduledSourceNode implements I
       return this._detune;
     }
 
-    const id = this.createObjectReference('detune', []);
-    this._detune = new AudioParam(id, this.context, 'k-rate', this._detuneDefaultValue);
+    this._detune = this.createObjectReference('detune', [], (id) => new AudioParam(id, this.context, 'k-rate', this._detuneDefaultValue));
     return this._detune;
   }
 
@@ -47,8 +46,11 @@ export class AudioBufferSourceNode extends AudioScheduledSourceNode implements I
       return this._playbackRate;
     }
 
-    const id = this.createObjectReference('playbackRate', []);
-    this._playbackRate = new AudioParam(id, this.context, 'k-rate', this._playbackRateDefaultValue);
+    this._playbackRate = this.createObjectReference(
+      'playbackRate',
+      [],
+      (id) => new AudioParam(id, this.context, 'k-rate', this._playbackRateDefaultValue),
+    );
     return this._playbackRate;
   }
 

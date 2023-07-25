@@ -35,7 +35,6 @@ testReflectedListenableProperty({
   duration: Number.NaN,
   currentSrc: '',
   seeking: false,
-  seeked: false,
   videoWidth: 0,
   videoHeight: 0,
 });

@@ -261,6 +261,7 @@ export const enum TransferrableObjectType {
   Undefined = 30,
   Object = 31,
   ArrayBuffer = 32,
+  Document = 33,
 }
 
 /**

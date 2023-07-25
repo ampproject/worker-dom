@@ -2,7 +2,11 @@ import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties, registerListenableProperties } from './enhanceElement';
 
-export class HTMLImageElement extends HTMLElement {}
+export class HTMLImageElement extends HTMLElement {
+  get currentSrc() {
+    return this.src;
+  }
+}
 
 registerSubclass('img', HTMLImageElement);
 
@@ -46,9 +50,10 @@ reflectProperties(
 registerListenableProperties(
   {
     complete: false,
-    currentSrc: '',
     naturalHeight: 0,
     naturalWidth: 0,
+    height: 0,
+    width: 0,
   },
   HTMLImageElement,
 );

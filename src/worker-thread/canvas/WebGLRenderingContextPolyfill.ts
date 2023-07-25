@@ -104,7 +104,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
 
   private _parameters: { [key: number]: any };
   private _supportedExtensions: string[] | null = null;
-  private _extensions: { [key: string]: any };
+  private readonly _extensions: { [key: string]: any } = {};
   private _contextAttributes: WebGLContextAttributes | null = null;
   private readonly _buffers: { [key: string]: vGLBuffer | null } = {
     arrayBuffer: null,
@@ -162,13 +162,15 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     }
 
     options = options || ({} as WebGLOptions);
-    this._extensions = options.extensions || [];
-    if (this._extensions.length == 0) {
+    const supportedExtensions = options.extensions || [];
+    if (supportedExtensions.length == 0) {
       callFunction(this.canvas.ownerDocument as Document, this, 'getSupportedExtensions', [])
         .then((result) => (this._supportedExtensions = result))
         .catch((reason) => {
           console.warn('Failed to get WebGL supported extensions', reason);
         });
+    } else {
+      this._supportedExtensions = supportedExtensions;
     }
 
     this._parameters = options.parameters || {};
@@ -590,53 +592,43 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   createBuffer(): vGLBuffer | null {
-    const bufferId = this.createObjectReference('createBuffer', []);
-    return new vGLBuffer(bufferId);
+    return this.createObjectReference('createBuffer', [], (id) => new vGLBuffer(id));
   }
 
   createFramebuffer(): vGLFramebuffer | null {
-    const framebufferId = this.createObjectReference('createFramebuffer', []);
-    return new vGLFramebuffer(framebufferId);
+    return this.createObjectReference('createFramebuffer', [], (id) => new vGLFramebuffer(id));
   }
 
   createProgram(): GLProgram | null {
-    const programId = this.createObjectReference('createProgram', []);
-    return new GLProgram(programId);
+    return this.createObjectReference('createProgram', [], (id) => new GLProgram(id));
   }
 
   createQuery(): vGLQuery | null {
-    const queryId = this.createObjectReference('createQuery', []);
-    return new vGLQuery(queryId);
+    return this.createObjectReference('createQuery', [], (id) => new vGLQuery(id));
   }
 
   createRenderbuffer(): vGLRenderbuffer | null {
-    const renderbufferId = this.createObjectReference('createRenderbuffer', []);
-    return new vGLRenderbuffer(renderbufferId);
+    return this.createObjectReference('createRenderbuffer', [], (id) => new vGLRenderbuffer(id));
   }
 
   createSampler(): vGLSampler | null {
-    const samplerId = this.createObjectReference('createSampler', []);
-    return new vGLSampler(samplerId);
+    return this.createObjectReference('createSampler', [], (id) => new vGLSampler(id));
   }
 
   createShader(type: GLenum): GLShader | null {
-    const shaderId = this.createObjectReference('createShader', [...arguments]);
-    return new GLShader(shaderId, type);
+    return this.createObjectReference('createShader', [...arguments], (id) => new GLShader(id, type));
   }
 
   createTexture(): vGLTexture | null {
-    const textureId = this.createObjectReference('createTexture', []);
-    return new vGLTexture(textureId);
+    return this.createObjectReference('createTexture', [], (id) => new vGLTexture(id));
   }
 
   createTransformFeedback(): vGLTransformFeedback | null {
-    const transformFeedbackId = this.createObjectReference('createTransformFeedback', []);
-    return new vGLTransformFeedback(transformFeedbackId);
+    return this.createObjectReference('createTransformFeedback', [], (id) => new vGLTransformFeedback(id));
   }
 
   createVertexArray(): vGLVertexArrayObject | null {
-    const vertexArrayId = this.createObjectReference('createVertexArray', []);
-    return new vGLVertexArrayObject(vertexArrayId);
+    return this.createObjectReference('createVertexArray', [], (id) => new vGLVertexArrayObject(id));
   }
 
   cullFace(mode: GLenum): void {
@@ -827,8 +819,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   fenceSync(condition: GLenum, flags: GLbitfield): vGLSync | null {
-    const syncId = this.createObjectReference('fenceSync', [...arguments]);
-    return new vGLSync(syncId);
+    return this.createObjectReference('fenceSync', [...arguments], (id) => new vGLSync(id));
   }
 
   finish(): void {
@@ -933,83 +924,71 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
       return this._extensions[name];
     }
 
-    const id = this.createObjectReference('getExtension', [...arguments]);
-
-    // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API#extensions
-    switch (name) {
-      case 'EXT_blend_minmax':
-      case 'EXT_color_buffer_half_float':
-      case 'EXT_color_buffer_float':
-      case 'EXT_float_blend':
-      case 'EXT_frag_depth':
-      case 'EXT_shader_texture_lod':
-      case 'OES_element_index_uint':
-      case 'OES_fbo_render_mipmap':
-      case 'OES_texture_float':
-      case 'OES_texture_float_linear':
-      case 'OES_texture_half_float_linear':
-      case 'EXT_sRGB':
-      case 'EXT_texture_compression_bptc':
-      case 'EXT_texture_compression_rgtc':
-      case 'EXT_texture_norm16':
-      case 'KHR_parallel_shader_compile':
-      case 'OES_standard_derivatives':
-      case 'OES_texture_half_float':
-      case 'WEBGL_color_buffer_float':
-      case 'WEBGL_compressed_texture_etc':
-      case 'WEBGL_compressed_texture_etc1':
-      case 'WEBGL_compressed_texture_pvrtc':
-      case 'WEBGL_compressed_texture_s3tc':
-      case 'WEBGL_compressed_texture_s3tc_srgb':
-      case 'WEBGL_debug_renderer_info':
-      case 'WEBGL_depth_texture':
-        this._extensions[name] = new GenericExtension();
-        break;
-      case 'WEBGL_compressed_texture_astc':
-        this._extensions[name] = new WEBGLCompressedTextureAstc();
-        break;
-      case 'WEBGL_debug_shaders':
-        this._extensions[name] = new WEBGLDebugShaders();
-        break;
-      case 'ANGLE_instanced_arrays':
-        this._extensions[name] = new ANGLEInstancedArrays(id, this);
-        break;
-      case 'EXT_disjoint_timer_query':
-      case 'EXT_disjoint_timer_query_webgl2':
-        this._extensions[name] = new EXTDisjointTimerQuery(id, this);
-        break;
-      case 'OES_draw_buffers_indexed':
-        this._extensions[name] = new OESDrawBuffersIndexed(id, this);
-        break;
-      case 'OES_vertex_array_object':
-        this._extensions[name] = new OESVertexArrayObject(id, this);
-        break;
-      case 'OVR_multiview2':
-        this._extensions[name] = new OVRMultiview2(id, this);
-        break;
-      case 'WEBGL_draw_buffers':
-        this._extensions[name] = new WEBGLDrawBuffers(id, this);
-        break;
-      case 'WEBGL_lose_context':
-        this._extensions[name] = new WEBGLLoseContext(id, this);
-        break;
-      case 'WEBGL_multi_draw':
-        this._extensions[name] = new WEBGLMultiDraw(id, this);
-        break;
-      case 'EXT_texture_filter_anisotropic': {
-        this._parameters[this.MAX_TEXTURE_MAX_ANISOTROPY_EXT] = 2; // default value
-        callFunction(this.canvas.ownerDocument as Document, this, 'getParameter', [this.MAX_TEXTURE_MAX_ANISOTROPY_EXT])
-          .then((result) => (this._parameters[this.MAX_TEXTURE_MAX_ANISOTROPY_EXT] = result))
-          .catch((reason) => {
-            console.warn(`Failed to get WebGL parameter ${this.MAX_TEXTURE_MAX_ANISOTROPY_EXT}`, reason);
-          });
-        this._extensions[name] = new GenericExtension();
-        break;
+    this._extensions[name] = this.createObjectReference('getExtension', [...arguments], (id) => {
+      // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API#extensions
+      switch (name) {
+        case 'EXT_blend_minmax':
+        case 'EXT_color_buffer_half_float':
+        case 'EXT_color_buffer_float':
+        case 'EXT_float_blend':
+        case 'EXT_frag_depth':
+        case 'EXT_shader_texture_lod':
+        case 'OES_element_index_uint':
+        case 'OES_fbo_render_mipmap':
+        case 'OES_texture_float':
+        case 'OES_texture_float_linear':
+        case 'OES_texture_half_float_linear':
+        case 'EXT_sRGB':
+        case 'EXT_texture_compression_bptc':
+        case 'EXT_texture_compression_rgtc':
+        case 'EXT_texture_norm16':
+        case 'KHR_parallel_shader_compile':
+        case 'OES_standard_derivatives':
+        case 'OES_texture_half_float':
+        case 'WEBGL_color_buffer_float':
+        case 'WEBGL_compressed_texture_etc':
+        case 'WEBGL_compressed_texture_etc1':
+        case 'WEBGL_compressed_texture_pvrtc':
+        case 'WEBGL_compressed_texture_s3tc':
+        case 'WEBGL_compressed_texture_s3tc_srgb':
+        case 'WEBGL_debug_renderer_info':
+        case 'WEBGL_depth_texture':
+          return new GenericExtension();
+        case 'WEBGL_compressed_texture_astc':
+          return new WEBGLCompressedTextureAstc();
+        case 'WEBGL_debug_shaders':
+          return new WEBGLDebugShaders();
+        case 'ANGLE_instanced_arrays':
+          return new ANGLEInstancedArrays(id, this);
+        case 'EXT_disjoint_timer_query':
+        case 'EXT_disjoint_timer_query_webgl2':
+          return new EXTDisjointTimerQuery(id, this);
+        case 'OES_draw_buffers_indexed':
+          return new OESDrawBuffersIndexed(id, this);
+        case 'OES_vertex_array_object':
+          return new OESVertexArrayObject(id, this);
+        case 'OVR_multiview2':
+          return new OVRMultiview2(id, this);
+        case 'WEBGL_draw_buffers':
+          return new WEBGLDrawBuffers(id, this);
+        case 'WEBGL_lose_context':
+          return new WEBGLLoseContext(id, this);
+        case 'WEBGL_multi_draw':
+          return new WEBGLMultiDraw(id, this);
+        case 'EXT_texture_filter_anisotropic': {
+          this._parameters[this.MAX_TEXTURE_MAX_ANISOTROPY_EXT] = 2; // default value
+          callFunction(this.canvas.ownerDocument as Document, this, 'getParameter', [this.MAX_TEXTURE_MAX_ANISOTROPY_EXT])
+            .then((result) => (this._parameters[this.MAX_TEXTURE_MAX_ANISOTROPY_EXT] = result))
+            .catch((reason) => {
+              console.warn(`Failed to get WebGL parameter ${this.MAX_TEXTURE_MAX_ANISOTROPY_EXT}`, reason);
+            });
+          return new GenericExtension();
+        }
+        default:
+          console.warn(`Unimplemented but supported extension: ${name}, supported: `, this._supportedExtensions);
+          return null;
       }
-      default:
-        console.warn(`Unimplemented but supported extension: ${name}, supported: `, this._supportedExtensions);
-        return null;
-    }
+    });
 
     return this._extensions[name];
   }
@@ -1083,7 +1062,11 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
         return this._getBindedBuffer(this.READ_FRAMEBUFFER);
       }
       default:
-        throw new Error(`Unexpected name: ${pname}`);
+        if (!Object.values(this).includes(pname)) {
+          return null; // unknown parameter
+        }
+        // known parameter, but not loaded
+        throw new Error(`Unexpected pname: ${pname}`);
     }
   }
 
@@ -1115,8 +1098,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   getQuery(target: GLenum, pname: GLenum): vGLQuery | null {
-    const queryId = this.createObjectReference('getQuery', [...arguments]);
-    return new vGLQuery(queryId);
+    return this.createObjectReference('getQuery', [...arguments], (id) => new vGLQuery(id));
   }
 
   getQueryParameter(query: vGLQuery, pname: GLenum): any {
@@ -1199,8 +1181,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
       if (uniform.uniformLocations) {
         return uniform.uniformLocations;
       } else {
-        const uniformLocationId = this.createObjectReference('getUniformLocation', [...arguments]);
-        const uniformLocation = new vGLLocation(uniformLocationId, name);
+        const uniformLocation = this.createObjectReference('getUniformLocation', [...arguments], (id) => new vGLLocation(id, name));
         uniform.uniformLocations = uniformLocation;
         return uniformLocation;
       }
@@ -1975,8 +1956,8 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     return this._serializedAsTransferrableObject;
   }
 
-  private createObjectReference(creationMethod: string, creationArgs: any[]) {
-    return createObjectReference(this.canvas.ownerDocument as Document, this, creationMethod, creationArgs);
+  private createObjectReference<T>(creationMethod: string, creationArgs: any[], instanceCreationFn: (id: number) => T) {
+    return createObjectReference(this.canvas.ownerDocument as Document, this, creationMethod, creationArgs, instanceCreationFn);
   }
 
   private deleteObjectReference(objectId: number) {

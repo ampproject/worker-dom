@@ -182,6 +182,7 @@ export function createTestingDocument(overrides: {} | null = null): Document {
   customGlobal.sessionStorage = createStorage(document, StorageLocation.Session, {});
 
   AudioContext.document = document;
+  AudioBuffer.document = document;
 
   return document;
 }

@@ -27,8 +27,7 @@ export class AudioListener extends TransferrableAudio implements IAudioListener 
       return this._forwardX;
     }
 
-    const id = this.createObjectReference('forwardX', []);
-    this._forwardX = new AudioParam(id, this.context, 'k-rate', 0);
+    this._forwardX = this.createObjectReference('forwardX', [], (id) => new AudioParam(id, this.context, 'k-rate', 0));
     return this._forwardX;
   }
 
@@ -37,8 +36,7 @@ export class AudioListener extends TransferrableAudio implements IAudioListener 
       return this._forwardY;
     }
 
-    const id = this.createObjectReference('forwardY', []);
-    this._forwardY = new AudioParam(id, this.context, 'k-rate', 0);
+    this._forwardY = this.createObjectReference('forwardY', [], (id) => new AudioParam(id, this.context, 'k-rate', 0));
     return this._forwardY;
   }
 
@@ -47,8 +45,7 @@ export class AudioListener extends TransferrableAudio implements IAudioListener 
       return this._forwardZ;
     }
 
-    const id = this.createObjectReference('forwardZ', []);
-    this._forwardZ = new AudioParam(id, this.context, 'k-rate', -1);
+    this._forwardZ = this.createObjectReference('forwardZ', [], (id) => new AudioParam(id, this.context, 'k-rate', -1));
     return this._forwardZ;
   }
 
@@ -57,8 +54,7 @@ export class AudioListener extends TransferrableAudio implements IAudioListener 
       return this._positionX;
     }
 
-    const id = this.createObjectReference('positionX', []);
-    this._positionX = new AudioParam(id, this.context, 'k-rate', 0);
+    this._positionX = this.createObjectReference('positionX', [], (id) => new AudioParam(id, this.context, 'k-rate', 0));
     return this._positionX;
   }
 
@@ -67,8 +63,7 @@ export class AudioListener extends TransferrableAudio implements IAudioListener 
       return this._positionY;
     }
 
-    const id = this.createObjectReference('positionY', []);
-    this._positionY = new AudioParam(id, this.context, 'k-rate', 0);
+    this._positionY = this.createObjectReference('positionY', [], (id) => new AudioParam(id, this.context, 'k-rate', 0));
     return this._positionY;
   }
 
@@ -77,8 +72,7 @@ export class AudioListener extends TransferrableAudio implements IAudioListener 
       return this._positionZ;
     }
 
-    const id = this.createObjectReference('positionZ', []);
-    this._positionZ = new AudioParam(id, this.context, 'k-rate', 0);
+    this._positionZ = this.createObjectReference('positionZ', [], (id) => new AudioParam(id, this.context, 'k-rate', 0));
     return this._positionZ;
   }
 
@@ -87,8 +81,7 @@ export class AudioListener extends TransferrableAudio implements IAudioListener 
       return this._upX;
     }
 
-    const id = this.createObjectReference('upX', []);
-    this._upX = new AudioParam(id, this.context, 'k-rate', 0);
+    this._upX = this.createObjectReference('upX', [], (id) => new AudioParam(id, this.context, 'k-rate', 0));
     return this._upX;
   }
 
@@ -97,8 +90,7 @@ export class AudioListener extends TransferrableAudio implements IAudioListener 
       return this._upY;
     }
 
-    const id = this.createObjectReference('upY', []);
-    this._upY = new AudioParam(id, this.context, 'k-rate', 1);
+    this._upY = this.createObjectReference('upY', [], (id) => new AudioParam(id, this.context, 'k-rate', 1));
     return this._upY;
   }
 
@@ -107,8 +99,7 @@ export class AudioListener extends TransferrableAudio implements IAudioListener 
       return this._upZ;
     }
 
-    const id = this.createObjectReference('upZ', []);
-    this._upZ = new AudioParam(id, this.context, 'k-rate', 0);
+    this._upZ = this.createObjectReference('upZ', [], (id) => new AudioParam(id, this.context, 'k-rate', 0));
     return this._upZ;
   }
 

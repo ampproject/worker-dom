@@ -12,7 +12,7 @@ import { HTMLMediaElement } from '../dom/HTMLMediaElement';
 import { callFunction } from '../function';
 import { MediaElementAudioSourceNode } from './node/MediaElementAudioSourceNode';
 import { Document } from '../dom/Document';
-import { createWindowObjectReferenceConstructor } from '../object-reference';
+import { createWindowObjectReferenceConstructor, deleteObjectReference } from '../object-reference';
 
 export class AudioContext extends BaseAudioContext implements IAudioContext {
   readonly baseLatency: number = 0.015;
@@ -26,20 +26,24 @@ export class AudioContext extends BaseAudioContext implements IAudioContext {
   }
 
   close(): Promise<void> {
-    // TODO: Delete reference in the main thread
     return callFunction(AudioContext.document, this, 'close', [], 0, true).then(() => {
       this.changeState('closed');
+      deleteObjectReference(AudioContext.document, this.id);
     });
   }
 
   createMediaElementSource(mediaElement: HTMLMediaElement): IMediaElementAudioSourceNode {
-    const id = this.createObjectReference('createMediaElementSource', [...arguments]);
-    return new MediaElementAudioSourceNode(
-      this,
-      {
-        mediaElement,
-      },
-      id,
+    return this.createObjectReference(
+      'createMediaElementSource',
+      [...arguments],
+      (id) =>
+        new MediaElementAudioSourceNode(
+          this,
+          {
+            mediaElement,
+          },
+          id,
+        ),
     );
   }
 

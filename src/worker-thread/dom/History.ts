@@ -5,7 +5,6 @@ import { transfer } from '../MutationTransfer';
 import { Document } from './Document';
 import { DocumentStub } from './DocumentStub';
 import { createObjectReference } from '../object-reference';
-import { windowTarget } from '../function';
 
 export class History implements TransferrableObject {
   public readonly length: number = 1;
@@ -65,7 +64,9 @@ export class History implements TransferrableObject {
     if (this.id) {
       return;
     }
-
-    this.id = createObjectReference(this.document, windowTarget, 'history', []);
+    createObjectReference(this.document, self, 'history', [], (id) => {
+      this.id = id;
+      return this;
+    });
   }
 }

@@ -9,8 +9,10 @@ import { EventToWorker, MessageType } from '../transfer/Messages';
 import { TransferrableEvent, TransferrableTouchList } from '../transfer/TransferrableEvent';
 import { get } from './nodes';
 import { Document } from './dom/Document';
-import { TransferredNode } from '../transfer/TransferrableNodes';
 import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
+import { EventTarget } from './event-subscription/EventTarget';
+import { TransferrableObjectType } from '../transfer/TransferrableMutation';
+import { getObjectReference } from './object-reference';
 
 interface EventOptions {
   bubbles?: boolean;
@@ -41,8 +43,10 @@ interface Touch {
   readonly pageY: number;
   readonly target: Node | null;
 }
+
 interface TouchList {
   [key: number]: Touch;
+
   length: number;
   item: (index: number) => Touch | null;
 }
@@ -51,14 +55,14 @@ export class Event {
   public bubbles: boolean;
   public cancelable: boolean;
   public cancelBubble: boolean;
-  public currentTarget: Node;
+  public currentTarget: EventTarget;
   public defaultPrevented: boolean;
   public eventPhase: number;
   public isTrusted: boolean;
   public returnValue: boolean;
   // public srcElement: Element | null;
   // TODO(KB): Restore srcElement.
-  public target: Node | null;
+  public target: EventTarget | null;
   public timeStamp: number;
   public type: string;
   public scoped: boolean;
@@ -76,21 +80,24 @@ export class Event {
   public buttons?: number;
   public detail?: number;
 
-
   constructor(type: string, opts: EventOptions) {
     this.type = type;
-    this.bubbles = !!opts.bubbles;
-    this.cancelable = !!opts.cancelable;
+    this.bubbles = opts && !!opts.bubbles;
+    this.cancelable = opts && !!opts.cancelable;
   }
+
   public stopPropagation(): void {
     this[TransferrableKeys.stop] = true;
   }
+
   public stopImmediatePropagation(): void {
     this[TransferrableKeys.end] = this[TransferrableKeys.stop] = true;
   }
+
   public preventDefault(): void {
     this.defaultPrevented = true;
   }
+
   /** Event.initEvent() is deprecated but supported here for legacy usage.  */
   public initEvent(type: string, bubbles: boolean, cancelable: boolean) {
     this.type = type;
@@ -157,7 +164,7 @@ const eventType = (type: string, opts: UIEventOptions) => {
     default:
       return new Event(type, opts);
   }
-}
+};
 
 /**
  * Determine the target for a TransferrableEvent.
@@ -165,10 +172,14 @@ const eventType = (type: string, opts: UIEventOptions) => {
  * @param event
  */
 const targetFromTransfer = (document: Document, event: TransferrableEvent): Node | null => {
-  if (event[TransferrableKeys.target] !== null) {
-    const index = (event[TransferrableKeys.target] as TransferredNode)[0];
-    // If the target was sent as index 0, use the current document.
-    return get(index !== 0 ? index : document[TransferrableKeys.index]);
+  if (event[TransferrableKeys.target]) {
+    const index = event[TransferrableKeys.target];
+    if (event[TransferrableKeys.nodeType] === TransferrableObjectType.HTMLElement) {
+      // If the target was sent as index 0, use the current document.
+      return get(index !== 0 ? index : document[TransferrableKeys.index]);
+    } else {
+      return getObjectReference(index);
+    }
   }
   return null;
 };
@@ -226,10 +237,13 @@ export function propagate(global: WorkerDOMGlobalScope): void {
     if (data[TransferrableKeys.type] !== MessageType.EVENT) {
       return;
     }
-    const event = data[TransferrableKeys.event] as TransferrableEvent;
-    const node = get(event[TransferrableKeys.index]);
-    if (node !== null) {
 
+    const event = data[TransferrableKeys.event] as TransferrableEvent;
+    const node =
+      event[TransferrableKeys.nodeType] == TransferrableObjectType.HTMLElement
+        ? get(event[TransferrableKeys.index])
+        : getObjectReference(event[TransferrableKeys.index]);
+    if (node !== null) {
       const propertiesValues = event[TransferrableKeys.listenableProperties] || [];
       if (propertiesValues.length > 0) {
         const propertiesNames = node[TransferrableKeys.listenableProperties] || [];
@@ -241,19 +255,23 @@ export function propagate(global: WorkerDOMGlobalScope): void {
         }
       }
 
+      if (event[TransferrableKeys.boundingClientRect] && 'boundingClientRect' in node) {
+        node.boundingClientRect = event[TransferrableKeys.boundingClientRect];
+      }
+
       node.dispatchEvent(
         Object.assign(
           eventType(event[TransferrableKeys.type], {
-            bubbles: event[TransferrableKeys.bubbles],
-            cancelable: event[TransferrableKeys.cancelable],
-            view: global
+            bubbles: event[TransferrableKeys.bubbles] || false,
+            cancelable: event[TransferrableKeys.cancelable] || false,
+            view: global,
           }),
           {
-            cancelBubble: event[TransferrableKeys.cancelBubble],
-            defaultPrevented: event[TransferrableKeys.defaultPrevented],
+            cancelBubble: event[TransferrableKeys.cancelBubble] || false,
+            defaultPrevented: event[TransferrableKeys.defaultPrevented] || false,
             eventPhase: event[TransferrableKeys.eventPhase],
-            isTrusted: event[TransferrableKeys.isTrusted],
-            returnValue: event[TransferrableKeys.returnValue],
+            isTrusted: event[TransferrableKeys.isTrusted] || false,
+            returnValue: event[TransferrableKeys.returnValue] || false,
             target: targetFromTransfer(global.document, event),
             timeStamp: event[TransferrableKeys.timeStamp],
             scoped: event[TransferrableKeys.scoped],
@@ -266,9 +284,9 @@ export function propagate(global: WorkerDOMGlobalScope): void {
             changedTouches: touchListFromTransfer(global.document, event, TransferrableKeys.changedTouches),
             clientX: event[TransferrableKeys.clientX],
             clientY: event[TransferrableKeys.clientY],
-            button: event[TransferrableKeys.button],
-            buttons: event[TransferrableKeys.buttons],
-            detail: event[TransferrableKeys.detail],
+            button: event[TransferrableKeys.button] || 0,
+            buttons: event[TransferrableKeys.buttons] || 0,
+            detail: event[TransferrableKeys.detail] || 0,
           },
         ),
       );

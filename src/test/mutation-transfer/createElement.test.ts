@@ -39,7 +39,6 @@ test.serial.cb('document.createElement creation format is valid', (t) => {
   });
 });
 
-
 test.serial.cb('document.createElement creation format is valid for listenable properties', (t) => {
   const { document, emitter } = t.context;
   const audio = document.createElement('audio');
@@ -53,12 +52,11 @@ test.serial.cb('document.createElement creation format is valid for listenable p
         strings.indexOf(audio.localName),
         0,
         strings.indexOf(audio.namespaceURI),
-        5,
+        4,
         4,
         5,
         6,
         7,
-        8,
       ],
       'creation format is as expected',
     );

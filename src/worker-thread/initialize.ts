@@ -3,10 +3,11 @@ import { Document } from './dom/Document';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
-import { appendGlobalEventProperties } from './dom/HTMLElement';
 import { initializeStorage, WorkerStorageInit } from './initialize-storage';
 import { HTMLCanvasElement } from './dom/HTMLCanvasElement';
 import { History } from './dom/History';
+import { HTMLElement } from './dom/HTMLElement';
+import { appendGlobalEventProperties } from './event-subscription/EventTarget';
 
 export function initialize(
   document: Document,
@@ -27,7 +28,7 @@ export function initialize(
   location: { [type: string]: any },
 ): void {
   addCssKeys(cssKeys);
-  appendGlobalEventProperties(globalEventHandlerKeys);
+  appendGlobalEventProperties(HTMLElement, globalEventHandlerKeys);
   strings.forEach(storeString);
   (hydrateableNode[TransferrableKeys.childNodes] || []).forEach((child) =>
     document.body.appendChild(document[TransferrableKeys.hydrateNode](strings, child)),

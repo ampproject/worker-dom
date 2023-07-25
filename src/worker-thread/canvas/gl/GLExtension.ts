@@ -20,8 +20,8 @@ export abstract class TransferrableGLExtension extends TransferrableGLObject {
     transfer(this.context.canvas.ownerDocument as Document, [TransferrableMutationType.OBJECT_MUTATION, fnName, this, args]);
   }
 
-  protected createObjectReference(creationMethod: string, creationArgs: any[]): number {
-    return createObjectReference(this.context.canvas.ownerDocument as Document, this, creationMethod, creationArgs);
+  protected createObjectReference<T>(creationMethod: string, creationArgs: any[], instanceCreationFn: (id: number) => T): T {
+    return createObjectReference(this.context.canvas.ownerDocument as Document, this, creationMethod, creationArgs, instanceCreationFn);
   }
 
   protected deleteObjectReference(objectId: number) {
@@ -204,8 +204,7 @@ export class OESVertexArrayObject extends TransferrableGLExtension implements OE
   }
 
   createVertexArrayOES(): GLVertexArrayObjectOES | null {
-    const id = this.createObjectReference('createVertexArrayOES', []);
-    return new GLVertexArrayObjectOES(id);
+    return this.createObjectReference('createVertexArrayOES', [], (id) => new GLVertexArrayObjectOES(id));
   }
 
   deleteVertexArrayOES(arrayObject: GLVertexArrayObjectOES | null): void {
@@ -254,8 +253,7 @@ export class EXTDisjointTimerQuery extends TransferrableGLExtension /* implement
   }
 
   createQueryEXT(): vGLQuery {
-    const queryId = this.createObjectReference('createQueryEXT', []);
-    return new vGLQuery(queryId);
+    return this.createObjectReference('createQueryEXT', [], (id) => new vGLQuery(id));
   }
 
   deleteQueryEXT(query: vGLQuery): void {

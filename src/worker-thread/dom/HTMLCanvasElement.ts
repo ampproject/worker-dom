@@ -35,13 +35,18 @@ export class HTMLCanvasElement extends HTMLElement {
         }
 
         if (!(contextType in this.contextWebGLs)) {
-          const id = createObjectReference(this.ownerDocument as Document, this, 'getContext', [...arguments]);
-
           contextAttributes = {
             ...contextInfo.attributes,
             ...(contextAttributes || {}),
           };
-          this.contextWebGLs[contextType] = new WebGLRenderingContextPolyfill(id, this, contextAttributes, contextInfo);
+
+          this.contextWebGLs[contextType] = createObjectReference(
+            this.ownerDocument as Document,
+            this,
+            'getContext',
+            [...arguments],
+            (id) => new WebGLRenderingContextPolyfill(id, this, contextAttributes, contextInfo),
+          );
         }
         return this.contextWebGLs[contextType];
       }

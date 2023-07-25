@@ -40,8 +40,7 @@ export class DynamicsCompressorNode extends AudioNode implements IDynamicsCompre
       return this._attack;
     }
 
-    const id = this.createObjectReference('attack', []);
-    this._attack = new AudioParam(id, this.context, 'k-rate', this._attackDefaultValue);
+    this._attack = this.createObjectReference('attack', [], (id) => new AudioParam(id, this.context, 'k-rate', this._attackDefaultValue));
     return this._attack;
   }
 
@@ -50,8 +49,7 @@ export class DynamicsCompressorNode extends AudioNode implements IDynamicsCompre
       return this._knee;
     }
 
-    const id = this.createObjectReference('knee', []);
-    this._knee = new AudioParam(id, this.context, 'k-rate', this._kneeDefaultValue);
+    this._knee = this.createObjectReference('knee', [], (id) => new AudioParam(id, this.context, 'k-rate', this._kneeDefaultValue));
     return this._knee;
   }
 
@@ -60,8 +58,7 @@ export class DynamicsCompressorNode extends AudioNode implements IDynamicsCompre
       return this._ratio;
     }
 
-    const id = this.createObjectReference('ratio', []);
-    this._ratio = new AudioParam(id, this.context, 'k-rate', this._ratioDefaultValue);
+    this._ratio = this.createObjectReference('ratio', [], (id) => new AudioParam(id, this.context, 'k-rate', this._ratioDefaultValue));
     return this._ratio;
   }
 
@@ -74,8 +71,7 @@ export class DynamicsCompressorNode extends AudioNode implements IDynamicsCompre
       return this._release;
     }
 
-    const id = this.createObjectReference('release', []);
-    this._release = new AudioParam(id, this.context, 'k-rate', this._releaseDefaultValue);
+    this._release = this.createObjectReference('release', [], (id) => new AudioParam(id, this.context, 'k-rate', this._releaseDefaultValue));
     return this._release;
   }
 
@@ -84,8 +80,7 @@ export class DynamicsCompressorNode extends AudioNode implements IDynamicsCompre
       return this._threshold;
     }
 
-    const id = this.createObjectReference('threshold', []);
-    this._threshold = new AudioParam(id, this.context, 'k-rate', this._thresholdDefaultValue);
+    this._threshold = this.createObjectReference('threshold', [], (id) => new AudioParam(id, this.context, 'k-rate', this._thresholdDefaultValue));
     return this._threshold;
   }
 }

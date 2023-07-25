@@ -61,9 +61,9 @@ export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typ
 export const registerListenableProperties = (properties: { [key: string]: any }, defineOn: typeof Element): void => {
   const listenableProperties: string[] = [];
   for (const propertyName in properties) {
-    if (!(propertyName in defineOn.prototype)) {
-      listenableProperties.push(propertyName);
+    listenableProperties.push(propertyName);
 
+    if (!(propertyName in defineOn.prototype)) {
       Object.defineProperty(defineOn.prototype, propertyName, {
         enumerable: true,
         writable: true,

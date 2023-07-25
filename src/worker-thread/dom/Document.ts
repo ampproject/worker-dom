@@ -45,7 +45,7 @@ import { propagate as propagateResize } from '../ResizePropagation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { GlobalScope, WorkerDOMGlobalScope } from '../WorkerDOMGlobalScope';
 import { set as setPhase } from '../phase';
-import { callGlobalFunction, windowTarget } from '../function';
+import { callGlobalFunction } from '../function';
 import { createObjectReference } from '../object-reference';
 import { Range, Selection } from './Selection';
 import { Location } from './Location';
@@ -130,9 +130,7 @@ export class Document extends Element {
       return this._location;
     }
 
-    const locationId = createObjectReference(this, windowTarget, 'location', []);
-    this._location = new Location(locationId, this, this.locationInfo);
-
+    this._location = createObjectReference(this, self, 'location', [], (id) => new Location(id, this, this.locationInfo));
     return this._location;
   }
 
@@ -174,12 +172,10 @@ export class Document extends Element {
   }
 
   public getSelection(): Selection {
-    const id = createObjectReference(this, this, 'getSelection', []);
-    return new Selection(id, this);
+    return createObjectReference(this, this, 'getSelection', [], (id) => new Selection(id, this));
   }
 
   public createRange() {
-    const id = createObjectReference(this, this, 'createRange', []);
-    return new Range(id, this);
+    return createObjectReference(this, this, 'createRange', [], (id) => new Range(id, this));
   }
 }

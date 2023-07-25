@@ -1,4 +1,5 @@
 import { HTMLMediaElement } from '../dom/HTMLMediaElement';
+import { Event } from '../Event';
 
 export type ChannelCountMode = 'clamped-max' | 'explicit' | 'max';
 export type ChannelInterpretation = 'discrete' | 'speakers';
@@ -71,7 +72,7 @@ export interface BaseAudioContextEventMap {
 }
 
 /** A generic interface for representing an audio processing module. Examples include: */
-export interface IAudioNode extends EventTarget {
+export interface IAudioNode {
   channelCount: number;
   channelCountMode: ChannelCountMode;
   channelInterpretation: ChannelInterpretation;
@@ -184,22 +185,6 @@ export interface IAudioWorkletNode extends IAudioNode {
   onprocessorerror: ((this: IAudioWorkletNode, ev: Event) => any) | null;
   readonly parameters: AudioParamMap;
   readonly port: MessagePort;
-
-  addEventListener<K extends keyof AudioWorkletNodeEventMap>(
-    type: K,
-    listener: (this: IAudioWorkletNode, ev: AudioWorkletNodeEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-
-  removeEventListener<K extends keyof AudioWorkletNodeEventMap>(
-    type: K,
-    listener: (this: IAudioWorkletNode, ev: AudioWorkletNodeEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void;
-
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
 }
 
 export declare var AudioWorkletNode: {
@@ -341,22 +326,6 @@ interface IMediaStream extends EventTarget {
   getVideoTracks(): IMediaStreamTrack[];
 
   removeTrack(track: IMediaStreamTrack): void;
-
-  addEventListener<K extends keyof MediaStreamEventMap>(
-    type: K,
-    listener: (this: IMediaStream, ev: MediaStreamEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-
-  removeEventListener<K extends keyof MediaStreamEventMap>(
-    type: K,
-    listener: (this: IMediaStream, ev: MediaStreamEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void;
-
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
 }
 
 declare var MediaStream: {
@@ -459,22 +428,6 @@ interface IMediaStreamTrack extends EventTarget {
   getSettings(): MediaTrackSettings;
 
   stop(): void;
-
-  addEventListener<K extends keyof MediaStreamTrackEventMap>(
-    type: K,
-    listener: (this: IMediaStreamTrack, ev: MediaStreamTrackEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-
-  removeEventListener<K extends keyof MediaStreamTrackEventMap>(
-    type: K,
-    listener: (this: IMediaStreamTrack, ev: MediaStreamTrackEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void;
-
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
 }
 
 declare var MediaStreamTrack: {
@@ -540,22 +493,6 @@ interface IAudioBufferSourceNode extends IAudioScheduledSourceNode {
   readonly playbackRate: IAudioParam;
 
   start(when?: number, offset?: number, duration?: number): void;
-
-  addEventListener<K extends keyof AudioScheduledSourceNodeEventMap>(
-    type: K,
-    listener: (this: IAudioBufferSourceNode, ev: AudioScheduledSourceNodeEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-
-  removeEventListener<K extends keyof AudioScheduledSourceNodeEventMap>(
-    type: K,
-    listener: (this: IAudioBufferSourceNode, ev: AudioScheduledSourceNodeEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void;
-
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
 }
 
 interface AudioScheduledSourceNodeEventMap {
@@ -577,27 +514,9 @@ declare var AudioBufferSourceNode: {
 };
 
 interface IAudioScheduledSourceNode extends IAudioNode {
-  onended: ((this: IAudioScheduledSourceNode, ev: Event) => any) | null;
-
   start(when?: number): void;
 
   stop(when?: number): void;
-
-  addEventListener<K extends keyof AudioScheduledSourceNodeEventMap>(
-    type: K,
-    listener: (this: IAudioScheduledSourceNode, ev: AudioScheduledSourceNodeEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-
-  removeEventListener<K extends keyof AudioScheduledSourceNodeEventMap>(
-    type: K,
-    listener: (this: IAudioScheduledSourceNode, ev: AudioScheduledSourceNodeEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void;
-
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
 }
 
 declare var AudioScheduledSourceNode: {
@@ -630,22 +549,6 @@ interface ChannelSplitterOptions extends AudioNodeOptions {
 
 interface IConstantSourceNode extends IAudioScheduledSourceNode {
   readonly offset: IAudioParam;
-
-  addEventListener<K extends keyof AudioScheduledSourceNodeEventMap>(
-    type: K,
-    listener: (this: IConstantSourceNode, ev: AudioScheduledSourceNodeEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-
-  removeEventListener<K extends keyof AudioScheduledSourceNodeEventMap>(
-    type: K,
-    listener: (this: IConstantSourceNode, ev: AudioScheduledSourceNodeEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void;
-
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
 }
 
 declare var ConstantSourceNode: {
@@ -747,22 +650,6 @@ interface IOscillatorNode extends IAudioScheduledSourceNode {
   type: OscillatorType;
 
   setPeriodicWave(periodicWave: IPeriodicWave): void;
-
-  addEventListener<K extends keyof AudioScheduledSourceNodeEventMap>(
-    type: K,
-    listener: (this: IOscillatorNode, ev: AudioScheduledSourceNodeEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-
-  removeEventListener<K extends keyof AudioScheduledSourceNodeEventMap>(
-    type: K,
-    listener: (this: IOscillatorNode, ev: AudioScheduledSourceNodeEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void;
-
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
 }
 
 declare var OscillatorNode: {
@@ -884,22 +771,6 @@ interface IScriptProcessorNode extends IAudioNode {
   readonly bufferSize: number;
   /** @deprecated */
   onaudioprocess: ((this: IScriptProcessorNode, ev: IAudioProcessingEvent) => any) | null;
-
-  addEventListener<K extends keyof ScriptProcessorNodeEventMap>(
-    type: K,
-    listener: (this: IScriptProcessorNode, ev: ScriptProcessorNodeEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-
-  removeEventListener<K extends keyof ScriptProcessorNodeEventMap>(
-    type: K,
-    listener: (this: IScriptProcessorNode, ev: ScriptProcessorNodeEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void;
-
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
 }
 
 /** @deprecated */
@@ -940,13 +811,12 @@ interface DecodeSuccessCallback {
   (decodedData: IAudioBuffer): void;
 }
 
-export interface IBaseAudioContext extends EventTarget {
+export interface IBaseAudioContext {
   /** Available only in secure contexts. */
   readonly audioWorklet: IAudioWorklet;
   readonly currentTime: number;
   readonly destination: IAudioDestinationNode;
   readonly listener: IAudioListener;
-  onstatechange: ((this: IBaseAudioContext, ev: Event) => any) | null;
   readonly sampleRate: number;
   readonly state: AudioContextState;
 
@@ -992,22 +862,6 @@ export interface IBaseAudioContext extends EventTarget {
     successCallback?: DecodeSuccessCallback | null,
     errorCallback?: DecodeErrorCallback | null,
   ): Promise<IAudioBuffer>;
-
-  addEventListener<K extends keyof BaseAudioContextEventMap>(
-    type: K,
-    listener: (this: IBaseAudioContext, ev: BaseAudioContextEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-
-  removeEventListener<K extends keyof BaseAudioContextEventMap>(
-    type: K,
-    listener: (this: IBaseAudioContext, ev: BaseAudioContextEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void;
-
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
 }
 
 export declare var BaseAudioContext: {
@@ -1033,22 +887,6 @@ export interface IAudioContext extends IBaseAudioContext {
   resume(): Promise<void>;
 
   suspend(): Promise<void>;
-
-  addEventListener<K extends keyof BaseAudioContextEventMap>(
-    type: K,
-    listener: (this: IAudioContext, ev: BaseAudioContextEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-
-  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-
-  removeEventListener<K extends keyof BaseAudioContextEventMap>(
-    type: K,
-    listener: (this: IAudioContext, ev: BaseAudioContextEventMap[K]) => any,
-    options?: boolean | EventListenerOptions,
-  ): void;
-
-  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
 }
 
 export declare var AudioContext: {

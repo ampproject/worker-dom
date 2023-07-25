@@ -11,8 +11,15 @@ export abstract class AudioNode extends TransferrableAudio implements IAudioNode
   readonly numberOfInputs: number = 0;
   readonly numberOfOutputs: number = 0;
 
-  constructor(id: number, context: BaseAudioContext, numberOfInputs: number, numberOfOutputs: number, options: AudioNodeOptions = {}) {
-    super(id, context.document);
+  constructor(
+    id: number,
+    context: BaseAudioContext,
+    numberOfInputs: number,
+    numberOfOutputs: number,
+    options: AudioNodeOptions = {},
+    keys?: string[],
+  ) {
+    super(id, context.document, keys);
     this.context = context;
     this.numberOfInputs = numberOfInputs;
     this.numberOfOutputs = numberOfOutputs;
@@ -75,17 +82,5 @@ export abstract class AudioNode extends TransferrableAudio implements IAudioNode
   disconnect(destinationParam: IAudioParam, output: number): void;
   disconnect(destinationNode?: number | IAudioNode | IAudioParam, output?: number, input?: number): void {
     this[TransferrableKeys.mutated]('disconnect', [...arguments]);
-  }
-
-  addEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: AddEventListenerOptions | boolean): void {
-    throw new Error('NOT IMPLEMENTED');
-  }
-
-  dispatchEvent(event: Event): boolean {
-    throw new Error('NOT IMPLEMENTED');
-  }
-
-  removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void {
-    throw new Error('NOT IMPLEMENTED');
   }
 }

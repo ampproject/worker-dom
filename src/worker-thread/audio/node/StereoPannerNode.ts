@@ -26,8 +26,7 @@ export class StereoPannerNode extends AudioNode implements IStereoPannerNode {
       return this._pan;
     }
 
-    const id = this.createObjectReference('pan', []);
-    this._pan = new AudioParam(id, this.context, 'a-rate', this._panDefaultValue);
+    this._pan = this.createObjectReference('pan', [], (id) => new AudioParam(id, this.context, 'a-rate', this._panDefaultValue));
 
     return this._pan;
   }

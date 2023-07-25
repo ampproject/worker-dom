@@ -25,8 +25,7 @@ export class DelayNode extends AudioNode implements IDelayNode {
       return this._delayTime;
     }
 
-    const id = this.createObjectReference('delayTime', []);
-    this._delayTime = new AudioParam(id, this.context, 'a-rate', this._delayTimeDefaultValue);
+    this._delayTime = this.createObjectReference('delayTime', [], (id) => new AudioParam(id, this.context, 'a-rate', this._delayTimeDefaultValue));
 
     return this._delayTime;
   }

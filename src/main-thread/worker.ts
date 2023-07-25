@@ -284,6 +284,14 @@ function getWebGLMetaData(): any {
           context.MAX_SERVER_WAIT_TIMEOUT,
         ];
 
+        contextMeta.attributes = context.getContextAttributes();
+        contextMeta.extensions = context.getSupportedExtensions();
+
+        if (contextMeta.extensions && contextMeta.extensions.includes('WEBGL_debug_renderer_info')) {
+          const extension = context.getExtension('WEBGL_debug_renderer_info');
+          requiredParameters.push(extension.UNMASKED_VENDOR_WEBGL, extension.UNMASKED_RENDERER_WEBGL);
+        }
+
         const parameters: { [key: number]: any } = {};
         requiredParameters
           .filter((value) => !!value) // filter out unsupported parameters
@@ -292,8 +300,6 @@ function getWebGLMetaData(): any {
           });
 
         contextMeta.parameters = parameters;
-        contextMeta.extensions = context.getSupportedExtensions();
-        contextMeta.attributes = context.getContextAttributes();
 
         result[type] = contextMeta;
       } else {

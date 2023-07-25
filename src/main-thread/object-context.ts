@@ -1,4 +1,4 @@
-declare type TransferObject = CanvasGradient | CanvasPattern;
+declare type TransferObject = any;
 
 /**
  * Stores objects that have their behavior handled from the main-thread. Each object is associated to a unique ID.
@@ -11,6 +11,7 @@ export class ObjectContext {
   }
 
   store(id: number, obj: TransferObject): void {
+    obj._index_ = id;
     this.objects.set(id, obj);
   }
 
