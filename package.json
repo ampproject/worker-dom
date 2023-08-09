@@ -123,8 +123,8 @@
     ]
   },
   "volta": {
-    "node": "16.14.0",
-    "yarn": "1.22.17"
+    "node": "16.20.2",
+    "yarn": "1.22.19"
   },
   "publishConfig": {
     "access": "public"
