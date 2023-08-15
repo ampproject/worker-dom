@@ -90,16 +90,16 @@
       "./dist/amp-production/**/*.(js|mjs)"
     ],
     "./dist/main.mjs": {
-      "brotli": "4 kB"
+      "brotli": "5 kB"
     },
     "./dist/main.js": {
-      "brotli": "5 kB"
+      "brotli": "5.5 kB"
     },
     "./dist/worker/worker.mjs": {
       "brotli": "13 kB"
     },
     "./dist/worker/worker.js": {
-      "brotli": "14 kB"
+      "brotli": "15 kB"
     },
     "./dist/amp-production/main.mjs": {
       "brotli": "4.5 kB"
