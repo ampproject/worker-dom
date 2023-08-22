@@ -3,7 +3,7 @@ import replace from '@rollup/plugin-replace';
 import MagicString from 'magic-string';
 import fs from 'fs';
 import * as path from 'path';
-const walk = require('acorn-walk');
+import walk from 'acorn-walk';
 
 /**
  * Invoke Babel on source, with some configuration.
