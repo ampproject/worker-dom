@@ -85,6 +85,10 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     this[TransferrableKeys.mutated]('strokeRect', [...arguments]);
   }
 
+  roundRect(x: number, y: number, w: number, h: number, radii?: number | DOMPointInit | (number | DOMPointInit)[]): void {
+    this[TransferrableKeys.mutated]('roundRect', [...arguments]);
+  }
+  
   set lineWidth(value: number) {
     this[TransferrableKeys.mutated]('lineWidth', [...arguments]);
   }
