@@ -1,6 +1,6 @@
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
-import { babelPlugin, replacePlugin } from './rollup.plugins.js';
+import { babelPlugin, replacePlugin } from './rollup.plugins.mjs';
 
 // Compile plugins should always be added at the end of the plugin list.
 const compilePlugins = [
