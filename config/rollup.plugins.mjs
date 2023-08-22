@@ -3,7 +3,7 @@ import replace from '@rollup/plugin-replace';
 import MagicString from 'magic-string';
 import fs from 'fs';
 import * as path from 'path';
-const walk = require('acorn-walk');
+import { simple } from 'acorn-walk';
 
 /**
  * Invoke Babel on source, with some configuration.
@@ -82,7 +82,7 @@ export function removeDebugCommandExecutors() {
       const source = new MagicString(code);
       const program = context.parse(code, { ranges: true });
 
-      walk.simple(program, {
+      simple(program, {
         ObjectExpression(node) {
           const propertyNames = (node.properties && node.properties.map((property) => property.key.name)) || [];
           const validPropertyRanges = [];
@@ -122,7 +122,7 @@ export function removeWorkerWhitespace() {
       const source = new MagicString(code);
       const program = this.parse(code, { ranges: true });
 
-      walk.simple(program, {
+      simple(program, {
         TemplateLiteral(node) {
           let literalValue = code.substring(node.range[0], node.range[1]);
           literalValue = literalValue
