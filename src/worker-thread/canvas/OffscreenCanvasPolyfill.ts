@@ -69,10 +69,6 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     return this.canvasElement;
   }
 
-  roundRect(x: number, y: number, w: number, h: number, radii?: number | DOMPointInit | (number | DOMPointInit)[] | undefined): void {
-    this[TransferrableKeys.mutated]('roundRect', [...arguments]);
-  }
-
   clearRect(x: number, y: number, w: number, h: number): void {
     this[TransferrableKeys.mutated]('clearRect', [...arguments]);
   }
