@@ -105,7 +105,7 @@ export const appendGlobalEventProperties = (type: any, keys: Array<string>): voi
         if (stored) {
           this.removeEventListener(normalizedKey, stored);
         }
-        if (typeof value === 'function') {
+        if (value instanceof Function) {
           this.addEventListener(normalizedKey, value);
         }
         this[TransferrableKeys.propertyEventHandlers][normalizedKey] = value;
