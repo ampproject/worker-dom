@@ -97,9 +97,9 @@ test.serial('unsubscription with `null` value does not cause an error', (t) => {
   t.is(element.onclick, null);
   element.onclick = handler;
   t.is(element.onclick, handler);
-  element.dispatchEvent(new Event('click', {}));
+  element.dispatchEvent(new Event("click",  {}));
 
   element.onclick = null;
   t.is(element.onclick, null);
-  element.dispatchEvent(new Event('click', {}));
+  element.dispatchEvent(new Event("click",  {}));
 });
