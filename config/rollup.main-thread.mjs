@@ -1,6 +1,6 @@
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import { terser } from 'rollup-plugin-terser';
-import { babelPlugin, removeDebugCommandExecutors, removeWorkerWhitespace, replacePlugin } from './rollup.plugins.js';
+import { babelPlugin, removeDebugCommandExecutors, removeWorkerWhitespace, replacePlugin } from './rollup.plugins.mjs';
 
 const ESModules = [
   {

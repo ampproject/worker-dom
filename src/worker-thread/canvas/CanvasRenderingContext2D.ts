@@ -181,6 +181,10 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     this.delegateFunc('strokeRect', [...arguments]);
   }
 
+  roundRect(x: number, y: number, w: number, h: number, radii?: number | DOMPointInit | (number | DOMPointInit)[]): void {
+    this.delegateFunc('roundRect', [...arguments]);
+  }
+
   /* DRAWING TEXT */
   fillText(text: string, x: number, y: number, maxWidth?: number): void {
     this.delegateFunc('fillText', [...arguments]);
