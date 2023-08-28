@@ -14,7 +14,7 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@babel/core": "7.22.10",
+    "@babel/core": "7.22.11",
     "@babel/preset-env": "7.22.10",
     "@babel/plugin-transform-react-jsx": "7.22.5",
     "babel-loader": "9.1.3",
