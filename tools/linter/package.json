@@ -27,7 +27,7 @@
     "esm": "3.2.25",
     "lint-staged": "14.0.1",
     "npm-run-all": "4.1.5",
-    "prettier": "3.0.2",
+    "prettier": "3.0.3",
     "rimraf": "5.0.1",
     "shx": "0.3.4"
   },
