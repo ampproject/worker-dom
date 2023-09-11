@@ -36,7 +36,7 @@ export class Location implements TransferrableObject {
   }
 
   assign(url: string | URL): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'assign', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'assign', this, arguments]);
   }
 
   reload(): void {

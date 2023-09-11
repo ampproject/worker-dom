@@ -31,11 +31,11 @@ export abstract class TransferrableAudio extends EventTarget implements Transfer
     return [TransferrableObjectType.TransferObject, this.id];
   }
 
-  createObjectReference<T>(creationMethod: string, creationArgs: any[], instanceCreationFn: (id: number) => T): T {
+  createObjectReference<T>(creationMethod: string, creationArgs: any[] | IArguments, instanceCreationFn: (id: number) => T): T {
     return createObjectReference(this.document, this, creationMethod, creationArgs, instanceCreationFn);
   }
 
-  protected [TransferrableKeys.mutated](fnName: string, args: any[]) {
+  protected [TransferrableKeys.mutated](fnName: string, args: any[] | IArguments) {
     transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, fnName, this, args]);
   }
 

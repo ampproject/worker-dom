@@ -10,7 +10,7 @@ export class DelayNode extends AudioNode implements IDelayNode {
 
   // https://developer.mozilla.org/en-US/docs/Web/API/DelayNode
   constructor(context: BaseAudioContext, options: DelayOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'DelayNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'DelayNode', arguments);
     super(id, context, 1, 1, {
       channelCount: options.channelCount || 2,
       channelCountMode: options.channelCountMode || 'max',

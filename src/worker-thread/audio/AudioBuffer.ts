@@ -26,7 +26,7 @@ export class AudioBuffer extends TransferrableAudio implements IAudioBuffer {
   }
 
   copyToChannel(source: Float32Array, channelNumber: number, bufferOffset?: number): void {
-    this[TransferrableKeys.mutated]('copyToChannel', [...arguments]);
+    this[TransferrableKeys.mutated]('copyToChannel', arguments);
   }
 
   getChannelData(channel: number): Float32Array {

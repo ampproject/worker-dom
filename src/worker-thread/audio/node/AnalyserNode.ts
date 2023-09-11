@@ -8,7 +8,7 @@ export class AnalyserNode extends AudioNode implements IAnalyserNode {
 
   // https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode
   constructor(context: BaseAudioContext, options: AnalyserOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'AnalyserNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'AnalyserNode', arguments);
 
     super(id, context, 1, 1, {
       channelCount: options.channelCount || 2,

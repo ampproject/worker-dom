@@ -6,7 +6,7 @@ import { createWindowObjectReferenceConstructor } from '../../object-reference';
 export class IIRFilterNode extends AudioNode implements IIIRFilterNode {
   // https://developer.mozilla.org/en-US/docs/Web/API/IIRFilterNode
   constructor(context: BaseAudioContext, options: IIRFilterOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'IIRFilterNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'IIRFilterNode', arguments);
     super(id, context, 1, 1, {
       channelCount: options.channelCount || 2,
       channelCountMode: options.channelCountMode || 'max',

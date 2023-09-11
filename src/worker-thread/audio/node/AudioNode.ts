@@ -65,7 +65,7 @@ export abstract class AudioNode extends TransferrableAudio implements IAudioNode
   connect(destinationNode: IAudioNode, output?: number, input?: number): IAudioNode;
   connect(destinationParam: IAudioParam, output?: number): void;
   connect(destinationNode: IAudioNode | IAudioParam, output?: number, input?: number): IAudioNode | void {
-    this[TransferrableKeys.mutated]('connect', [...arguments]);
+    this[TransferrableKeys.mutated]('connect', arguments);
 
     if (destinationNode instanceof AudioNode) {
       return destinationNode as IAudioNode;
@@ -81,6 +81,6 @@ export abstract class AudioNode extends TransferrableAudio implements IAudioNode
   disconnect(destinationParam: IAudioParam): void;
   disconnect(destinationParam: IAudioParam, output: number): void;
   disconnect(destinationNode?: number | IAudioNode | IAudioParam, output?: number, input?: number): void {
-    this[TransferrableKeys.mutated]('disconnect', [...arguments]);
+    this[TransferrableKeys.mutated]('disconnect', arguments);
   }
 }

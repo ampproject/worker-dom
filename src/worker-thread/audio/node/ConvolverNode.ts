@@ -9,7 +9,7 @@ export class ConvolverNode extends AudioNode implements IConvolverNode {
 
   // https://developer.mozilla.org/en-US/docs/Web/API/ConvolverNode
   constructor(context: BaseAudioContext, options: ConvolverOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'ConvolverNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'ConvolverNode', arguments);
     super(id, context, 1, 1, {
       channelCount: options.channelCount || 2,
       channelCountMode: options.channelCountMode || 'clamped-max',

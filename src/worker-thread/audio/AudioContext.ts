@@ -20,7 +20,7 @@ export class AudioContext extends BaseAudioContext implements IAudioContext {
   static document: Document;
 
   constructor(contextOptions?: AudioContextOptions) {
-    const id: number = createWindowObjectReferenceConstructor(AudioContext.document, 'AudioContext', [...arguments]);
+    const id: number = createWindowObjectReferenceConstructor(AudioContext.document, 'AudioContext', arguments);
 
     super(id, AudioContext.document);
   }
@@ -35,7 +35,7 @@ export class AudioContext extends BaseAudioContext implements IAudioContext {
   createMediaElementSource(mediaElement: HTMLMediaElement): IMediaElementAudioSourceNode {
     return this.createObjectReference(
       'createMediaElementSource',
-      [...arguments],
+      arguments,
       (id) =>
         new MediaElementAudioSourceNode(
           this,

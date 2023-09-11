@@ -17,7 +17,7 @@ export class BiquadFilterNode extends AudioNode implements IBiquadFilterNode {
 
   // https://developer.mozilla.org/en-US/docs/Web/API/BiquadFilterNode
   constructor(context: BaseAudioContext, options: BiquadFilterOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'BiquadFilterNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'BiquadFilterNode', arguments);
 
     super(id, context, 1, 1, {
       channelCount: options.channelCount || 2,

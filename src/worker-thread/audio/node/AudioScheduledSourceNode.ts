@@ -11,10 +11,10 @@ export abstract class AudioScheduledSourceNode extends AudioNode implements IAud
   }
 
   start(when?: number): void {
-    this[TransferrableKeys.mutated]('start', [...arguments]);
+    this[TransferrableKeys.mutated]('start', arguments);
   }
 
   stop(when?: number): void {
-    this[TransferrableKeys.mutated]('stop', [...arguments]);
+    this[TransferrableKeys.mutated]('stop', arguments);
   }
 }

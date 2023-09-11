@@ -30,11 +30,11 @@ export class Selection implements TransferrableObject {
   }
 
   addRange(range: Range): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'addRange', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'addRange', this, arguments]);
   }
 
   collapse(node: Node | null, offset?: number): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'collapse', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'collapse', this, arguments]);
   }
 
   collapseToEnd(): void {
@@ -58,11 +58,11 @@ export class Selection implements TransferrableObject {
   }
 
   extend(node: Node, offset?: number): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'extend', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'extend', this, arguments]);
   }
 
   getRangeAt(index: number): Range {
-    return createObjectReference(this.document, this, 'getRangeAt', [...arguments], (id) => new Range(id, this.document));
+    return createObjectReference(this.document, this, 'getRangeAt', arguments, (id) => new Range(id, this.document));
   }
 
   removeAllRanges(): void {
@@ -70,19 +70,19 @@ export class Selection implements TransferrableObject {
   }
 
   removeRange(range: Range): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'removeRange', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'removeRange', this, arguments]);
   }
 
   selectAllChildren(node: Node): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'selectAllChildren', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'selectAllChildren', this, arguments]);
   }
 
   setBaseAndExtent(anchorNode: Node, anchorOffset: number, focusNode: Node, focusOffset: number): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setBaseAndExtent', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setBaseAndExtent', this, arguments]);
   }
 
   setPosition(node: Node | null, offset?: number): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setPosition', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setPosition', this, arguments]);
   }
 }
 
@@ -119,7 +119,7 @@ export class Range implements TransferrableObject {
   }
 
   collapse(toStart?: boolean): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'collapse', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'collapse', this, arguments]);
   }
 
   compareBoundaryPoints(how: number, sourceRange: Range): number {
@@ -155,7 +155,7 @@ export class Range implements TransferrableObject {
   }
 
   insertNode(node: Node): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'insertNode', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'insertNode', this, arguments]);
   }
 
   intersectsNode(node: Node): boolean {
@@ -167,38 +167,38 @@ export class Range implements TransferrableObject {
   }
 
   selectNode(node: Node): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'selectNode', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'selectNode', this, arguments]);
   }
 
   selectNodeContents(node: Node): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'selectNodeContents', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'selectNodeContents', this, arguments]);
   }
 
   setEnd(node: Node, offset: number): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setEnd', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setEnd', this, arguments]);
   }
 
   setEndAfter(node: Node): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setEndAfter', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setEndAfter', this, arguments]);
   }
 
   setEndBefore(node: Node): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setEndBefore', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setEndBefore', this, arguments]);
   }
 
   setStart(node: Node, offset: number): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setStart', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setStart', this, arguments]);
   }
 
   setStartAfter(node: Node): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setStartAfter', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setStartAfter', this, arguments]);
   }
 
   setStartBefore(node: Node): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setStartBefore', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'setStartBefore', this, arguments]);
   }
 
   surroundContents(newParent: Node): void {
-    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'surroundContents', this, [...arguments]]);
+    transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, 'surroundContents', this, arguments]);
   }
 }

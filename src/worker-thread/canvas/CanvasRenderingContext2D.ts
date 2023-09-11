@@ -29,7 +29,7 @@ export const deferredUpgrades = new WeakMap();
  * (depending on whether it is supported).
  */
 export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> implements CanvasRenderingContext2D {
-  private queue = [] as { fnName: string; args: any[]; isSetter: boolean }[];
+  private queue = [] as { fnName: string; args: any[] | IArguments; isSetter: boolean }[];
   private implementation: CanvasRenderingContext2D;
   private upgraded = false;
   private canvasElement: ElementType;
@@ -149,7 +149,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     this.queue.length = 0;
   }
 
-  private delegateFunc(name: string, args: any[]) {
+  private delegateFunc(name: string, args: any[] | IArguments) {
     const returnValue = (this.implementation as any)[name](...args);
     if (!this.upgraded) {
       this.queue.push({ fnName: name, args, isSetter: false });
@@ -157,7 +157,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     return returnValue;
   }
 
-  private delegateSetter(name: string, args: any[]) {
+  private delegateSetter(name: string, args: any[] | IArguments) {
     (this.implementation as any)[name] = args[0];
     if (!this.upgraded) {
       this.queue.push({ fnName: name, args, isSetter: true });
@@ -170,37 +170,37 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* DRAWING RECTANGLES */
   clearRect(x: number, y: number, width: number, height: number): void {
-    this.delegateFunc('clearRect', [...arguments]);
+    this.delegateFunc('clearRect', arguments);
   }
 
   fillRect(x: number, y: number, width: number, height: number): void {
-    this.delegateFunc('fillRect', [...arguments]);
+    this.delegateFunc('fillRect', arguments);
   }
 
   strokeRect(x: number, y: number, width: number, height: number): void {
-    this.delegateFunc('strokeRect', [...arguments]);
+    this.delegateFunc('strokeRect', arguments);
   }
 
   roundRect(x: number, y: number, w: number, h: number, radii?: number | DOMPointInit | (number | DOMPointInit)[]): void {
-    this.delegateFunc('roundRect', [...arguments]);
+    this.delegateFunc('roundRect', arguments);
   }
 
   /* DRAWING TEXT */
   fillText(text: string, x: number, y: number, maxWidth?: number): void {
-    this.delegateFunc('fillText', [...arguments]);
+    this.delegateFunc('fillText', arguments);
   }
 
   strokeText(text: string, x: number, y: number, maxWidth?: number): void {
-    this.delegateFunc('strokeText', [...arguments]);
+    this.delegateFunc('strokeText', arguments);
   }
 
   measureText(text: string): TextMetrics {
-    return this.delegateFunc('measureText', [...arguments]);
+    return this.delegateFunc('measureText', arguments);
   }
 
   /* LINE STYLES */
   set lineWidth(value: number) {
-    this.delegateSetter('lineWidth', [...arguments]);
+    this.delegateSetter('lineWidth', arguments);
   }
 
   get lineWidth(): number {
@@ -208,7 +208,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set lineCap(value: CanvasLineCap) {
-    this.delegateSetter('lineCap', [...arguments]);
+    this.delegateSetter('lineCap', arguments);
   }
 
   get lineCap(): CanvasLineCap {
@@ -216,7 +216,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set lineJoin(value: CanvasLineJoin) {
-    this.delegateSetter('lineJoin', [...arguments]);
+    this.delegateSetter('lineJoin', arguments);
   }
 
   get lineJoin(): CanvasLineJoin {
@@ -224,7 +224,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set miterLimit(value: number) {
-    this.delegateSetter('miterLimit', [...arguments]);
+    this.delegateSetter('miterLimit', arguments);
   }
 
   get miterLimit(): number {
@@ -232,15 +232,15 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   getLineDash(): number[] {
-    return this.delegateFunc('getLineDash', [...arguments]);
+    return this.delegateFunc('getLineDash', arguments);
   }
 
   setLineDash(segments: number[]): void {
-    this.delegateFunc('setLineDash', [...arguments]);
+    this.delegateFunc('setLineDash', arguments);
   }
 
   set lineDashOffset(value: number) {
-    this.delegateSetter('lineDashOffset', [...arguments]);
+    this.delegateSetter('lineDashOffset', arguments);
   }
 
   get lineDashOffset(): number {
@@ -249,7 +249,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* TEXT STYLES */
   set font(value: string) {
-    this.delegateSetter('font', [...arguments]);
+    this.delegateSetter('font', arguments);
   }
 
   get font(): string {
@@ -257,7 +257,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set textAlign(value: CanvasTextAlign) {
-    this.delegateSetter('textAlign', [...arguments]);
+    this.delegateSetter('textAlign', arguments);
   }
 
   get textAlign(): CanvasTextAlign {
@@ -265,7 +265,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set textBaseline(value: CanvasTextBaseline) {
-    this.delegateSetter('textBaseline', [...arguments]);
+    this.delegateSetter('textBaseline', arguments);
   }
 
   get textBaseline(): CanvasTextBaseline {
@@ -273,7 +273,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set direction(value: CanvasDirection) {
-    this.delegateSetter('direction', [...arguments]);
+    this.delegateSetter('direction', arguments);
   }
 
   get direction(): CanvasDirection {
@@ -299,7 +299,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
       }
       // Any other case does not require special handling.
     } else {
-      this.delegateSetter('fillStyle', [...arguments]);
+      this.delegateSetter('fillStyle', arguments);
     }
   }
 
@@ -330,7 +330,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
       // Any other case does not require special handling.
     } else {
-      this.delegateSetter('strokeStyle', [...arguments]);
+      this.delegateSetter('strokeStyle', arguments);
     }
   }
 
@@ -340,11 +340,11 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* GRADIENTS AND PATTERNS */
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
-    return this.delegateFunc('createLinearGradient', [...arguments]);
+    return this.delegateFunc('createLinearGradient', arguments);
   }
 
   createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
-    return this.delegateFunc('createRadialGradient', [...arguments]);
+    return this.delegateFunc('createRadialGradient', arguments);
   }
 
   createPattern(image: CanvasImageSource, repetition: string): CanvasPattern | null {
@@ -352,7 +352,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
     // Only HTMLElement image sources require special handling. ImageBitmap is OK to use.
     if (this.polyfillUsed || image instanceof ImageBitmap) {
-      return this.delegateFunc('createPattern', [...arguments]);
+      return this.delegateFunc('createPattern', arguments);
     } else {
       // Degrade the underlying implementation because we don't want calls on the real one until
       // after pattern is retrieved
@@ -373,7 +373,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
     // Only HTMLElement image sources require special handling. ImageBitmap is OK to use.
     if (this.polyfillUsed || image instanceof ImageBitmap) {
-      this.delegateFunc('drawImage', [...arguments]);
+      this.delegateFunc('drawImage', arguments);
     } else {
       // Queue the drawImage call to make sure it gets called in correct order
       const args = [] as any[];
@@ -395,7 +395,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* SHADOWS */
   set shadowBlur(value: number) {
-    this.delegateSetter('shadowBlur', [...arguments]);
+    this.delegateSetter('shadowBlur', arguments);
   }
 
   get shadowBlur(): number {
@@ -403,7 +403,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set shadowColor(value: string) {
-    this.delegateSetter('shadowColor', [...arguments]);
+    this.delegateSetter('shadowColor', arguments);
   }
 
   get shadowColor(): string {
@@ -411,7 +411,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set shadowOffsetX(value: number) {
-    this.delegateSetter('shadowOffsetX', [...arguments]);
+    this.delegateSetter('shadowOffsetX', arguments);
   }
 
   get shadowOffsetX(): number {
@@ -419,7 +419,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set shadowOffsetY(value: number) {
-    this.delegateSetter('shadowOffsetY', [...arguments]);
+    this.delegateSetter('shadowOffsetY', arguments);
   }
 
   get shadowOffsetY(): number {
@@ -428,35 +428,35 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* PATHS */
   beginPath(): void {
-    this.delegateFunc('beginPath', [...arguments]);
+    this.delegateFunc('beginPath', arguments);
   }
 
   closePath(): void {
-    this.delegateFunc('closePath', [...arguments]);
+    this.delegateFunc('closePath', arguments);
   }
 
   moveTo(x: number, y: number): void {
-    this.delegateFunc('moveTo', [...arguments]);
+    this.delegateFunc('moveTo', arguments);
   }
 
   lineTo(x: number, y: number): void {
-    this.delegateFunc('lineTo', [...arguments]);
+    this.delegateFunc('lineTo', arguments);
   }
 
   bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void {
-    this.delegateFunc('bezierCurveTo', [...arguments]);
+    this.delegateFunc('bezierCurveTo', arguments);
   }
 
   quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void {
-    this.delegateFunc('quadraticCurveTo', [...arguments]);
+    this.delegateFunc('quadraticCurveTo', arguments);
   }
 
   arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, antiClockwise?: boolean): void {
-    this.delegateFunc('arc', [...arguments]);
+    this.delegateFunc('arc', arguments);
   }
 
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void {
-    this.delegateFunc('arcTo', [...arguments]);
+    this.delegateFunc('arcTo', arguments);
   }
 
   ellipse(
@@ -469,11 +469,11 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
     endAngle: number,
     antiClockwise?: boolean,
   ): void {
-    this.delegateFunc('ellipse', [...arguments]);
+    this.delegateFunc('ellipse', arguments);
   }
 
   rect(x: number, y: number, width: number, height: number): void {
-    this.delegateFunc('rect', [...arguments]);
+    this.delegateFunc('rect', arguments);
   }
 
   /* DRAWING PATHS */
@@ -505,19 +505,19 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* TRANSFORMATIONS */
   rotate(angle: number): void {
-    this.delegateFunc('rotate', [...arguments]);
+    this.delegateFunc('rotate', arguments);
   }
 
   scale(x: number, y: number): void {
-    this.delegateFunc('scale', [...arguments]);
+    this.delegateFunc('scale', arguments);
   }
 
   translate(x: number, y: number): void {
-    this.delegateFunc('translate', [...arguments]);
+    this.delegateFunc('translate', arguments);
   }
 
   transform(a: number, b: number, c: number, d: number, e: number, f: number): void {
-    this.delegateFunc('transform', [...arguments]);
+    this.delegateFunc('transform', arguments);
   }
 
   setTransform(transformOrA?: DOMMatrix2DInit | number, bOrC?: number, cOrD?: number, dOrE?: number, eOrF?: number, f?: number): void {
@@ -526,12 +526,12 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   /* experimental */ resetTransform(): void {
-    this.delegateFunc('resetTransform', [...arguments]);
+    this.delegateFunc('resetTransform', arguments);
   }
 
   /* COMPOSITING */
   set globalAlpha(value: number) {
-    this.delegateSetter('globalAlpha', [...arguments]);
+    this.delegateSetter('globalAlpha', arguments);
   }
 
   get globalAlpha(): number {
@@ -539,7 +539,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   set globalCompositeOperation(value: string) {
-    this.delegateSetter('globalCompositeOperation', [...arguments]);
+    this.delegateSetter('globalCompositeOperation', arguments);
   }
 
   get globalCompositeOperation(): string {
@@ -553,16 +553,16 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   getImageData(sx: number, sy: number, sw: number, sh: number): ImageData {
-    return this.delegateFunc('getImageData', [...arguments]);
+    return this.delegateFunc('getImageData', arguments);
   }
 
   putImageData(imageData: ImageData, dx: number, dy: number, dirtyX?: number, dirtyY?: number, dirtyWidth?: number, dirtyHeight?: number): void {
-    this.delegateFunc('putImageData', [...arguments]);
+    this.delegateFunc('putImageData', arguments);
   }
 
   /* IMAGE SMOOTHING */
   /* experimental */ set imageSmoothingEnabled(value: boolean) {
-    this.delegateSetter('imageSmoothingEnabled', [...arguments]);
+    this.delegateSetter('imageSmoothingEnabled', arguments);
   }
 
   /* experimental */ get imageSmoothingEnabled(): boolean {
@@ -570,7 +570,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
   }
 
   /* experimental */ set imageSmoothingQuality(value: ImageSmoothingQuality) {
-    this.delegateSetter('imageSmoothingQuality', [...arguments]);
+    this.delegateSetter('imageSmoothingQuality', arguments);
   }
 
   /* experimental */ get imageSmoothingQuality(): ImageSmoothingQuality {
@@ -579,11 +579,11 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* THE CANVAS STATE */
   save(): void {
-    this.delegateFunc('save', [...arguments]);
+    this.delegateFunc('save', arguments);
   }
 
   restore(): void {
-    this.delegateFunc('restore', [...arguments]);
+    this.delegateFunc('restore', arguments);
   }
 
   // canvas property is readonly. We don't want to implement getters, but this must be here
@@ -594,7 +594,7 @@ export class CanvasRenderingContext2DShim<ElementType extends HTMLElement> imple
 
   /* FILTERS */
   /* experimental */ set filter(value: string) {
-    this.delegateSetter('filter', [...arguments]);
+    this.delegateSetter('filter', arguments);
   }
 
   /* experimental */ get filter(): string {

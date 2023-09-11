@@ -10,7 +10,7 @@ export class StereoPannerNode extends AudioNode implements IStereoPannerNode {
 
   // https://developer.mozilla.org/en-US/docs/Web/API/StereoPannerNode
   constructor(context: BaseAudioContext, options: StereoPannerOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'StereoPannerNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'StereoPannerNode', arguments);
 
     super(id, context, 1, 1, {
       channelCount: options.channelCount || 2,

@@ -116,7 +116,7 @@ export abstract class BaseAudioContext extends TransferrableAudio implements IBa
   createBuffer(numberOfChannels: number, length: number, sampleRate: number): IAudioBuffer {
     return this.createObjectReference(
       'createBuffer',
-      [...arguments],
+      arguments,
       (id) =>
         new AudioBuffer(
           {
@@ -136,7 +136,7 @@ export abstract class BaseAudioContext extends TransferrableAudio implements IBa
   createChannelMerger(numberOfInputs?: number): IChannelMergerNode {
     return this.createObjectReference(
       'createChannelMerger',
-      [...arguments],
+      arguments,
       (id) =>
         new ChannelMergerNode(
           this,
@@ -151,7 +151,7 @@ export abstract class BaseAudioContext extends TransferrableAudio implements IBa
   createChannelSplitter(numberOfOutputs?: number): IChannelSplitterNode {
     return this.createObjectReference(
       'createChannelSplitter',
-      [...arguments],
+      arguments,
       (id) =>
         new ChannelSplitterNode(
           this,
@@ -174,7 +174,7 @@ export abstract class BaseAudioContext extends TransferrableAudio implements IBa
   createDelay(maxDelayTime?: number): IDelayNode {
     return this.createObjectReference(
       'createDelay',
-      [...arguments],
+      arguments,
       (id) =>
         new DelayNode(
           this,
@@ -197,7 +197,7 @@ export abstract class BaseAudioContext extends TransferrableAudio implements IBa
   createIIRFilter(feedforward: number[], feedback: number[]): IIIRFilterNode {
     return this.createObjectReference(
       'createIIRFilter',
-      [...arguments],
+      arguments,
       (id) =>
         new IIRFilterNode(
           this,
@@ -221,7 +221,7 @@ export abstract class BaseAudioContext extends TransferrableAudio implements IBa
   createPeriodicWave(real: number[] | Float32Array, imag: number[] | Float32Array, constraints?: PeriodicWaveConstraints): IPeriodicWave {
     return this.createObjectReference(
       'createPeriodicWave',
-      [...arguments],
+      arguments,
       (id) =>
         new PeriodicWave(
           this,

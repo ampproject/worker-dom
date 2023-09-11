@@ -10,7 +10,7 @@ export class GainNode extends AudioNode implements IGainNode {
 
   // https://developer.mozilla.org/en-US/docs/Web/API/GainNode
   constructor(context: BaseAudioContext, options: GainOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'GainNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'GainNode', arguments);
 
     super(id, context, 1, 1, {
       channelCount: options.channelCount || 2,

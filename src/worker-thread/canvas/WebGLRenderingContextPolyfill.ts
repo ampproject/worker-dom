@@ -186,28 +186,28 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   activeTexture(texture: GLenum): void {
-    this[TransferrableKeys.mutated]('activeTexture', [...arguments]);
+    this[TransferrableKeys.mutated]('activeTexture', arguments);
   }
 
   attachShader(program: GLProgram, shader: GLShader): void {
-    this[TransferrableKeys.mutated]('attachShader', [...arguments]);
+    this[TransferrableKeys.mutated]('attachShader', arguments);
     program.attachShader(shader);
   }
 
   beginQuery(target: GLenum, query: vGLQuery): void {
-    this[TransferrableKeys.mutated]('beginQuery', [...arguments]);
+    this[TransferrableKeys.mutated]('beginQuery', arguments);
   }
 
   beginTransformFeedback(primitiveMode: GLenum): void {
-    this[TransferrableKeys.mutated]('beginTransformFeedback', [...arguments]);
+    this[TransferrableKeys.mutated]('beginTransformFeedback', arguments);
   }
 
   bindAttribLocation(program: GLProgram, index: GLuint, name: string): void {
-    this[TransferrableKeys.mutated]('bindAttribLocation', [...arguments]);
+    this[TransferrableKeys.mutated]('bindAttribLocation', arguments);
   }
 
   bindBuffer(target: GLenum, buffer: vGLBuffer | null): void {
-    this[TransferrableKeys.mutated]('bindBuffer', [...arguments]);
+    this[TransferrableKeys.mutated]('bindBuffer', arguments);
     if (buffer) {
       buffer.target = target;
     }
@@ -219,15 +219,15 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   bindBufferBase(target: GLenum, index: GLuint, buffer: vGLBuffer | null): void {
-    this[TransferrableKeys.mutated]('bindBufferBase', [...arguments]);
+    this[TransferrableKeys.mutated]('bindBufferBase', arguments);
   }
 
   bindBufferRange(target: GLenum, index: GLuint, buffer: vGLBuffer | null, offset: GLintptr, size: GLsizeiptr): void {
-    this[TransferrableKeys.mutated]('bindBufferRange', [...arguments]);
+    this[TransferrableKeys.mutated]('bindBufferRange', arguments);
   }
 
   bindFramebuffer(target: GLenum, framebuffer: vGLFramebuffer | null): void {
-    this[TransferrableKeys.mutated]('bindFramebuffer', [...arguments]);
+    this[TransferrableKeys.mutated]('bindFramebuffer', arguments);
 
     switch (target) {
       case this.FRAMEBUFFER:
@@ -247,7 +247,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   bindRenderbuffer(target: GLenum, renderbuffer: vGLRenderbuffer | null): void {
     switch (target) {
       case this.RENDERBUFFER:
-        this[TransferrableKeys.mutated]('bindRenderbuffer', [...arguments]);
+        this[TransferrableKeys.mutated]('bindRenderbuffer', arguments);
         this._buffers.renderbuffer = renderbuffer;
         break;
       default:
@@ -256,14 +256,14 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   bindSampler(unit: GLuint, sampler: vGLSampler | null): void {
-    this[TransferrableKeys.mutated]('bindSampler', [...arguments]);
+    this[TransferrableKeys.mutated]('bindSampler', arguments);
     this._bindings.sampler = sampler;
   }
 
   bindTexture(target: GLenum, texture: vGLTexture | null): void {
     switch (target) {
       case this.TEXTURE_2D: {
-        this[TransferrableKeys.mutated]('bindTexture', [...arguments]);
+        this[TransferrableKeys.mutated]('bindTexture', arguments);
         this._bindings.texture2D = texture;
         break;
       }
@@ -278,7 +278,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   bindTransformFeedback(target: GLenum, tf: vGLTransformFeedback | null): void {
     switch (target) {
       case this.TRANSFORM_FEEDBACK:
-        this[TransferrableKeys.mutated]('bindTransformFeedback', [...arguments]);
+        this[TransferrableKeys.mutated]('bindTransformFeedback', arguments);
         this._bindings.transformFeedback = tf;
         break;
       default:
@@ -287,28 +287,28 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   bindVertexArray(array: vGLVertexArrayObject | null): void {
-    this[TransferrableKeys.mutated]('bindVertexArray', [...arguments]);
+    this[TransferrableKeys.mutated]('bindVertexArray', arguments);
     this._bindings.vertexArray = array;
   }
 
   blendColor(red: GLclampf, green: GLclampf, blue: GLclampf, alpha: GLclampf): void {
-    this[TransferrableKeys.mutated]('blendColor', [...arguments]);
+    this[TransferrableKeys.mutated]('blendColor', arguments);
   }
 
   blendEquation(mode: GLenum): void {
-    this[TransferrableKeys.mutated]('blendEquation', [...arguments]);
+    this[TransferrableKeys.mutated]('blendEquation', arguments);
   }
 
   blendEquationSeparate(modeRGB: GLenum, modeAlpha: GLenum): void {
-    this[TransferrableKeys.mutated]('blendEquationSeparate', [...arguments]);
+    this[TransferrableKeys.mutated]('blendEquationSeparate', arguments);
   }
 
   blendFunc(sfactor: GLenum, dfactor: GLenum): void {
-    this[TransferrableKeys.mutated]('blendFunc', [...arguments]);
+    this[TransferrableKeys.mutated]('blendFunc', arguments);
   }
 
   blendFuncSeparate(srcRGB: GLenum, dstRGB: GLenum, srcAlpha: GLenum, dstAlpha: GLenum): void {
-    this[TransferrableKeys.mutated]('blendFuncSeparate', [...arguments]);
+    this[TransferrableKeys.mutated]('blendFuncSeparate', arguments);
   }
 
   blitFramebuffer(
@@ -323,14 +323,14 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     mask: GLbitfield,
     filter: GLenum,
   ): void {
-    this[TransferrableKeys.mutated]('blitFramebuffer', [...arguments]);
+    this[TransferrableKeys.mutated]('blitFramebuffer', arguments);
   }
 
   bufferData(target: GLenum, size: GLsizeiptr, usage: GLenum): void;
   bufferData(target: GLenum, srcData: BufferSource | null, usage: GLenum): void;
   bufferData(target: GLenum, srcData: ArrayBufferView, usage: GLenum, srcOffset: GLuint, length?: GLuint): void;
   bufferData(target: GLenum, size: GLsizeiptr | BufferSource | null | ArrayBufferView, usage: GLenum, srcOffset?: GLuint, length?: GLuint): void {
-    this[TransferrableKeys.mutated]('bufferData', [...arguments]);
+    this[TransferrableKeys.mutated]('bufferData', arguments);
 
     const buffer = this._getBindedBuffer(target);
     if (buffer) {
@@ -352,7 +352,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   bufferSubData(target: GLenum, dstByteOffset: GLintptr, srcData: BufferSource): void;
   bufferSubData(target: GLenum, dstByteOffset: GLintptr, srcData: ArrayBufferView, srcOffset: GLuint, length?: GLuint): void;
   bufferSubData(target: GLenum, dstByteOffset: GLintptr, srcData: BufferSource | ArrayBufferView, srcOffset?: GLuint, length?: GLuint): void {
-    this[TransferrableKeys.mutated]('bufferSubData', [...arguments]);
+    this[TransferrableKeys.mutated]('bufferSubData', arguments);
   }
 
   checkFramebufferStatus(target: GLenum): GLenum {
@@ -360,41 +360,41 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   clear(mask: GLbitfield): void {
-    this[TransferrableKeys.mutated]('clear', [...arguments]);
+    this[TransferrableKeys.mutated]('clear', arguments);
   }
 
   clearBufferfi(buffer: GLenum, drawbuffer: GLint, depth: GLfloat, stencil: GLint): void {
-    this[TransferrableKeys.mutated]('clearBufferfi', [...arguments]);
+    this[TransferrableKeys.mutated]('clearBufferfi', arguments);
   }
 
   clearBufferfv(buffer: GLenum, drawbuffer: GLint, values: Float32List, srcOffset?: GLuint): void;
   clearBufferfv(buffer: GLenum, drawbuffer: GLint, values: Iterable<GLfloat>, srcOffset?: GLuint): void;
   clearBufferfv(buffer: GLenum, drawbuffer: GLint, values: Float32List | Iterable<GLfloat>, srcOffset?: GLuint): void {
-    this[TransferrableKeys.mutated]('clearBufferfv', [...arguments]);
+    this[TransferrableKeys.mutated]('clearBufferfv', arguments);
   }
 
   clearBufferiv(buffer: GLenum, drawbuffer: GLint, values: Int32List, srcOffset?: GLuint): void;
   clearBufferiv(buffer: GLenum, drawbuffer: GLint, values: Iterable<GLint>, srcOffset?: GLuint): void;
   clearBufferiv(buffer: GLenum, drawbuffer: GLint, values: Int32List | Iterable<GLint>, srcOffset?: GLuint): void {
-    this[TransferrableKeys.mutated]('clearBufferiv', [...arguments]);
+    this[TransferrableKeys.mutated]('clearBufferiv', arguments);
   }
 
   clearBufferuiv(buffer: GLenum, drawbuffer: GLint, values: Uint32List, srcOffset?: GLuint): void;
   clearBufferuiv(buffer: GLenum, drawbuffer: GLint, values: Iterable<GLuint>, srcOffset?: GLuint): void;
   clearBufferuiv(buffer: GLenum, drawbuffer: GLint, values: Uint32List | Iterable<GLuint>, srcOffset?: GLuint): void {
-    this[TransferrableKeys.mutated]('clearBufferuiv', [...arguments]);
+    this[TransferrableKeys.mutated]('clearBufferuiv', arguments);
   }
 
   clearColor(red: GLclampf, green: GLclampf, blue: GLclampf, alpha: GLclampf): void {
-    this[TransferrableKeys.mutated]('clearColor', [...arguments]);
+    this[TransferrableKeys.mutated]('clearColor', arguments);
   }
 
   clearDepth(depth: GLclampf): void {
-    this[TransferrableKeys.mutated]('clearDepth', [...arguments]);
+    this[TransferrableKeys.mutated]('clearDepth', arguments);
   }
 
   clearStencil(s: GLint): void {
-    this[TransferrableKeys.mutated]('clearStencil', [...arguments]);
+    this[TransferrableKeys.mutated]('clearStencil', arguments);
   }
 
   clientWaitSync(sync: vGLSync, flags: GLbitfield, timeout: GLuint64): GLenum {
@@ -402,11 +402,11 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   colorMask(red: GLboolean, green: GLboolean, blue: GLboolean, alpha: GLboolean): void {
-    this[TransferrableKeys.mutated]('colorMask', [...arguments]);
+    this[TransferrableKeys.mutated]('colorMask', arguments);
   }
 
   compileShader(shader: GLShader): void {
-    this[TransferrableKeys.mutated]('compileShader', [...arguments]);
+    this[TransferrableKeys.mutated]('compileShader', arguments);
     shader.compiled = true;
   }
 
@@ -442,7 +442,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     offset?: GLintptr | GLuint,
     srcLengthOverride?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('compressedTexImage2D', [...arguments]);
+    this[TransferrableKeys.mutated]('compressedTexImage2D', arguments);
   }
 
   compressedTexImage3D(
@@ -480,7 +480,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     offset?: GLintptr | GLuint,
     srcLengthOverride?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('compressedTexImage3D', [...arguments]);
+    this[TransferrableKeys.mutated]('compressedTexImage3D', arguments);
   }
 
   compressedTexSubImage2D(
@@ -518,7 +518,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     offset?: GLintptr | GLuint,
     srcLengthOverride?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('compressedTexSubImage2D', [...arguments]);
+    this[TransferrableKeys.mutated]('compressedTexSubImage2D', arguments);
   }
 
   compressedTexSubImage3D(
@@ -562,19 +562,19 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     offset?: GLintptr | GLuint,
     srcLengthOverride?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('compressedTexSubImage3D', [...arguments]);
+    this[TransferrableKeys.mutated]('compressedTexSubImage3D', arguments);
   }
 
   copyBufferSubData(readTarget: GLenum, writeTarget: GLenum, readOffset: GLintptr, writeOffset: GLintptr, size: GLsizeiptr): void {
-    this[TransferrableKeys.mutated]('copyBufferSubData', [...arguments]);
+    this[TransferrableKeys.mutated]('copyBufferSubData', arguments);
   }
 
   copyTexImage2D(target: GLenum, level: GLint, internalformat: GLenum, x: GLint, y: GLint, width: GLsizei, height: GLsizei, border: GLint): void {
-    this[TransferrableKeys.mutated]('copyTexImage2D', [...arguments]);
+    this[TransferrableKeys.mutated]('copyTexImage2D', arguments);
   }
 
   copyTexSubImage2D(target: GLenum, level: GLint, xoffset: GLint, yoffset: GLint, x: GLint, y: GLint, width: GLsizei, height: GLsizei): void {
-    this[TransferrableKeys.mutated]('copyTexSubImage2D', [...arguments]);
+    this[TransferrableKeys.mutated]('copyTexSubImage2D', arguments);
   }
 
   copyTexSubImage3D(
@@ -588,7 +588,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     width: GLsizei,
     height: GLsizei,
   ): void {
-    this[TransferrableKeys.mutated]('copyTexSubImage3D', [...arguments]);
+    this[TransferrableKeys.mutated]('copyTexSubImage3D', arguments);
   }
 
   createBuffer(): vGLBuffer | null {
@@ -616,7 +616,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   createShader(type: GLenum): GLShader | null {
-    return this.createObjectReference('createShader', [...arguments], (id) => new GLShader(id, type));
+    return this.createObjectReference('createShader', arguments, (id) => new GLShader(id, type));
   }
 
   createTexture(): vGLTexture | null {
@@ -632,12 +632,12 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   cullFace(mode: GLenum): void {
-    this[TransferrableKeys.mutated]('cullFace', [...arguments]);
+    this[TransferrableKeys.mutated]('cullFace', arguments);
   }
 
   deleteBuffer(buffer: vGLBuffer | null): void {
     if (!buffer || buffer.isDeleted()) return;
-    this[TransferrableKeys.mutated]('deleteBuffer', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteBuffer', arguments);
     this.deleteObjectReference(buffer.id);
 
     buffer.delete();
@@ -650,7 +650,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
 
   deleteFramebuffer(framebuffer: vGLFramebuffer | null): void {
     if (!framebuffer || framebuffer.isDeleted()) return;
-    this[TransferrableKeys.mutated]('deleteFramebuffer', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteFramebuffer', arguments);
     this.deleteObjectReference(framebuffer.id);
 
     framebuffer.delete();
@@ -661,7 +661,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
 
   deleteProgram(program: GLProgram | null): void {
     if (!program || program.isDeleted()) return;
-    this[TransferrableKeys.mutated]('deleteProgram', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteProgram', arguments);
     this.deleteObjectReference(program.id);
 
     program.delete();
@@ -672,7 +672,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
 
   deleteQuery(query: vGLQuery | null): void {
     if (!query || query.isDeleted()) return;
-    this[TransferrableKeys.mutated]('deleteQuery', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteQuery', arguments);
     this.deleteObjectReference(query.id);
 
     query.delete();
@@ -680,7 +680,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
 
   deleteRenderbuffer(renderbuffer: vGLRenderbuffer | null): void {
     if (!renderbuffer || renderbuffer.isDeleted()) return;
-    this[TransferrableKeys.mutated]('deleteRenderbuffer', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteRenderbuffer', arguments);
     this.deleteObjectReference(renderbuffer.id);
 
     renderbuffer.delete();
@@ -691,7 +691,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
 
   deleteSampler(sampler: vGLSampler | null): void {
     if (!sampler || sampler.isDeleted()) return;
-    this[TransferrableKeys.mutated]('deleteSampler', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteSampler', arguments);
     this.deleteObjectReference(sampler.id);
 
     sampler.delete();
@@ -702,7 +702,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
 
   deleteShader(shader: GLShader | null): void {
     if (!shader || shader.isDeleted()) return;
-    this[TransferrableKeys.mutated]('deleteShader', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteShader', arguments);
     this.deleteObjectReference(shader.id);
 
     shader.delete();
@@ -710,7 +710,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
 
   deleteSync(sync: vGLSync | null): void {
     if (!sync || sync.isDeleted()) return;
-    this[TransferrableKeys.mutated]('deleteSync', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteSync', arguments);
     this.deleteObjectReference(sync.id);
 
     sync.delete();
@@ -718,7 +718,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
 
   deleteTexture(texture: vGLTexture | null): void {
     if (!texture || texture.isDeleted()) return;
-    this[TransferrableKeys.mutated]('deleteTexture', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteTexture', arguments);
     this.deleteObjectReference(texture.id);
 
     texture.delete();
@@ -729,7 +729,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
 
   deleteTransformFeedback(tf: vGLTransformFeedback | null): void {
     if (!tf || tf.isDeleted()) return;
-    this[TransferrableKeys.mutated]('deleteTransformFeedback', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteTransformFeedback', arguments);
     this.deleteObjectReference(tf.id);
 
     tf.delete();
@@ -740,7 +740,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
 
   deleteVertexArray(vertexArray: vGLVertexArrayObject | null): void {
     if (!vertexArray || vertexArray.isDeleted()) return;
-    this[TransferrableKeys.mutated]('deleteVertexArray', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteVertexArray', arguments);
     this.deleteObjectReference(vertexArray.id);
 
     vertexArray.delete();
@@ -750,68 +750,68 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   depthFunc(func: GLenum): void {
-    this[TransferrableKeys.mutated]('depthFunc', [...arguments]);
+    this[TransferrableKeys.mutated]('depthFunc', arguments);
   }
 
   depthMask(flag: GLboolean): void {
-    this[TransferrableKeys.mutated]('depthMask', [...arguments]);
+    this[TransferrableKeys.mutated]('depthMask', arguments);
   }
 
   depthRange(zNear: GLclampf, zFar: GLclampf): void {
-    this[TransferrableKeys.mutated]('depthRange', [...arguments]);
+    this[TransferrableKeys.mutated]('depthRange', arguments);
   }
 
   detachShader(program: GLProgram, shader: GLShader): void {
-    this[TransferrableKeys.mutated]('detachShader', [...arguments]);
+    this[TransferrableKeys.mutated]('detachShader', arguments);
     program.detachShader(shader, this);
   }
 
   disable(cap: GLenum): void {
-    this[TransferrableKeys.mutated]('disable', [...arguments]);
+    this[TransferrableKeys.mutated]('disable', arguments);
     this._capabilities[cap] = false;
   }
 
   disableVertexAttribArray(index: GLuint): void {
-    this[TransferrableKeys.mutated]('disableVertexAttribArray', [...arguments]);
+    this[TransferrableKeys.mutated]('disableVertexAttribArray', arguments);
   }
 
   drawArrays(mode: GLenum, first: GLint, count: GLsizei): void {
-    this[TransferrableKeys.mutated]('drawArrays', [...arguments]);
+    this[TransferrableKeys.mutated]('drawArrays', arguments);
   }
 
   drawArraysInstanced(mode: GLenum, first: GLint, count: GLsizei, instanceCount: GLsizei): void {
-    this[TransferrableKeys.mutated]('drawArraysInstanced', [...arguments]);
+    this[TransferrableKeys.mutated]('drawArraysInstanced', arguments);
   }
 
   drawBuffers(buffers: GLenum[]): void;
   drawBuffers(buffers: Iterable<GLenum>): void;
   drawBuffers(buffers: GLenum[] | Iterable<GLenum>): void {
-    this[TransferrableKeys.mutated]('drawBuffers', [...arguments]);
+    this[TransferrableKeys.mutated]('drawBuffers', arguments);
   }
 
   drawElements(mode: GLenum, count: GLsizei, type: GLenum, offset: GLintptr): void {
-    this[TransferrableKeys.mutated]('drawElements', [...arguments]);
+    this[TransferrableKeys.mutated]('drawElements', arguments);
   }
 
   drawElementsInstanced(mode: GLenum, count: GLsizei, type: GLenum, offset: GLintptr, instanceCount: GLsizei): void {
-    this[TransferrableKeys.mutated]('drawElementsInstanced', [...arguments]);
+    this[TransferrableKeys.mutated]('drawElementsInstanced', arguments);
   }
 
   drawRangeElements(mode: GLenum, start: GLuint, end: GLuint, count: GLsizei, type: GLenum, offset: GLintptr): void {
-    this[TransferrableKeys.mutated]('drawRangeElements', [...arguments]);
+    this[TransferrableKeys.mutated]('drawRangeElements', arguments);
   }
 
   enable(cap: GLenum): void {
-    this[TransferrableKeys.mutated]('enable', [...arguments]);
+    this[TransferrableKeys.mutated]('enable', arguments);
     this._capabilities[cap] = true;
   }
 
   enableVertexAttribArray(index: GLuint): void {
-    this[TransferrableKeys.mutated]('enableVertexAttribArray', [...arguments]);
+    this[TransferrableKeys.mutated]('enableVertexAttribArray', arguments);
   }
 
   endQuery(target: GLenum): void {
-    this[TransferrableKeys.mutated]('endQuery', [...arguments]);
+    this[TransferrableKeys.mutated]('endQuery', arguments);
   }
 
   endTransformFeedback(): void {
@@ -819,7 +819,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   fenceSync(condition: GLenum, flags: GLbitfield): vGLSync | null {
-    return this.createObjectReference('fenceSync', [...arguments], (id) => new vGLSync(id));
+    return this.createObjectReference('fenceSync', arguments, (id) => new vGLSync(id));
   }
 
   finish(): void {
@@ -831,23 +831,23 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   framebufferRenderbuffer(target: GLenum, attachment: GLenum, renderbuffertarget: GLenum, renderbuffer: vGLRenderbuffer | null): void {
-    this[TransferrableKeys.mutated]('framebufferRenderbuffer', [...arguments]);
+    this[TransferrableKeys.mutated]('framebufferRenderbuffer', arguments);
   }
 
   framebufferTexture2D(target: GLenum, attachment: GLenum, textarget: GLenum, texture: vGLTexture | null, level: GLint): void {
-    this[TransferrableKeys.mutated]('framebufferTexture2D', [...arguments]);
+    this[TransferrableKeys.mutated]('framebufferTexture2D', arguments);
   }
 
   framebufferTextureLayer(target: GLenum, attachment: GLenum, texture: vGLTexture | null, level: GLint, layer: GLint): void {
-    this[TransferrableKeys.mutated]('framebufferTextureLayer', [...arguments]);
+    this[TransferrableKeys.mutated]('framebufferTextureLayer', arguments);
   }
 
   frontFace(mode: GLenum): void {
-    this[TransferrableKeys.mutated]('frontFace', [...arguments]);
+    this[TransferrableKeys.mutated]('frontFace', arguments);
   }
 
   generateMipmap(target: GLenum): void {
-    this[TransferrableKeys.mutated]('generateMipmap', [...arguments]);
+    this[TransferrableKeys.mutated]('generateMipmap', arguments);
   }
 
   getActiveAttrib(program: GLProgram, index: GLuint): vGLActiveInfo | null {
@@ -924,7 +924,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
       return this._extensions[name];
     }
 
-    this._extensions[name] = this.createObjectReference('getExtension', [...arguments], (id) => {
+    this._extensions[name] = this.createObjectReference('getExtension', arguments, (id) => {
       // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API#extensions
       switch (name) {
         case 'EXT_blend_minmax':
@@ -1098,7 +1098,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   getQuery(target: GLenum, pname: GLenum): vGLQuery | null {
-    return this.createObjectReference('getQuery', [...arguments], (id) => new vGLQuery(id));
+    return this.createObjectReference('getQuery', arguments, (id) => new vGLQuery(id));
   }
 
   getQueryParameter(query: vGLQuery, pname: GLenum): any {
@@ -1181,7 +1181,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
       if (uniform.uniformLocations) {
         return uniform.uniformLocations;
       } else {
-        const uniformLocation = this.createObjectReference('getUniformLocation', [...arguments], (id) => new vGLLocation(id, name));
+        const uniformLocation = this.createObjectReference('getUniformLocation', arguments, (id) => new vGLLocation(id, name));
         uniform.uniformLocations = uniformLocation;
         return uniformLocation;
       }
@@ -1198,19 +1198,19 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   hint(target: GLenum, mode: GLenum): void {
-    this[TransferrableKeys.mutated]('hint', [...arguments]);
+    this[TransferrableKeys.mutated]('hint', arguments);
   }
 
   invalidateFramebuffer(target: GLenum, attachments: GLenum[]): void;
   invalidateFramebuffer(target: GLenum, attachments: Iterable<GLenum>): void;
   invalidateFramebuffer(target: GLenum, attachments: GLenum[] | Iterable<GLenum>): void {
-    this[TransferrableKeys.mutated]('invalidateFramebuffer', [...arguments]);
+    this[TransferrableKeys.mutated]('invalidateFramebuffer', arguments);
   }
 
   invalidateSubFramebuffer(target: GLenum, attachments: GLenum[], x: GLint, y: GLint, width: GLsizei, height: GLsizei): void;
   invalidateSubFramebuffer(target: GLenum, attachments: Iterable<GLenum>, x: GLint, y: GLint, width: GLsizei, height: GLsizei): void;
   invalidateSubFramebuffer(target: GLenum, attachments: GLenum[] | Iterable<GLenum>, x: GLint, y: GLint, width: GLsizei, height: GLsizei): void {
-    this[TransferrableKeys.mutated]('invalidateSubFramebuffer', [...arguments]);
+    this[TransferrableKeys.mutated]('invalidateSubFramebuffer', arguments);
   }
 
   isBuffer(buffer: vGLBuffer | null): GLboolean {
@@ -1266,11 +1266,11 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   lineWidth(width: GLfloat): void {
-    this[TransferrableKeys.mutated]('lineWidth', [...arguments]);
+    this[TransferrableKeys.mutated]('lineWidth', arguments);
   }
 
   linkProgram(program: GLProgram): void {
-    this[TransferrableKeys.mutated]('linkProgram', [...arguments]);
+    this[TransferrableKeys.mutated]('linkProgram', arguments);
     program.link(this);
   }
 
@@ -1279,15 +1279,15 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   pixelStorei(pname: GLenum, param: GLint | GLboolean): void {
-    this[TransferrableKeys.mutated]('pixelStorei', [...arguments]);
+    this[TransferrableKeys.mutated]('pixelStorei', arguments);
   }
 
   polygonOffset(factor: GLfloat, units: GLfloat): void {
-    this[TransferrableKeys.mutated]('polygonOffset', [...arguments]);
+    this[TransferrableKeys.mutated]('polygonOffset', arguments);
   }
 
   readBuffer(src: GLenum): void {
-    this[TransferrableKeys.mutated]('readBuffer', [...arguments]);
+    this[TransferrableKeys.mutated]('readBuffer', arguments);
   }
 
   readPixels(x: GLint, y: GLint, width: GLsizei, height: GLsizei, format: GLenum, type: GLenum, dstData: ArrayBufferView | null): void;
@@ -1307,11 +1307,11 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   renderbufferStorage(target: GLenum, internalformat: GLenum, width: GLsizei, height: GLsizei): void {
-    this[TransferrableKeys.mutated]('renderbufferStorage', [...arguments]);
+    this[TransferrableKeys.mutated]('renderbufferStorage', arguments);
   }
 
   renderbufferStorageMultisample(target: GLenum, samples: GLsizei, internalformat: GLenum, width: GLsizei, height: GLsizei): void {
-    this[TransferrableKeys.mutated]('renderbufferStorageMultisample', [...arguments]);
+    this[TransferrableKeys.mutated]('renderbufferStorageMultisample', arguments);
   }
 
   resumeTransformFeedback(): void {
@@ -1319,19 +1319,19 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   sampleCoverage(value: GLclampf, invert: GLboolean): void {
-    this[TransferrableKeys.mutated]('sampleCoverage', [...arguments]);
+    this[TransferrableKeys.mutated]('sampleCoverage', arguments);
   }
 
   samplerParameterf(sampler: vGLSampler, pname: GLenum, param: GLfloat): void {
-    this[TransferrableKeys.mutated]('samplerParameterf', [...arguments]);
+    this[TransferrableKeys.mutated]('samplerParameterf', arguments);
   }
 
   samplerParameteri(sampler: vGLSampler, pname: GLenum, param: GLint): void {
-    this[TransferrableKeys.mutated]('samplerParameteri', [...arguments]);
+    this[TransferrableKeys.mutated]('samplerParameteri', arguments);
   }
 
   scissor(x: GLint, y: GLint, width: GLsizei, height: GLsizei): void {
-    this[TransferrableKeys.mutated]('scissor', [...arguments]);
+    this[TransferrableKeys.mutated]('scissor', arguments);
   }
 
   shaderSource(shader: GLShader, source: string): void {
@@ -1341,27 +1341,27 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
   }
 
   stencilFunc(func: GLenum, ref: GLint, mask: GLuint): void {
-    this[TransferrableKeys.mutated]('stencilFunc', [...arguments]);
+    this[TransferrableKeys.mutated]('stencilFunc', arguments);
   }
 
   stencilFuncSeparate(face: GLenum, func: GLenum, ref: GLint, mask: GLuint): void {
-    this[TransferrableKeys.mutated]('stencilFuncSeparate', [...arguments]);
+    this[TransferrableKeys.mutated]('stencilFuncSeparate', arguments);
   }
 
   stencilMask(mask: GLuint): void {
-    this[TransferrableKeys.mutated]('stencilMask', [...arguments]);
+    this[TransferrableKeys.mutated]('stencilMask', arguments);
   }
 
   stencilMaskSeparate(face: GLenum, mask: GLuint): void {
-    this[TransferrableKeys.mutated]('stencilMaskSeparate', [...arguments]);
+    this[TransferrableKeys.mutated]('stencilMaskSeparate', arguments);
   }
 
   stencilOp(fail: GLenum, zfail: GLenum, zpass: GLenum): void {
-    this[TransferrableKeys.mutated]('stencilOp', [...arguments]);
+    this[TransferrableKeys.mutated]('stencilOp', arguments);
   }
 
   stencilOpSeparate(face: GLenum, fail: GLenum, zfail: GLenum, zpass: GLenum): void {
-    this[TransferrableKeys.mutated]('stencilOpSeparate', [...arguments]);
+    this[TransferrableKeys.mutated]('stencilOpSeparate', arguments);
   }
 
   texImage2D(
@@ -1422,7 +1422,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     pixels?: ArrayBufferView | null | GLintptr | TexImageSource,
     srcOffset?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('texImage2D', [...arguments]);
+    this[TransferrableKeys.mutated]('texImage2D', arguments);
   }
 
   texImage3D(
@@ -1487,23 +1487,23 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     pboOffset: GLintptr | TexImageSource | ArrayBufferView | null,
     srcOffset?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('texImage3D', [...arguments]);
+    this[TransferrableKeys.mutated]('texImage3D', arguments);
   }
 
   texParameterf(target: GLenum, pname: GLenum, param: GLfloat): void {
-    this[TransferrableKeys.mutated]('texParameterf', [...arguments]);
+    this[TransferrableKeys.mutated]('texParameterf', arguments);
   }
 
   texParameteri(target: GLenum, pname: GLenum, param: GLint): void {
-    this[TransferrableKeys.mutated]('texParameteri', [...arguments]);
+    this[TransferrableKeys.mutated]('texParameteri', arguments);
   }
 
   texStorage2D(target: GLenum, levels: GLsizei, internalformat: GLenum, width: GLsizei, height: GLsizei): void {
-    this[TransferrableKeys.mutated]('texStorage2D', [...arguments]);
+    this[TransferrableKeys.mutated]('texStorage2D', arguments);
   }
 
   texStorage3D(target: GLenum, levels: GLsizei, internalformat: GLenum, width: GLsizei, height: GLsizei, depth: GLsizei): void {
-    this[TransferrableKeys.mutated]('texStorage3D', [...arguments]);
+    this[TransferrableKeys.mutated]('texStorage3D', arguments);
   }
 
   texSubImage2D(
@@ -1564,7 +1564,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     pixels?: ArrayBufferView | null | GLintptr | TexImageSource,
     srcOffset?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('texSubImage2D', [...arguments]);
+    this[TransferrableKeys.mutated]('texSubImage2D', arguments);
   }
 
   texSubImage3D(
@@ -1621,137 +1621,137 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     pboOffset: GLintptr | TexImageSource | ArrayBufferView | null,
     srcOffset?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('texSubImage3D', [...arguments]);
+    this[TransferrableKeys.mutated]('texSubImage3D', arguments);
   }
 
   transformFeedbackVaryings(program: GLProgram, varyings: string[], bufferMode: GLenum): void;
   transformFeedbackVaryings(program: GLProgram, varyings: Iterable<string>, bufferMode: GLenum): void;
   transformFeedbackVaryings(program: GLProgram, varyings: string[] | Iterable<string>, bufferMode: GLenum): void {
-    this[TransferrableKeys.mutated]('transformFeedbackVaryings', [...arguments]);
+    this[TransferrableKeys.mutated]('transformFeedbackVaryings', arguments);
   }
 
   uniform1f(location: vGLLocation | null, x: GLfloat): void {
-    this[TransferrableKeys.mutated]('uniform1f', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform1f', arguments);
   }
 
   uniform1fv(location: vGLLocation | null, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform1fv(location: vGLLocation | null, data: Iterable<GLfloat>, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform1fv(location: vGLLocation | null, data: Float32List | Iterable<GLfloat>, srcOffset?: GLuint, srcLength?: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform1fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform1fv', arguments);
   }
 
   uniform1i(location: vGLLocation | null, x: GLint): void {
-    this[TransferrableKeys.mutated]('uniform1i', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform1i', arguments);
   }
 
   uniform1iv(location: vGLLocation | null, data: Int32List, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform1iv(location: vGLLocation | null, data: Iterable<GLint>, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform1iv(location: vGLLocation | null, data: Int32List | Iterable<GLint>, srcOffset?: GLuint, srcLength?: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform1iv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform1iv', arguments);
   }
 
   uniform1ui(location: vGLLocation | null, v0: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform1ui', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform1ui', arguments);
   }
 
   uniform1uiv(location: vGLLocation | null, data: Uint32List, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform1uiv(location: vGLLocation | null, data: Iterable<GLuint>, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform1uiv(location: vGLLocation | null, data: Uint32List | Iterable<GLuint>, srcOffset?: GLuint, srcLength?: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform1uiv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform1uiv', arguments);
   }
 
   uniform2f(location: vGLLocation | null, x: GLfloat, y: GLfloat): void {
-    this[TransferrableKeys.mutated]('uniform2f', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform2f', arguments);
   }
 
   uniform2fv(location: vGLLocation | null, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform2fv(location: vGLLocation | null, data: Iterable<GLfloat>, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform2fv(location: vGLLocation | null, data: Float32List | Iterable<GLfloat>, srcOffset?: GLuint, srcLength?: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform2fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform2fv', arguments);
   }
 
   uniform2i(location: vGLLocation | null, x: GLint, y: GLint): void {
-    this[TransferrableKeys.mutated]('uniform2i', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform2i', arguments);
   }
 
   uniform2iv(location: vGLLocation | null, data: Int32List, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform2iv(location: vGLLocation | null, data: Iterable<GLint>, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform2iv(location: vGLLocation | null, data: Int32List | Iterable<GLint>, srcOffset?: GLuint, srcLength?: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform2iv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform2iv', arguments);
   }
 
   uniform2ui(location: vGLLocation | null, v0: GLuint, v1: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform2ui', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform2ui', arguments);
   }
 
   uniform2uiv(location: vGLLocation | null, data: Uint32List, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform2uiv(location: vGLLocation | null, data: Iterable<GLuint>, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform2uiv(location: vGLLocation | null, data: Uint32List | Iterable<GLuint>, srcOffset?: GLuint, srcLength?: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform2uiv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform2uiv', arguments);
   }
 
   uniform3f(location: vGLLocation | null, x: GLfloat, y: GLfloat, z: GLfloat): void {
-    this[TransferrableKeys.mutated]('uniform3f', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform3f', arguments);
   }
 
   uniform3fv(location: vGLLocation | null, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform3fv(location: vGLLocation | null, data: Iterable<GLfloat>, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform3fv(location: vGLLocation | null, data: Float32List | Iterable<GLfloat>, srcOffset?: GLuint, srcLength?: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform3fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform3fv', arguments);
   }
 
   uniform3i(location: vGLLocation | null, x: GLint, y: GLint, z: GLint): void {
-    this[TransferrableKeys.mutated]('uniform3i', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform3i', arguments);
   }
 
   uniform3iv(location: vGLLocation | null, data: Int32List, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform3iv(location: vGLLocation | null, data: Iterable<GLint>, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform3iv(location: vGLLocation | null, data: Int32List | Iterable<GLint>, srcOffset?: GLuint, srcLength?: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform3iv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform3iv', arguments);
   }
 
   uniform3ui(location: vGLLocation | null, v0: GLuint, v1: GLuint, v2: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform3ui', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform3ui', arguments);
   }
 
   uniform3uiv(location: vGLLocation | null, data: Uint32List, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform3uiv(location: vGLLocation | null, data: Iterable<GLuint>, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform3uiv(location: vGLLocation | null, data: Uint32List | Iterable<GLuint>, srcOffset?: GLuint, srcLength?: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform3uiv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform3uiv', arguments);
   }
 
   uniform4f(location: vGLLocation | null, x: GLfloat, y: GLfloat, z: GLfloat, w: GLfloat): void {
-    this[TransferrableKeys.mutated]('uniform4f', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform4f', arguments);
   }
 
   uniform4fv(location: vGLLocation | null, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform4fv(location: vGLLocation | null, data: Iterable<GLfloat>, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform4fv(location: vGLLocation | null, data: Float32List | Iterable<GLfloat>, srcOffset?: GLuint, srcLength?: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform4fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform4fv', arguments);
   }
 
   uniform4i(location: vGLLocation | null, x: GLint, y: GLint, z: GLint, w: GLint): void {
-    this[TransferrableKeys.mutated]('uniform4i', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform4i', arguments);
   }
 
   uniform4iv(location: vGLLocation | null, data: Int32List, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform4iv(location: vGLLocation | null, data: Iterable<GLint>, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform4iv(location: vGLLocation | null, data: Int32List | Iterable<GLint>, srcOffset?: GLuint, srcLength?: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform4iv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform4iv', arguments);
   }
 
   uniform4ui(location: vGLLocation | null, v0: GLuint, v1: GLuint, v2: GLuint, v3: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform4ui', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform4ui', arguments);
   }
 
   uniform4uiv(location: vGLLocation | null, data: Uint32List, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform4uiv(location: vGLLocation | null, data: Iterable<GLuint>, srcOffset?: GLuint, srcLength?: GLuint): void;
   uniform4uiv(location: vGLLocation | null, data: Uint32List | Iterable<GLuint>, srcOffset?: GLuint, srcLength?: GLuint): void {
-    this[TransferrableKeys.mutated]('uniform4uiv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniform4uiv', arguments);
   }
 
   uniformBlockBinding(program: GLProgram, uniformBlockIndex: GLuint, uniformBlockBinding: GLuint): void {
-    this[TransferrableKeys.mutated]('uniformBlockBinding', [...arguments]);
+    this[TransferrableKeys.mutated]('uniformBlockBinding', arguments);
   }
 
   uniformMatrix2fv(location: vGLLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
@@ -1763,7 +1763,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     srcOffset?: GLuint,
     srcLength?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('uniformMatrix2fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniformMatrix2fv', arguments);
   }
 
   uniformMatrix2x3fv(location: vGLLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
@@ -1775,7 +1775,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     srcOffset?: GLuint,
     srcLength?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('uniformMatrix2x3fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniformMatrix2x3fv', arguments);
   }
 
   uniformMatrix2x4fv(location: vGLLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
@@ -1787,7 +1787,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     srcOffset?: GLuint,
     srcLength?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('uniformMatrix2x4fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniformMatrix2x4fv', arguments);
   }
 
   uniformMatrix3fv(location: vGLLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
@@ -1799,7 +1799,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     srcOffset?: GLuint,
     srcLength?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('uniformMatrix3fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniformMatrix3fv', arguments);
   }
 
   uniformMatrix3x2fv(location: vGLLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
@@ -1811,7 +1811,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     srcOffset?: GLuint,
     srcLength?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('uniformMatrix3x2fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniformMatrix3x2fv', arguments);
   }
 
   uniformMatrix3x4fv(location: vGLLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
@@ -1823,7 +1823,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     srcOffset?: GLuint,
     srcLength?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('uniformMatrix3x4fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniformMatrix3x4fv', arguments);
   }
 
   uniformMatrix4fv(location: vGLLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
@@ -1835,7 +1835,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     srcOffset?: GLuint,
     srcLength?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('uniformMatrix4fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniformMatrix4fv', arguments);
   }
 
   uniformMatrix4x2fv(location: vGLLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
@@ -1847,7 +1847,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     srcOffset?: GLuint,
     srcLength?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('uniformMatrix4x2fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniformMatrix4x2fv', arguments);
   }
 
   uniformMatrix4x3fv(location: vGLLocation | null, transpose: GLboolean, data: Float32List, srcOffset?: GLuint, srcLength?: GLuint): void;
@@ -1859,104 +1859,104 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     srcOffset?: GLuint,
     srcLength?: GLuint,
   ): void {
-    this[TransferrableKeys.mutated]('uniformMatrix4x3fv', [...arguments]);
+    this[TransferrableKeys.mutated]('uniformMatrix4x3fv', arguments);
   }
 
   useProgram(program: GLProgram | null): void {
     if (!program || program.isDeleted()) return;
     this._bindings.program = program;
-    this[TransferrableKeys.mutated]('useProgram', [...arguments]);
+    this[TransferrableKeys.mutated]('useProgram', arguments);
   }
 
   validateProgram(program: GLProgram): void {
-    this[TransferrableKeys.mutated]('validateProgram', [...arguments]);
+    this[TransferrableKeys.mutated]('validateProgram', arguments);
   }
 
   vertexAttrib1f(index: GLuint, x: GLfloat): void {
-    this[TransferrableKeys.mutated]('vertexAttrib1f', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttrib1f', arguments);
   }
 
   vertexAttrib1fv(index: GLuint, values: Float32List): void;
   vertexAttrib1fv(index: GLuint, values: Iterable<GLfloat>): void;
   vertexAttrib1fv(index: GLuint, values: Float32List | Iterable<GLfloat>): void {
-    this[TransferrableKeys.mutated]('vertexAttrib1fv', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttrib1fv', arguments);
   }
 
   vertexAttrib2f(index: GLuint, x: GLfloat, y: GLfloat): void {
-    this[TransferrableKeys.mutated]('vertexAttrib2f', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttrib2f', arguments);
   }
 
   vertexAttrib2fv(index: GLuint, values: Float32List): void;
   vertexAttrib2fv(index: GLuint, values: Iterable<GLfloat>): void;
   vertexAttrib2fv(index: GLuint, values: Float32List | Iterable<GLfloat>): void {
-    this[TransferrableKeys.mutated]('vertexAttrib2fv', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttrib2fv', arguments);
   }
 
   vertexAttrib3f(index: GLuint, x: GLfloat, y: GLfloat, z: GLfloat): void {
-    this[TransferrableKeys.mutated]('vertexAttrib3f', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttrib3f', arguments);
   }
 
   vertexAttrib3fv(index: GLuint, values: Float32List): void;
   vertexAttrib3fv(index: GLuint, values: Iterable<GLfloat>): void;
   vertexAttrib3fv(index: GLuint, values: Float32List | Iterable<GLfloat>): void {
-    this[TransferrableKeys.mutated]('vertexAttrib3fv', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttrib3fv', arguments);
   }
 
   vertexAttrib4f(index: GLuint, x: GLfloat, y: GLfloat, z: GLfloat, w: GLfloat): void {
-    this[TransferrableKeys.mutated]('vertexAttrib4f', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttrib4f', arguments);
   }
 
   vertexAttrib4fv(index: GLuint, values: Float32List): void;
   vertexAttrib4fv(index: GLuint, values: Iterable<GLfloat>): void;
   vertexAttrib4fv(index: GLuint, values: Float32List | Iterable<GLfloat>): void {
-    this[TransferrableKeys.mutated]('vertexAttrib4fv', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttrib4fv', arguments);
   }
 
   vertexAttribDivisor(index: GLuint, divisor: GLuint): void {
-    this[TransferrableKeys.mutated]('vertexAttribDivisor', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttribDivisor', arguments);
   }
 
   vertexAttribI4i(index: GLuint, x: GLint, y: GLint, z: GLint, w: GLint): void {
-    this[TransferrableKeys.mutated]('vertexAttribI4i', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttribI4i', arguments);
   }
 
   vertexAttribI4iv(index: GLuint, values: Int32List): void;
   vertexAttribI4iv(index: GLuint, values: Iterable<GLint>): void;
   vertexAttribI4iv(index: GLuint, values: Int32List | Iterable<GLint>): void {
-    this[TransferrableKeys.mutated]('vertexAttribI4iv', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttribI4iv', arguments);
   }
 
   vertexAttribI4ui(index: GLuint, x: GLuint, y: GLuint, z: GLuint, w: GLuint): void {
-    this[TransferrableKeys.mutated]('vertexAttribI4ui', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttribI4ui', arguments);
   }
 
   vertexAttribI4uiv(index: GLuint, values: Uint32List): void;
   vertexAttribI4uiv(index: GLuint, values: Iterable<GLuint>): void;
   vertexAttribI4uiv(index: GLuint, values: Uint32List | Iterable<GLuint>): void {
-    this[TransferrableKeys.mutated]('vertexAttribI4uiv', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttribI4uiv', arguments);
   }
 
   vertexAttribIPointer(index: GLuint, size: GLint, type: GLenum, stride: GLsizei, offset: GLintptr): void {
-    this[TransferrableKeys.mutated]('vertexAttribIPointer', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttribIPointer', arguments);
   }
 
   vertexAttribPointer(index: GLuint, size: GLint, type: GLenum, normalized: GLboolean, stride: GLsizei, offset: GLintptr): void {
-    this[TransferrableKeys.mutated]('vertexAttribPointer', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttribPointer', arguments);
   }
 
   viewport(x: GLint, y: GLint, width: GLsizei, height: GLsizei): void {
-    this[TransferrableKeys.mutated]('viewport', [...arguments]);
+    this[TransferrableKeys.mutated]('viewport', arguments);
   }
 
   waitSync(sync: vGLSync, flags: GLbitfield, timeout: GLint64): void {
-    this[TransferrableKeys.mutated]('waitSync', [...arguments]);
+    this[TransferrableKeys.mutated]('waitSync', arguments);
   }
 
   public [TransferrableKeys.serializeAsTransferrableObject](): number[] {
     return this._serializedAsTransferrableObject;
   }
 
-  private createObjectReference<T>(creationMethod: string, creationArgs: any[], instanceCreationFn: (id: number) => T) {
+  private createObjectReference<T>(creationMethod: string, creationArgs: any[] | IArguments, instanceCreationFn: (id: number) => T) {
     return createObjectReference(this.canvas.ownerDocument as Document, this, creationMethod, creationArgs, instanceCreationFn);
   }
 
@@ -1964,7 +1964,7 @@ export class WebGLRenderingContextPolyfill extends GLConstants implements WebGL2
     deleteObjectReference(this.canvas.ownerDocument as Document, objectId);
   }
 
-  private [TransferrableKeys.mutated](fnName: string, args: any[]) {
+  private [TransferrableKeys.mutated](fnName: string, args: any[] | IArguments) {
     transfer(this.canvas.ownerDocument as Document, [TransferrableMutationType.OBJECT_MUTATION, fnName, this, args]);
   }
 

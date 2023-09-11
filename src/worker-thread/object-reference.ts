@@ -39,7 +39,7 @@ export function createObjectReference<T>(
   document: Document | DocumentStub,
   target: TransferrableObject | Document | typeof globalThis,
   creationMethod: string,
-  creationArgs: any[],
+  creationArgs: any[] | IArguments,
   instanceCreationFn: (id: number) => T,
 ): T {
   const id = nextObjectId();
@@ -67,7 +67,7 @@ export function createObjectReferenceConstructor<T>(
   return instance;
 }
 
-export function createWindowObjectReferenceConstructor<T>(document: Document | DocumentStub, className: string, args: any[]): number {
+export function createWindowObjectReferenceConstructor<T>(document: Document | DocumentStub, className: string, args: any[] | IArguments): number {
   const id = nextObjectId();
   transfer(document, [TransferrableMutationType.OBJECT_CREATION, className, true, id, self, args]);
 

@@ -104,10 +104,10 @@ export class AudioListener extends TransferrableAudio implements IAudioListener 
   }
 
   setOrientation(x: number, y: number, z: number, xUp: number, yUp: number, zUp: number): void {
-    this[TransferrableKeys.mutated]('setOrientation', [...arguments]);
+    this[TransferrableKeys.mutated]('setOrientation', arguments);
   }
 
   setPosition(x: number, y: number, z: number): void {
-    this[TransferrableKeys.mutated]('setPosition', [...arguments]);
+    this[TransferrableKeys.mutated]('setPosition', arguments);
   }
 }

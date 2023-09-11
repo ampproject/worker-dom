@@ -33,7 +33,7 @@ export class AudioParam extends TransferrableAudio implements IAudioParam {
   }
 
   cancelAndHoldAtTime(cancelTime: number): IAudioParam {
-    this[TransferrableKeys.mutated]('cancelAndHoldAtTime', [...arguments]);
+    this[TransferrableKeys.mutated]('cancelAndHoldAtTime', arguments);
     if (cancelTime > this.context.currentTime) {
       setTimeout(
         (me: AudioParam) => {
@@ -47,7 +47,7 @@ export class AudioParam extends TransferrableAudio implements IAudioParam {
   }
 
   cancelScheduledValues(cancelTime: number): IAudioParam {
-    this[TransferrableKeys.mutated]('cancelScheduledValues', [...arguments]);
+    this[TransferrableKeys.mutated]('cancelScheduledValues', arguments);
     if (cancelTime > this.context.currentTime) {
       setTimeout(
         (me: AudioParam) => {
@@ -61,7 +61,7 @@ export class AudioParam extends TransferrableAudio implements IAudioParam {
   }
 
   exponentialRampToValueAtTime(value: number, endTime: number): IAudioParam {
-    this[TransferrableKeys.mutated]('exponentialRampToValueAtTime', [...arguments]);
+    this[TransferrableKeys.mutated]('exponentialRampToValueAtTime', arguments);
 
     let currentTime = this.context.currentTime;
 
@@ -90,7 +90,7 @@ export class AudioParam extends TransferrableAudio implements IAudioParam {
   }
 
   linearRampToValueAtTime(value: number, endTime: number): IAudioParam {
-    this[TransferrableKeys.mutated]('linearRampToValueAtTime', [...arguments]);
+    this[TransferrableKeys.mutated]('linearRampToValueAtTime', arguments);
 
     let currentTime = this.context.currentTime;
 
@@ -119,7 +119,7 @@ export class AudioParam extends TransferrableAudio implements IAudioParam {
   }
 
   setTargetAtTime(target: number, startTime: number, timeConstant: number): IAudioParam {
-    this[TransferrableKeys.mutated]('setTargetAtTime', [...arguments]);
+    this[TransferrableKeys.mutated]('setTargetAtTime', arguments);
 
     const startValue = this._value;
     const duration = timeConstant * Math.log(1 + (target - startValue) / (target - startValue));
@@ -152,7 +152,7 @@ export class AudioParam extends TransferrableAudio implements IAudioParam {
     if (startTime <= currentTime) {
       this.value = value;
     } else {
-      this[TransferrableKeys.mutated]('setValueAtTime', [...arguments]);
+      this[TransferrableKeys.mutated]('setValueAtTime', arguments);
       this.schedule = setTimeout(() => {
         this._value = value;
       }, (startTime - currentTime) * 1000);
@@ -161,7 +161,7 @@ export class AudioParam extends TransferrableAudio implements IAudioParam {
   }
 
   setValueCurveAtTime(values: number[] | Float32Array, startTime: number, duration: number): IAudioParam {
-    this[TransferrableKeys.mutated]('setValueCurveAtTime', [...arguments]);
+    this[TransferrableKeys.mutated]('setValueCurveAtTime', arguments);
 
     const interval = (duration * 1000) / values.length;
 

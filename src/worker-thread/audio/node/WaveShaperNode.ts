@@ -9,7 +9,7 @@ export class WaveShaperNode extends AudioNode implements IWaveShaperNode {
 
   // https://developer.mozilla.org/en-US/docs/Web/API/WaveShaperNode
   constructor(context: BaseAudioContext, options: WaveShaperOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'WaveShaperNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'WaveShaperNode', arguments);
 
     super(id, context, 1, 1, {
       channelCount: options.channelCount || 2,

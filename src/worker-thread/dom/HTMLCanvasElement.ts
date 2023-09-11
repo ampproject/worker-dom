@@ -44,7 +44,7 @@ export class HTMLCanvasElement extends HTMLElement {
             this.ownerDocument as Document,
             this,
             'getContext',
-            [...arguments],
+            arguments,
             (id) => new WebGLRenderingContextPolyfill(id, this, contextAttributes, contextInfo),
           );
         }

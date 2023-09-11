@@ -20,7 +20,7 @@ export class DynamicsCompressorNode extends AudioNode implements IDynamicsCompre
 
   // https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode
   constructor(context: BaseAudioContext, options: DynamicsCompressorOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'DynamicsCompressorNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'DynamicsCompressorNode', arguments);
 
     super(id, context, 1, 1, {
       channelCount: options.channelCount || 2,

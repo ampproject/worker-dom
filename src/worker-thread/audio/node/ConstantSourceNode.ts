@@ -10,7 +10,7 @@ export class ConstantSourceNode extends AudioScheduledSourceNode implements ICon
 
   // https://developer.mozilla.org/en-US/docs/Web/API/ConstantSourceNode
   constructor(context: BaseAudioContext, options: ConstantSourceOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'ConstantSourceNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'ConstantSourceNode', arguments);
 
     super(id, context, 0, 1, {});
 

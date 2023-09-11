@@ -64,7 +64,7 @@ function serializeObject(arg: any, stream: BytesStream) {
     return;
   }
 
-  if (Array.isArray(arg)) {
+  if (Array.isArray(arg) || isArguments(argType, arg)) {
     if (arg.length === 0) {
       stream.appendUint8(TransferrableObjectType.ArrayEmpty);
     } else {
@@ -133,7 +133,7 @@ function serializeObject(arg: any, stream: BytesStream) {
       stream.appendUint8(TransferrableObjectType.Document);
     } else if (isSelf(arg)) {
       stream.appendUint8(TransferrableObjectType.Window);
-    } else if (typeof arg[TransferrableKeys.serializeAsTransferrableObject] == 'function') {
+    } else if (arg[TransferrableKeys.serializeAsTransferrableObject] instanceof Function) {
       // serializable
       const serializedObject = (arg as TransferrableObject)[TransferrableKeys.serializeAsTransferrableObject]();
       stream.appendUint8(serializedObject[0]); // type
@@ -238,7 +238,7 @@ function estimateObjectSizeInBytes(obj: any) {
     }
   }
 
-  if (Array.isArray(obj)) {
+  if (Array.isArray(obj) || isArguments(argType, obj)) {
     if (obj.length > 0) {
       size += estimateSizeInBytes(obj);
       return size;
@@ -270,7 +270,7 @@ function estimateObjectSizeInBytes(obj: any) {
   }
 
   if (argType === 'object') {
-    if (typeof obj[TransferrableKeys.serializeAsTransferrableObject] == 'function') {
+    if (obj[TransferrableKeys.serializeAsTransferrableObject] instanceof Function) {
       size += Uint16Array.BYTES_PER_ELEMENT;
       return size;
     } else {
@@ -354,6 +354,14 @@ function isSelf(arg: any): boolean {
 function isDocument(arg: any): boolean {
   try {
     return (self as any).document === arg;
+  } catch (e) {
+    return false;
+  }
+}
+
+function isArguments(type: string, arg: any): boolean {
+  try {
+    return type === 'object' && 'callee' in arg && 'length' in arg;
   } catch (e) {
     return false;
   }

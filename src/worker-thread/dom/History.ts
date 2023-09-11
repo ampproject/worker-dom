@@ -40,22 +40,22 @@ export class History implements TransferrableObject {
   }
 
   go(delta?: number): void {
-    this[TransferrableKeys.mutated]('go', [...arguments]);
+    this[TransferrableKeys.mutated]('go', arguments);
   }
 
   pushState(data: any, unused: string, url?: string | URL | null): void {
-    this[TransferrableKeys.mutated]('pushState', [...arguments]);
+    this[TransferrableKeys.mutated]('pushState', arguments);
   }
 
   replaceState(data: any, unused: string, url?: string | URL | null): void {
-    this[TransferrableKeys.mutated]('replaceState', [...arguments]);
+    this[TransferrableKeys.mutated]('replaceState', arguments);
   }
 
   public [TransferrableKeys.serializeAsTransferrableObject](): number[] {
     return [TransferrableObjectType.TransferObject, this.id];
   }
 
-  private [TransferrableKeys.mutated](fnName: string, args: any[]) {
+  private [TransferrableKeys.mutated](fnName: string, args: any[] | IArguments) {
     this.checkInitialized();
     transfer(this.document, [TransferrableMutationType.OBJECT_MUTATION, fnName, this, args]);
   }

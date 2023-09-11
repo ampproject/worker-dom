@@ -30,7 +30,7 @@ export class PannerNode extends AudioNode implements IPannerNode {
 
   // https://developer.mozilla.org/en-US/docs/Web/API/PannerNode
   constructor(context: BaseAudioContext, options: PannerOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'PannerNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'PannerNode', arguments);
 
     super(id, context, 1, 1, {
       channelCount: options.channelCount || 2,
@@ -56,11 +56,11 @@ export class PannerNode extends AudioNode implements IPannerNode {
   }
 
   setOrientation(x: number, y: number, z: number): void {
-    this[TransferrableKeys.mutated]('setOrientation', [...arguments]);
+    this[TransferrableKeys.mutated]('setOrientation', arguments);
   }
 
   setPosition(x: number, y: number, z: number): void {
-    this[TransferrableKeys.mutated]('setPosition', [...arguments]);
+    this[TransferrableKeys.mutated]('setPosition', arguments);
   }
 
   get orientationX(): IAudioParam {

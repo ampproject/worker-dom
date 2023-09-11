@@ -16,7 +16,7 @@ export class AudioBufferSourceNode extends AudioScheduledSourceNode implements I
 
   // https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode
   constructor(context: BaseAudioContext, options: AudioBufferSourceOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'AudioBufferSourceNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'AudioBufferSourceNode', arguments);
 
     super(id, context, 0, 1, {
       channelCount: options.buffer ? options.buffer.numberOfChannels || 2 : 2,

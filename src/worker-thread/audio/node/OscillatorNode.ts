@@ -14,7 +14,7 @@ export class OscillatorNode extends AudioScheduledSourceNode implements IOscilla
 
   // https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode
   constructor(context: BaseAudioContext, options: OscillatorOptions = {}, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'OscillatorNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'OscillatorNode', arguments);
 
     super(id, context, 0, 1, {
       channelCount: options.channelCount || 2,
@@ -28,7 +28,7 @@ export class OscillatorNode extends AudioScheduledSourceNode implements IOscilla
   }
 
   setPeriodicWave(periodicWave: IPeriodicWave): void {
-    this[TransferrableKeys.mutated]('setPeriodicWave', [...arguments]);
+    this[TransferrableKeys.mutated]('setPeriodicWave', arguments);
   }
 
   get detune(): IAudioParam {

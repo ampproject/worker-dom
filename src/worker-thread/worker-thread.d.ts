@@ -9,7 +9,7 @@ type RenderableElement = HTMLElement | SVGElement | Text | Comment;
 type PostMessage = (message: any, transfer?: Transferable[]) => void;
 
 type SerializableType = TransferrableObject | number | string | boolean | undefined | Document | typeof globalThis;
-type Serializable = SerializableType | SerializableType[];
+type Serializable = SerializableType | SerializableType[] | IArguments;
 
 export interface TransferrableObject {
   /**

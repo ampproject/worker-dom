@@ -10,7 +10,7 @@ export class MediaElementAudioSourceNode extends AudioNode implements IMediaElem
   // https://developer.mozilla.org/en-US/docs/Web/API/MediaElementAudioSourceNode
 
   constructor(context: BaseAudioContext, options: MediaElementAudioSourceOptions, id?: number) {
-    id = id || createWindowObjectReferenceConstructor(context.document, 'MediaElementAudioSourceNode', [...arguments]);
+    id = id || createWindowObjectReferenceConstructor(context.document, 'MediaElementAudioSourceNode', arguments);
 
     super(id, context, 0, 1, {
       channelCount: options.channelCount || 2,

@@ -57,7 +57,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     this.lineDash = [];
   }
 
-  private [TransferrableKeys.mutated](fnName: string, args: any[]) {
+  private [TransferrableKeys.mutated](fnName: string, args: any[] | IArguments) {
     transfer(this.canvasElement.ownerDocument as Document, [TransferrableMutationType.OBJECT_MUTATION, fnName, this, args]);
   }
 
@@ -70,35 +70,35 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   }
 
   clearRect(x: number, y: number, w: number, h: number): void {
-    this[TransferrableKeys.mutated]('clearRect', [...arguments]);
+    this[TransferrableKeys.mutated]('clearRect', arguments);
   }
 
   fillRect(x: number, y: number, w: number, h: number): void {
-    this[TransferrableKeys.mutated]('fillRect', [...arguments]);
+    this[TransferrableKeys.mutated]('fillRect', arguments);
   }
 
   strokeRect(x: number, y: number, w: number, h: number): void {
-    this[TransferrableKeys.mutated]('strokeRect', [...arguments]);
+    this[TransferrableKeys.mutated]('strokeRect', arguments);
   }
 
   roundRect(x: number, y: number, w: number, h: number, radii?: number | DOMPointInit | (number | DOMPointInit)[]): void {
-    this[TransferrableKeys.mutated]('roundRect', [...arguments]);
+    this[TransferrableKeys.mutated]('roundRect', arguments);
   }
   
   set lineWidth(value: number) {
-    this[TransferrableKeys.mutated]('lineWidth', [...arguments]);
+    this[TransferrableKeys.mutated]('lineWidth', arguments);
   }
 
   fillText(text: string, x: number, y: number, maxWidth?: number) {
-    this[TransferrableKeys.mutated]('fillText', [...arguments]);
+    this[TransferrableKeys.mutated]('fillText', arguments);
   }
 
   moveTo(x: number, y: number) {
-    this[TransferrableKeys.mutated]('moveTo', [...arguments]);
+    this[TransferrableKeys.mutated]('moveTo', arguments);
   }
 
   lineTo(x: number, y: number) {
-    this[TransferrableKeys.mutated]('lineTo', [...arguments]);
+    this[TransferrableKeys.mutated]('lineTo', arguments);
   }
 
   closePath() {
@@ -122,59 +122,59 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   }
 
   rotate(angle: number) {
-    this[TransferrableKeys.mutated]('rotate', [...arguments]);
+    this[TransferrableKeys.mutated]('rotate', arguments);
   }
 
   transform(a: number, b: number, c: number, d: number, e: number, f: number) {
-    this[TransferrableKeys.mutated]('transform', [...arguments]);
+    this[TransferrableKeys.mutated]('transform', arguments);
   }
 
   translate(x: number, y: number) {
-    this[TransferrableKeys.mutated]('translate', [...arguments]);
+    this[TransferrableKeys.mutated]('translate', arguments);
   }
 
   scale(x: number, y: number) {
-    this[TransferrableKeys.mutated]('scale', [...arguments]);
+    this[TransferrableKeys.mutated]('scale', arguments);
   }
 
   set globalAlpha(value: number) {
-    this[TransferrableKeys.mutated]('globalAlpha', [...arguments]);
+    this[TransferrableKeys.mutated]('globalAlpha', arguments);
   }
 
   set globalCompositeOperation(value: string) {
-    this[TransferrableKeys.mutated]('globalCompositeOperation', [...arguments]);
+    this[TransferrableKeys.mutated]('globalCompositeOperation', arguments);
   }
 
   set imageSmoothingQuality(value: ImageSmoothingQuality) {
-    this[TransferrableKeys.mutated]('imageSmoothingQuality', [...arguments]);
+    this[TransferrableKeys.mutated]('imageSmoothingQuality', arguments);
   }
 
   set fillStyle(value: string | CanvasGradient | CanvasPattern) {
-    this[TransferrableKeys.mutated]('fillStyle', [...arguments]);
+    this[TransferrableKeys.mutated]('fillStyle', arguments);
   }
 
   set strokeStyle(value: string | CanvasGradient | CanvasPattern) {
-    this[TransferrableKeys.mutated]('strokeStyle', [...arguments]);
+    this[TransferrableKeys.mutated]('strokeStyle', arguments);
   }
 
   set shadowBlur(value: number) {
-    this[TransferrableKeys.mutated]('shadowBlur', [...arguments]);
+    this[TransferrableKeys.mutated]('shadowBlur', arguments);
   }
 
   set shadowColor(value: string) {
-    this[TransferrableKeys.mutated]('shadowColor', [...arguments]);
+    this[TransferrableKeys.mutated]('shadowColor', arguments);
   }
 
   set shadowOffsetX(value: number) {
-    this[TransferrableKeys.mutated]('shadowOffsetX', [...arguments]);
+    this[TransferrableKeys.mutated]('shadowOffsetX', arguments);
   }
 
   set shadowOffsetY(value: number) {
-    this[TransferrableKeys.mutated]('shadowOffsetY', [...arguments]);
+    this[TransferrableKeys.mutated]('shadowOffsetY', arguments);
   }
 
   set filter(value: string) {
-    this[TransferrableKeys.mutated]('filter', [...arguments]);
+    this[TransferrableKeys.mutated]('filter', arguments);
   }
 
   beginPath() {
@@ -182,67 +182,67 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   }
 
   strokeText(text: string, x: number, y: number, maxWidth?: number) {
-    this[TransferrableKeys.mutated]('strokeText', [...arguments]);
+    this[TransferrableKeys.mutated]('strokeText', arguments);
   }
 
   set textAlign(value: CanvasTextAlign) {
-    this[TransferrableKeys.mutated]('textAlign', [...arguments]);
+    this[TransferrableKeys.mutated]('textAlign', arguments);
   }
 
   set textBaseline(value: CanvasTextBaseline) {
-    this[TransferrableKeys.mutated]('textBaseline', [...arguments]);
+    this[TransferrableKeys.mutated]('textBaseline', arguments);
   }
 
   set lineCap(value: CanvasLineCap) {
-    this[TransferrableKeys.mutated]('lineCap', [...arguments]);
+    this[TransferrableKeys.mutated]('lineCap', arguments);
   }
 
   set lineDashOffset(value: number) {
-    this[TransferrableKeys.mutated]('lineDashOffset', [...arguments]);
+    this[TransferrableKeys.mutated]('lineDashOffset', arguments);
   }
 
   set lineJoin(value: CanvasLineJoin) {
-    this[TransferrableKeys.mutated]('lineJoin', [...arguments]);
+    this[TransferrableKeys.mutated]('lineJoin', arguments);
   }
 
   set miterLimit(value: number) {
-    this[TransferrableKeys.mutated]('miterLimit', [...arguments]);
+    this[TransferrableKeys.mutated]('miterLimit', arguments);
   }
 
   arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: boolean) {
-    this[TransferrableKeys.mutated]('arc', [...arguments]);
+    this[TransferrableKeys.mutated]('arc', arguments);
   }
 
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number) {
-    this[TransferrableKeys.mutated]('arcTo', [...arguments]);
+    this[TransferrableKeys.mutated]('arcTo', arguments);
   }
 
   set direction(value: CanvasDirection) {
-    this[TransferrableKeys.mutated]('direction', [...arguments]);
+    this[TransferrableKeys.mutated]('direction', arguments);
   }
 
   set font(value: string) {
-    this[TransferrableKeys.mutated]('font', [...arguments]);
+    this[TransferrableKeys.mutated]('font', arguments);
   }
 
   ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean) {
-    this[TransferrableKeys.mutated]('ellipse', [...arguments]);
+    this[TransferrableKeys.mutated]('ellipse', arguments);
   }
 
   bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number) {
-    this[TransferrableKeys.mutated]('bezierCurveTo', [...arguments]);
+    this[TransferrableKeys.mutated]('bezierCurveTo', arguments);
   }
 
   rect(x: number, y: number, width: number, height: number) {
-    this[TransferrableKeys.mutated]('rect', [...arguments]);
+    this[TransferrableKeys.mutated]('rect', arguments);
   }
 
   quadraticCurveTo(cpx: number, cpy: number, x: number, y: number) {
-    this[TransferrableKeys.mutated]('quadraticCurveTo', [...arguments]);
+    this[TransferrableKeys.mutated]('quadraticCurveTo', arguments);
   }
 
   set imageSmoothingEnabled(value: boolean) {
-    this[TransferrableKeys.mutated]('imageSmoothingEnabled', [...arguments]);
+    this[TransferrableKeys.mutated]('imageSmoothingEnabled', arguments);
   }
 
   setLineDash(lineDash: number[]) {
@@ -251,7 +251,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       lineDash = lineDash.concat(lineDash);
     }
     this.lineDash = lineDash;
-    this[TransferrableKeys.mutated]('setLineDash', [...arguments]);
+    this[TransferrableKeys.mutated]('setLineDash', arguments);
   }
 
   getLineDash(): number[] {
@@ -262,14 +262,14 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     if (typeof pathOrFillRule === 'object') {
       throw new Error('clip(Path2D) is currently not supported!');
     }
-    this[TransferrableKeys.mutated]('clip', [...arguments]);
+    this[TransferrableKeys.mutated]('clip', arguments);
   }
 
   fill(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule) {
     if (typeof pathOrFillRule === 'object') {
       throw new Error('fill(Path2D) is currently not supported!');
     }
-    this[TransferrableKeys.mutated]('fill', [...arguments]);
+    this[TransferrableKeys.mutated]('fill', arguments);
   }
 
   // Method has a different signature in MDN than it does in HTML spec
@@ -277,7 +277,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
     if (typeof transformOrA === 'object') {
       throw new Error('setTransform(DOMMatrix2DInit) is currently not supported!');
     }
-    this[TransferrableKeys.mutated]('setTransform', [...arguments]);
+    this[TransferrableKeys.mutated]('setTransform', arguments);
   }
 
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient {
@@ -285,7 +285,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       this.canvasElement.ownerDocument as Document,
       this,
       'createLinearGradient',
-      [...arguments],
+      arguments,
       (id) => new CanvasGradient(id, this.canvasElement.ownerDocument as Document),
     );
   }
@@ -295,17 +295,17 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
       this.canvasElement.ownerDocument as Document,
       this,
       'createRadialGradient',
-      [...arguments],
+      arguments,
       (id) => new CanvasGradient(id, this.canvasElement.ownerDocument as Document),
     );
   }
 
   createPattern(image: HTMLCanvasElement | HTMLImageElement, repetition: string): CanvasPattern {
-    return createObjectReference(this.canvasElement.ownerDocument as Document, this, 'createPattern', [...arguments], (id) => new CanvasPattern(id));
+    return createObjectReference(this.canvasElement.ownerDocument as Document, this, 'createPattern', arguments, (id) => new CanvasPattern(id));
   }
 
   drawImage(image: CanvasImageSource, dx: number, dy: number) {
-    this[TransferrableKeys.mutated]('drawImage', [...arguments]);
+    this[TransferrableKeys.mutated]('drawImage', arguments);
   }
 
   createImageData(sw: number, sh: number): ImageData;
@@ -333,7 +333,7 @@ class OffscreenCanvasRenderingContext2DPolyfill<ElementType extends HTMLElement>
   putImageData(imagedata: ImageData, dx: number, dy: number): void;
   putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX: number, dirtyY: number, dirtyWidth: number, dirtyHeight: number): void;
   putImageData(imagedata: ImageData, dx: number, dy: number, dirtyX?: number, dirtyY?: number, dirtyWidth?: number, dirtyHeight?: number): void {
-    this[TransferrableKeys.mutated]('putImageData', [...arguments]);
+    this[TransferrableKeys.mutated]('putImageData', arguments);
   }
 
   isPointInPath(): boolean {

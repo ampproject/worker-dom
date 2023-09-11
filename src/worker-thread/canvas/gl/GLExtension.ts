@@ -16,7 +16,7 @@ export abstract class TransferrableGLExtension extends TransferrableGLObject {
     this.context = context;
   }
 
-  protected [TransferrableKeys.mutated](fnName: string, args: any[]) {
+  protected [TransferrableKeys.mutated](fnName: string, args: any[] | IArguments) {
     transfer(this.context.canvas.ownerDocument as Document, [TransferrableMutationType.OBJECT_MUTATION, fnName, this, args]);
   }
 
@@ -140,7 +140,7 @@ export class WEBGLDrawBuffers extends TransferrableGLExtension implements WEBGL_
   }
 
   drawBuffersWEBGL(buffers: GLenum[]): void {
-    this[TransferrableKeys.mutated]('drawBuffersWEBGL', [...arguments]);
+    this[TransferrableKeys.mutated]('drawBuffersWEBGL', arguments);
   }
 }
 
@@ -153,15 +153,15 @@ export class ANGLEInstancedArrays extends TransferrableGLExtension implements AN
   }
 
   drawArraysInstancedANGLE(mode: GLenum, first: GLint, count: GLsizei, primcount: GLsizei): void {
-    this[TransferrableKeys.mutated]('drawArraysInstancedANGLE', [...arguments]);
+    this[TransferrableKeys.mutated]('drawArraysInstancedANGLE', arguments);
   }
 
   drawElementsInstancedANGLE(mode: GLenum, count: GLsizei, type: GLenum, offset: GLintptr, primcount: GLsizei): void {
-    this[TransferrableKeys.mutated]('drawElementsInstancedANGLE', [...arguments]);
+    this[TransferrableKeys.mutated]('drawElementsInstancedANGLE', arguments);
   }
 
   vertexAttribDivisorANGLE(index: GLuint, divisor: GLuint): void {
-    this[TransferrableKeys.mutated]('vertexAttribDivisorANGLE', [...arguments]);
+    this[TransferrableKeys.mutated]('vertexAttribDivisorANGLE', arguments);
   }
 }
 
@@ -187,7 +187,7 @@ export class OVRMultiview2 extends TransferrableGLExtension implements OVR_multi
     baseViewIndex: GLint,
     numViews: GLsizei,
   ): void {
-    this[TransferrableKeys.mutated]('framebufferTextureMultiviewOVR', [...arguments]);
+    this[TransferrableKeys.mutated]('framebufferTextureMultiviewOVR', arguments);
   }
 }
 
@@ -200,7 +200,7 @@ export class OESVertexArrayObject extends TransferrableGLExtension implements OE
   }
 
   bindVertexArrayOES(arrayObject: GLVertexArrayObjectOES | null): void {
-    this[TransferrableKeys.mutated]('bindVertexArrayOES', [...arguments]);
+    this[TransferrableKeys.mutated]('bindVertexArrayOES', arguments);
   }
 
   createVertexArrayOES(): GLVertexArrayObjectOES | null {
@@ -209,7 +209,7 @@ export class OESVertexArrayObject extends TransferrableGLExtension implements OE
 
   deleteVertexArrayOES(arrayObject: GLVertexArrayObjectOES | null): void {
     if (!arrayObject || arrayObject.isDeleted()) return;
-    this[TransferrableKeys.mutated]('deleteVertexArrayOES', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteVertexArrayOES', arguments);
     this.deleteObjectReference(arrayObject.id);
 
     arrayObject.delete();
@@ -249,7 +249,7 @@ export class EXTDisjointTimerQuery extends TransferrableGLExtension /* implement
   }
 
   beginQueryEXT(target: number, query: vGLQuery): void {
-    this[TransferrableKeys.mutated]('beginQueryEXT', [...arguments]);
+    this[TransferrableKeys.mutated]('beginQueryEXT', arguments);
   }
 
   createQueryEXT(): vGLQuery {
@@ -259,14 +259,14 @@ export class EXTDisjointTimerQuery extends TransferrableGLExtension /* implement
   deleteQueryEXT(query: vGLQuery): void {
     if (!query || query.isDeleted()) return;
 
-    this[TransferrableKeys.mutated]('deleteQueryEXT', [...arguments]);
+    this[TransferrableKeys.mutated]('deleteQueryEXT', arguments);
     this.deleteObjectReference(query.id);
 
     query.delete();
   }
 
   endQueryEXT(target: number): void {
-    this[TransferrableKeys.mutated]('endQueryEXT', [...arguments]);
+    this[TransferrableKeys.mutated]('endQueryEXT', arguments);
   }
 
   getQueryEXT(target: number, pname: number): any {
@@ -278,7 +278,7 @@ export class EXTDisjointTimerQuery extends TransferrableGLExtension /* implement
   }
 
   queryCounterEXT(query: vGLQuery, target: number): void {
-    this[TransferrableKeys.mutated]('queryCounterEXT', [...arguments]);
+    this[TransferrableKeys.mutated]('queryCounterEXT', arguments);
   }
 
   isQueryEXT(query: vGLQuery): boolean {
@@ -297,7 +297,7 @@ export class WEBGLMultiDraw extends TransferrableGLExtension implements WEBGL_mu
     instanceCountsOffset: GLuint,
     drawcount: GLsizei,
   ): void {
-    this[TransferrableKeys.mutated]('multiDrawArraysInstancedWEBGL', [...arguments]);
+    this[TransferrableKeys.mutated]('multiDrawArraysInstancedWEBGL', arguments);
   }
 
   multiDrawArraysWEBGL(
@@ -308,7 +308,7 @@ export class WEBGLMultiDraw extends TransferrableGLExtension implements WEBGL_mu
     countsOffset: GLuint,
     drawcount: GLsizei,
   ): void {
-    this[TransferrableKeys.mutated]('multiDrawArraysWEBGL', [...arguments]);
+    this[TransferrableKeys.mutated]('multiDrawArraysWEBGL', arguments);
   }
 
   multiDrawElementsInstancedWEBGL(
@@ -322,7 +322,7 @@ export class WEBGLMultiDraw extends TransferrableGLExtension implements WEBGL_mu
     instanceCountsOffset: GLuint,
     drawcount: GLsizei,
   ): void {
-    this[TransferrableKeys.mutated]('multiDrawElementsInstancedWEBGL', [...arguments]);
+    this[TransferrableKeys.mutated]('multiDrawElementsInstancedWEBGL', arguments);
   }
 
   multiDrawElementsWEBGL(
@@ -334,36 +334,36 @@ export class WEBGLMultiDraw extends TransferrableGLExtension implements WEBGL_mu
     offsetsOffset: GLuint,
     drawcount: GLsizei,
   ): void {
-    this[TransferrableKeys.mutated]('multiDrawElementsWEBGL', [...arguments]);
+    this[TransferrableKeys.mutated]('multiDrawElementsWEBGL', arguments);
   }
 }
 
 export class OESDrawBuffersIndexed extends TransferrableGLExtension /* implements OES_draw_buffers_indexed */ {
   blendEquationSeparateiOES(buf: GLuint, modeRGB: GLenum, modeAlpha: GLenum): void {
-    this[TransferrableKeys.mutated]('multiDrawElementsInstancedWEBGL', [...arguments]);
+    this[TransferrableKeys.mutated]('multiDrawElementsInstancedWEBGL', arguments);
   }
 
   blendEquationiOES(buf: GLuint, mode: GLenum): void {
-    this[TransferrableKeys.mutated]('blendEquationiOES', [...arguments]);
+    this[TransferrableKeys.mutated]('blendEquationiOES', arguments);
   }
 
   blendFuncSeparateiOES(buf: GLuint, srcRGB: GLenum, dstRGB: GLenum, srcAlpha: GLenum, dstAlpha: GLenum): void {
-    this[TransferrableKeys.mutated]('blendFuncSeparateiOES', [...arguments]);
+    this[TransferrableKeys.mutated]('blendFuncSeparateiOES', arguments);
   }
 
   blendFunciOES(buf: GLuint, src: GLenum, dst: GLenum): void {
-    this[TransferrableKeys.mutated]('blendFunciOES', [...arguments]);
+    this[TransferrableKeys.mutated]('blendFunciOES', arguments);
   }
 
   colorMaskiOES(buf: GLuint, r: GLboolean, g: GLboolean, b: GLboolean, a: GLboolean): void {
-    this[TransferrableKeys.mutated]('colorMaskiOES', [...arguments]);
+    this[TransferrableKeys.mutated]('colorMaskiOES', arguments);
   }
 
   disableiOES(target: GLenum, index: GLuint): void {
-    this[TransferrableKeys.mutated]('disableiOES', [...arguments]);
+    this[TransferrableKeys.mutated]('disableiOES', arguments);
   }
 
   enableiOES(target: GLenum, index: GLuint): void {
-    this[TransferrableKeys.mutated]('enableiOES', [...arguments]);
+    this[TransferrableKeys.mutated]('enableiOES', arguments);
   }
 }
