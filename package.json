@@ -40,9 +40,9 @@
   "devDependencies": {
     "@ampproject/filesize": "4.3.0",
     "@ampproject/rollup-plugin-closure-compiler": "0.27.0",
-    "@babel/cli": "7.22.15",
-    "@babel/core": "7.22.20",
-    "@babel/preset-env": "7.22.20",
+    "@babel/cli": "7.23.0",
+    "@babel/core": "7.23.2",
+    "@babel/preset-env": "7.23.2",
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-replace": "5.0.3",
     "@types/node": "18.18.4",
