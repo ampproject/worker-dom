@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "obj-str": "1.1.0",
-    "preact": "10.19.1"
+    "preact": "10.19.2"
   },
   "devDependencies": {
     "@babel/core": "7.23.3",
@@ -25,6 +25,6 @@
   },
   "volta": {
     "node": "18.18.2",
-    "yarn": "1.22.19"
+    "yarn": "1.22.21"
   }
 }
