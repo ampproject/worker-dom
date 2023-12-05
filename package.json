@@ -45,7 +45,7 @@
     "@babel/preset-env": "7.23.5",
     "@rollup/plugin-babel": "6.0.4",
     "@rollup/plugin-replace": "5.0.5",
-    "@types/node": "18.18.13",
+    "@types/node": "18.19.2",
     "@types/sinon": "10.0.20",
     "acorn": "8.11.2",
     "acorn-walk": "8.3.0",
@@ -123,7 +123,7 @@
     ]
   },
   "volta": {
-    "node": "18.18.2",
+    "node": "18.19.0",
     "yarn": "1.22.21"
   },
   "publishConfig": {
