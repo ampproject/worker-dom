@@ -26,7 +26,7 @@
     "ava": "5.3.1",
     "esm": "3.2.25",
     "lint-staged": "14.0.1",
-    "npm-run-all2": "5.0.0",
+    "npm-run-all2": "5.0.2",
     "prettier": "3.2.5",
     "rimraf": "5.0.5",
     "shx": "0.3.4"
