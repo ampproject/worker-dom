@@ -45,6 +45,8 @@ import { propagate as propagateResize } from '../ResizePropagation';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { WorkerDOMGlobalScope, GlobalScope } from '../WorkerDOMGlobalScope';
 import { set as setPhase } from '../phase';
+import { NodeIterator, NodeFilter } from './NodeIterator';
+
 
 const DOCUMENT_NAME = '#document';
 
@@ -151,4 +153,12 @@ export class Document extends Element {
   public getElementById(id: string): Element | null {
     return matchChildElement(this.body, (element) => element.id === id);
   }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeIterator
+   * @return NodeIterator object.
+   */
+  public createNodeIterator(root: Node, whatToShow: number = NodeFilter.SHOW_ALL, filter: ((node: Node) => number) | null = null): NodeIterator {
+    return new NodeIterator(root, whatToShow, filter);
+  } 
 }
