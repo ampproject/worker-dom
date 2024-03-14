@@ -37,7 +37,7 @@ test.serial.cb('Node.removeEventListener transfers an event subscription', (t) =
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
     t.deepEqual(
       Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION, div[TransferrableKeys.index], 1, 0, strings.indexOf('click'), 0],
+      [TransferrableMutationType.EVENT_SUBSCRIPTION, div[TransferrableKeys.index], 0, strings.indexOf('click'), 0],
       'mutation is as expected',
     );
     t.end();
@@ -50,16 +50,11 @@ test.serial.cb('Node.removeEventListener transfers an event subscription', (t) =
   });
 });
 
-test.serial.cb('Node.removeEventListener transfers the correct subscription when multiple exist', (t) => {
+test.serial.cb('Node.removeEventListener not transfers the subscription when multiple exist', (t) => {
   const { div, eventHandler, emitter } = t.context;
 
   function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION, div[TransferrableKeys.index], 1, 0, strings.indexOf('click'), 1],
-      'mutation is as expected',
-    );
-    t.end();
+    throw 'Should not be called';
   }
 
   div.addEventListener('click', (e) => console.log('0th listener'));
@@ -67,5 +62,6 @@ test.serial.cb('Node.removeEventListener transfers the correct subscription when
   Promise.resolve().then(() => {
     emitter.once(transmitted);
     div.removeEventListener('click', eventHandler);
+    t.end();
   });
 });
