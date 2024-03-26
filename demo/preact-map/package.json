@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "obj-str": "1.1.0",
-    "preact": "10.19.6"
+    "preact": "10.20.1"
   },
   "devDependencies": {
     "@babel/core": "7.24.0",
@@ -20,11 +20,11 @@
     "css-loader": "6.10.0",
     "mini-css-extract-plugin": "2.8.1",
     "style-loader": "3.3.4",
-    "webpack": "5.90.3",
+    "webpack": "5.91.0",
     "webpack-cli": "5.1.4"
   },
   "volta": {
-    "node": "18.19.1",
+    "node": "18.20.0",
     "yarn": "1.22.22"
   }
 }
