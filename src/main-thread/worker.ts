@@ -64,9 +64,23 @@ export class WorkerContext {
         Object.assign(self, workerDOM);
       }).call(self);
       ${authorScript}
-      //# sourceURL=${encodeURI(config.authorURL)}`;
+      //# sourceURL=${encodeURI(config.authorURL ?? '')}`;
     if (!config.sandbox) {
-      this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
+      if (config.worker) {
+        this[TransferrableKeys.worker] = config.worker;
+        const hydrateArgs = [
+          strings,
+          skeleton,
+          cssKeys,
+          globalEventHandlerKeys,
+          [window.innerWidth, window.innerHeight],
+          localStorageInit,
+          sessionStorageInit,
+        ];
+        config.worker.postMessage({ hydrateArgs });
+      } else {
+        this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
+      }
     } else if (IS_AMP) {
       this[TransferrableKeys.worker] = new IframeWorker(URL.createObjectURL(new Blob([code])), config.sandbox.iframeUrl);
     }
