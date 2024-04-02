@@ -37,7 +37,7 @@ To upgrade this node using the module version of the code, we can directly impor
 ```html
 <script type="module">
   import {upgradeElement} from './dist/main.mjs';
-  upgradeElement(document.getElementById('upgrade-me'), './dist/worker/worker.mjs');
+  upgradeElement(document.getElementById('upgrade-me'), './dist/worker/worker.js');
 </script>
 ```
 
@@ -49,6 +49,26 @@ The nomodule format exposes the global `MainThread`, and could upgrade the `div`
     MainThread.upgradeElement(document.getElementById('upgrade-me'), './dist/worker/worker.js');
   }, false);
 </script>
+``` 
+
+### With Webpack
+
+In main.js :
+```js
+import { upgradeElementByWorker } from '@ampproject/worker-dom/dist/main.mjs';
+
+const worker = new Worker(new URL('./worker.js', import.meta.url));
+upgradeElementByWorker(document.getElementById('upgrade-me'), worker);
+``` 
+In worker.js :
+
+```js
+import { initWorkerDom } from '@ampproject/worker-dom/dist/worker/worker.mjs'
+
+initWorkerDom().then(() => {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+})
 ``` 
 
 ### AMP Distribution for `amp-script`

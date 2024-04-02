@@ -6,6 +6,7 @@ import { NodeContext } from './nodes';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { StorageLocation } from '../transfer/TransferrableStorage';
 import { IframeWorker } from './iframe-worker';
+import { waitForMsg } from '../utils';
 
 // TODO: Sanitizer storage init is likely broken, since the code currently
 // attempts to stringify a Promise.
@@ -68,16 +69,18 @@ export class WorkerContext {
     if (!config.sandbox) {
       if (config.worker) {
         this[TransferrableKeys.worker] = config.worker;
-        const hydrateArgs = [
-          strings,
-          skeleton,
-          cssKeys,
-          globalEventHandlerKeys,
-          [window.innerWidth, window.innerHeight],
-          localStorageInit,
-          sessionStorageInit,
-        ];
-        config.worker.postMessage({ hydrateArgs });
+        waitForMsg<any>(config.worker, 'initHydrateArgs').then(() => {
+          const hydrateArgs = [
+            strings,
+            skeleton,
+            cssKeys,
+            globalEventHandlerKeys,
+            [window.innerWidth, window.innerHeight],
+            localStorageInit,
+            sessionStorageInit,
+          ];
+          config.worker?.postMessage({ data: JSON.stringify(hydrateArgs), type: 'initHydrateArgs' });
+        });
       } else {
         this[TransferrableKeys.worker] = new Worker(URL.createObjectURL(new Blob([code])));
       }

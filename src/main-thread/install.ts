@@ -51,7 +51,7 @@ export function install(
   const nodeContext = new NodeContext(stringContext, baseElement);
   const normalizedConfig = normalizeConfiguration(config);
   return fetchPromise.then(([domScriptContent, authorScriptContent]) => {
-    if (domScriptContent && authorScriptContent && config.authorURL) {
+    if ((domScriptContent && authorScriptContent && config.authorURL) || config.worker) {
       const workerContext = new WorkerContext(baseElement, nodeContext, domScriptContent, authorScriptContent, normalizedConfig);
       const mutatorContext = new MutatorProcessor(stringContext, nodeContext, workerContext, normalizedConfig, objectContext);
       workerContext.worker.onmessage = (message: MessageFromWorker) => {

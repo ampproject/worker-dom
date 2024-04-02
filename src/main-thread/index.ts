@@ -1,6 +1,5 @@
 import { fetchAndInstall, install } from './install';
 import { ExportedWorker } from './exported-worker';
-import './main-thread';
 
 export function upgradeElement(baseElement: Element, domURL: string): Promise<ExportedWorker | null> {
   const authorURL = baseElement.getAttribute('src');

@@ -44,6 +44,7 @@ import { Element } from './dom/Element';
 import { rafPolyfill, cafPolyfill } from './AnimationFrame';
 import { HydrateFunction } from './hydrate';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { waitForMsg, postMsg } from '../utils';
 
 const globalScope: GlobalScope = {
   innerWidth: 0,
@@ -118,20 +119,15 @@ export const workerDOM = (function (postMessage, addEventListener, removeEventLi
 
 export const hydrate: HydrateFunction = initialize;
 
-function waitForNextMessage<T>(): Promise<T> {
-  return new Promise((res) => {
-    self.addEventListener('message', (e: { data: T }) => {
-      res(e.data);
-    });
-  });
-}
-
 type SliceTuple<T extends any[]> = T extends [any, ...infer Last] ? Last : never;
 
-export async function init() {
-  const hydrateArgs = await waitForNextMessage<SliceTuple<Parameters<HydrateFunction>>>();
-  Object.assign(self, { window: self });
-  hydrate(workerDOM.document, ...hydrateArgs);
-  workerDOM.document[TransferrableKeys.observe]();
-  Object.assign(self, workerDOM);
+export function initWorkerDom() {
+  postMsg(self, 'initHydrateArgs');
+  return waitForMsg<string>(self, 'initHydrateArgs').then((data) => {
+    const hydrateArgs = JSON.parse(data.data) as SliceTuple<Parameters<HydrateFunction>>;
+    Object.assign(self, { window: self });
+    hydrate(workerDOM.document, ...hydrateArgs);
+    workerDOM.document[TransferrableKeys.observe]();
+    Object.assign(self, workerDOM);
+  });
 }
