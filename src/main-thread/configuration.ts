@@ -15,11 +15,12 @@ export type LongTaskFunction = (promise: Promise<any>) => void;
 export type HydrationFilterPredicate = (node: RenderableElement) => boolean;
 
 export interface InboundWorkerDOMConfiguration {
-  // ---- Required Values.
-  authorURL: string;
-  domURL: string;
+  authorURL?: string;
+  domURL?: string;
 
   // ---- Optional Overrides
+  // worker
+  worker?: Worker;
   // Schedules mutation phase.
   mutationPump?: MutationPumpFunction;
   // Schedules long task.
@@ -43,9 +44,8 @@ export interface InboundWorkerDOMConfiguration {
 }
 
 export interface WorkerDOMConfiguration {
-  // ---- Required Values.
-  authorURL: string;
-  domURL: string;
+  authorURL?: string;
+  domURL?: string;
 
   // ---- Optional, with defaults
   // Schedules mutation phase.
@@ -54,6 +54,8 @@ export interface WorkerDOMConfiguration {
   executorsAllowed: Array<number>;
 
   // ---- Optional Overrides
+  // worker
+  worker?: Worker;
   // Schedules long task.
   longTask?: LongTaskFunction;
   // Sanitizer for DOM Mutations
