@@ -43,6 +43,8 @@ import { DocumentFragment } from './dom/DocumentFragment';
 import { Element } from './dom/Element';
 import { rafPolyfill, cafPolyfill } from './AnimationFrame';
 import { HydrateFunction } from './hydrate';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { waitForMsg, postMsg } from '../utils';
 
 const globalScope: GlobalScope = {
   innerWidth: 0,
@@ -116,3 +118,16 @@ export const workerDOM = (function (postMessage, addEventListener, removeEventLi
 })(postMessage.bind(self) || noop, addEventListener.bind(self) || noop, removeEventListener.bind(self) || noop);
 
 export const hydrate: HydrateFunction = initialize;
+
+type SliceTuple<T extends any[]> = T extends [any, ...infer Last] ? Last : never;
+
+export function initWorkerDom() {
+  postMsg(self, 'initHydrateArgs');
+  return waitForMsg<string>(self, 'initHydrateArgs').then((data) => {
+    const hydrateArgs = JSON.parse(data.data) as SliceTuple<Parameters<HydrateFunction>>;
+    Object.assign(self, { window: self });
+    hydrate(workerDOM.document, ...hydrateArgs);
+    workerDOM.document[TransferrableKeys.observe]();
+    Object.assign(self, workerDOM);
+  });
+}

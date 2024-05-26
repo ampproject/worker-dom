@@ -34,7 +34,7 @@ const ESModules = [
     input: 'output/worker-thread/index.js',
     output: {
       file: 'dist/worker/worker.mjs',
-      format: 'iife',
+      format: 'es',
       name: 'WorkerThread',
       sourcemap: true,
     },
@@ -51,7 +51,7 @@ const ESModules = [
     input: 'output/worker-thread/index.js',
     output: {
       file: 'dist/debug/worker/worker.mjs',
-      format: 'iife',
+      format: 'es',
       name: 'WorkerThread',
       sourcemap: true,
     },

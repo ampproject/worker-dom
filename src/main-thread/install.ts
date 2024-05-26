@@ -19,6 +19,8 @@ const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
  * @param debug
  */
 export function fetchAndInstall(baseElement: HTMLElement, config: InboundWorkerDOMConfiguration): Promise<ExportedWorker | null> {
+  if (!config.domURL || !config.authorURL) throw new Error('miss domURL or authorURL');
+
   const fetchPromise = Promise.all([
     // TODO(KB): Fetch Polyfill for IE11.
     fetch(config.domURL).then((response) => response.text()),
@@ -49,7 +51,7 @@ export function install(
   const nodeContext = new NodeContext(stringContext, baseElement);
   const normalizedConfig = normalizeConfiguration(config);
   return fetchPromise.then(([domScriptContent, authorScriptContent]) => {
-    if (domScriptContent && authorScriptContent && config.authorURL) {
+    if ((domScriptContent && authorScriptContent && config.authorURL) || config.worker) {
       const workerContext = new WorkerContext(baseElement, nodeContext, domScriptContent, authorScriptContent, normalizedConfig);
       const mutatorContext = new MutatorProcessor(stringContext, nodeContext, workerContext, normalizedConfig, objectContext);
       workerContext.worker.onmessage = (message: MessageFromWorker) => {
