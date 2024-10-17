@@ -27,8 +27,8 @@
     "esm": "3.2.25",
     "lint-staged": "14.0.1",
     "npm-run-all2": "5.0.2",
-    "prettier": "3.2.5",
-    "rimraf": "5.0.5",
+    "prettier": "3.3.3",
+    "rimraf": "5.0.10",
     "shx": "0.3.4"
   },
   "lint-staged": {
@@ -43,7 +43,7 @@
     ]
   },
   "volta": {
-    "node": "18.19.1",
+    "node": "18.20.4",
     "yarn": "1.22.22"
   }
 }
