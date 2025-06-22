@@ -1,12 +1,12 @@
-import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages';
-import { MutatorProcessor } from './mutator';
-import { NodeContext } from './nodes';
-import { StringContext } from './strings';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { InboundWorkerDOMConfiguration, normalizeConfiguration } from './configuration';
-import { WorkerContext } from './worker';
-import { ObjectContext } from './object-context';
-import { ExportedWorker } from './exported-worker';
+import { MutationFromWorker, MessageType, MessageFromWorker } from '../transfer/Messages.js';
+import { MutatorProcessor } from './mutator.js';
+import { NodeContext } from './nodes.js';
+import { StringContext } from './strings.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
+import { InboundWorkerDOMConfiguration, normalizeConfiguration } from './configuration.js';
+import { WorkerContext } from './worker.js';
+import { ObjectContext } from './object-context.js';
+import { ExportedWorker } from './exported-worker.js';
 
 const ALLOWABLE_MESSAGE_TYPES = [MessageType.MUTATE, MessageType.HYDRATE];
 

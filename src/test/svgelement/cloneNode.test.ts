@@ -1,11 +1,11 @@
-import anyTest, { TestInterface } from 'ava';
-import { createTestingDocument } from '../DocumentCreation';
-import { Element } from '../../worker-thread/dom/Element';
-import { SVGElement } from '../../worker-thread/dom/SVGElement';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { SVG_NAMESPACE } from '../../transfer/TransferrableNodes';
+import anyTest, { TestFn } from 'ava';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { SVGElement } from '../../worker-thread/dom/SVGElement.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { SVG_NAMESPACE } from '../../transfer/TransferrableNodes.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   parent: Element;
   svg: SVGElement;
   path: Element;

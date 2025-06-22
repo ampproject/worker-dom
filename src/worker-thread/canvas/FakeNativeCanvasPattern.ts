@@ -1,8 +1,8 @@
-import { HTMLElement } from '../dom/HTMLElement';
-import { CanvasImageSource } from './CanvasTypes';
-import { retrieveImageBitmap } from './canvas-utils';
-import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { HTMLElement } from '../dom/HTMLElement.js';
+import { CanvasImageSource } from './CanvasTypes.js';
+import { retrieveImageBitmap } from './canvas-utils.js';
+import { HTMLCanvasElement } from '../dom/HTMLCanvasElement.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
 
 /**
  * Wraps CanvasPattern for usage in a native OffscreenCanvas case.

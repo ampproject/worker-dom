@@ -1,16 +1,18 @@
-import anyTest, { TestInterface } from 'ava';
-import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
-import { deserializeTransferrableObject } from '../../main-thread/deserializeTransferrableObject';
-import { StringContext } from '../../main-thread/strings';
-import { NodeContext } from '../../main-thread/nodes';
-import { Env } from './helpers/env';
-import { ObjectContext } from '../../main-thread/object-context';
+import anyTest, { TestFn } from 'ava';
+import { TransferrableObjectType } from '../../transfer/TransferrableMutation.js';
+import { deserializeTransferrableObject } from '../../main-thread/deserializeTransferrableObject.js';
+import { StringContext } from '../../main-thread/strings.js';
+import { NodeContext } from '../../main-thread/nodes.js';
+import { Env } from './helpers/env.js';
+import { ObjectContext } from '../../main-thread/object-context.js';
 
-const test = anyTest as TestInterface<{
+interface TestContext {
   stringContext: StringContext;
   nodeContext: NodeContext;
   objectContext: ObjectContext;
-}>;
+}
+
+const test = anyTest as TestFn<TestContext>;
 
 test.beforeEach((t) => {
   const env = new Env();

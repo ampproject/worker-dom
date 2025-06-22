@@ -1,8 +1,8 @@
-import anyTest, { TestInterface } from 'ava';
-import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   tokenList: DOMTokenList;
 }>;
 

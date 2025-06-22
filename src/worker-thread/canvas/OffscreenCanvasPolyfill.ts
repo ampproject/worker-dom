@@ -1,5 +1,5 @@
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
 import {
   CanvasRenderingContext2D,
   ImageSmoothingQuality,
@@ -10,19 +10,19 @@ import {
   CanvasDirection,
   CanvasFillRule,
   CanvasImageSource,
-} from './CanvasTypes';
-import { transfer } from '../MutationTransfer';
-import { Document } from '../dom/Document';
-import { toLower } from '../../utils';
-import { store } from '../strings';
-import { HTMLElement } from '../dom/HTMLElement';
-import { serializeTransferrableObject } from '../serializeTransferrableObject';
-import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
-import { TransferrableObject } from '../worker-thread';
-import { CanvasGradient } from './CanvasGradient';
-import { CanvasPattern } from './CanvasPattern';
-import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
-import { HTMLImageElement } from '../dom/HTMLImageElement';
+} from './CanvasTypes.js';
+import { transfer } from '../MutationTransfer.js';
+import { Document } from '../dom/Document.js';
+import { toLower } from '../../utils.js';
+import { store } from '../strings.js';
+import { HTMLElement } from '../dom/HTMLElement.js';
+import { serializeTransferrableObject } from '../serializeTransferrableObject.js';
+import { TransferrableObjectType } from '../../transfer/TransferrableMutation.js';
+import { TransferrableObject } from '../worker-thread.js';
+import { CanvasGradient } from './CanvasGradient.js';
+import { CanvasPattern } from './CanvasPattern.js';
+import { HTMLCanvasElement } from '../dom/HTMLCanvasElement.js';
+import { HTMLImageElement } from '../dom/HTMLImageElement.js';
 
 /**
  * Handles calls to a CanvasRenderingContext2D object in cases where the user's environment does not

@@ -1,8 +1,8 @@
-import { CommandExecutorInterface } from './interface';
-import { TransferrableMutationType, StorageMutationIndex } from '../../transfer/TransferrableMutation';
-import { StorageLocation } from '../../transfer/TransferrableStorage';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { MessageType, StorageValueToWorker, GetOrSet } from '../../transfer/Messages';
+import { CommandExecutorInterface } from './interface.js';
+import { TransferrableMutationType, StorageMutationIndex } from '../../transfer/TransferrableMutation.js';
+import { StorageLocation } from '../../transfer/TransferrableStorage.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { MessageType, StorageValueToWorker, GetOrSet } from '../../transfer/Messages.js';
 
 export const StorageProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.STORAGE);

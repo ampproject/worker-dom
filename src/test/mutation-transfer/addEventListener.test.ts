@@ -1,15 +1,15 @@
-import anyTest, { TestInterface } from 'ava';
-import { Document } from '../../worker-thread/dom/Document';
-import { MutationFromWorker } from '../../transfer/Messages';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { emitter, Emitter } from '../Emitter';
-import { createTestingDocument } from '../DocumentCreation';
-import { Element } from '../../worker-thread/dom/Element';
-import { Event } from '../../worker-thread/Event';
-import { NumericBoolean } from '../../utils';
+import anyTest, { TestFn } from 'ava';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { MutationFromWorker } from '../../transfer/Messages.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { emitter, Emitter } from '../Emitter.js';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { Event } from '../../worker-thread/Event.js';
+import { NumericBoolean } from '../../utils.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   div: Element;
   eventHandler: (e: Event) => any;
@@ -32,149 +32,159 @@ test.beforeEach((t) => {
   };
 });
 
-test.serial.cb('Node.addEventListener transfers an event subscription', (t) => {
+test.serial('Node.addEventListener transfers an event subscription', async (t) => {
   const { div, eventHandler, emitter } = t.context;
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.EVENT_SUBSCRIPTION,
-        div[TransferrableKeys.index],
-        0,
-        1,
-        strings.indexOf('click'),
-        0, // This is the first event registered.
-        NumericBoolean.FALSE,
-        NumericBoolean.FALSE,
-        NumericBoolean.FALSE,
-        NumericBoolean.FALSE,
-      ],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+  return new Promise<void>((resolve) => {
+    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.EVENT_SUBSCRIPTION,
+          div[TransferrableKeys.index],
+          0,
+          1,
+          strings.indexOf('click'),
+          0, // This is the first event registered.
+          NumericBoolean.FALSE,
+          NumericBoolean.FALSE,
+          NumericBoolean.FALSE,
+          NumericBoolean.FALSE,
+        ],
+        'mutation is as expected',
+      );
+      resolve();
+    }
 
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.addEventListener('click', eventHandler);
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.addEventListener('click', eventHandler);
+    });
   });
 });
 
-test.serial.cb('Node.addEventListener(..., {capture: true}) transfers an event subscription', (t) => {
+test.serial('Node.addEventListener(..., {capture: true}) transfers an event subscription', async (t) => {
   const { div, eventHandler, emitter } = t.context;
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.EVENT_SUBSCRIPTION,
-        div[TransferrableKeys.index],
-        0,
-        1,
-        strings.indexOf('click'),
-        0, // This is the first event registered.
-        NumericBoolean.TRUE,
-        NumericBoolean.FALSE,
-        NumericBoolean.FALSE,
-        NumericBoolean.FALSE,
-      ],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+  return new Promise<void>((resolve) => {
+    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.EVENT_SUBSCRIPTION,
+          div[TransferrableKeys.index],
+          0,
+          1,
+          strings.indexOf('click'),
+          0, // This is the first event registered.
+          NumericBoolean.TRUE,
+          NumericBoolean.FALSE,
+          NumericBoolean.FALSE,
+          NumericBoolean.FALSE,
+        ],
+        'mutation is as expected',
+      );
+      resolve();
+    }
 
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.addEventListener('click', eventHandler, { capture: true });
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.addEventListener('click', eventHandler, { capture: true });
+    });
   });
 });
 
-test.serial.cb('Node.addEventListener(..., {once: true}) transfers an event subscription', (t) => {
+test.serial('Node.addEventListener(..., {once: true}) transfers an event subscription', async (t) => {
   const { div, eventHandler, emitter } = t.context;
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.EVENT_SUBSCRIPTION,
-        div[TransferrableKeys.index],
-        0,
-        1,
-        strings.indexOf('click'),
-        0, // This is the first event registered.
-        NumericBoolean.FALSE,
-        NumericBoolean.TRUE,
-        NumericBoolean.FALSE,
-        NumericBoolean.FALSE,
-      ],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+  return new Promise<void>((resolve) => {
+    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.EVENT_SUBSCRIPTION,
+          div[TransferrableKeys.index],
+          0,
+          1,
+          strings.indexOf('click'),
+          0, // This is the first event registered.
+          NumericBoolean.FALSE,
+          NumericBoolean.TRUE,
+          NumericBoolean.FALSE,
+          NumericBoolean.FALSE,
+        ],
+        'mutation is as expected',
+      );
+      resolve();
+    }
 
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.addEventListener('click', eventHandler, { once: true });
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.addEventListener('click', eventHandler, { once: true });
+    });
   });
 });
 
-test.serial.cb('Node.addEventListener(..., {passive: true}) transfers an event subscription', (t) => {
+test.serial('Node.addEventListener(..., {passive: true}) transfers an event subscription', async (t) => {
   const { div, eventHandler, emitter } = t.context;
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.EVENT_SUBSCRIPTION,
-        div[TransferrableKeys.index],
-        0,
-        1,
-        strings.indexOf('click'),
-        0, // This is the first event registered.
-        NumericBoolean.FALSE,
-        NumericBoolean.FALSE,
-        NumericBoolean.TRUE,
-        NumericBoolean.FALSE,
-      ],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+  return new Promise<void>((resolve) => {
+    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.EVENT_SUBSCRIPTION,
+          div[TransferrableKeys.index],
+          0,
+          1,
+          strings.indexOf('click'),
+          0, // This is the first event registered.
+          NumericBoolean.FALSE,
+          NumericBoolean.FALSE,
+          NumericBoolean.TRUE,
+          NumericBoolean.FALSE,
+        ],
+        'mutation is as expected',
+      );
+      resolve();
+    }
 
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.addEventListener('click', eventHandler, { passive: true });
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.addEventListener('click', eventHandler, { passive: true });
+    });
   });
 });
 
-test.serial.cb('Node.addEventListener(..., {workerDOMPreventDefault: true}) transfers an event subscription', (t) => {
+test.serial('Node.addEventListener(..., {workerDOMPreventDefault: true}) transfers an event subscription', async (t) => {
   const { div, eventHandler, emitter } = t.context;
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [
-        TransferrableMutationType.EVENT_SUBSCRIPTION,
-        div[TransferrableKeys.index],
-        0,
-        1,
-        strings.indexOf('click'),
-        0, // This is the first event registered.
-        NumericBoolean.FALSE,
-        NumericBoolean.FALSE,
-        NumericBoolean.FALSE,
-        NumericBoolean.TRUE,
-      ],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+  return new Promise<void>((resolve) => {
+    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [
+          TransferrableMutationType.EVENT_SUBSCRIPTION,
+          div[TransferrableKeys.index],
+          0,
+          1,
+          strings.indexOf('click'),
+          0, // This is the first event registered.
+          NumericBoolean.FALSE,
+          NumericBoolean.FALSE,
+          NumericBoolean.FALSE,
+          NumericBoolean.TRUE,
+        ],
+        'mutation is as expected',
+      );
+      resolve();
+    }
 
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.addEventListener('click', eventHandler, {
-      workerDOMPreventDefault: true,
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.addEventListener('click', eventHandler, {
+        workerDOMPreventDefault: true,
+      });
     });
   });
 });

@@ -1,8 +1,8 @@
-import { Node } from './dom/Node';
-import { transfer } from './MutationTransfer';
-import { Document } from './dom/Document';
-import { TransferrableMutationType } from '../transfer/TransferrableMutation';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { Node } from './dom/Node.js';
+import { transfer } from './MutationTransfer.js';
+import { Document } from './dom/Document.js';
+import { TransferrableMutationType } from '../transfer/TransferrableMutation.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
 
 export function wrap(target: Node, func: Function): Function {
   return function () {

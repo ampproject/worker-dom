@@ -1,6 +1,6 @@
-import { TransferrableMutationType, ObjectMutationIndex } from '../../transfer/TransferrableMutation';
-import { CommandExecutorInterface } from './interface';
-import { deserializeTransferrableObject } from '../deserializeTransferrableObject';
+import { TransferrableMutationType, ObjectMutationIndex } from '../../transfer/TransferrableMutation.js';
+import { CommandExecutorInterface } from './interface.js';
+import { deserializeTransferrableObject } from '../deserializeTransferrableObject.js';
 
 export const ObjectMutationProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.OBJECT_MUTATION);

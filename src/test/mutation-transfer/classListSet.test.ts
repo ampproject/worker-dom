@@ -1,12 +1,12 @@
-import anyTest, { TestInterface } from 'ava';
-import { Document } from '../../worker-thread/dom/Document';
-import { MutationFromWorker } from '../../transfer/Messages';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { emitter, Emitter } from '../Emitter';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { MutationFromWorker } from '../../transfer/Messages.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { emitter, Emitter } from '../Emitter.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   emitter: Emitter;
 }>;
@@ -20,22 +20,24 @@ test.beforeEach((t) => {
   };
 });
 
-test.serial.cb('Element.classList.set transfer', (t) => {
+test.serial('Element.classList.set transfer', async (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('foo bar') + 1],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+  return new Promise<void>((resolve) => {
+    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('class'), 0, strings.indexOf('foo bar') + 1],
+        'mutation is as expected',
+      );
+      resolve();
+    }
 
-  document.body.appendChild(div);
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.classList.value = 'foo bar';
+    document.body.appendChild(div);
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.classList.value = 'foo bar';
+    });
   });
 });

@@ -1,5 +1,5 @@
-import { Document } from './dom/Document';
-import { GlobalScope } from './WorkerDOMGlobalScope';
+import { Document } from './dom/Document.js';
+import { GlobalScope } from './WorkerDOMGlobalScope.js';
 
 export function createDocument() {
   const win: GlobalScope = {} as any;

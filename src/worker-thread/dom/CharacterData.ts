@@ -1,12 +1,12 @@
-import { Node, NodeName } from './Node';
-import { mutate } from '../MutationObserver';
-import { MutationRecordType } from '../MutationRecord';
-import { store as storeString } from '../strings';
-import { Document } from './Document';
-import { NodeType } from '../../transfer/TransferrableNodes';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { getNextElementSibling, getPreviousElementSibling } from './elementSibling';
+import { Node, NodeName } from './Node.js';
+import { mutate } from '../MutationObserver.js';
+import { MutationRecordType } from '../MutationRecord.js';
+import { store as storeString } from '../strings.js';
+import { Document } from './Document.js';
+import { NodeType } from '../../transfer/TransferrableNodes.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { getNextElementSibling, getPreviousElementSibling } from './elementSibling.js';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 export abstract class CharacterData extends Node {

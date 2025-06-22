@@ -1,7 +1,7 @@
-import { registerSubclass } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
-import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
+import { registerSubclass } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { reflectProperties } from './enhanceElement.js';
+import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin.js';
 
 export class HTMLMeterElement extends HTMLElement {}
 registerSubclass('meter', HTMLMeterElement);

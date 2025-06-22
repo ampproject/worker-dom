@@ -1,8 +1,8 @@
-import { registerSubclass } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
-import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { registerSubclass } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { reflectProperties } from './enhanceElement.js';
+import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
 
 export class HTMLProgressElement extends HTMLElement {
   private [TransferrableKeys.indeterminate]: boolean = true;

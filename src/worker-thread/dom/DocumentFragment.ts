@@ -1,8 +1,8 @@
-import { ParentNode } from './ParentNode';
-import { store as storeString } from '../strings';
-import { Node } from './Node';
-import { NodeType } from '../../transfer/TransferrableNodes';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { ParentNode } from './ParentNode.js';
+import { store as storeString } from '../strings.js';
+import { Node } from './Node.js';
+import { NodeType } from '../../transfer/TransferrableNodes.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
 
 export class DocumentFragment extends ParentNode {
   constructor(ownerDocument: Node, overrideIndex?: number) {

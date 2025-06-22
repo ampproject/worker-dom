@@ -1,7 +1,7 @@
-import anyTest, { TestInterface } from 'ava';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{}>;
+const test = anyTest as TestFn<{}>;
 
 test('HTMLElement.click() can be programatically triggered', (t) => {
   const doc = createTestingDocument();

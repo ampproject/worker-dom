@@ -1,10 +1,10 @@
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { Document } from './dom/Document';
-import { MessageToWorker, MessageType, FunctionCallToWorker, ResolveOrReject } from '../transfer/Messages';
-import { transfer } from './MutationTransfer';
-import { TransferrableMutationType } from '../transfer/TransferrableMutation';
-import { store } from './strings';
-import { DocumentStub } from './dom/DocumentStub';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
+import { Document } from './dom/Document.js';
+import { MessageToWorker, MessageType, FunctionCallToWorker, ResolveOrReject } from '../transfer/Messages.js';
+import { transfer } from './MutationTransfer.js';
+import { TransferrableMutationType } from '../transfer/TransferrableMutation.js';
+import { store } from './strings.js';
+import { DocumentStub } from './dom/DocumentStub.js';
 
 const exportedFunctions: { [fnIdent: string]: Function } = {};
 

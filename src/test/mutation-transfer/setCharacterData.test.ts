@@ -1,12 +1,12 @@
-import anyTest, { TestInterface } from 'ava';
-import { Document } from '../../worker-thread/dom/Document';
-import { MutationFromWorker } from '../../transfer/Messages';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { emitter, Emitter } from '../Emitter';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { MutationFromWorker } from '../../transfer/Messages.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { emitter, Emitter } from '../Emitter.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   emitter: Emitter;
 }>;
@@ -20,40 +20,44 @@ test.beforeEach((t) => {
   };
 });
 
-test.serial.cb('Text, set data', (t) => {
+test.serial('Text, set data', async (t) => {
   const { document, emitter } = t.context;
   const text = document.createTextNode('original text');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.CHARACTER_DATA, text[TransferrableKeys.index], strings.indexOf('new text')],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+  return new Promise<void>((resolve) => {
+    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [TransferrableMutationType.CHARACTER_DATA, text[TransferrableKeys.index], strings.indexOf('new text')],
+        'mutation is as expected',
+      );
+      resolve();
+    }
 
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    text.data = 'new text';
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      text.data = 'new text';
+    });
   });
 });
 
-test.serial.cb('Text, set textContent', (t) => {
+test.serial('Text, set textContent', async (t) => {
   const { document, emitter } = t.context;
   const text = document.createTextNode('original text');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.CHARACTER_DATA, text[TransferrableKeys.index], strings.indexOf('new text')],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+  return new Promise<void>((resolve) => {
+    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [TransferrableMutationType.CHARACTER_DATA, text[TransferrableKeys.index], strings.indexOf('new text')],
+        'mutation is as expected',
+      );
+      resolve();
+    }
 
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    text.textContent = 'new text';
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      text.textContent = 'new text';
+    });
   });
 });

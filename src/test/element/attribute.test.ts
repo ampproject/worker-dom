@@ -1,10 +1,10 @@
-import anyTest, { TestInterface } from 'ava';
-import { Element } from '../../worker-thread/dom/Element';
-import { Attr } from '../../worker-thread/dom/Attr';
-import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { Attr } from '../../worker-thread/dom/Attr.js';
+import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   node: Element;
   attr: Attr;
   attrOverride: Attr;

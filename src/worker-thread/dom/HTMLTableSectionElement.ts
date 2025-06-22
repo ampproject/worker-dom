@@ -1,8 +1,8 @@
-import { registerSubclass } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { tagNameConditionPredicate, matchChildrenElements } from './matchElements';
-import { Document } from './Document';
-import { HTMLTableRowElement } from './HTMLTableRowElement';
+import { registerSubclass } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { tagNameConditionPredicate, matchChildrenElements } from './matchElements.js';
+import { Document } from './Document.js';
+import { HTMLTableRowElement } from './HTMLTableRowElement.js';
 
 export class HTMLTableSectionElement extends HTMLElement {
   /**

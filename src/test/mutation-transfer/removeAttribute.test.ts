@@ -1,13 +1,13 @@
-import anyTest, { TestInterface } from 'ava';
-import { Document } from '../../worker-thread/dom/Document';
-import { MutationFromWorker } from '../../transfer/Messages';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { emitter, Emitter } from '../Emitter';
-import { createTestingDocument } from '../DocumentCreation';
-import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
+import anyTest, { TestFn } from 'ava';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { MutationFromWorker } from '../../transfer/Messages.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { emitter, Emitter } from '../Emitter.js';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { HTML_NAMESPACE } from '../../transfer/TransferrableNodes.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   emitter: Emitter;
 }>;
@@ -21,44 +21,48 @@ test.beforeEach((t) => {
   };
 });
 
-test.serial.cb('Element.removeAttribute transfer', (t) => {
+test.serial('Element.removeAttribute transfer', async (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('data-foo'), strings.indexOf(HTML_NAMESPACE), 0],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+  return new Promise<void>((resolve) => {
+    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('data-foo'), strings.indexOf(HTML_NAMESPACE), 0],
+        'mutation is as expected',
+      );
+      resolve();
+    }
 
-  div.setAttribute('data-foo', 'foo');
-  document.body.appendChild(div);
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.removeAttribute('data-foo');
+    div.setAttribute('data-foo', 'foo');
+    document.body.appendChild(div);
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.removeAttribute('data-foo');
+    });
   });
 });
 
-test.serial.cb('Element.removeAttribute transfer, with namespace', (t) => {
+test.serial('Element.removeAttribute transfer, with namespace', async (t) => {
   const { document, emitter } = t.context;
   const div = document.createElement('div');
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('data-foo'), strings.indexOf('namespace'), 0],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+  return new Promise<void>((resolve) => {
+    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [TransferrableMutationType.ATTRIBUTES, div[TransferrableKeys.index], strings.indexOf('data-foo'), strings.indexOf('namespace'), 0],
+        'mutation is as expected',
+      );
+      resolve();
+    }
 
-  div.setAttributeNS('namespace', 'data-foo', 'foo');
-  document.body.appendChild(div);
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.removeAttributeNS('namespace', 'data-foo');
+    div.setAttributeNS('namespace', 'data-foo', 'foo');
+    document.body.appendChild(div);
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.removeAttributeNS('namespace', 'data-foo');
+    });
   });
 });

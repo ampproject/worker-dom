@@ -1,10 +1,10 @@
-import { TransferrableEvent } from './TransferrableEvent';
-import { TransferrableSyncValue } from './TransferrableSyncValue';
-import { TransferrableKeys } from './TransferrableKeys';
-import { HydrateableNode, TransferredNode } from './TransferrableNodes';
-import { TransferrableBoundingClientRect } from './TransferrableBoundClientRect';
-import { Phase } from './Phase';
-import { StorageLocation } from './TransferrableStorage';
+import { TransferrableEvent } from './TransferrableEvent.js';
+import { TransferrableSyncValue } from './TransferrableSyncValue.js';
+import { TransferrableKeys } from './TransferrableKeys.js';
+import { HydrateableNode, TransferredNode } from './TransferrableNodes.js';
+import { TransferrableBoundingClientRect } from './TransferrableBoundClientRect.js';
+import { Phase } from './Phase.js';
+import { StorageLocation } from './TransferrableStorage.js';
 
 export const enum MessageType {
   // INIT = 0,

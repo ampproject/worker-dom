@@ -1,9 +1,9 @@
-import anyTest, { TestInterface } from 'ava';
-import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { HTMLProgressElement } from '../../worker-thread/dom/HTMLProgressElement';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { testReflectedProperties } from '../reflectPropertiesHelper.js';
+import { HTMLProgressElement } from '../../worker-thread/dom/HTMLProgressElement.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   element: HTMLProgressElement;
 }>;
 

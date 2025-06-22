@@ -1,6 +1,6 @@
-import type { Document } from './dom/Document';
-import type { HydrateableNode } from '../transfer/TransferrableNodes';
-import type { WorkerStorageInit } from './initialize-storage';
+import type { Document } from './dom/Document.js';
+import type { HydrateableNode } from '../transfer/TransferrableNodes.js';
+import type { WorkerStorageInit } from './initialize-storage.js';
 
 export type HydrateFunction = (
   document: Document,

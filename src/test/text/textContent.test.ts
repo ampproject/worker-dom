@@ -1,8 +1,8 @@
-import anyTest, { TestInterface } from 'ava';
-import { Text } from '../../worker-thread/dom/Text';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { Text } from '../../worker-thread/dom/Text.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   text: Text;
 }>;
 

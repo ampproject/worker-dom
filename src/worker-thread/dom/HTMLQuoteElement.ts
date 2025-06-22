@@ -1,6 +1,6 @@
-import { registerSubclass } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
+import { registerSubclass } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { reflectProperties } from './enhanceElement.js';
 
 export class HTMLQuoteElement extends HTMLElement {}
 registerSubclass('blockquote', HTMLQuoteElement);

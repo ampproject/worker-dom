@@ -1,9 +1,9 @@
-import anyTest, { TestInterface } from 'ava';
-import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { HTMLModElement } from '../../worker-thread/dom/HTMLModElement';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { testReflectedProperties } from '../reflectPropertiesHelper.js';
+import { HTMLModElement } from '../../worker-thread/dom/HTMLModElement.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   element: HTMLModElement;
 }>;
 

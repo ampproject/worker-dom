@@ -1,8 +1,8 @@
-import { HTMLElement } from './dom/HTMLElement';
-import { SVGElement } from './dom/SVGElement';
-import { Text } from './dom/Text';
-import { Comment } from './dom/Comment';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { HTMLElement } from './dom/HTMLElement.js';
+import { SVGElement } from './dom/SVGElement.js';
+import { Text } from './dom/Text.js';
+import { Comment } from './dom/Comment.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
 
 type RenderableElement = HTMLElement | SVGElement | Text | Comment;
 type PostMessage = (message: any, transfer?: Transferable[]) => void;

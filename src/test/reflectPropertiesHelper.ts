@@ -1,8 +1,8 @@
-import anyTest, { TestInterface } from 'ava';
-import { PropertyPair } from '../worker-thread/dom/enhanceElement';
-import { Element } from '../worker-thread/dom/Element';
+import anyTest, { TestFn } from 'ava';
+import { PropertyPair } from '../worker-thread/dom/enhanceElement.js';
+import { Element } from '../worker-thread/dom/Element.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   element: Element;
 }>;
 

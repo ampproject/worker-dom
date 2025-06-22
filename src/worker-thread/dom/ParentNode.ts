@@ -1,8 +1,8 @@
-import { Element } from './Element';
-import { elementPredicate, matchAttrReference, matchChildrenElements } from './matchElements';
-import { Node } from './Node';
-import { containsIndexOf, toLower } from '../../utils';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { Element } from './Element.js';
+import { elementPredicate, matchAttrReference, matchChildrenElements } from './matchElements.js';
+import { Node } from './Node.js';
+import { containsIndexOf, toLower } from '../../utils.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
 
 /*
 Normally ParentNode is implemented as a mixin, but since the Node class is an abstract

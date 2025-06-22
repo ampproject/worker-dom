@@ -1,9 +1,9 @@
-import anyTest, { TestInterface } from 'ava';
-import { Document } from '../../worker-thread/dom/Document';
-import { Element } from '../../worker-thread/dom/Element';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   parent: Element;
   child: Element;

@@ -13,15 +13,15 @@ import {
   ValueSyncToWorker,
   BoundingClientRectToWorker,
   StorageValueToWorker,
-} from '../transfer/Messages';
-import { HydrateableNode, TransferredNode, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
-import { NodeContext } from './nodes';
-import { TransferrableEvent } from '../transfer/TransferrableEvent';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue';
-import { createReadableHydrateableRootNode } from './serialize';
-import { WorkerDOMConfiguration } from './configuration';
-import { WorkerContext } from './worker';
+} from '../transfer/Messages.js';
+import { HydrateableNode, TransferredNode, TransferrableNodeIndex } from '../transfer/TransferrableNodes.js';
+import { NodeContext } from './nodes.js';
+import { TransferrableEvent } from '../transfer/TransferrableEvent.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
+import { TransferrableSyncValue } from '../transfer/TransferrableSyncValue.js';
+import { createReadableHydrateableRootNode } from './serialize.js';
+import { WorkerDOMConfiguration } from './configuration.js';
+import { WorkerContext } from './worker.js';
 
 /**
  * @param element

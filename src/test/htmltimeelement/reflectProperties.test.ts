@@ -1,9 +1,9 @@
-import anyTest, { TestInterface } from 'ava';
-import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { HTMLTimeElement } from '../../worker-thread/dom/HTMLTimeElement';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { testReflectedProperties } from '../reflectPropertiesHelper.js';
+import { HTMLTimeElement } from '../../worker-thread/dom/HTMLTimeElement.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   element: HTMLTimeElement;
 }>;
 

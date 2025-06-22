@@ -1,12 +1,12 @@
-import { mutate } from '../MutationObserver';
-import { MutationRecordType } from '../MutationRecord';
-import { Element } from '../dom/Element';
-import { NamespaceURI } from '../dom/Node';
-import { toLower } from '../../utils';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { store as storeString } from '../strings';
-import { Document } from '../dom/Document';
+import { mutate } from '../MutationObserver.js';
+import { MutationRecordType } from '../MutationRecord.js';
+import { Element } from '../dom/Element.js';
+import { NamespaceURI } from '../dom/Node.js';
+import { toLower } from '../../utils.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { store as storeString } from '../strings.js';
+import { Document } from '../dom/Document.js';
 
 interface StyleProperties {
   [key: string]: string | null;
@@ -17,6 +17,7 @@ interface StyleDeclaration {
   setProperty: (key: string, value: string) => void;
   cssText: string;
   [key: string]:
+    | undefined
     | string
     | number
     | StyleProperties

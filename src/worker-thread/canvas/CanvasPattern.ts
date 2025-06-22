@@ -1,6 +1,6 @@
-import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
-import { TransferrableObject } from '../worker-thread';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { TransferrableObjectType } from '../../transfer/TransferrableMutation.js';
+import { TransferrableObject } from '../worker-thread.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
 
 /**
  * Wrapper class for CanvasPattern. The user will be able to manipulate as a regular CanvasPattern object.

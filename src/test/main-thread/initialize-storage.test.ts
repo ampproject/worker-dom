@@ -1,10 +1,10 @@
-import anyTest, { TestInterface } from 'ava';
-import { initialize } from '../../worker-thread/initialize';
-import { WorkerStorageInit } from '../../worker-thread/initialize-storage';
-import { Document } from '../../worker-thread/dom/Document';
-import { HydrateableNode } from '../../transfer/TransferrableNodes';
+import anyTest, { TestFn } from 'ava';
+import { initialize } from '../../worker-thread/initialize.js';
+import { WorkerStorageInit } from '../../worker-thread/initialize-storage.js';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { HydrateableNode } from '../../transfer/TransferrableNodes.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   doc: Document;
   self: any;
 }>;

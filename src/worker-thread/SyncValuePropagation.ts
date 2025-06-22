@@ -1,8 +1,8 @@
-import { MessageToWorker, MessageType, ValueSyncToWorker } from '../transfer/Messages';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { get } from './nodes';
-import { Document } from './dom/Document';
-import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
+import { MessageToWorker, MessageType, ValueSyncToWorker } from '../transfer/Messages.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
+import { get } from './nodes.js';
+import { Document } from './dom/Document.js';
+import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope.js';
 
 /**
  * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.

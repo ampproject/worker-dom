@@ -1,9 +1,9 @@
-import { WorkerContext } from './worker';
-import { WorkerDOMConfiguration } from './configuration';
-import { registerPromise } from './commands/function';
-import { FunctionCallToWorker, MessageType } from '../transfer/Messages';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../transfer/TransferrableMutation';
+import { WorkerContext } from './worker.js';
+import { WorkerDOMConfiguration } from './configuration.js';
+import { registerPromise } from './commands/function.js';
+import { FunctionCallToWorker, MessageType } from '../transfer/Messages.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
+import { TransferrableMutationType } from '../transfer/TransferrableMutation.js';
 
 /**
  * An ExportedWorker is returned by the upgradeElement API.

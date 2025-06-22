@@ -1,10 +1,10 @@
-import anyTest, { TestInterface } from 'ava';
-import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement';
-import { Text } from '../../worker-thread/dom/Text';
-import { createTestingDocument } from '../DocumentCreation';
-import { Element } from '../../worker-thread/dom/Element';
+import anyTest, { TestFn } from 'ava';
+import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement.js';
+import { Text } from '../../worker-thread/dom/Text.js';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { Element } from '../../worker-thread/dom/Element.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   element: HTMLAnchorElement;
   child: Element;
   text: Text;

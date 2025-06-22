@@ -1,7 +1,7 @@
-import { registerSubclass, Element } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { HTMLFormControlsCollectionMixin } from './HTMLFormControlsMixin';
-import { reflectProperties } from './enhanceElement';
+import { registerSubclass, Element } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { HTMLFormControlsCollectionMixin } from './HTMLFormControlsMixin.js';
+import { reflectProperties } from './enhanceElement.js';
 
 export class HTMLFormElement extends HTMLElement {
   /**

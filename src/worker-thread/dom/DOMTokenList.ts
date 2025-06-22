@@ -1,11 +1,11 @@
-import { Element } from './Element';
-import { NamespaceURI } from './Node';
-import { mutate } from '../MutationObserver';
-import { MutationRecordType } from '../MutationRecord';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { store as storeString } from '../strings';
-import { Document } from './Document';
+import { Element } from './Element.js';
+import { NamespaceURI } from './Node.js';
+import { mutate } from '../MutationObserver.js';
+import { MutationRecordType } from '../MutationRecord.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { store as storeString } from '../strings.js';
+import { Document } from './Document.js';
 
 const WHITESPACE_REGEX = /\s/;
 

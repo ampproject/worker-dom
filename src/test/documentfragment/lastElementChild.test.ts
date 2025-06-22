@@ -1,10 +1,10 @@
-import anyTest, { TestInterface } from 'ava';
-import { createTestingDocument } from '../DocumentCreation';
-import { DocumentFragment } from '../../worker-thread/dom/DocumentFragment';
-import { Element } from '../../worker-thread/dom/Element';
-import { Text } from '../../worker-thread/dom/Text';
+import anyTest, { TestFn } from 'ava';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { DocumentFragment } from '../../worker-thread/dom/DocumentFragment.js';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { Text } from '../../worker-thread/dom/Text.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   parentFragment: DocumentFragment;
   node: Element;
   sibling: Element;

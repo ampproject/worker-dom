@@ -1,7 +1,7 @@
-import { registerSubclass, Element } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
-import { matchChildrenElements } from './matchElements';
+import { registerSubclass, Element } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { reflectProperties } from './enhanceElement.js';
+import { matchChildrenElements } from './matchElements.js';
 
 export class HTMLMapElement extends HTMLElement {
   /**

@@ -1,8 +1,8 @@
-import anyTest, { TestInterface } from 'ava';
-import { Env } from './helpers/env';
-import { IframeWorker, MessageToIframe, MessageFromIframe } from '../../main-thread/iframe-worker';
+import anyTest, { TestFn } from 'ava';
+import { Env } from './helpers/env.js';
+import { IframeWorker, MessageToIframe, MessageFromIframe } from '../../main-thread/iframe-worker.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   env: Env;
   fakeReceiveMessage: (msg: MessageFromIframe) => void;
   sentToIframe: MessageToIframe[];

@@ -1,9 +1,9 @@
-import anyTest, { TestInterface } from 'ava';
-import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
-import { Document } from '../../worker-thread/dom/Document';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement.js';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   option: HTMLOptionElement;
 }>;

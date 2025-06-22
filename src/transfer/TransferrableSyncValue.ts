@@ -1,4 +1,4 @@
-import { TransferrableKeys } from './TransferrableKeys';
+import { TransferrableKeys } from './TransferrableKeys.js';
 
 export interface TransferrableSyncValue {
   readonly [TransferrableKeys.index]: number;

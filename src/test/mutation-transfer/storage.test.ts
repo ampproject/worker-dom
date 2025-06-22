@@ -1,15 +1,15 @@
-import anyTest, { TestInterface } from 'ava';
-import { Document } from '../../worker-thread/dom/Document';
-import { GetOrSet } from '../../transfer/Messages';
-import { Storage, createStorage } from '../../worker-thread/Storage';
-import { StorageLocation } from '../../transfer/TransferrableStorage';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { createTestingDocument } from '../DocumentCreation';
-import { expectMutations } from '../Emitter';
-import { getForTesting } from '../../worker-thread/strings';
+import anyTest, { TestFn } from 'ava';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { GetOrSet } from '../../transfer/Messages.js';
+import { Storage, createStorage } from '../../worker-thread/Storage.js';
+import { StorageLocation } from '../../transfer/TransferrableStorage.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { expectMutations } from '../Emitter.js';
+import { getForTesting } from '../../worker-thread/strings.js';
 import { setTimeout } from 'timers';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   storage: Storage;
 }>;
@@ -24,7 +24,7 @@ test.beforeEach((t) => {
   };
 });
 
-test.serial.cb('Storage.getItem', (t) => {
+test.serial('Storage.getItem', async (t) => {
   const { document, storage } = t.context;
 
   let postMessageCalled = false;
@@ -33,47 +33,55 @@ test.serial.cb('Storage.getItem', (t) => {
   storage.getItem('foo');
 
   // getItem() should return local data, not invoke postMessage.
-  setTimeout(() => {
-    t.false(postMessageCalled);
-    t.end();
-  }, 0);
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      t.false(postMessageCalled);
+      resolve();
+    }, 0);
+  });
 });
 
-test.serial.cb('Storage.setItem', (t) => {
+test.serial('Storage.setItem', async (t) => {
   const { document, storage } = t.context;
 
-  expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [
-      TransferrableMutationType.STORAGE,
-      GetOrSet.SET,
-      StorageLocation.Local,
-      getForTesting('foo')! + 1,
-      getForTesting('bar')! + 1,
-    ]);
-    t.end();
-  });
+  return new Promise<void>((resolve) => {
+    expectMutations(document, (mutations) => {
+      t.deepEqual(mutations, [
+        TransferrableMutationType.STORAGE,
+        GetOrSet.SET,
+        StorageLocation.Local,
+        getForTesting('foo')! + 1,
+        getForTesting('bar')! + 1,
+      ]);
+      resolve();
+    });
 
-  storage.setItem('foo', 'bar');
+    storage.setItem('foo', 'bar');
+  });
 });
 
-test.serial.cb('Storage.removeItem', (t) => {
+test.serial('Storage.removeItem', async (t) => {
   const { document, storage } = t.context;
 
-  expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, getForTesting('foo')! + 1, 0]);
-    t.end();
-  });
+  return new Promise<void>((resolve) => {
+    expectMutations(document, (mutations) => {
+      t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, getForTesting('foo')! + 1, 0]);
+      resolve();
+    });
 
-  storage.removeItem('foo');
+    storage.removeItem('foo');
+  });
 });
 
-test.serial.cb('Storage.clear', (t) => {
+test.serial('Storage.clear', async (t) => {
   const { document, storage } = t.context;
 
-  expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, 0, 0]);
-    t.end();
-  });
+  return new Promise<void>((resolve) => {
+    expectMutations(document, (mutations) => {
+      t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.Local, 0, 0]);
+      resolve();
+    });
 
-  storage.clear();
+    storage.clear();
+  });
 });

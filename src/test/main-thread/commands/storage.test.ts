@@ -1,15 +1,13 @@
-import anyTest, { TestInterface } from 'ava';
-import { StorageProcessor } from '../../../main-thread/commands/storage';
-import { StringContext } from '../../../main-thread/strings';
-import { WorkerDOMConfiguration } from '../../../main-thread/configuration';
-import { CommandExecutor } from '../../../main-thread/commands/interface';
-import { TransferrableMutationType, StorageMutationIndex } from '../../../transfer/TransferrableMutation';
-import { StorageLocation } from '../../../transfer/TransferrableStorage';
-import { GetOrSet, MessageToWorker, MessageType, StorageValueToWorker } from '../../../transfer/Messages';
-import { WorkerContext } from '../../../main-thread/worker';
-import { TransferrableKeys } from '../../../transfer/TransferrableKeys';
-
-const test = anyTest as TestInterface<{}>;
+import test from 'ava';
+import { StorageProcessor } from '../../../main-thread/commands/storage.js';
+import { StringContext } from '../../../main-thread/strings.js';
+import { WorkerDOMConfiguration } from '../../../main-thread/configuration.js';
+import { CommandExecutor } from '../../../main-thread/commands/interface.js';
+import { TransferrableMutationType, StorageMutationIndex } from '../../../transfer/TransferrableMutation.js';
+import { StorageLocation } from '../../../transfer/TransferrableStorage.js';
+import { GetOrSet, MessageToWorker, MessageType, StorageValueToWorker } from '../../../transfer/Messages.js';
+import { WorkerContext } from '../../../main-thread/worker.js';
+import { TransferrableKeys } from '../../../transfer/TransferrableKeys.js';
 
 type SetStorageMeta = { location: StorageLocation; key: string | null; value: string | null };
 

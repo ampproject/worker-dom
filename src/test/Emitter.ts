@@ -1,6 +1,6 @@
-import { Document } from '../worker-thread/dom/Document';
-import { MutationFromWorker } from '../transfer/Messages';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { Document } from '../worker-thread/dom/Document.js';
+import { MutationFromWorker } from '../transfer/Messages.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
 
 type Subscriber = (strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) => void;
 

@@ -1,8 +1,8 @@
-import { WorkerDOMConfiguration } from '../configuration';
-import { StringContext } from '../strings';
-import { NodeContext } from '../nodes';
-import { WorkerContext } from '../worker';
-import { ObjectContext } from '../object-context';
+import { WorkerDOMConfiguration } from '../configuration.js';
+import { StringContext } from '../strings.js';
+import { NodeContext } from '../nodes.js';
+import { WorkerContext } from '../worker.js';
+import { ObjectContext } from '../object-context.js';
 
 export interface CommandExecutor {
   /**

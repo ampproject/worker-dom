@@ -1,7 +1,7 @@
-import { CommandExecutorInterface } from './interface';
-import { TransferrableMutationType, ImageBitmapMutationIndex } from '../../transfer/TransferrableMutation';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { MessageType } from '../../transfer/Messages';
+import { CommandExecutorInterface } from './interface.js';
+import { TransferrableMutationType, ImageBitmapMutationIndex } from '../../transfer/TransferrableMutation.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { MessageType } from '../../transfer/Messages.js';
 
 export const ImageBitmapProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.IMAGE_BITMAP_INSTANCE);

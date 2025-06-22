@@ -2,10 +2,10 @@
  * @fileoverview This entry point API in active development and unstable.
  */
 
-import { fetchAndInstall, install } from './install';
-import { WorkerDOMConfiguration, LongTaskFunction } from './configuration';
-import { toLower } from '../utils';
-import { ExportedWorker } from './exported-worker';
+import { fetchAndInstall, install } from './install.js';
+import { WorkerDOMConfiguration, LongTaskFunction } from './configuration.js';
+import { toLower } from '../utils.js';
+import { ExportedWorker } from './exported-worker.js';
 
 /**
  * AMP Element Children need to be filtered from Hydration, to avoid Author Code from manipulating it.

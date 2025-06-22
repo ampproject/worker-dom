@@ -1,6 +1,6 @@
-import { PropertyMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { CommandExecutorInterface } from './interface';
-import { NumericBoolean } from '../../utils';
+import { PropertyMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { CommandExecutorInterface } from './interface.js';
+import { NumericBoolean } from '../../utils.js';
 
 export const PropertyProcessor: CommandExecutorInterface = (strings, nodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.PROPERTIES);

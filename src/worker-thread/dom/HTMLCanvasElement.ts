@@ -1,7 +1,7 @@
-import { HTMLElement } from './HTMLElement';
-import { registerSubclass } from './Element';
-import { reflectProperties } from './enhanceElement';
-import { CanvasRenderingContext2DShim } from '../canvas/CanvasRenderingContext2D';
+import { HTMLElement } from './HTMLElement.js';
+import { registerSubclass } from './Element.js';
+import { reflectProperties } from './enhanceElement.js';
+import { CanvasRenderingContext2DShim } from '../canvas/CanvasRenderingContext2D.js';
 
 export class HTMLCanvasElement extends HTMLElement {
   private context: CanvasRenderingContext2DShim<HTMLCanvasElement>;

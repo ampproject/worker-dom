@@ -1,15 +1,15 @@
-import anyTest, { TestInterface } from 'ava';
-import { Document } from '../../worker-thread/dom/Document';
-import { toLower } from '../../utils';
-import { Element } from '../../worker-thread/dom/Element';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { toLower } from '../../utils.js';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
 const DIV_ID = 'DIV_ID';
 const DIV_CLASS = 'DIV_CLASS';
 const FAKE_ATTR = 'FAKE_ATTR';
 const FAKE_ATTR_VALUE = 'FAKE_ATTR_VALUE';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   parentDiv: Element;
   div: Element;

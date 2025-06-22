@@ -1,5 +1,5 @@
 import test from 'ava';
-import { createTestingDocument } from '../DocumentCreation';
+import { createTestingDocument } from '../DocumentCreation.js';
 
 test('returns the name of the Node', (t) => {
   const document = createTestingDocument();

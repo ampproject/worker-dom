@@ -1,6 +1,6 @@
-import { MessageToWorker, MessageType, ResizeSyncToWorker } from '../transfer/Messages';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
+import { MessageToWorker, MessageType, ResizeSyncToWorker } from '../transfer/Messages.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
+import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope.js';
 
 export function propagate(global: WorkerDOMGlobalScope): void {
   const document = global.document;

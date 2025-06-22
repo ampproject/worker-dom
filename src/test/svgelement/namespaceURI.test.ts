@@ -1,6 +1,6 @@
 import test from 'ava';
-import { createTestingDocument } from '../DocumentCreation';
-import { SVG_NAMESPACE } from '../../transfer/TransferrableNodes';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { SVG_NAMESPACE } from '../../transfer/TransferrableNodes.js';
 
 test('svg should have the SVG namespaceURI', (t) => {
   const document = createTestingDocument();

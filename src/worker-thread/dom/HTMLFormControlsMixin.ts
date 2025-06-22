@@ -1,5 +1,5 @@
-import { Element } from './Element';
-import { matchChildrenElements, tagNameConditionPredicate } from './matchElements';
+import { Element } from './Element.js';
+import { matchChildrenElements, tagNameConditionPredicate } from './matchElements.js';
 
 const MATCHING_CHILD_ELEMENT_TAGNAMES = 'BUTTON FIELDSET INPUT OBJECT OUTPUT SELECT TEXTAREA'.split(' ');
 

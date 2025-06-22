@@ -1,5 +1,5 @@
-import { Element } from './Element';
-import { toLower } from '../../utils';
+import { Element } from './Element.js';
+import { toLower } from '../../utils.js';
 
 type PropertyValue = string | boolean | number;
 type AttributeName = string;

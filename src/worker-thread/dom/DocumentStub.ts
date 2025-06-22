@@ -1,8 +1,8 @@
-import { PostMessage } from '../worker-thread';
-import { Phase } from '../../transfer/Phase';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { set as setPhase } from '../phase';
-import { WorkerNoDOMGlobalScope } from '../WorkerDOMGlobalScope';
+import { PostMessage } from '../worker-thread.js';
+import { Phase } from '../../transfer/Phase.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { set as setPhase } from '../phase.js';
+import { WorkerNoDOMGlobalScope } from '../WorkerDOMGlobalScope.js';
 
 /**
  * A lightweight Document stub for the no-dom amp binary.

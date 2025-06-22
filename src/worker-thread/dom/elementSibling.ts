@@ -1,6 +1,6 @@
-import { NodeType } from '../../transfer/TransferrableNodes';
-import { Element } from './Element';
-import { Node } from './Node';
+import { NodeType } from '../../transfer/TransferrableNodes.js';
+import { Element } from './Element.js';
+import { Node } from './Node.js';
 
 export function getPreviousElementSibling(node: Node): Element | null {
   let parentNodes = node.parentNode && node.parentNode.childNodes;

@@ -1,10 +1,10 @@
-import { registerSubclass, Element } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { matchChildElement, matchChildrenElements, tagNameConditionPredicate } from './matchElements';
-import { NodeName } from './Node';
-import { HTMLTableSectionElement } from './HTMLTableSectionElement';
-import { HTMLTableRowElement } from './HTMLTableRowElement';
-import { toUpper } from '../../utils';
+import { registerSubclass, Element } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { matchChildElement, matchChildrenElements, tagNameConditionPredicate } from './matchElements.js';
+import { NodeName } from './Node.js';
+import { HTMLTableSectionElement } from './HTMLTableSectionElement.js';
+import { HTMLTableRowElement } from './HTMLTableRowElement.js';
+import { toUpper } from '../../utils.js';
 
 const removeElement = (element: Element | null): any => element && element.remove();
 

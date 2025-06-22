@@ -1,5 +1,5 @@
-import { AttributeMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { CommandExecutorInterface } from './interface';
+import { AttributeMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { CommandExecutorInterface } from './interface.js';
 
 export const AttributeProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.ATTRIBUTES);

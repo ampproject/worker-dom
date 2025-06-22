@@ -1,8 +1,8 @@
-import type { Document } from './dom/Document';
-import type { DocumentStub } from './dom/DocumentStub';
+import type { Document } from './dom/Document.js';
+import type { DocumentStub } from './dom/DocumentStub.js';
 
-import { createStorage } from './Storage';
-import { StorageLocation } from '../transfer/TransferrableStorage';
+import { createStorage } from './Storage.js';
+import { StorageLocation } from '../transfer/TransferrableStorage.js';
 
 type InitStorageMap = { storage: { [key: string]: string }; errorMsg: null };
 type InitStorageError = { storage: null; errorMsg: string };

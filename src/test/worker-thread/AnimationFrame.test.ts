@@ -1,7 +1,7 @@
-import anyTest, { TestInterface } from 'ava';
-import { rafPolyfill, cafPolyfill } from '../../worker-thread/AnimationFrame';
+import anyTest, { TestFn } from 'ava';
+import { rafPolyfill, cafPolyfill } from '../../worker-thread/AnimationFrame.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   runTimeout: Function;
   runAllTimeouts: Function;
 }>;

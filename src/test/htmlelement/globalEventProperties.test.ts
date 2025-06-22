@@ -1,11 +1,11 @@
-import anyTest, { TestInterface } from 'ava';
-import { HTMLElement, appendGlobalEventProperties } from '../../worker-thread/dom/HTMLElement';
-import { createTestingDocument } from '../DocumentCreation';
-import { Document } from '../../worker-thread/dom/Document';
-import { Event } from '../../worker-thread/Event';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import anyTest, { TestFn } from 'ava';
+import { HTMLElement, appendGlobalEventProperties } from '../../worker-thread/dom/HTMLElement.js';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { Event } from '../../worker-thread/Event.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   element: HTMLElement;
 }>;
