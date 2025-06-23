@@ -1,7 +1,7 @@
-import { registerSubclass, definePropertyBackedAttributes } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { DOMTokenList, synchronizedAccessor } from './DOMTokenList';
-import { reflectProperties } from './enhanceElement';
+import { registerSubclass, definePropertyBackedAttributes } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { DOMTokenList, synchronizedAccessor } from './DOMTokenList.js';
+import { reflectProperties } from './enhanceElement.js';
 
 export class HTMLAnchorElement extends HTMLElement {
   private _relList: DOMTokenList;

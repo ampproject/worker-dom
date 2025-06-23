@@ -1,10 +1,10 @@
-import anyTest, { TestInterface } from 'ava';
-import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
-import { Element } from '../../worker-thread/dom/Element';
-import { createTestingDocument } from '../DocumentCreation';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import anyTest, { TestFn } from 'ava';
+import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration.js';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   node: Element;
   declaration: CSSStyleDeclaration;
 }>;
@@ -21,7 +21,7 @@ test.beforeEach((t) => {
 test.serial('appending keys mutates a declaration instance', (t) => {
   const { declaration } = t.context;
 
-  t.is(declaration.width, undefined);
+  t.true(declaration.width === undefined);
   appendKeys(['width']);
   t.is(declaration.width, '');
 });
@@ -43,8 +43,8 @@ test('appending keys mutates all known declaration instances', (t) => {
   const firstDeclaration = new CSSStyleDeclaration(t.context.node);
   const secondDeclaration = new CSSStyleDeclaration(t.context.node);
 
-  t.is(firstDeclaration.height, undefined);
-  t.is(secondDeclaration.height, undefined);
+  t.true(firstDeclaration.height === undefined);
+  t.true(secondDeclaration.height === undefined);
   appendKeys(['height']);
   t.is(firstDeclaration.height, '');
   t.is(secondDeclaration.height, '');

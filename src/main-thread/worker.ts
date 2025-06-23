@@ -1,11 +1,11 @@
-import { MessageToWorker } from '../transfer/Messages';
-import { WorkerDOMConfiguration } from './configuration';
-import { createHydrateableRootNode } from './serialize';
-import { readableHydrateableRootNode, readableMessageToWorker } from './debugging';
-import { NodeContext } from './nodes';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { StorageLocation } from '../transfer/TransferrableStorage';
-import { IframeWorker } from './iframe-worker';
+import { MessageToWorker } from '../transfer/Messages.js';
+import { WorkerDOMConfiguration } from './configuration.js';
+import { createHydrateableRootNode } from './serialize.js';
+import { readableHydrateableRootNode, readableMessageToWorker } from './debugging.js';
+import { NodeContext } from './nodes.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
+import { StorageLocation } from '../transfer/TransferrableStorage.js';
+import { IframeWorker } from './iframe-worker.js';
 
 // TODO: Sanitizer storage init is likely broken, since the code currently
 // attempts to stringify a Promise.

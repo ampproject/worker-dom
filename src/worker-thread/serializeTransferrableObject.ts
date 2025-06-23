@@ -1,7 +1,7 @@
-import { store } from './strings';
-import { TransferrableObjectType } from '../transfer/TransferrableMutation';
-import { Serializable, TransferrableObject } from './worker-thread';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { store } from './strings.js';
+import { TransferrableObjectType } from '../transfer/TransferrableMutation.js';
+import { Serializable, TransferrableObject } from './worker-thread.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
 
 const f32 = new Float32Array(1);
 const u16 = new Uint16Array(f32.buffer);

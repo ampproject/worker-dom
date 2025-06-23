@@ -1,14 +1,14 @@
-import anyTest, { TestInterface } from 'ava';
-import { createTestingDocument } from '../DocumentCreation';
-import { DocumentFragment } from '../../worker-thread/dom/DocumentFragment';
-import { Element } from '../../worker-thread/dom/Element';
+import anyTest, { TestFn } from 'ava';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { DocumentFragment } from '../../worker-thread/dom/DocumentFragment.js';
+import { Element } from '../../worker-thread/dom/Element.js';
 
 const PARENT_DIV_ID = 'PARENT_DIV_ID';
 const PARENT_DIV_CLASS = 'PARENT_DIV_CLASS';
 const DIV_ID = 'DIV_ID';
 const DIV_CLASS = 'DIV_CLASS';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   parentFragment: DocumentFragment;
   parentDiv: Element;
   div: Element;

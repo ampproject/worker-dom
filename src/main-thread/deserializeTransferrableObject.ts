@@ -1,7 +1,7 @@
-import { StringContext } from './strings';
-import { TransferrableObjectType } from '../transfer/TransferrableMutation';
-import { NodeContext } from './nodes';
-import { ObjectContext } from './object-context';
+import { StringContext } from './strings.js';
+import { TransferrableObjectType } from '../transfer/TransferrableMutation.js';
+import { NodeContext } from './nodes.js';
+import { ObjectContext } from './object-context.js';
 
 interface DeserializedArgs {
   args: unknown[];

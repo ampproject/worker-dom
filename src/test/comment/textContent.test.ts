@@ -1,8 +1,8 @@
-import anyTest, { TestInterface } from 'ava';
-import { Comment } from '../../worker-thread/dom/Comment';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { Comment } from '../../worker-thread/dom/Comment.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   comment: Comment;
 }>;
 

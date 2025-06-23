@@ -1,8 +1,8 @@
-import { registerSubclass } from './Element';
-import { reflectProperties } from './enhanceElement';
-import { HTMLFormControlsCollectionMixin } from './HTMLFormControlsMixin';
-import { HTMLElement } from './HTMLElement';
-import { toLower } from '../../utils';
+import { registerSubclass } from './Element.js';
+import { reflectProperties } from './enhanceElement.js';
+import { HTMLFormControlsCollectionMixin } from './HTMLFormControlsMixin.js';
+import { HTMLElement } from './HTMLElement.js';
+import { toLower } from '../../utils.js';
 
 export class HTMLFieldSetElement extends HTMLElement {
   /**

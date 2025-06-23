@@ -1,7 +1,7 @@
-import { registerSubclass, definePropertyBackedAttributes } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
-import { DOMTokenList } from './DOMTokenList';
+import { registerSubclass, definePropertyBackedAttributes } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { reflectProperties } from './enhanceElement.js';
+import { DOMTokenList } from './DOMTokenList.js';
 
 export class HTMLIFrameElement extends HTMLElement {
   private _sandbox: DOMTokenList;

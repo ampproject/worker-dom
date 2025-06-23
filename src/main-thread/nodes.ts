@@ -1,5 +1,5 @@
-import { NodeType, TransferrableNodeIndex } from '../transfer/TransferrableNodes';
-import { StringContext } from './strings';
+import { NodeType, TransferrableNodeIndex } from '../transfer/TransferrableNodes.js';
+import { StringContext } from './strings.js';
 
 /**
  * IE11 doesn't support NodeList.prototype.forEach

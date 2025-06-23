@@ -1,8 +1,8 @@
-import { Element } from './Element';
-import { reflectProperties } from './enhanceElement';
-import { matchNearestParent, tagNameConditionPredicate } from './matchElements';
-import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { Element } from './Element.js';
+import { reflectProperties } from './enhanceElement.js';
+import { matchNearestParent, tagNameConditionPredicate } from './matchElements.js';
+import { TransferrableObjectType } from '../../transfer/TransferrableMutation.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
 
 export const appendGlobalEventProperties = (keys: Array<string>): void => {
   const keysToAppend = keys.filter((key) => !HTMLElement.prototype.hasOwnProperty(key));

@@ -1,18 +1,18 @@
-import anyTest, { TestInterface } from 'ava';
-import { Env } from './helpers/env';
-import { LongTaskCommandExecutor, LongTaskExecutor } from '../../main-thread/commands/long-task';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { StringContext } from '../../main-thread/strings';
-import { NodeContext } from '../../main-thread/nodes';
-import { WorkerContext } from '../../main-thread/worker';
-import { normalizeConfiguration, WorkerDOMConfiguration } from '../../main-thread/configuration';
-import { ObjectContext } from '../../main-thread/object-context';
+import anyTest, { TestFn } from 'ava';
+import { Env } from './helpers/env.js';
+import { LongTaskCommandExecutor, LongTaskExecutor } from '../../main-thread/commands/long-task.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { StringContext } from '../../main-thread/strings.js';
+import { NodeContext } from '../../main-thread/nodes.js';
+import { WorkerContext } from '../../main-thread/worker.js';
+import { normalizeConfiguration, WorkerDOMConfiguration } from '../../main-thread/configuration.js';
+import { ObjectContext } from '../../main-thread/object-context.js';
 
 async function sleep(ms: number): Promise<void> {
   return new Promise((res) => setTimeout(res, ms));
 }
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   env: Env;
   executor: LongTaskCommandExecutor;
   longTasks: Array<Promise<any>>;

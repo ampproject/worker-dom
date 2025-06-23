@@ -1,5 +1,5 @@
-import { keyValueString } from '../../utils';
-import { NamespaceURI } from './Node';
+import { keyValueString } from '../../utils.js';
+import { NamespaceURI } from './Node.js';
 
 export interface Attr {
   [index: string]: string | null;

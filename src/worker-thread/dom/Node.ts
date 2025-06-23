@@ -1,14 +1,14 @@
-import { store as storeNodeMapping, storeOverride as storeOverrideNodeMapping } from '../nodes';
-import { Event, EventHandler, AddEventListenerOptions } from '../Event';
-import { toLower } from '../../utils';
-import { mutate } from '../MutationObserver';
-import { MutationRecordType } from '../MutationRecord';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { store as storeString } from '../strings';
-import { Document } from './Document';
-import { transfer } from '../MutationTransfer';
-import { TransferredNode, NodeType } from '../../transfer/TransferrableNodes';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { store as storeNodeMapping, storeOverride as storeOverrideNodeMapping } from '../nodes.js';
+import { Event, EventHandler, AddEventListenerOptions } from '../Event.js';
+import { toLower } from '../../utils.js';
+import { mutate } from '../MutationObserver.js';
+import { MutationRecordType } from '../MutationRecord.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { store as storeString } from '../strings.js';
+import { Document } from './Document.js';
+import { transfer } from '../MutationTransfer.js';
+import { TransferredNode, NodeType } from '../../transfer/TransferrableNodes.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
 
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 export type NamespaceURI = string;

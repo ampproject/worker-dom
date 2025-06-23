@@ -1,8 +1,8 @@
-import anyTest, { TestInterface } from 'ava';
-import { HTMLInputElement } from '../../worker-thread/dom/HTMLInputElement';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { HTMLInputElement } from '../../worker-thread/dom/HTMLInputElement.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   element: HTMLInputElement;
 }>;
 
@@ -58,7 +58,7 @@ test('valueAsDate', (t) => {
 
   const error = t.throws(() => {
     input.valueAsDate = 'notADate' as any;
-  }, null);
+  });
   t.is(error.message, 'The provided value is not a Date.');
 });
 

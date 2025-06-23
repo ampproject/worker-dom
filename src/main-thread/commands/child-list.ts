@@ -1,7 +1,7 @@
-import { ChildListMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { CommandExecutorInterface } from './interface';
-import { NodeContext } from '../nodes';
-import { applyDefaultInputListener, sendValueChangeOnAttributeMutation } from './event-subscription';
+import { ChildListMutationIndex, TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { CommandExecutorInterface } from './interface.js';
+import { NodeContext } from '../nodes.js';
+import { applyDefaultInputListener, sendValueChangeOnAttributeMutation } from './event-subscription.js';
 
 export const ChildListProcessor: CommandExecutorInterface = (strings, { getNode }: NodeContext, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.CHILD_LIST);

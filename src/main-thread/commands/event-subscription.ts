@@ -1,16 +1,16 @@
-import { MessageType } from '../../transfer/Messages';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { MessageType } from '../../transfer/Messages.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
 import {
   ADD_EVENT_SUBSCRIPTION_LENGTH,
   REMOVE_EVENT_SUBSCRIPTION_LENGTH,
   EventSubscriptionMutationIndex,
   TransferrableTouchList,
   AddEventRegistrationIndex,
-} from '../../transfer/TransferrableEvent';
-import { WorkerContext } from '../worker';
-import { CommandExecutorInterface } from './interface';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { BASE_ELEMENT_INDEX } from '../nodes';
+} from '../../transfer/TransferrableEvent.js';
+import { WorkerContext } from '../worker.js';
+import { CommandExecutorInterface } from './interface.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { BASE_ELEMENT_INDEX } from '../nodes.js';
 
 /**
  * Monitoring Nodes attribute changes requires a Mutation Observer.

@@ -1,11 +1,11 @@
-import { Document } from '../dom/Document';
-import { StorageLocation } from '../../transfer/TransferrableStorage';
-import { StorageValueToWorker, MessageType, MessageToWorker, GetOrSet } from '../../transfer/Messages';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { store } from '../strings';
-import { transfer } from '../MutationTransfer';
-import { DocumentStub } from '../dom/DocumentStub';
+import { Document } from '../dom/Document.js';
+import { StorageLocation } from '../../transfer/TransferrableStorage.js';
+import { StorageValueToWorker, MessageType, MessageToWorker, GetOrSet } from '../../transfer/Messages.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { store } from '../strings.js';
+import { transfer } from '../MutationTransfer.js';
+import { DocumentStub } from '../dom/DocumentStub.js';
 
 export class AMP {
   private document: Document | DocumentStub;

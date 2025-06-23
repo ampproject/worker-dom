@@ -1,7 +1,7 @@
-import { MessageFromWorker, MessageToWorker } from '../transfer/Messages';
-import { Phase } from '../transfer/Phase';
-import { HydrateableNode } from '../transfer/TransferrableNodes';
-import { DefaultAllowedMutations } from '../transfer/TransferrableMutation';
+import { MessageFromWorker, MessageToWorker } from '../transfer/Messages.js';
+import { Phase } from '../transfer/Phase.js';
+import { HydrateableNode } from '../transfer/TransferrableNodes.js';
+import { DefaultAllowedMutations } from '../transfer/TransferrableMutation.js';
 
 /**
  * The callback for `mutationPump`. If specified, this callback will be called

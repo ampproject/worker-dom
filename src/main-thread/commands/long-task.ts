@@ -1,10 +1,10 @@
-import { CommandExecutor, CommandExecutorInterface } from './interface';
-import { TransferrableMutationType, ReadableMutationType, LongTaskMutationIndex } from '../../transfer/TransferrableMutation';
-import { StringContext } from '../strings';
-import { NodeContext } from '../nodes';
-import { WorkerContext } from '../worker';
-import { WorkerDOMConfiguration } from '../configuration';
-import { ObjectContext } from '../object-context';
+import { CommandExecutor, CommandExecutorInterface } from './interface.js';
+import { TransferrableMutationType, ReadableMutationType, LongTaskMutationIndex } from '../../transfer/TransferrableMutation.js';
+import { StringContext } from '../strings.js';
+import { NodeContext } from '../nodes.js';
+import { WorkerContext } from '../worker.js';
+import { WorkerDOMConfiguration } from '../configuration.js';
+import { ObjectContext } from '../object-context.js';
 
 export interface LongTaskCommandExecutorInterface extends CommandExecutorInterface {
   (

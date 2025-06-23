@@ -1,10 +1,10 @@
-import anyTest, { TestInterface } from 'ava';
-import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
-import { Document } from '../../worker-thread/dom/Document';
-import { HTMLSelectElement } from '../../worker-thread/dom/HTMLSelectElement';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement.js';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { HTMLSelectElement } from '../../worker-thread/dom/HTMLSelectElement.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   select: HTMLSelectElement;
 }>;

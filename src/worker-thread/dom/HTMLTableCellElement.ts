@@ -1,8 +1,8 @@
-import { registerSubclass, definePropertyBackedAttributes } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
-import { DOMTokenList } from './DOMTokenList';
-import { matchNearestParent, tagNameConditionPredicate, matchChildrenElements } from './matchElements';
+import { registerSubclass, definePropertyBackedAttributes } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { reflectProperties } from './enhanceElement.js';
+import { DOMTokenList } from './DOMTokenList.js';
+import { matchNearestParent, tagNameConditionPredicate, matchChildrenElements } from './matchElements.js';
 
 export class HTMLTableCellElement extends HTMLElement {
   private _headers: DOMTokenList;

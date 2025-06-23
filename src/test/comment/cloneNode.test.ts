@@ -1,10 +1,10 @@
-import anyTest, { TestInterface } from 'ava';
-import { Element } from '../../worker-thread/dom/Element';
-import { Comment } from '../../worker-thread/dom/Comment';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { Comment } from '../../worker-thread/dom/Comment.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   parent: Element;
   comment: Comment;
 }>;

@@ -1,13 +1,13 @@
-import { HTMLElement } from './HTMLElement';
-import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
-import { reflectProperties } from './enhanceElement';
-import { registerSubclass } from './Element';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { store as storeString } from '../strings';
-import { Document } from './Document';
-import { transfer } from '../MutationTransfer';
-import { NumericBoolean } from '../../utils';
+import { HTMLElement } from './HTMLElement.js';
+import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin.js';
+import { reflectProperties } from './enhanceElement.js';
+import { registerSubclass } from './Element.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { store as storeString } from '../strings.js';
+import { Document } from './Document.js';
+import { transfer } from '../MutationTransfer.js';
+import { NumericBoolean } from '../../utils.js';
 
 export class HTMLInputElement extends HTMLElement {
   // Per spec, some attributes like 'value' and 'checked' change behavior based on dirty flags.

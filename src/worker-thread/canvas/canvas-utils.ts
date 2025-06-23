@@ -1,10 +1,10 @@
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { MessageType, ImageBitmapToWorker } from '../../transfer/Messages';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { HTMLImageElement } from '../dom/HTMLImageElement';
-import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
-import { Document } from '../dom/Document';
-import { transfer } from '../MutationTransfer';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { MessageType, ImageBitmapToWorker } from '../../transfer/Messages.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { HTMLImageElement } from '../dom/HTMLImageElement.js';
+import { HTMLCanvasElement } from '../dom/HTMLCanvasElement.js';
+import { Document } from '../dom/Document.js';
+import { transfer } from '../MutationTransfer.js';
 
 let indexTracker = 0;
 

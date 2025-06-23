@@ -1,11 +1,11 @@
-import anyTest, { TestInterface } from 'ava';
-import { testReflectedProperty } from '../reflectPropertiesHelper';
-import { HTMLCanvasElement } from '../../worker-thread/dom/HTMLCanvasElement';
-import { CanvasRenderingContext2DShim } from '../../worker-thread/canvas/CanvasRenderingContext2D';
-import { CanvasRenderingContext2D } from '../../worker-thread/canvas/CanvasTypes';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { testReflectedProperty } from '../reflectPropertiesHelper.js';
+import { HTMLCanvasElement } from '../../worker-thread/dom/HTMLCanvasElement.js';
+import { CanvasRenderingContext2DShim } from '../../worker-thread/canvas/CanvasRenderingContext2D.js';
+import { CanvasRenderingContext2D } from '../../worker-thread/canvas/CanvasTypes.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   element: HTMLCanvasElement;
 }>;
 

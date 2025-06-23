@@ -1,17 +1,17 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import * as sinon from 'sinon';
-import { StringContext } from '../../main-thread/strings';
-import { ObjectContext } from '../../main-thread/object-context';
-import { CommandExecutor } from '../../main-thread/commands/interface';
-import { Env } from './helpers/env';
-import { NodeContext } from '../../main-thread/nodes';
-import { WorkerContext } from '../../main-thread/worker';
-import { ObjectCreationProcessor } from '../../main-thread/commands/object-creation';
-import { normalizeConfiguration } from '../../main-thread/configuration';
-import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
+import { StringContext } from '../../main-thread/strings.js';
+import { ObjectContext } from '../../main-thread/object-context.js';
+import { CommandExecutor } from '../../main-thread/commands/interface.js';
+import { Env } from './helpers/env.js';
+import { NodeContext } from '../../main-thread/nodes.js';
+import { WorkerContext } from '../../main-thread/worker.js';
+import { ObjectCreationProcessor } from '../../main-thread/commands/object-creation.js';
+import { normalizeConfiguration } from '../../main-thread/configuration.js';
+import { TransferrableObjectType } from '../../transfer/TransferrableMutation.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   stringContext: StringContext;
   objectContext: ObjectContext;
   objectCreationProcessor: CommandExecutor;
@@ -74,7 +74,7 @@ test('Object creation with mutation at a zero offset', (t) => {
   const stub = ((targetObject[methodName] as sinon.SinonStub) = sandbox.stub());
 
   // use a CanvasGradient as an example
-  const gradientObject = {};
+  const gradientObject : any = {};
   stub.returns(gradientObject);
 
   const objectId = 111; // give a sample id
@@ -122,7 +122,7 @@ test('Object creation with mutation at non-zero offset', (t) => {
   const stub = ((targetObject[methodName] as sinon.SinonStub) = sandbox.stub());
 
   // use a CanvasGradient as an example
-  const gradientObject = {};
+  const gradientObject : any = {};
   stub.returns(gradientObject);
 
   const objectId = 111; // give a sample id

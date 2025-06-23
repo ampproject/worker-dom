@@ -1,17 +1,17 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import * as sinon from 'sinon';
-import { StringContext } from '../../main-thread/strings';
-import { ObjectContext } from '../../main-thread/object-context';
-import { CommandExecutor } from '../../main-thread/commands/interface';
-import { Env } from './helpers/env';
-import { NodeContext } from '../../main-thread/nodes';
-import { WorkerContext } from '../../main-thread/worker';
-import { PropertyProcessor } from '../../main-thread/commands/property';
-import { normalizeConfiguration } from '../../main-thread/configuration';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { NumericBoolean } from '../../utils';
+import { StringContext } from '../../main-thread/strings.js';
+import { ObjectContext } from '../../main-thread/object-context.js';
+import { CommandExecutor } from '../../main-thread/commands/interface.js';
+import { Env } from './helpers/env.js';
+import { NodeContext } from '../../main-thread/nodes.js';
+import { WorkerContext } from '../../main-thread/worker.js';
+import { PropertyProcessor } from '../../main-thread/commands/property.js';
+import { normalizeConfiguration } from '../../main-thread/configuration.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { NumericBoolean } from '../../utils.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   stringContext: StringContext;
   propertyProcessor: CommandExecutor;
   sandbox: sinon.SinonSandbox;

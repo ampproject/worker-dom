@@ -1,9 +1,9 @@
-import { registerSubclass, Element } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { matchNearestParent, tagNameConditionPredicate, ConditionPredicate, matchChildrenElements } from './matchElements';
-import { HTMLTableElement } from './HTMLTableElement';
-import { Document } from './Document';
-import { HTMLTableCellElement } from './HTMLTableCellElement';
+import { registerSubclass, Element } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { matchNearestParent, tagNameConditionPredicate, ConditionPredicate, matchChildrenElements } from './matchElements.js';
+import { HTMLTableElement } from './HTMLTableElement.js';
+import { Document } from './Document.js';
+import { HTMLTableCellElement } from './HTMLTableCellElement.js';
 
 const TABLE_SECTION_TAGNAMES = 'TABLE TBODY THEAD TFOOT'.split(' ');
 

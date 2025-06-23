@@ -10,17 +10,17 @@ import {
   ImageSmoothingQuality,
   CanvasGradient,
   CanvasPattern,
-} from './CanvasTypes';
-import { MessageType, OffscreenCanvasToWorker } from '../../transfer/Messages';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { transfer } from '../MutationTransfer';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { OffscreenCanvasPolyfill } from './OffscreenCanvasPolyfill';
-import { Document } from '../dom/Document';
-import { HTMLElement } from '../dom/HTMLElement';
-import { FakeNativeCanvasPattern } from './FakeNativeCanvasPattern';
-import { retrieveImageBitmap } from './canvas-utils';
-import { HTMLCanvasElement } from '../dom/HTMLCanvasElement';
+} from './CanvasTypes.js';
+import { MessageType, OffscreenCanvasToWorker } from '../../transfer/Messages.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { transfer } from '../MutationTransfer.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { OffscreenCanvasPolyfill } from './OffscreenCanvasPolyfill.js';
+import { Document } from '../dom/Document.js';
+import { HTMLElement } from '../dom/HTMLElement.js';
+import { FakeNativeCanvasPattern } from './FakeNativeCanvasPattern.js';
+import { retrieveImageBitmap } from './canvas-utils.js';
+import { HTMLCanvasElement } from '../dom/HTMLCanvasElement.js';
 
 export const deferredUpgrades = new WeakMap();
 

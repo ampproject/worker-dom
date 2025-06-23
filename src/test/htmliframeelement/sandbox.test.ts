@@ -1,8 +1,8 @@
-import anyTest, { TestInterface } from 'ava';
-import { HTMLIFrameElement } from '../../worker-thread/dom/HTMLIFrameElement';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { HTMLIFrameElement } from '../../worker-thread/dom/HTMLIFrameElement.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   element: HTMLIFrameElement;
 }>;
 

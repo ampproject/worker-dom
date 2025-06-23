@@ -1,8 +1,8 @@
-import { Node } from './dom/Node';
-import { MutationRecord } from './MutationRecord';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { Document } from './dom/Document';
-import { transfer } from './MutationTransfer';
+import { Node } from './dom/Node.js';
+import { MutationRecord } from './MutationRecord.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
+import { Document } from './dom/Document.js';
+import { transfer } from './MutationTransfer.js';
 
 const observers: MutationObserver[] = [];
 

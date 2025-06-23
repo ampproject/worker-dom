@@ -1,14 +1,14 @@
-import anyTest, { TestInterface } from 'ava';
-import { Document } from '../../worker-thread/dom/Document';
-import { MutationFromWorker } from '../../transfer/Messages';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { emitter, Emitter } from '../Emitter';
-import { createTestingDocument } from '../DocumentCreation';
-import { Element } from '../../worker-thread/dom/Element';
-import { Event } from '../../worker-thread/Event';
+import anyTest, { TestFn } from 'ava';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { MutationFromWorker } from '../../transfer/Messages.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { emitter, Emitter } from '../Emitter.js';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { Event } from '../../worker-thread/Event.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   div: Element;
   eventHandler: (e: Event) => any;
@@ -31,41 +31,45 @@ test.beforeEach((t) => {
   };
 });
 
-test.serial.cb('Node.removeEventListener transfers an event subscription', (t) => {
+test.serial('Node.removeEventListener transfers an event subscription', async (t) => {
   const { div, eventHandler, emitter } = t.context;
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION, div[TransferrableKeys.index], 1, 0, strings.indexOf('click'), 0],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+  return new Promise<void>((resolve) => {
+    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [TransferrableMutationType.EVENT_SUBSCRIPTION, div[TransferrableKeys.index], 1, 0, strings.indexOf('click'), 0],
+        'mutation is as expected',
+      );
+      resolve();
+    }
 
-  div.addEventListener('click', eventHandler);
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.removeEventListener('click', eventHandler);
+    div.addEventListener('click', eventHandler);
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.removeEventListener('click', eventHandler);
+    });
   });
 });
 
-test.serial.cb('Node.removeEventListener transfers the correct subscription when multiple exist', (t) => {
+test.serial('Node.removeEventListener transfers the correct subscription when multiple exist', async (t) => {
   const { div, eventHandler, emitter } = t.context;
 
-  function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
-    t.deepEqual(
-      Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
-      [TransferrableMutationType.EVENT_SUBSCRIPTION, div[TransferrableKeys.index], 1, 0, strings.indexOf('click'), 1],
-      'mutation is as expected',
-    );
-    t.end();
-  }
+  return new Promise<void>((resolve) => {
+    function transmitted(strings: Array<string>, message: MutationFromWorker, buffers: Array<ArrayBuffer>) {
+      t.deepEqual(
+        Array.from(new Uint16Array(message[TransferrableKeys.mutations])),
+        [TransferrableMutationType.EVENT_SUBSCRIPTION, div[TransferrableKeys.index], 1, 0, strings.indexOf('click'), 1],
+        'mutation is as expected',
+      );
+      resolve();
+    }
 
-  div.addEventListener('click', (e) => console.log('0th listener'));
-  div.addEventListener('click', eventHandler);
-  Promise.resolve().then(() => {
-    emitter.once(transmitted);
-    div.removeEventListener('click', eventHandler);
+    div.addEventListener('click', (e: Event) => console.log('0th listener'));
+    div.addEventListener('click', eventHandler);
+    Promise.resolve().then(() => {
+      emitter.once(transmitted);
+      div.removeEventListener('click', eventHandler);
+    });
   });
 });

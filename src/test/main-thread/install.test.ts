@@ -1,9 +1,9 @@
-import anyTest, { TestInterface } from 'ava';
-import { Env } from './helpers/env';
-import { install } from '../../main-thread/install';
-import { ExportedWorker } from '../../main-thread/exported-worker';
+import anyTest, { TestFn } from 'ava';
+import { Env } from './helpers/env.js';
+import { install } from '../../main-thread/install.js';
+import { ExportedWorker } from '../../main-thread/exported-worker.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   env: Env;
   baseElement: HTMLElement;
 }>;

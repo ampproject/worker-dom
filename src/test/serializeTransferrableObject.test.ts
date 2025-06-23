@@ -1,12 +1,12 @@
-import anyTest, { TestInterface } from 'ava';
+import anyTest, { TestFn } from 'ava';
 import * as sinon from 'sinon';
-import { serializeTransferrableObject } from '../worker-thread/serializeTransferrableObject';
-import { TransferrableObjectType } from '../transfer/TransferrableMutation';
-import { store } from '../worker-thread/strings';
-import { CanvasGradient } from '../worker-thread/canvas/CanvasGradient';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { serializeTransferrableObject } from '../worker-thread/serializeTransferrableObject.js';
+import { TransferrableObjectType } from '../transfer/TransferrableMutation.js';
+import { store } from '../worker-thread/strings.js';
+import { CanvasGradient } from '../worker-thread/canvas/CanvasGradient.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
 
-const test = anyTest as TestInterface<{}>;
+const test = anyTest as TestFn<{}>;
 
 test('Serializes Integers', (t) => {
   const serialized = serializeTransferrableObject([1]);

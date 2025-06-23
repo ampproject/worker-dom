@@ -1,7 +1,7 @@
-import { Element } from '../../worker-thread/dom/Element';
-import { Node } from '../../worker-thread/dom/Node';
-import { SVG_NAMESPACE, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
-import { toLower, toUpper } from '../../utils';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { Node } from '../../worker-thread/dom/Node.js';
+import { SVG_NAMESPACE, HTML_NAMESPACE } from '../../transfer/TransferrableNodes.js';
+import { toLower, toUpper } from '../../utils.js';
 
 interface Elements {
   [key: string]: boolean;

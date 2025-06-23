@@ -1,9 +1,9 @@
-import anyTest, { TestInterface } from 'ava';
-import { testReflectedProperty } from '../reflectPropertiesHelper';
-import { HTMLDataElement } from '../../worker-thread/dom/HTMLDataElement';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { testReflectedProperty } from '../reflectPropertiesHelper.js';
+import { HTMLDataElement } from '../../worker-thread/dom/HTMLDataElement.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   element: HTMLDataElement;
 }>;
 

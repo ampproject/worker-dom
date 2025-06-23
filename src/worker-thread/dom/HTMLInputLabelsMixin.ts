@@ -1,5 +1,5 @@
-import { Element } from './Element';
-import { matchChildrenElements } from './matchElements';
+import { Element } from './Element.js';
+import { matchChildrenElements } from './matchElements.js';
 
 /**
  * The HTMLInputLabels interface represents a collection of input getters for their related label Elements.

@@ -1,6 +1,6 @@
-import { registerSubclass, Element } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { Node } from './Node';
+import { registerSubclass, Element } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { Node } from './Node.js';
 
 export class HTMLDataListElement extends HTMLElement {
   /**

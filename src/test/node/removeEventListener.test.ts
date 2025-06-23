@@ -1,9 +1,9 @@
-import anyTest, { TestInterface } from 'ava';
-import { Element } from '../../worker-thread/dom/Element';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   node: Element;
   callback: () => undefined;
   callbackTwo: () => false;
@@ -51,5 +51,5 @@ test('removing an unknown callback for a unknown type does nothing', (t) => {
   const { node } = t.context;
 
   node.removeEventListener('click', () => undefined);
-  t.is(node[TransferrableKeys.handlers]['click'], undefined);
+  t.true(node[TransferrableKeys.handlers]['click'] === undefined);
 });

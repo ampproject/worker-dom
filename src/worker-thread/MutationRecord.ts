@@ -1,4 +1,4 @@
-import { Node } from './dom/Node';
+import { Node } from './dom/Node.js';
 
 // MutationRecord interface is modification and extension of the spec version.
 // It supports capturing property changes.

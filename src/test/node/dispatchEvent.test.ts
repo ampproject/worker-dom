@@ -1,9 +1,9 @@
-import anyTest, { TestInterface } from 'ava';
-import { Event } from '../../worker-thread/Event';
-import { Element } from '../../worker-thread/dom/Element';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { Event } from '../../worker-thread/Event.js';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   node: Element;
   event: Event;
 }>;

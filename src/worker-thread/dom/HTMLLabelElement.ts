@@ -1,8 +1,8 @@
-import { Element, registerSubclass } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
-import { matchChildElement, tagNameConditionPredicate } from './matchElements';
-import { Document } from './Document';
+import { Element, registerSubclass } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { reflectProperties } from './enhanceElement.js';
+import { matchChildElement, tagNameConditionPredicate } from './matchElements.js';
+import { Document } from './Document.js';
 
 export class HTMLLabelElement extends HTMLElement {
   /**

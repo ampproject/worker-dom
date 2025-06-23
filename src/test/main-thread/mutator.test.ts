@@ -1,15 +1,15 @@
-import anyTest, { TestInterface } from 'ava';
-import { Env } from './helpers/env';
-import { MutatorProcessor } from '../../main-thread/mutator';
-import { NodeContext } from '../../main-thread/nodes';
-import { StringContext } from '../../main-thread/strings';
-import { WorkerContext } from '../../main-thread/worker';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { Phase } from '../../transfer/Phase';
-import { normalizeConfiguration } from '../../main-thread/configuration';
-import { ObjectContext } from '../../main-thread/object-context';
+import anyTest, { TestFn } from 'ava';
+import { Env } from './helpers/env.js';
+import { MutatorProcessor } from '../../main-thread/mutator.js';
+import { NodeContext } from '../../main-thread/nodes.js';
+import { StringContext } from '../../main-thread/strings.js';
+import { WorkerContext } from '../../main-thread/worker.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { Phase } from '../../transfer/Phase.js';
+import { normalizeConfiguration } from '../../main-thread/configuration.js';
+import { ObjectContext } from '../../main-thread/object-context.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   env: Env;
   baseElement: Element;
   stringContext: StringContext;

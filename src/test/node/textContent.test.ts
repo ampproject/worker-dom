@@ -1,11 +1,11 @@
-import anyTest, { TestInterface } from 'ava';
-import { Text } from '../../worker-thread/dom/Text';
-import { Element } from '../../worker-thread/dom/Element';
-import { Document } from '../../worker-thread/dom/Document';
-import { NodeType } from '../../transfer/TransferrableNodes';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { Text } from '../../worker-thread/dom/Text.js';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { NodeType } from '../../transfer/TransferrableNodes.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   node: Element;
   child: Element;

@@ -1,14 +1,14 @@
-import anyTest, { TestInterface } from 'ava';
-import { AMP } from '../../worker-thread/amp/amp';
-import { Document } from '../../worker-thread/dom/Document';
-import { GetOrSet } from '../../transfer/Messages';
-import { StorageLocation } from '../../transfer/TransferrableStorage';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { createTestingDocument } from '../DocumentCreation';
-import { expectMutations } from '../Emitter';
-import { getForTesting } from '../../worker-thread/strings';
+import anyTest, { TestFn } from 'ava';
+import { AMP } from '../../worker-thread/amp/amp.js';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { GetOrSet } from '../../transfer/Messages.js';
+import { StorageLocation } from '../../transfer/TransferrableStorage.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { expectMutations } from '../Emitter.js';
+import { getForTesting } from '../../worker-thread/strings.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   amp: AMP;
 }>;
@@ -22,7 +22,7 @@ test.beforeEach((t) => {
   };
 });
 
-test.serial.cb('AMP.getState(): string key', (t) => {
+test.serial('AMP.getState(): string key', async (t) => {
   const { document, amp } = t.context;
 
   let addGlobalEventListenerCalled = false;
@@ -30,16 +30,18 @@ test.serial.cb('AMP.getState(): string key', (t) => {
     addGlobalEventListenerCalled = true;
   };
 
-  expectMutations(document, (mutations) => {
-    t.true(addGlobalEventListenerCalled);
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.GET, StorageLocation.AmpState, getForTesting('foo')! + 1, 0]);
-    t.end();
-  });
+  return new Promise<void>((resolve) => {
+    expectMutations(document, (mutations) => {
+      t.true(addGlobalEventListenerCalled);
+      t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.GET, StorageLocation.AmpState, getForTesting('foo')! + 1, 0]);
+      resolve();
+    });
 
-  amp.getState('foo');
+    amp.getState('foo');
+  });
 });
 
-test.serial.cb('AMP.getState(): falsy key', (t) => {
+test.serial('AMP.getState(): falsy key', async (t) => {
   const { document, amp } = t.context;
 
   let addGlobalEventListenerCalled = false;
@@ -47,22 +49,26 @@ test.serial.cb('AMP.getState(): falsy key', (t) => {
     addGlobalEventListenerCalled = true;
   };
 
-  expectMutations(document, (mutations) => {
-    t.true(addGlobalEventListenerCalled);
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.GET, StorageLocation.AmpState, getForTesting('')! + 1, 0]);
-    t.end();
-  });
+  return new Promise<void>((resolve) => {
+    expectMutations(document, (mutations) => {
+      t.true(addGlobalEventListenerCalled);
+      t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.GET, StorageLocation.AmpState, getForTesting('')! + 1, 0]);
+      resolve();
+    });
 
-  (amp as any).getState();
+    (amp as any).getState();
+  });
 });
 
-test.serial.cb('AMP.setState()', (t) => {
+test.serial('AMP.setState()', async (t) => {
   const { document, amp } = t.context;
 
-  expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.AmpState, 0, getForTesting('{"foo":"bar"}')! + 1]);
-    t.end();
-  });
+  return new Promise<void>((resolve) => {
+    expectMutations(document, (mutations) => {
+      t.deepEqual(mutations, [TransferrableMutationType.STORAGE, GetOrSet.SET, StorageLocation.AmpState, 0, getForTesting('{"foo":"bar"}')! + 1]);
+      resolve();
+    });
 
-  amp.setState({ foo: 'bar' });
+    amp.setState({ foo: 'bar' });
+  });
 });

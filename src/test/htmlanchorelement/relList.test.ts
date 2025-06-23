@@ -1,8 +1,8 @@
-import anyTest, { TestInterface } from 'ava';
-import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   element: HTMLAnchorElement;
 }>;
 

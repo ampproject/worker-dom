@@ -1,6 +1,6 @@
-import { CommandExecutorInterface } from './interface';
-import { TransferrableMutationType, FunctionMutationIndex } from '../../transfer/TransferrableMutation';
-import { ResolveOrReject } from '../../transfer/Messages';
+import { CommandExecutorInterface } from './interface.js';
+import { TransferrableMutationType, FunctionMutationIndex } from '../../transfer/TransferrableMutation.js';
+import { ResolveOrReject } from '../../transfer/Messages.js';
 
 let fnCallCount = 0;
 

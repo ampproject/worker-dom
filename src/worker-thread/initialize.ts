@@ -1,11 +1,11 @@
-import { store as storeString } from './strings';
-import { Document } from './dom/Document';
-import { HydrateableNode } from '../transfer/TransferrableNodes';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration';
-import { appendGlobalEventProperties } from './dom/HTMLElement';
-import { initializeStorage } from './initialize-storage';
-import { WorkerStorageInit } from './initialize-storage';
+import { store as storeString } from './strings.js';
+import { Document } from './dom/Document.js';
+import { HydrateableNode } from '../transfer/TransferrableNodes.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
+import { appendKeys as addCssKeys } from './css/CSSStyleDeclaration.js';
+import { appendGlobalEventProperties } from './dom/HTMLElement.js';
+import { initializeStorage } from './initialize-storage.js';
+import { WorkerStorageInit } from './initialize-storage.js';
 
 export function initialize(
   document: Document,

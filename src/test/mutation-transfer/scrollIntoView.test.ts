@@ -1,12 +1,12 @@
-import anyTest, { TestInterface } from 'ava';
-import { Document } from '../../worker-thread/dom/Document';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { createTestingDocument } from '../DocumentCreation';
-import { expectMutations } from '../Emitter';
-import { Element } from '../../worker-thread/dom/Element';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import anyTest, { TestFn } from 'ava';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { expectMutations } from '../Emitter.js';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   element: Element;
 }>;
@@ -21,14 +21,16 @@ test.beforeEach((t) => {
   };
 });
 
-test.serial.cb('Element.scrollIntoView() transfer to main-thread', (t) => {
+test.serial('Element.scrollIntoView() transfer to main-thread', async (t) => {
   const { document, element } = t.context;
   element.isConnected = true;
 
-  expectMutations(document, (mutations) => {
-    t.deepEqual(mutations, [TransferrableMutationType.SCROLL_INTO_VIEW, element[TransferrableKeys.index]]);
-    t.end();
-  });
+  return new Promise<void>((resolve) => {
+    expectMutations(document, (mutations) => {
+      t.deepEqual(mutations, [TransferrableMutationType.SCROLL_INTO_VIEW, element[TransferrableKeys.index]]);
+      resolve();
+    });
 
-  element.scrollIntoView();
+    element.scrollIntoView();
+  });
 });

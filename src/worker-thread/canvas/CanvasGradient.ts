@@ -1,11 +1,11 @@
-import { Document } from '../dom/Document';
-import { transfer } from '../MutationTransfer';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { serializeTransferrableObject } from '../serializeTransferrableObject';
-import { store } from '../strings';
-import { TransferrableObject } from '../worker-thread';
-import { TransferrableObjectType } from '../../transfer/TransferrableMutation';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { Document } from '../dom/Document.js';
+import { transfer } from '../MutationTransfer.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { serializeTransferrableObject } from '../serializeTransferrableObject.js';
+import { store } from '../strings.js';
+import { TransferrableObject } from '../worker-thread.js';
+import { TransferrableObjectType } from '../../transfer/TransferrableMutation.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
 
 /**
  * Wrapper class for CanvasGradient. The user will be able to manipulate as a regular CanvasGradient object.

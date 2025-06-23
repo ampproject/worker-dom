@@ -1,11 +1,11 @@
-import { registerSubclass, Element } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
-import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
-import { matchChildrenElements, matchChildElement, tagNameConditionPredicate } from './matchElements';
-import { HTMLOptionElement } from './HTMLOptionElement';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { Node } from './Node';
+import { registerSubclass, Element } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { reflectProperties } from './enhanceElement.js';
+import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin.js';
+import { matchChildrenElements, matchChildElement, tagNameConditionPredicate } from './matchElements.js';
+import { HTMLOptionElement } from './HTMLOptionElement.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { Node } from './Node.js';
 
 const isOptionPredicate = tagNameConditionPredicate(['OPTION']);
 const isSelectedOptionPredicate = (element: Element): boolean => isOptionPredicate(element) && (element as HTMLOptionElement).selected === true;

@@ -1,12 +1,12 @@
-import anyTest, { TestInterface } from 'ava';
-import { createTestingDocument } from '../DocumentCreation';
-import { Element } from '../../worker-thread/dom/Element';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { Text } from '../../worker-thread/dom/Text';
-import { Document } from '../../worker-thread/dom/Document';
-import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement';
+import anyTest, { TestFn } from 'ava';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { Text } from '../../worker-thread/dom/Text.js';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   parent: Element;
   child: Element;
   text: Text;

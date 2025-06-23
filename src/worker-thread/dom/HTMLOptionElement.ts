@@ -1,12 +1,12 @@
-import { registerSubclass, definePropertyBackedAttributes } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { transfer } from '../MutationTransfer';
-import { Document } from './Document';
-import { TransferrableMutationType } from '../../transfer/TransferrableMutation';
-import { store as storeString } from '../strings';
-import { NumericBoolean } from '../../utils';
+import { registerSubclass, definePropertyBackedAttributes } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { reflectProperties } from './enhanceElement.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { transfer } from '../MutationTransfer.js';
+import { Document } from './Document.js';
+import { TransferrableMutationType } from '../../transfer/TransferrableMutation.js';
+import { store as storeString } from '../strings.js';
+import { NumericBoolean } from '../../utils.js';
 
 export class HTMLOptionElement extends HTMLElement {
   private [TransferrableKeys.selected]: boolean = false;

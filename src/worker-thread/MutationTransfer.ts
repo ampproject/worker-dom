@@ -1,12 +1,12 @@
-import { consume as consumeNodes } from './nodes';
-import { consume as consumeStrings } from './strings';
-import { MessageType, MutationFromWorker } from '../transfer/Messages';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { Node } from './dom/Node';
-import { Phase } from '../transfer/Phase';
-import { phase, set as setPhase } from './phase';
-import { Document } from './dom/Document';
-import { DocumentStub } from './dom/DocumentStub';
+import { consume as consumeNodes } from './nodes.js';
+import { consume as consumeStrings } from './strings.js';
+import { MessageType, MutationFromWorker } from '../transfer/Messages.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
+import { Node } from './dom/Node.js';
+import { Phase } from '../transfer/Phase.js';
+import { phase, set as setPhase } from './phase.js';
+import { Document } from './dom/Document.js';
+import { DocumentStub } from './dom/DocumentStub.js';
 
 let pending = false;
 let pendingMutations: Array<number> = [];

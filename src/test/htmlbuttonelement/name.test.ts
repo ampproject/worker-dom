@@ -1,8 +1,8 @@
-import anyTest, { TestInterface } from 'ava';
-import { HTMLButtonElement } from '../../worker-thread/dom/HTMLButtonElement';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { HTMLButtonElement } from '../../worker-thread/dom/HTMLButtonElement.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   element: HTMLButtonElement;
 }>;
 

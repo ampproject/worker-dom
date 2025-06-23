@@ -1,5 +1,5 @@
-import { CommandExecutorInterface } from './interface';
-import { TransferrableMutationType, ScrollIntoViewMutationIndex } from '../../transfer/TransferrableMutation';
+import { CommandExecutorInterface } from './interface.js';
+import { TransferrableMutationType, ScrollIntoViewMutationIndex } from '../../transfer/TransferrableMutation.js';
 
 export const ScrollIntoViewProcessor: CommandExecutorInterface = (strings, nodes, workerContext, objectContext, config) => {
   const allowedExecution = config.executorsAllowed.includes(TransferrableMutationType.SCROLL_INTO_VIEW);

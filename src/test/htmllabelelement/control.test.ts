@@ -1,15 +1,15 @@
-import anyTest, { TestInterface } from 'ava';
-import { HTMLLabelElement } from '../../worker-thread/dom/HTMLLabelElement';
-import { Document } from '../../worker-thread/dom/Document';
-import { Element } from '../../worker-thread/dom/Element';
-import { createTestingDocument } from '../DocumentCreation';
+import anyTest, { TestFn } from 'ava';
+import { HTMLLabelElement } from '../../worker-thread/dom/HTMLLabelElement.js';
+import { Document } from '../../worker-thread/dom/Document.js';
+import { Element } from '../../worker-thread/dom/Element.js';
+import { createTestingDocument } from '../DocumentCreation.js';
 
 // NOTE FOR KRIS
 // --
 // The issue is the `globalDocument` in `Node` is set once and cannot be reassigned when a new document is created.
 // for testing purposes, this needs to be altered.
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
   label: HTMLLabelElement;
   form: Element;

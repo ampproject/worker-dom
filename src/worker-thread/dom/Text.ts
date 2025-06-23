@@ -1,6 +1,6 @@
-import { CharacterData } from './CharacterData';
-import { Node } from './Node';
-import { NodeType } from '../../transfer/TransferrableNodes';
+import { CharacterData } from './CharacterData.js';
+import { Node } from './Node.js';
+import { NodeType } from '../../transfer/TransferrableNodes.js';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {

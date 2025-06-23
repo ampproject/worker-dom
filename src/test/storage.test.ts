@@ -1,9 +1,9 @@
-import anyTest, { TestInterface } from 'ava';
-import { createTestingDocument } from './DocumentCreation';
-import { Storage, createStorage } from '../worker-thread/Storage';
-import { StorageLocation } from '../transfer/TransferrableStorage';
+import anyTest, { TestFn } from 'ava';
+import { createTestingDocument } from './DocumentCreation.js';
+import { Storage, createStorage } from '../worker-thread/Storage.js';
+import { StorageLocation } from '../transfer/TransferrableStorage.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   storage: Storage;
 }>;
 

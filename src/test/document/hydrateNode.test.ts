@@ -1,10 +1,10 @@
-import anyTest, { TestInterface } from 'ava';
-import { createTestingDocument } from '../DocumentCreation';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
-import { NodeType, HydrateableNode, HTML_NAMESPACE } from '../../transfer/TransferrableNodes';
-import { Document } from '../../worker-thread/dom/Document';
+import anyTest, { TestFn } from 'ava';
+import { createTestingDocument } from '../DocumentCreation.js';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys.js';
+import { NodeType, HydrateableNode, HTML_NAMESPACE } from '../../transfer/TransferrableNodes.js';
+import { Document } from '../../worker-thread/dom/Document.js';
 
-const test = anyTest as TestInterface<{
+const test = anyTest as TestFn<{
   document: Document;
 }>;
 

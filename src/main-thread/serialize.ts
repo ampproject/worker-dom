@@ -1,9 +1,9 @@
-import { HydrateableNode, NodeType } from '../transfer/TransferrableNodes';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { NumericBoolean } from '../utils';
-import { WorkerDOMConfiguration, HydrationFilterPredicate } from './configuration';
-import { applyDefaultInputListener, sendValueChangeOnAttributeMutation } from './commands/event-subscription';
-import { WorkerContext } from './worker';
+import { HydrateableNode, NodeType } from '../transfer/TransferrableNodes.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
+import { NumericBoolean } from '../utils.js';
+import { WorkerDOMConfiguration, HydrationFilterPredicate } from './configuration.js';
+import { applyDefaultInputListener, sendValueChangeOnAttributeMutation } from './commands/event-subscription.js';
+import { WorkerContext } from './worker.js';
 
 const NODES_ALLOWED_TO_TRANSMIT_TEXT_CONTENT = [NodeType.COMMENT_NODE, NodeType.TEXT_NODE];
 

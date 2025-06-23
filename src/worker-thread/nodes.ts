@@ -1,7 +1,7 @@
-import { Node } from './dom/Node';
-import { phase } from './phase';
-import { Phase } from '../transfer/Phase';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { Node } from './dom/Node.js';
+import { phase } from './phase.js';
+import { Phase } from '../transfer/Phase.js';
+import { TransferrableKeys } from '../transfer/TransferrableKeys.js';
 
 let count: number = 0;
 let transfer: Array<Node> = [];

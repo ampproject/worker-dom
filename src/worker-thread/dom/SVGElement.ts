@@ -1,6 +1,6 @@
-import { Element, registerSubclass } from './Element';
-import { NodeName, Node, NamespaceURI } from './Node';
-import { SVG_NAMESPACE, NodeType } from '../../transfer/TransferrableNodes';
+import { Element, registerSubclass } from './Element.js';
+import { NodeName, Node, NamespaceURI } from './Node.js';
+import { SVG_NAMESPACE, NodeType } from '../../transfer/TransferrableNodes.js';
 
 export class SVGElement extends Element {
   constructor(nodeType: NodeType, localName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Node) {

@@ -1,11 +1,11 @@
-import { HydrateFunction } from './hydrate';
-import { AMP } from './amp/amp';
-import { callFunctionMessageHandler, exportFunction } from './function';
-import { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope';
-import { DocumentStub } from './dom/DocumentStub';
-import { deleteGlobals } from './amp/delete-globals';
-import { initializeStorage } from './initialize-storage';
-import { WorkerStorageInit } from './initialize-storage';
+import { HydrateFunction } from './hydrate.js';
+import { AMP } from './amp/amp.js';
+import { callFunctionMessageHandler, exportFunction } from './function.js';
+import { WorkerNoDOMGlobalScope } from './WorkerDOMGlobalScope.js';
+import { DocumentStub } from './dom/DocumentStub.js';
+import { deleteGlobals } from './amp/delete-globals.js';
+import { initializeStorage } from './initialize-storage.js';
+import { WorkerStorageInit } from './initialize-storage.js';
 
 const noop = () => void 0;
 

@@ -1,7 +1,7 @@
-import { registerSubclass, definePropertyBackedAttributes } from './Element';
-import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
-import { DOMTokenList, synchronizedAccessor } from './DOMTokenList';
+import { registerSubclass, definePropertyBackedAttributes } from './Element.js';
+import { HTMLElement } from './HTMLElement.js';
+import { reflectProperties } from './enhanceElement.js';
+import { DOMTokenList, synchronizedAccessor } from './DOMTokenList.js';
 
 export class HTMLLinkElement extends HTMLElement {
   private _relList: DOMTokenList;

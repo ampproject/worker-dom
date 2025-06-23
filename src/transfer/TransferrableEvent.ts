@@ -1,5 +1,5 @@
-import { TransferredNode } from './TransferrableNodes';
-import { TransferrableKeys } from './TransferrableKeys';
+import { TransferredNode } from './TransferrableNodes.js';
+import { TransferrableKeys } from './TransferrableKeys.js';
 
 interface TransferrableTouch {
   [key: number]: number;
