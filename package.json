@@ -63,7 +63,7 @@
     "polka": "0.5.2",
     "prettier": "3.2.5",
     "rimraf": "5.0.5",
-    "rollup": "3.29.4",
+    "rollup": "3.29.5",
     "rollup-plugin-analyzer": "4.0.0",
     "@rollup/plugin-terser": "0.4.4",
     "sinon": "14.0.0",
