@@ -93,12 +93,12 @@ export function removeDebugCommandExecutors() {
                 if (property.key.name === 'print') {
                   toDiscover--;
                 } else {
-                  validPropertyRanges.push([property.range[0], property.range[1]]);
+                  validPropertyRanges.push([property.start, property.end]);
                 }
               }
             }
 
-            source.overwrite(node.range[0], node.range[1], outputPropertyRange(code, validPropertyRanges));
+            source.overwrite(node.start, node.end, outputPropertyRange(code, validPropertyRanges));
           }
         },
       });
@@ -124,7 +124,7 @@ export function removeWorkerWhitespace() {
 
       simple(program, {
         TemplateLiteral(node) {
-          let literalValue = code.substring(node.range[0], node.range[1]);
+          let literalValue = code.substring(node.start, node.end);
           literalValue = literalValue
             .replace(/\) \{/g, '){')
             .replace(/, /g, ',')
@@ -132,7 +132,7 @@ export function removeWorkerWhitespace() {
             .replace(/\t/g, '')
             .replace(/[ ]{2,}/g, '')
             .replace(/\n/g, '');
-          source.overwrite(node.range[0], node.range[1], literalValue);
+          source.overwrite(node.start, node.end, literalValue);
         },
       });
 
