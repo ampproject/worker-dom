@@ -31,11 +31,11 @@ addEventListener('message', (evt: MessageEvent) => callFunctionMessageHandler(ev
 
 export const hydrate: HydrateFunction = (
   document: DocumentStub,
-  strings: Object,
-  hydrateableNode: Object,
-  cssKeys: Object,
-  globalEventHandlerKeys: Object,
-  size: Object,
+  strings: {},
+  hydrateableNode: {},
+  cssKeys: {},
+  globalEventHandlerKeys: {},
+  size: {},
   localStorageInit: WorkerStorageInit,
   sessionStorageInit: WorkerStorageInit,
 ) => {
