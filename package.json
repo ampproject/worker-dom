@@ -26,7 +26,7 @@
     "test": "ava -v",
     "pre~rollup": "npm-run-all --parallel tsc:worker tsc:main",
     "~rollup": "rollup --config config/rollup.config.mjs",
-    "lint:worker": "tslint -c config/tslint.json -p src/worker-thread/",
+    "lint:worker": "tslint -c config/tslint.json -p src/worker-thread/ -e '**/third_party/**'",
     "lint:main": "tslint -c config/tslint.json -p src/main-thread/",
     "lint": "npm-run-all --parallel lint:*",
     "predemo": "cross-env DEBUG_BUNDLE=true npm-run-all ~rollup",
