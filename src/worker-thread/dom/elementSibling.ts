@@ -3,13 +3,13 @@ import { Element } from './Element.js';
 import { Node } from './Node.js';
 
 export function getPreviousElementSibling(node: Node): Element | null {
-  let parentNodes = node.parentNode && node.parentNode.childNodes;
+  const parentNodes = node.parentNode && node.parentNode.childNodes;
   if (!parentNodes) {
     return null;
   }
 
   for (let i = parentNodes.indexOf(node) - 1; i >= 0; i--) {
-    let node = parentNodes[i];
+    const node = parentNodes[i];
     if (node.nodeType === NodeType.ELEMENT_NODE) {
       return node as Element;
     }
@@ -18,13 +18,13 @@ export function getPreviousElementSibling(node: Node): Element | null {
 }
 
 export function getNextElementSibling(node: Node): Element | null {
-  let parentNodes = node.parentNode && node.parentNode.childNodes;
+  const parentNodes = node.parentNode && node.parentNode.childNodes;
   if (!parentNodes) {
     return null;
   }
 
   for (let i = parentNodes.indexOf(node) + 1; i < parentNodes.length; i++) {
-    let node = parentNodes[i];
+    const node = parentNodes[i];
     if (node.nodeType === NodeType.ELEMENT_NODE) {
       return node as Element;
     }

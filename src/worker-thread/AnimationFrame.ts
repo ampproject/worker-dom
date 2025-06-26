@@ -7,7 +7,7 @@ interface Queued {
 const frameDuration = 1000 / 60;
 let last: number = 0;
 let id: number = 0;
-let queue: Array<Queued> = [];
+const queue: Array<Queued> = [];
 
 /**
  * Schedules the accumulated callbacks to be fired 16ms after the last round.
@@ -18,12 +18,12 @@ function scheduleNext() {
   last = now + next;
 
   setTimeout(function () {
-    var cp = queue.slice(0);
+    const cp = queue.slice(0);
     // Clear queue here to prevent
     // callbacks from appending listeners
     // to the current frame's queue
     queue.length = 0;
-    for (var i = 0; i < cp.length; i++) {
+    for (let i = 0; i < cp.length; i++) {
       if (cp[i].cancelled) {
         continue;
       }
