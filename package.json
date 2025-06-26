@@ -12,7 +12,7 @@
     "url": "https://github.com/ampproject/worker-dom.git"
   },
   "engines": {
-    "node": ">=10.14"
+    "node": ">=18"
   },
   "author": "The AMP HTML Authors",
   "license": "Apache-2.0",
@@ -117,7 +117,7 @@
     ]
   },
   "volta": {
-    "node": "18.19.1",
+    "node": "22.16.0",
     "yarn": "1.22.22"
   },
   "publishConfig": {
