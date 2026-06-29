@@ -13,7 +13,7 @@
     "preact": "10.19.6"
   },
   "devDependencies": {
-    "@babel/core": "7.27.7",
+    "@babel/core": "7.29.6",
     "@babel/preset-env": "7.27.2",
     "@babel/plugin-transform-react-jsx": "7.27.1",
     "babel-loader": "9.1.3",
