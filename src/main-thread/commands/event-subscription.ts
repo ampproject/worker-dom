@@ -54,7 +54,7 @@ export const sendValueChangeOnAttributeMutation = (workerContext: WorkerContext,
 };
 
 /**
- * Tell WorkerDOM what the value is for a Node.
+ * Tell WorkerDOM what the value and checked state are for a Node.
  * @param worker whom to dispatch value toward.
  * @param node where to get the value from.
  */
@@ -64,6 +64,7 @@ const fireValueChange = (workerContext: WorkerContext, node: RenderableElement):
     [TransferrableKeys.sync]: {
       [TransferrableKeys.index]: node._index_,
       [TransferrableKeys.value]: node.value,
+      [TransferrableKeys.checked]: node.checked,
     },
   });
 

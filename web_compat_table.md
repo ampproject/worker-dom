@@ -524,7 +524,7 @@ This section highlights the DOM APIs that are implemented in WorkerDOM currently
 | HTMLInputElement.autocomplete                       | ✔️     |                                                  | 
 | HTMLInputElement.autofocus                          | ✔️     |                                                  | 
 | HTMLInputElement.blur()                             | ✔️     |                                                  | 
-| HTMLInputElement.checked                            | ✖️     |                                                  | 
+| HTMLInputElement.checked                            | ✔️     | Radio group siblings are not synced              | 
 | HTMLInputElement.checkValidity()                    | ✖️     |                                                  | 
 | HTMLInputElement.defaultChecked                     | ✔️     |                                                  | 
 | HTMLInputElement.defaultValue                       | ✔️     |                                                  | 

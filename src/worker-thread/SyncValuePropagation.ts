@@ -24,6 +24,10 @@ export function propagate(global: WorkerDOMGlobalScope): void {
       (node.ownerDocument as Document)[TransferrableKeys.allowTransfer] = false;
       // Modify the private backing ivar of `value` property to avoid mutation/sync cycle.
       node.value = sync[TransferrableKeys.value];
+      const checked = sync[TransferrableKeys.checked];
+      if (checked !== undefined) {
+        node.checked = checked;
+      }
       (node.ownerDocument as Document)[TransferrableKeys.allowTransfer] = true;
     }
   });

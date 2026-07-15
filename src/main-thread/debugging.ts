@@ -108,6 +108,7 @@ function readableTransferrableSyncValue(nodeContext: NodeContext, value: Transfe
   return {
     target: nodeContext.getNode(index) || index,
     value: value[TransferrableKeys.value],
+    checked: value[TransferrableKeys.checked],
   };
 }
 
