@@ -533,12 +533,14 @@ export class Element extends ParentNode {
     };
 
     return new Promise((resolve) => {
+      let timeoutId: ReturnType<typeof setTimeout>;
       const messageHandler = ({ data }: { data: MessageToWorker }) => {
         if (
           data[TransferrableKeys.type] === MessageType.GET_BOUNDING_CLIENT_RECT &&
           (data as BoundingClientRectToWorker)[TransferrableKeys.target][0] === this[TransferrableKeys.index]
         ) {
           this.ownerDocument.removeGlobalEventListener('message', messageHandler);
+          clearTimeout(timeoutId);
           const transferredBoundingClientRect: TransferrableBoundingClientRect = (data as BoundingClientRectToWorker)[TransferrableKeys.data];
           resolve({
             top: transferredBoundingClientRect[0],
@@ -559,8 +561,11 @@ export class Element extends ParentNode {
         resolve(defaultValue);
       } else {
         this.ownerDocument.addGlobalEventListener('message', messageHandler);
+        timeoutId = setTimeout(() => {
+          this.ownerDocument.removeGlobalEventListener('message', messageHandler);
+          resolve(defaultValue);
+        }, 500); // TODO: Why a magical constant, define and explain.
         transfer(this.ownerDocument as Document, [TransferrableMutationType.GET_BOUNDING_CLIENT_RECT, this[TransferrableKeys.index]]);
-        setTimeout(resolve, 500, defaultValue); // TODO: Why a magical constant, define and explain.
       }
     });
   }
